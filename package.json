@@ -1,0 +1,27 @@
+{
+    "name": "ub-ria",
+    "version": "0.8.0",
+    "maintainers": [
+        {
+            "name": "otakustay",
+            "email": "otakustay@gmail.com"
+        }
+    ],
+    "contributors": [
+        {
+            "name": "DDDBear"
+        },
+        {
+            "name": "wangyaqiong"
+        },
+    ],
+    "dependencies": {
+        "er": ">=3.1.0-alpha.4",
+        "esui": ">=3.1.0-alpha.6",
+        "ef": ">=3.1.0-alpha.4",
+        "underscore": "1.5.x"
+    },
+    "main": "main",
+    "description": "联盟前端产品RIA基础库",
+    "homepage": "https://github.com/ecomfe/ub-ria"
+}
