@@ -220,6 +220,23 @@ define(
                 }
             }
         };
+
+        /**
+         * 查询列表
+         *
+         * @param {Object} [query] 查询参数
+         * @return {er.Promise}
+         */
+        ListModel.prototype.search = function (query) {
+            if (!this.data) {
+                throw new Error('No data object attached to this Model');
+            }
+            if (typeof this.data.search !== 'function') {
+                throw new Error('No search method implemented on data object');
+            }
+
+            return this.data.search(query || {});
+        };
         
         return ListModel;
     }
