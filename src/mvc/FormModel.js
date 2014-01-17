@@ -72,7 +72,7 @@ define(
          */
         FormModel.prototype.save = function (entity) {
             if (!this.data) {
-                throw new Error('No data object attached to this FormModel');
+                throw new Error('No data object attached to this Model');
             }
             if (typeof this.data.save !== 'function') {
                 throw new Error('No save method implemented on data object');
@@ -89,7 +89,7 @@ define(
          */
         FormModel.prototype.update = function (entity) {
             if (!this.data) {
-                throw new Error('No data object attached to this FormModel');
+                throw new Error('No data object attached to this Model');
             }
             if (typeof this.data.update !== 'function') {
                 throw new Error('No update method implemented on data object');

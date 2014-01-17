@@ -76,7 +76,7 @@ define(
          */
         SingleEntityModel.prototype.findById = function (id) {
             if (!this.data) {
-                throw new Error('No data object attached to this FormModel');
+                throw new Error('No data object attached to this Model');
             }
             if (typeof this.data.findById !== 'function') {
                 throw new Error(
