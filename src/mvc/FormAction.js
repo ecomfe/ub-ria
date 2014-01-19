@@ -155,13 +155,17 @@ define(
                 return Deferred.rejected(handleResult);
             }
 
-
             var method = this.context.formType === 'update' ? 'update' : 'save';
-            return this.model[method](entity)
-                .then(
-                    u.bind(this.handleSubmitResult, this),
-                    u.bind(handleError, this)
-                );
+            try {
+                return this.model[method](entity)
+                    .then(
+                        u.bind(this.handleSubmitResult, this),
+                        u.bind(handleError, this)
+                    );
+            }
+            catch (ex) {
+                return Deferred.rejected(ex);
+            }
         };
 
         /**

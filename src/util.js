@@ -8,6 +8,10 @@
  */
 define(
     function (require) {
+        var u = require('underscore');
+        
+        var EMPTY_OBJECT = {};
+
         /**
          * 工具模块
          *
@@ -17,7 +21,7 @@ define(
         var util = {};
 
         util.purify = function purify(object, defaults, deep) {
-            defaults = defaults || empty;
+            defaults = defaults || EMPTY_OBJECT;
             var purifiedObject = {};
             u.each(
                 object,

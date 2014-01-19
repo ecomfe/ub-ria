@@ -46,11 +46,6 @@ define(
          * @return {Object} 补充完整的实体数据
          */
         FormModel.prototype.fillEntity = function (entity) {
-            // 如果是更新则添加一个`id`字段
-            if (this.get('formType') === 'update') {
-                entity.id = this.model.get('id');
-            }
-
             return entity;
         };
 
@@ -94,6 +89,9 @@ define(
             if (typeof this.data.update !== 'function') {
                 throw new Error('No update method implemented on data object');
             }
+
+            // 更新默认加上id
+            entity.id = this.get('id');
 
             return this.data.update(entity);
         };

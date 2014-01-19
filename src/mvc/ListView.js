@@ -40,9 +40,9 @@ define(
          * 收集查询参数并触发查询事件
          *
          * @param {ListView} this 当前视图实例
-         * @param {Object} e 控件事件对象
+         * @param {mini-event.Event} e 控件事件对象
          */
-        ListView.prototype.submitSearch = function () {
+        ListView.prototype.submitSearch = function (e) {
             var args = this.getSearchArgs();
 
             // 如果是表格排序引发的，把新的排序放进去
@@ -66,10 +66,11 @@ define(
                     var status = +button.getData('status');
                     // 1. 没有任何选中项时，所有按钮肯定禁用
                     // 2. 使用`model.canUpdateToStatus`判断按钮是否能用
-                    var disabled = u.isEmpty(items.length)
+                    var disabled = u.isEmpty(items)
                         || !this.model.canUpdateToStatus(items, status);
                     button.set('disabled', disabled);
-                }
+                },
+                this
             );
         };
 

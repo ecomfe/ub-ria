@@ -175,6 +175,16 @@ define(
             throw new Error('updatePageSize method is not implemented');
         };
 
+        /** 
+         * 获取每页显示条数
+         *
+         * @return {number}
+         * @abstract
+         */
+        ListModel.prototype.getPageSize = function () {
+            throw new Error('getPageSize method is not implemented');
+        };
+
         /**
          * 获取列表全部数据
          *
@@ -202,7 +212,7 @@ define(
          * @param {Object | string | number} item 要查找的元素或其id
          * @return {number} 无查找结果则返回`-1`
          */
-        ListModel.prototype.findIndex = function (item) {
+        ListModel.prototype.indexOf = function (item) {
             var list = this.getAllItems();
 
             if (!list) {
