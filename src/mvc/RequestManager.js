@@ -156,6 +156,42 @@ define(
             }
         }
 
+        /**
+         * 获取请求对象
+         *
+         * @return {meta.Request}
+         * @protected
+         */
+        RequestManager.prototype.getRequest = function (name, data, options) {
+                if (typeof name !== 'string') {
+                    options = name;
+                    name = null;
+                }
+
+                var config = lookupRequestConfig(this, name);
+
+                options = util.mix({}, config && config.options, options);
+                if (typeof data === 'function') {
+                    data = data(this, options);
+                }
+                if (typeof options.data === 'function') {
+                    options.data = options.data(this, options);
+                }
+                if (data) {
+                    options.data = util.mix({}, options.data, data);
+                }
+
+                if (!options.dataType) {
+                    options.dataType = 'json';
+                }
+
+                return {
+                    name: name,
+                    options: options,
+                    config: config
+                };
+            };
+
         var ajax = require('er/ajax');
 
         /**
@@ -175,49 +211,29 @@ define(
          * @return {er.FakeXHR}
          */
         RequestManager.prototype.request = function (name, data, options) {
-            if (typeof name !== 'string') {
-                options = name;
-                name = null;
+            var context = this.getRequest(name, data, options);
+
+            if (!context.config) {
+                return ajax.request(context.options);
             }
 
-            var config = lookupRequestConfig(this, name);
-
-            options = util.mix({}, config && config.options, options);
-            if (typeof data === 'function') {
-                data = data(this, options);
-            }
-            if (typeof options.data === 'function') {
-                options.data = options.data(this, options);
-            }
-            if (data) {
-                options.data = util.mix({}, options.data, data);
-            }
-
-            if (!options.dataType) {
-                options.dataType = 'json';
-            }
-
-            if (!config) {
-                return ajax.request(options);
-            }
-
-            var xhr = resolveConflict(this, config, options);
+            var xhr = resolveConflict(this, context.config, context.options);
             if (!xhr) {
-                xhr = ajax.request(options);
+                xhr = ajax.request(context.options);
                 if (name) {
                     // 根据管理的级别，把未完成的请求放到合适的容器里保留
-                    var runningRequests = config.scope === 'instance'
+                    var runningRequests = context.config.scope === 'instance'
                         ? this.runningRequests
                         : globalRunningRequests;
                     // 由于`options`是在`auto`模式下决定策略用的，所以也要保留起来
                     runningRequests[name] = {
-                        options: options,
+                        options: context.options,
                         xhr: xhr
                     };
                     // 有时候一个请求中带的数据会很大，因此要尽早让请求对象可回收，
                     // 所以无论请求失败还是成功，统一进行一次移除操作
                     xhr.ensure(
-                        u.partial(detachRunningRequest, this, name, xhr)
+                        u.partial(detachRunningRequest, this, context.name, xhr)
                     );
                 }
             }
