@@ -25,6 +25,20 @@ define(
 
         util.inherits(BaseModel, UIModel);
 
+        /**
+         * 添加一个数据对象，以便当前数据模型对象可以进行管理
+         *
+         * @param {RequestManager} instance 一个数据对象
+         * @return {RequestManager} 返回`instance`
+         */
+        BaseModel.prototype.addData = function (instance) {
+            if (!this.dataInstances) {
+                this.dataInstances = [];
+            }
+            this.dataInstances.push(instance);
+            return instance;
+        };
+
         function extendLastObjectTypeValue(array, extension) {
             var lastObject = array[array.length - 1];
             if (u.isArray(lastObject)) {
@@ -92,6 +106,16 @@ define(
             this.mergeDefaultDatasource();
 
             return UIModel.prototype.load.apply(this, arguments);
+        };
+
+        /**
+         * 销毁
+         *
+         * @override
+         */
+        BaseModel.prototype.dispose = function () {
+            UIModel.prototype.dispose.apply(this, arguments);
+            u.invoke(this.dataInstances, 'dispose');
         };
 
         return BaseModel;
