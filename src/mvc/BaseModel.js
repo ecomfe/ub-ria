@@ -28,15 +28,40 @@ define(
         /**
          * 添加一个数据对象，以便当前数据模型对象可以进行管理
          *
-         * @param {RequestManager} instance 一个数据对象
-         * @return {RequestManager} 返回`instance`
+         * @param {mvc.RequestManager} instance 一个数据对象
+         * @return {mvc.RequestManager} 返回`instance`
          */
-        BaseModel.prototype.addData = function (instance) {
-            if (!this.dataInstances) {
-                this.dataInstances = [];
+        BaseModel.prototype.addData = function (name, instance) {
+            if (!this.dataPool) {
+                this.dataPool = {};
             }
-            this.dataInstances.push(instance);
-            return instance;
+
+            if (arguments.length < 2) {
+                instance = name;
+                name = 'default';
+            }
+            if (!name) {
+                name = 'default';
+            }
+
+            if (!this.dataPool[name]) {
+                this.dataPool[name] = instance;
+            }
+
+            return this.dataPool[name];
+        };
+
+        /**
+         * 获取关联在当前Model上的数据对象
+         *
+         * @param {string} [name] 需要的数据对象的名称，不提供则返回默认的数据对象
+         * @return {mvc.RequestManager}
+         */
+        BaseModel.prototype.data = function (name) {
+            if (!name) {
+                name = 'default';
+            }
+            return this.dataPool[name] || null;
         };
 
         function extendLastObjectTypeValue(array, extension) {
@@ -48,7 +73,7 @@ define(
                 // 这里也一样，必须变成一个新对象，以避免多次覆盖过来的影响
                 array[array.length - 1] = u.defaults({}, extension, lastObject);
             }
-        }
+        };
 
         /**
          * 合并默认数据源
@@ -115,7 +140,13 @@ define(
          */
         BaseModel.prototype.dispose = function () {
             UIModel.prototype.dispose.apply(this, arguments);
-            u.invoke(this.dataInstances, 'dispose');
+            u.each(
+                this.dataPool,
+                function (data) {
+                    data.dispose();
+                }
+            );
+            this.dataPool = null;
         };
 
         return BaseModel;

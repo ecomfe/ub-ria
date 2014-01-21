@@ -75,15 +75,17 @@ define(
          * @return {er.Promise}
          */
         SingleEntityModel.prototype.findById = function (id) {
-            if (!this.data) {
-                throw new Error('No data object attached to this Model');
-            }
-            if (typeof this.data.findById !== 'function') {
+            var data = this.data();
+            if (!data) {
                 throw new Error(
-                    'No findById method implemented on data object');
+                    'No default data object attached to this Model');
+            }
+            if (typeof data.findById !== 'function') {
+                throw new Error(
+                    'No findById method implemented on default data object');
             }
 
-            return this.data.findById(id);
+            return data.findById(id);
         };
         
         return SingleEntityModel;

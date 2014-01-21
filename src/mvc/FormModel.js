@@ -66,14 +66,17 @@ define(
          * @return {er.Promise}
          */
         FormModel.prototype.save = function (entity) {
-            if (!this.data) {
-                throw new Error('No data object attached to this Model');
+            var data = this.data();
+            if (!data) {
+                throw new Error(
+                    'No default data object attached to this Model');
             }
-            if (typeof this.data.save !== 'function') {
-                throw new Error('No save method implemented on data object');
+            if (typeof data.save !== 'function') {
+                throw new Error(
+                    'No save method implemented on default data object');
             }
 
-            return this.data.save(entity);
+            return data.save(entity);
         };
 
         /**
@@ -83,17 +86,20 @@ define(
          * @return {er.Promise}
          */
         FormModel.prototype.update = function (entity) {
-            if (!this.data) {
-                throw new Error('No data object attached to this Model');
+            var data = this.data();
+            if (!data) {
+                throw new Error(
+                    'No default data object attached to this Model');
             }
-            if (typeof this.data.update !== 'function') {
-                throw new Error('No update method implemented on data object');
+            if (typeof data.update !== 'function') {
+                throw new Error(
+                    'No update method implemented on default data object');
             }
 
             // 更新默认加上id
             entity.id = this.get('id');
 
-            return this.data.update(entity);
+            return data.update(entity);
         };
         
         return FormModel;

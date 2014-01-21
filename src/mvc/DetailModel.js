@@ -41,15 +41,17 @@ define(
          * @return {er.meta.Promise}
          */
         DetailModel.prototype.getTreeDatasource = function () {
-            if (!this.data) {
-                throw new Error('No data object attached to this Model');
-            }
-            if (typeof this.data.getTree !== 'function') {
+            var data = this.data();
+            if (!data) {
                 throw new Error(
-                    'getTree method not implemented on data object');
+                    'No default data object attached to this Model');
+            }
+            if (typeof data.getTree !== 'function') {
+                throw new Error(
+                    'getTree method not implemented on defalut data object');
             }
 
-            return this.data.getTree()
+            return data.getTree()
                 .then(u.bind(this.buildTreeDatasource, this));
         };
 

@@ -238,14 +238,17 @@ define(
          * @return {er.Promise}
          */
         ListModel.prototype.search = function (query) {
-            if (!this.data) {
-                throw new Error('No data object attached to this Model');
+            var data = this.data();
+            if (!data) {
+                throw new Error(
+                    'No default data object attached to this Model');
             }
-            if (typeof this.data.search !== 'function') {
-                throw new Error('No search method implemented on data object');
+            if (typeof data.search !== 'function') {
+                throw new Error(
+                    'No search method implemented on default data object');
             }
 
-            return this.data.search(query || {});
+            return data.search(query || {});
         };
         
         return ListModel;
