@@ -28,6 +28,7 @@ define(
         /**
          * 添加一个数据对象，以便当前数据模型对象可以进行管理
          *
+         * @param {string} [name="default"] 数据对象的名称，没有则使用
          * @param {mvc.RequestManager} instance 一个数据对象
          * @return {mvc.RequestManager} 返回`instance`
          */
