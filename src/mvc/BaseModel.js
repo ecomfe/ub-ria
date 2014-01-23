@@ -74,7 +74,7 @@ define(
                 // 这里也一样，必须变成一个新对象，以避免多次覆盖过来的影响
                 array[array.length - 1] = u.defaults({}, extension, lastObject);
             }
-        };
+        }
 
         /**
          * 合并默认数据源
