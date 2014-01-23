@@ -25,13 +25,8 @@ define(
         util.inherits(ReadAction, BaseAction);
 
         function returnBack() {
-            var referrer = this.context.referrer;
-            // 默认回列表页
-            if (!referrer) {
-                referrer = '/' + this.getEntityName() + '/list';
-            }
-
-            this.redirect(referrer);
+            // 默认返回列表页
+            this.back('/' + this.getEntityName() + '/list');
         }
 
         /**

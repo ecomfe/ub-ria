@@ -104,10 +104,8 @@ define(
          * @param {Mixed} entity 提交后服务器返回的实体数据
          */
         FormAction.prototype.redirectAfterSubmit = function (entity) {
-            var targetURL =
-                (this.context && this.context.referrer)
-                || '/' + this.getEntityName() + '/list';
-            this.redirect(targetURL);
+            // 默认返回列表页
+            this.back('/' + this.getEntityName() + '/list');
         };
 
         /**
@@ -235,10 +233,8 @@ define(
          * 在取消编辑后重定向
          */
         FormAction.prototype.redirectAfterCancel = function () {
-            var redirectURL = this.context.referrer
-                ? this.context.referrer + ''
-                : '/' + this.getEntityName() + '/list';
-            this.redirect(redirectURL);
+            // 默认返回列表页
+            this.back('/' + this.getEntityName() + '/list');
         };
 
         function submit() {
