@@ -85,6 +85,27 @@ define(
         };
 
         /**
+         * 获取指定页码的跳转URL
+         *
+         * @param {number} page 指定的页码
+         * @return {string}
+         */
+        ListAction.prototype.getURLForPage = function (page) {
+            var url = this.context.url;
+            var path = url.getPath();
+            var query = url.getQuery();
+            
+            if (page === 1) {
+                query = u.omit(query, 'page');
+            }
+            else {
+                query.page = page;
+            }
+
+            return require('er/URL').withQuery(path, query).toString();
+        };
+
+        /**
          * 查询的事件处理函数
          *
          * @param {Object} e 事件对象
@@ -107,13 +128,29 @@ define(
         /**
          * 更新每页显示条数
          *
-         * @param {Object} 事件对象
+         * @param {mini-event.Event} e 事件对象
+         * @param {number} e.pageSize 每页显示条目数
          * @ignore
          */
         function updatePageSize(e) {
             // 先请求后端更新每页显示条数，然后直接刷新当前页
             this.model.updatePageSize(e.pageSize)
                 .then(u.bind(reloadWithSearchArgs, this));
+        }
+
+        /**
+         * 前往指定页
+         *
+         * @param {mini-event.Event} e 事件对象
+         * @param {number} e.page 前往的页码
+         * @ignore
+         */
+        function forwardToPage(e) {
+            var event = this.fire('pagechange', { page: e.page });
+            if (!event.isDefaultPrevented()) {
+                var url = this.getURLForPage(e.page);
+                this.redirect(url);
+            }
         }
 
         /**
@@ -223,9 +260,10 @@ define(
          */
         ListAction.prototype.initBehavior = function () {
             BaseAction.prototype.initBehavior.apply(this, arguments);
-            this.view.on('search', u.bind(search, this));
-            this.view.on('pagesizechange', u.bind(updatePageSize, this));
-            this.view.on('batchmodify', u.bind(batchModifyStatus, this));
+            this.view.on('search', search, this);
+            this.view.on('pagesizechange', updatePageSize, this);
+            this.view.on('batchmodify', batchModifyStatus, this);
+            this.view.on('pagechange', forwardToPage, this);
         };
 
         /**

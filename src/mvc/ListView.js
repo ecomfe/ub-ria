@@ -108,12 +108,23 @@ define(
         /**
          * 更新每页显示数
          *
-         * @param {Object} e 事件对象
+         * @param {mini-event.Event} e 事件对象
          * @ignore
          */
         function updatePageSize(e) {
             var pageSize = e.target.get('pageSize');
             this.fire('pagesizechange', { pageSize: pageSize });
+        }
+
+        /**
+         * 更新页码
+         *
+         * @param {mini-event.Event} e 事件对象
+         * @ignore
+         */
+        function updatePageIndex(e) {
+            var page = e.target.get('page');
+            this.fire('pagechange', { page: page });
         }
 
         /**
@@ -148,6 +159,7 @@ define(
             if (pager) {
                 // 切换每页大小
                 pager.on('pagesizechange', updatePageSize, this);
+                pager.on('pagechange', updatePageIndex, this);
             }
 
             var table = this.get('table');

@@ -28,6 +28,27 @@ define(
         DetailAction.prototype.modelType = './DetailModel';
 
         /**
+         * 获取指定页码的跳转URL
+         *
+         * @param {number} page 指定的页码
+         * @return {string}
+         */
+        DetailAction.prototype.getURLForPage = function (page) {
+            var url = this.context.url;
+            var path = url.getPath();
+            var query = url.getQuery();
+            
+            if (page === 1) {
+                query = u.omit(query, 'list.page');
+            }
+            else {
+                query['list.page'] = page;
+            }
+
+            return require('er/URL').withQuery(path, query).toString();
+        };
+
+        /**
          * 列表搜索
          *
          * @param {mini-event.Event} e 事件对象
@@ -98,6 +119,14 @@ define(
             this.view.refreshTree();
         }
 
+        function forwardToPage(e) {
+            // 防止子Action自己跳转
+            e.preventDefault();
+
+            var url = this.getURLForPage(e.page);
+            this.redirect(url);
+        }
+
         /**
          * 初始化交互行为
          *
@@ -109,6 +138,7 @@ define(
             this.view.on('search', search, this);
             this.view.on('selectitem', redirectToItem, this);
             this.view.on('searchtree', searchTree, this);
+            this.view.on('listpagechange', forwardToPage, this);
         };
         
         return DetailAction;

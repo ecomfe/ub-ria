@@ -78,6 +78,11 @@ define(
                     this, 'search',
                     { preserveData: true, syncState: true }
                 );
+                delegate(
+                    listActionPanel, 'action@pagechange',
+                    this, 'listpagechange',
+                    { preserveData: true, syncState: true }
+                );
             }
 
             var tree = this.get('tree');
