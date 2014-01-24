@@ -61,7 +61,8 @@ define(
 
             var args = {
                 tab: this.model.get('tab'),
-                id: this.model.get('id')
+                id: this.model.get('id'),
+                treeKeyword: this.model.get('treeKeyword')
             };
             // 所有列表参数加上`list.`前缀
             u.each(
@@ -97,25 +98,12 @@ define(
         /**
          * 对左侧导航树进行检索
          *
-         * @param {Object} e 事件对象
-         * @param {string} e.keyword 检索的关键词
+         * @param {string} keyword 查询的关键词
          * @ignore
          */
-        function searchTree(e) {
-            var filterTree = require('../filterTree');
-            var tree = this.model.get('treeDatasource');
-            if (e.keyword) {
-                tree = u.deepClone(tree);
-                // 保留第1个“全部xxx”
-                var all = tree.children[0];
-                tree = filterTree.byKeyword(tree, e.keyword);
-                if (all && all.id === 'all') {
-                    tree.children.unshift(all);
-                }
-            }
-
-            this.model.set('treeKeyword', e.keyword);
-            this.model.set('filteredTreeDatasource', tree);
+        function searchTree(keyword) {
+            this.model.set('treeKeyword', keyword);
+            this.model.filterTreeDatasource();
             this.view.refreshTree();
         }
 
@@ -125,6 +113,22 @@ define(
 
             var url = this.getURLForPage(e.page);
             this.redirect(url);
+        }
+
+        function redirectToTreeKeyword(e) {
+            var url = this.context.url;
+            var path = url.getPath();
+            var query = url.getQuery();
+
+            if (!e.keyword) {
+                query = u.omit(query, 'treeKeyword');
+            }
+            else {
+                query.treeKeyword = e.keyword;
+            }
+
+            var targetURL = require('er/URL').withQuery(path, query);
+            this.redirect(targetURL);
         }
 
         /**
@@ -137,8 +141,22 @@ define(
 
             this.view.on('search', search, this);
             this.view.on('selectitem', redirectToItem, this);
-            this.view.on('searchtree', searchTree, this);
+            this.view.on('searchtree', redirectToTreeKeyword, this);
             this.view.on('listpagechange', forwardToPage, this);
+        };
+
+        DetailAction.prototype.filterRedirect = function (targetURL) {
+            var diff = this.context.url.compare(targetURL);
+            // 如果只有`treeKeyword`有变化，那么拦截掉这一次的重定向，直接搜索导航树
+            if (!diff.path
+                && diff.queryDifference.length === 1
+                && diff.query.treeKeyword
+            ) {
+                this.context.url = targetURL;
+                var treeKeyword = diff.query.treeKeyword.other;
+                searchTree.call(this, treeKeyword);
+                return false;
+            }
         };
         
         return DetailAction;

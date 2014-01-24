@@ -117,6 +117,10 @@ define(
                 };
                 tree.setProperties(properties);
             }
+            var search = this.get('search');
+            if (search) {
+                search.set('text', this.model.get('treeKeyword') || '');
+            }
         };
 
         /**

@@ -16,7 +16,7 @@
         }
     ],
     "dependencies": {
-        "er": ">=3.1.0-alpha.5",
+        "er": ">=3.1.0-alpha.6",
         "esui": ">=3.1.0-alpha.6",
         "ef": ">=3.1.0-alpha.4",
         "underscore": "1.5.x",

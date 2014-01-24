@@ -56,6 +56,25 @@ define(
         };
 
         /**
+         * 根据存储的关键字过滤导航树数据源
+         */
+        DetailModel.prototype.filterTreeDatasource = function () {
+            var keyword = this.get('treeKeyword');
+            var rawDatasource = this.get('treeDatasource');
+            if (keyword) {
+                tree = u.deepClone(rawDatasource);
+                // 保留第1个“全部xxx”
+                var all = tree.children[0];
+                var filterTree = require('../filterTree');
+                tree = filterTree.byKeyword(tree, keyword);
+                if (all && all.id === 'all') {
+                    tree.children.unshift(all);
+                }
+            }
+            this.set('filteredTreeDatasource', tree);
+        };
+
+        /**
          * 获取单个子实体标签页的链接
          *
          * @param {string} tab 标签页实体名称
@@ -199,7 +218,8 @@ define(
                 SingleEntityModel.prototype.load.apply(this, arguments);
             return loading
                 .then(u.bind(adjustTabs, this))
-                .then(u.bind(setListActionURL, this));
+                .then(u.bind(setListActionURL, this))
+                .then(u.bind(this.filterTreeDatasource, this));
         };
         
         return DetailModel;
