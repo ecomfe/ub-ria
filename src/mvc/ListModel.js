@@ -9,14 +9,14 @@
  */
 define(
     function (require) {
-        var BaseModel = require('common/BaseModel');
+        var BaseModel = require('./BaseModel');
         var util = require('er/util');
         var u = require('underscore');
 
         /**
          * 列表数据模型基类
          *
-         * @extends common/BaseModel
+         * @extends mvc/BaseModel
          * @constructor
          */
         function ListModel() {

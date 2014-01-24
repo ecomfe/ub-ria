@@ -9,7 +9,7 @@
  */
 define(
     function (require) {
-        var BaseView = require('common/BaseView');
+        var BaseView = require('./BaseView');
         var util = require('er/util');
         var u = require('underscore');
 
@@ -27,8 +27,8 @@ define(
          * - 批量操作按钮需使用`CustomData`扩展，并设置`data-ui-data-status`属性，
          * 属性值即点击该按钮后实体将更新的目标状态数字，如`data-ui-data-status="0"`
          *
+         * @extends mvc/BaseView
          * @constructor
-         * @extends common/BaseView
          */
         function ListView() {
             BaseView.apply(this, arguments);

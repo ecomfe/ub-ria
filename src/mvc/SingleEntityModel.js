@@ -11,7 +11,7 @@ define(
     function (require) {
         var u = require('underscore');
         var util = require('er/util');
-        var BaseModel = require('common/BaseModel');
+        var BaseModel = require('./BaseModel');
 
         /**
          * 以单个实体为主要数据源的页面的数据模型基类

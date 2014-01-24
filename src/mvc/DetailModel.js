@@ -17,7 +17,7 @@ define(
          * 频道列表数据模型类
          *
          * @constructor
-         * @extends common/SingleEntityModel
+         * @extends mvc/SingleEntityModel
          */
         function DetailModel() {
             SingleEntityModel.apply(this, arguments);

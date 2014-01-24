@@ -102,7 +102,7 @@ define(
          * @ignore
          */
         function searchTree(e) {
-            var filterTree = require('common/util/filterTree');
+            var filterTree = require('../filterTree');
             var tree = this.model.get('treeDatasource');
             if (e.keyword) {
                 tree = u.deepClone(tree);
