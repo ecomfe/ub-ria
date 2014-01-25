@@ -60,9 +60,9 @@ define(
          */
         DetailModel.prototype.filterTreeDatasource = function () {
             var keyword = this.get('treeKeyword');
-            var rawDatasource = this.get('treeDatasource');
+            var tree = this.get('treeDatasource');
             if (keyword) {
-                tree = u.deepClone(rawDatasource);
+                tree = u.deepClone(tree);
                 // 保留第1个“全部xxx”
                 var all = tree.children[0];
                 var filterTree = require('../filterTree');
