@@ -45,18 +45,21 @@ define(
             ActionDialog: 'ef'
         };
 
-        var esuiExtensions = {
-            AutoSort: true, 
-            Command: true,
-            CustomData: true,
-            TableEdit: true
+        var extensionModulePrefix = {
+            AutoSort: 'esui/extension',
+            Command: 'esui/extension',
+            CustomData: 'esui/extension',
+            TableEdit: 'esui/extension',
+            AutoSubmit: 'ub-ria/ui/extension',
+            TableTip: 'ub-ria/ui/extension',
+            WordCount: 'ub-ria/ui/extension'
         };
 
         /**
          * 获取控件依赖关系
          *
          * @param {string} text 模板内容
-         * @return {Array} 依赖的控件列表
+         * @return {string[]} 依赖的控件列表
          */
         function getControlDependencies(text) {
             var dependencies = [];
@@ -83,7 +86,7 @@ define(
          * 获取扩展依赖关系
          *
          * @param {string} text 模板内容
-         * @return {Array} 依赖的扩展列表
+         * @return {string[]} 依赖的扩展列表
          */
         function getExtensionDependencies(text) {
             var dependencies = [];
@@ -96,9 +99,8 @@ define(
                 if (!defined[type]) {
                     defined[type] = true;
 
-                    var prefix = esuiExtensions[type]
-                        ? 'esui/extension/'
-                        : 'ui/extension/';
+                    var prefix =
+                        (extensionModulePrefix[type] || 'ui/extension') + '/';
                     dependencies.push(prefix + type);
                 }
 
@@ -171,6 +173,18 @@ define(
                 var prefix = moduleId.substring(0, lastIndexOfSlash);
                 var type = moduleId.substring(lastIndexOfSlash + 1);
                 controlModulePrefix[type] = prefix;
+            },
+
+            /**
+             * 注册业务控件扩展的模块
+             *
+             * @param {string} moduleId 业务控件对应的模块id，必须为顶级id
+             */
+            registerExtension: function (moduleId) {
+                var lastIndexOfSlash = moduleId.lastIndexOf('/');
+                var prefix = moduleId.substring(0, lastIndexOfSlash);
+                var type = moduleId.substring(lastIndexOfSlash + 1);
+                extensionModulePrefix[type] = prefix;
             }
         };
 
