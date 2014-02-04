@@ -97,9 +97,10 @@ define(
             args.order = this.model.get('order');
             args.orderBy = this.model.get('orderBy');
 
-            // 关键词去空格
-            if (args.keyword) {
-                args.keyword = require('../util').trim(args.keyword);
+            var keyword = this.get('keyword');
+            if (keyword) {
+                // 关键词去空格
+                args.keyword = require('../util').trim(keyword.getValue());
             }
             
             return args;
