@@ -83,6 +83,11 @@ define(
                     this, 'listpagechange',
                     { preserveData: true, syncState: true }
                 );
+                delegate(
+                    listActionPanel, 'action@statusupdate',
+                    this, 'liststatusupdate',
+                    { preserveData: true, syncState: true }
+                );
             }
 
             var tree = this.get('tree');

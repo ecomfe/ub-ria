@@ -115,6 +115,12 @@ define(
             this.redirect(url);
         }
 
+        function reloadEntityStatus(e) {
+            e.preventDefault();
+            
+            this.reload();
+        }
+
         function redirectToTreeKeyword(e) {
             var url = this.context.url;
             var path = url.getPath();
@@ -143,6 +149,7 @@ define(
             this.view.on('selectitem', redirectToItem, this);
             this.view.on('searchtree', redirectToTreeKeyword, this);
             this.view.on('listpagechange', forwardToPage, this);
+            this.view.on('liststatusupdate', reloadEntityStatus, this);
         };
 
         DetailAction.prototype.filterRedirect = function (targetURL) {
