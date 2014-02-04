@@ -25,6 +25,20 @@ define(
 
         util.inherits(FormModel, SingleEntityModel);
 
+        var datasource = require('er/datasource');
+        var defaultDatasource = {
+            rule: datasource.constant(require('./rule'))
+        };
+
+        /**
+         * 默认数据源配置
+         * 
+         * @param {Object}
+         * @override
+         */
+        FormModel.prototype.defaultDatasource = u.extend(
+            defaultDatasource, SingleEntityModel.prototype.defaultDatasource);
+
         /**
          * 判断实体是否有变化
          *
