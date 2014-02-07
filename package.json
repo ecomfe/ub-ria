@@ -18,7 +18,7 @@
     "dependencies": {
         "er": ">=3.1.0-alpha.6",
         "esui": ">=3.1.0-alpha.6",
-        "ef": ">=3.1.0-alpha.4",
+        "ef": ">=3.1.0-alpha.3",
         "underscore": "1.5.x",
         "mini-event": "1.x",
         "etpl": "2.x",
