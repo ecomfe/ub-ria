@@ -129,6 +129,7 @@ define(
          * @return {er/Promise}
          */
         BaseModel.prototype.load = function () {
+            // TODO: 移到`getDatasource`方法中
             this.mergeDefaultDatasource();
 
             return UIModel.prototype.load.apply(this, arguments);
