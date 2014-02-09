@@ -8,13 +8,24 @@
  */
 define(
     function (require) {
-        return {
+        var main = {
             version: '0.8.0-alpha.1',
 
+            enableExtensions: function () {
+                // 加载扩展
+                require('./extension/underscore').enable();
+                require('./extension/ajax').enable();
+                require('./extension/ui').enable();
+            },
+
             start: function () {
-                // TODO: 加载常用扩展
+                main.enableExtensions();
+
+                // 启动ER
                 require('er').start();
             }
-        }
+        };
+
+        return main;
     }
 );
