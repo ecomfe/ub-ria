@@ -49,7 +49,7 @@ define(
                 /**
                  * url网址最大长度
                  */
-                length: 1000,
+                maxLength: 1000,
 
                 /**
                  * url网址正则

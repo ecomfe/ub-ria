@@ -16,7 +16,7 @@ define(
         /**
          * 列表数据模型基类
          *
-         * @extends mvc/BaseModel
+         * @extends mvc.BaseModel
          * @constructor
          */
         function ListModel() {
@@ -190,7 +190,7 @@ define(
          *
          * @return {Object[]}
          */
-        ListModel.getAllItems = function () {
+        ListModel.prototype.getAllItems = function () {
             return this.get('results');
         };
 
@@ -250,6 +250,94 @@ define(
 
             return data.search(query || {});
         };
+
+        /**
+         * 批量更新一个或多个实体的状态
+         *
+         * @param {string} action 操作名称
+         * @param {number} status 目标状态
+         * @param {string[]} idx id集合
+         * @return {er.meta.FakeXHR}
+         */
+        ListModel.prototype.updateStatus = function (action, status, idx) {
+            var data = this.data();
+            if (!data) {
+                throw new Error(
+                    'No default data object attached to this Model');
+            }
+            if (typeof data.updateStatus !== 'function') {
+                throw new Error(
+                    'No updateStatus method implemented '
+                    + 'on default data object');
+            }
+
+            return data.updateStatus(action, status, idx);
+        };
+
+        /**
+         * 删除一个或多个实体
+         *
+         * @param {string[]} idx id集合
+         * @return {er.meta.FakeXHR}
+         */
+        ListModel.prototype.remove =
+            u.partial(ListModel.prototype.updateStatus, 'remove', 0);
+
+        /**
+         * 恢复一个或多个实体
+         *
+         * @param {string[]} idx id集合
+         * @return {er.meta.FakeXHR}
+         */
+        ListModel.prototype.restore =
+            u.partial(ListModel.prototype.updateStatus, 'restore', 1);
+
+        /**
+         * 获取批量操作前的确认
+         *
+         * @param {string} action 操作名称
+         * @param {number} status 目标状态
+         * @param {string[]} idx id集合
+         * @return {er.meta.FakeXHR}
+         */
+        ListModel.prototype.getAdvice = function (action, status, idx) {
+            var data = this.data();
+            if (!data) {
+                throw new Error(
+                    'No default data object attached to this Model');
+            }
+            if (typeof data.getAdvice !== 'function') {
+                throw new Error(
+                    'No getAdvice method implemented on default data object');
+            }
+
+            return data.getAdvice(action, status, idx);
+        };
+        
+        /**
+         * 批量删除前确认
+         *
+         * @param {string[]} idx id集合
+         * @return {er.meta.FakeXHR}
+         */
+        ListModel.prototype.getRemoveAdvice = function (idx, entityName) {
+            // 默认仅本地提示，有需要的子类重写为从远程获取信息
+            var Deferred = require('er/Deferred');
+            var advice = {
+                message: '您确定要删除已选择的' + idx.length + '个'
+                    + this.get('entityDescription') + '吗？'
+            };
+            return Deferred.resolved(advice);
+        };
+
+        /**
+         * 批量恢复前确认
+         *
+         * @param {string[]} idx id集合
+         * @return {er.meta.FakeXHR}
+         */
+        ListModel.prototype.getRestoreAdvice = 
+            u.partial(ListModel.prototype.getAdvice, 'restore', 1);
         
         return ListModel;
     }

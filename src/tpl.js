@@ -22,6 +22,7 @@ define(
             Crumb: 'esui',
             Dialog: 'esui',
             Form: 'esui',
+            Frame: 'esui',
             Label: 'esui',
             Link: 'esui',
             MonthView: 'esui',
@@ -31,6 +32,7 @@ define(
             Region: 'esui',
             RichCalendar: 'esui',
             Schedule: 'esui',
+            SearchBox: 'esui',
             Select: 'esui',
             Tab: 'esui',
             Table: 'esui',
@@ -52,6 +54,7 @@ define(
             TableEdit: 'esui/extension',
             AutoSubmit: 'ub-ria/ui/extension',
             TableTip: 'ub-ria/ui/extension',
+            TableSubrow: 'esui/extension',
             WordCount: 'ub-ria/ui/extension'
         };
 

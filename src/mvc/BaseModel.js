@@ -81,6 +81,7 @@ define(
          */
         BaseModel.prototype.mergeDefaultDatasource = function () {
             if (!this.datasource) {
+                this.datasource = this.defaultDatasource;
                 return;
             }
 
