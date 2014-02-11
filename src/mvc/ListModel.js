@@ -21,6 +21,17 @@ define(
          */
         function ListModel() {
             BaseModel.apply(this, arguments);
+
+            // 把默认参数补上，不然像表格的`orderBy`字段没值表格就不能正确显示
+            u.each(
+                this.getDefaultArgs(),
+                function (value, key) {
+                    if (!this.has(key)) {
+                        this.set(key, value);
+                    }
+                },
+                this
+            );
         }
 
         util.inherits(ListModel, BaseModel);
@@ -42,6 +53,66 @@ define(
             { status: 0, deny: [0] },
             { status: 1, deny: [1] }
         ];
+
+        /**
+         * 配置默认`status`参数值，即当URL中没有此参数时发给后端的代替值
+         *
+         * 通常“状态”的默认选项不是“全部”，而是“启用”等状态，就会遇上这样的情况：
+         *
+         * - 如果将“启用”项的值设为`""`，则不会给后端`status`参数，会查询到所有数据
+         * - 如果将“启用”项的值设为`"1"`，则所有入口要加上`status=1`参数
+         *
+         * 未了保持前端URL的整洁以及不需要外部关注默认的`status`参数，
+         * 同时保证后端的兼容性，列表在设计的时候采用以下方案：
+         *
+         * 1. 将“启用”之类未删除状态的值设为`""`
+         * 2. 在`ListModel`上添加`defaultStatusValue`属性，默认为`1`表示“启用”
+         * 3. 如果URL中没有`status`参数，则使用`defaultStatusValue`属性代替
+         * 4. 如果URL中的`status`参数值为`"all"`，则请求后端时不带此参数以获取全集
+         *
+         * @type {number | string}
+         * @protected
+         */
+        ListModel.prototype.defaultStatusValue = 1;
+
+        /**
+         * 获取默认`status`参数值，即当URL中没有此参数时发给后端的代替值
+         *
+         * @return {string | number}
+         * @protected
+         */
+        ListModel.prototype.getDefaultStatusValue = function () {
+            return this.defaultStatusValue || '';
+        };
+
+        /**
+         * 配置默认查询参数
+         * 
+         * 如果某个参数与这里的值相同，则不会加到URL中
+         * 
+         * 创建`Model`时，如果某个参数不存在，则会自动补上这里的值
+         *
+         * @type {Object}
+         * @protected
+         */
+        ListModel.prototype.defaultArgs = {};
+
+        /**
+         * 默认查询参数
+         *
+         * 参考{@link ListModel#defaultArgs}属性的说明
+         *
+         * @return {Object}
+         * @protected
+         */
+        ListModel.prototype.getDefaultArgs = function () {
+            var args = this.defaultArgs || {};
+            var defaultStatusValue = this.getDefaultStatusValue();
+            if (!args.hasOwnProperty('status') && defaultStatusValue) {
+                args.status = defaultStatusValue;
+            }
+            return args;
+        };
 
         ListModel.prototype.defaultDatasource = {
             list: [
@@ -125,6 +196,15 @@ define(
                 orderBy: this.get('orderBy'),
                 pageNo: this.get('page') || 1
             };
+
+            // 调整“状态”属性
+            if (!query.status) {
+                query.status = this.getDefaultStatusValue();
+            }
+            else if (query.status === 'all') {
+                query.status = '';
+            }
+
             return query;
         };
 

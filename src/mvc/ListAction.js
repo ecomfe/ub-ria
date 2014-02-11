@@ -30,41 +30,13 @@ define(
         ListAction.prototype.modelType = './ListModel';
 
         /**
-         * 创建数据模型对象
-         *
-         * @param {Object} args 模型的初始化数据
-         * @return {ListModel}
-         * @override
-         */
-        ListAction.prototype.createModel = function (args) {
-            // 把默认参数补回去，不然像表格的`orderBy`字段没值表格就不能正确显示
-            u.defaults(args, this.defaultArgs);
-
-            return BaseAction.prototype.createModel.apply(this, arguments);
-        };
-
-        /**
-         * 默认查询参数
-         * 
-         * 如果某个参数与这里的值相同，则不会加到URL中
-         * 
-         * 发给后端时，会自动加上这里的参数
-         *
-         * @type {Object}
-         */
-        ListAction.prototype.defaultArgs = {};
-
-        /**
          * 进行查询
          *
          * @param {Object} args 查询参数
          */
         ListAction.prototype.performSearch = function (args) {
             // 去除默认参数值
-            var defaultArgs = u.extend(
-                {}, 
-                this.defaultArgs
-            );
+            var defaultArgs = this.model.getDefaultArgs();
             args = require('../util').purify(args, defaultArgs);
 
             var event = this.fire('search', { args: args });
