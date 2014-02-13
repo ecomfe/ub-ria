@@ -70,11 +70,18 @@ define(
         /**
          * 处理提交数据时发生的错误，默认无行为，如验证信息显示等需要实现此方法
          *
-         * @param {er.FakeXHR} xhr `XMLHttpRequest`对象
+         * @param {er.meta.FakeXHR} xhr `XMLHttpRequest`对象
          * @return {boolean} 返回`true`表示错误已经处理完毕
          */
         FormAction.prototype.handleSubmitError = function (xhr) {
+            // 默认只处理409的验证失败，其它错误如果子类能处理则重写这个函数
+            if (xhr.status === 409) {
+                var errors = util.parseJSON(xhr.responseText);
+                this.view.notifyErrors(errors);
+                return true;
+            }
             return false;
+
         };
 
         /**
