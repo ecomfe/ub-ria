@@ -20,6 +20,18 @@ define(
          */
         var util = {};
 
+        /**
+         * 清理对象中无用的键值对
+         *
+         * 默认会去除所有值为`null`、`undefined`以及空字符串`""`的键值对
+         *
+         * 如果提供了`defaults`参数，则额外去除值与`defaults`的同名属性相同的键值对
+         *
+         * @param {Object} object 输入的对象
+         * @param {Object} [defaults] 用于提供属性默认值的参照对象
+         * @param {boolean} [deep=false] 是否深度清理，即遇到属性值为对象继续递归清理
+         * @return {Object} 清理后的新对象
+         */
         util.purify = function purify(object, defaults, deep) {
             defaults = defaults || EMPTY_OBJECT;
             var purifiedObject = {};
@@ -44,6 +56,12 @@ define(
             return purifiedObject;
         };
 
+        /**
+         * 去除字符串首尾空格
+         *
+         * @param {string} s 输入字符串
+         * @return {string}
+         */
         util.trim = function (s) {
             return s.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
         };
