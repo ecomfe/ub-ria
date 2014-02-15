@@ -72,7 +72,7 @@ define(
          * @param {Mixed} obj 任何对象
          * @return {Mixed} 复制后的对象
          */
-        u.deepClone = function (obj) {
+        util.deepClone = function (obj) {
             // 非对象以及函数就直接返回
             if (!u.isObject(obj) || u.isFunction(obj)) {
                 return obj;
