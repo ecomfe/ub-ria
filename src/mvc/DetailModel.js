@@ -156,12 +156,7 @@ define(
             activeNode: function (model) {
                 if (model.get('id')) {
                     var entityName = model.getTreeNodeEntityName();
-                    entityName = entityName.replace(
-                        /[A-Z]/,
-                        function (word) {
-                            return '-' + word.toLowerCase();
-                        }
-                    );
+                    entityName = require('../util').dasherize(entityName);
 
                     return entityName + '-' + model.get('id');
                 }

@@ -145,8 +145,7 @@ define(
 
             if (this.requireAdviceFor(context)) {
                 // 需要后端提示消息的，再额外加入用户确认的过程
-                var action = e.statusName;
-                action = action.charAt(0).toUpperCase() + action.substring(1);
+                var action = require('../util').pascalize(e.statusName);
                 var adviceMethod = 'get' + action + 'Advice';
 
                 this.model[adviceMethod](ids, items)

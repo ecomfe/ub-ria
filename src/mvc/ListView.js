@@ -139,10 +139,7 @@ define(
                 // `status`是`number`类型
                 status: +e.target.getData('status'),
                 // `statusName`是一个camelCase的格式
-                statusName: e.target.id.replace(
-                    /-[a-z]/g, 
-                    function (w) { return w.charAt(1).toUpperCase(); }
-                ),
+                statusName: require('../util').camelize(e.target.id),
                 // `command`是操作的中文说明
                 command: e.target.get('text')
             };
