@@ -62,7 +62,7 @@ define(
             var keyword = this.get('treeKeyword');
             var tree = this.get('treeDatasource');
             if (keyword) {
-                tree = u.deepClone(tree);
+                tree = util.deepClone(tree);
                 // 保留第1个“全部xxx”
                 var all = tree.children[0];
                 var filterTree = require('../filterTree');

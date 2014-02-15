@@ -48,6 +48,32 @@ define(
             return s.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
         };
 
+        /**
+         * 深度复制一个对象
+         *
+         * @param {Mixed} obj 任何对象
+         * @return {Mixed} 复制后的对象
+         */
+        u.deepClone = function (obj) {
+            // 非对象以及函数就直接返回
+            if (!u.isObject(obj) || u.isFunction(obj)) {
+                return obj;
+            }
+
+            if (u.isArray(obj)) {
+                return u.map(obj, u.deepClone);
+            }
+
+            var clone = {};
+            u.each(
+                obj,
+                function (value, key) {
+                    clone[key] = u.deepClone(value);
+                }
+            );
+            return clone;
+        };
+
         return util;
     }
 );

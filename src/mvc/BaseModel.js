@@ -87,8 +87,8 @@ define(
 
             // 管它有没有必要，先深复制一份，这样下面就不会为各种情况纠结，
             // `datasource`大不到哪里去，深复制不影响性能
-            var datasource = u.deepClone(this.datasource) || {};
-            var defaultDatasource = u.deepClone(this.defaultDatasource);
+            var datasource = util.deepClone(this.datasource) || {};
+            var defaultDatasource = util.deepClone(this.defaultDatasource);
 
             // 默认数据源可能是对象或者数组，当前的数据源也可能是对象或数组，按以下规则：
             //
