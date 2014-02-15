@@ -162,6 +162,103 @@ define(
         };
 
         /**
+         * 格式化数字
+         *
+         * @param {number} number 输入的数字
+         * @param {number} [decimals=0] 保留小数位数
+         * @param {Object} [options] 配置项
+         * @param {string} [decimalSeparator="."] 小数点符号
+         * @param {string} [thousandSeparator=","] 千位分隔符
+         * @param {string} [prefix=""] 返回的字符串的前缀
+         * @param {string} [emptyValue=""] 当输入为空或不是数字时的返回内容，会加前缀
+         * @return {string}
+         */
+        util.formatNumber = function (number, decimals, options) {
+            // 共4个重载：
+            //
+            // - `formatNumber(s)`
+            // - `formatNumber(s, decimals)`
+            // - `formatNumber(s, options)`
+            // - `formatNumber(s, decimals, options)
+            //
+            // 主要看第2个参数的类型
+            if (arguments.length < 2) {
+                decimals = 0;
+                options = {};
+            }
+            else if (typeof arguments[1] === 'object') {
+                options = decimals;
+                decimals = 0;
+            }
+
+            var defaults = {
+                decimalSeparator: '.',
+                thousandSeparator: ',',
+                prefix: '',
+                emptyValue: ''
+            };
+            options = u.extend(defaults, options);
+
+            if (isNaN(number)) {
+                return options.prefix + options.emptyValue;
+            }
+
+            number = parseFloat(number).toFixed(decimals);
+            // 分为整数和小数
+            var parts = number.split('.');
+            var integer = parts[0];
+            var decimal = parts[1];
+            // 加上千位分隔
+            integer = integer.replace(
+                /(\d)(?=(?:\d{3})+$)/g,
+                '$1' + options.decimalSeparator
+            );
+            // 再拼起来
+            return options.prefix + integer
+                + options.decimalSeparator + decimal;
+        };
+
+        /**
+         * 当字符串未达到预期长度时，在前方填充补齐字符
+         *
+         * @param {string} s 输入字符串
+         * @param {string} padding 补齐用的字符，只能是一个字符
+         * @param {number} length 补齐后的长度
+         * @return {string}
+         */
+        util.pad = function (s, padding, length) {
+            s = s + '';
+            var padLength = s.length - length;
+            if (padLength > 0) {
+                var left = new Array(padLength + 1).join(padding);
+                return left + s;
+            }
+            else {
+                return s;
+            }
+        };
+
+        /**
+         * 当字符串未达到预期长度时，在后方填充补齐字符
+         *
+         * @param {string} s 输入字符串
+         * @param {string} padding 补齐用的字符，只能是一个字符
+         * @param {number} length 补齐后的长度
+         * @return {string}
+         */
+        util.padRight = function () {
+            s = s + '';
+            var padLength = s.length - length;
+            if (padLength > 0) {
+                var right = new Array(padLength + 1).join(padding);
+                return s + right;
+            }
+            else {
+                return s;
+            }
+        };
+
+        /**
          * 深度复制一个对象
          *
          * @param {Mixed} obj 任何对象
