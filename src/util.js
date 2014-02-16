@@ -74,7 +74,7 @@ define(
          * @param {string} s 输入的字符串
          * @return {string}
          */
-        util.pascalise = function (s) {
+        util.pascalize = function (s) {
             s = s + '';
             s = s.replace(
                 /[\s-_]+(.)/g,
@@ -95,7 +95,7 @@ define(
          * @return {string}
          */
         util.camelize = function (s) {
-            s = pascalize(s);
+            s = util.pascalize(s);
             return s[0].toLowerCase() + s.slice(1);
         };
 
@@ -113,7 +113,7 @@ define(
          * @return {string}
          */
         util.dasherize = function (s) {
-            s = pascalize(s);
+            s = util.pascalize(s);
             // 这里把ABCD这种连续的大写，转成AbcD这种形式。
             // 如果`encodeURIComponent`，会变成`encodeUriComponent`，
             // 然后加横线后就是`encode-uri-component`得到正确的结果
@@ -145,7 +145,7 @@ define(
          * @return {string}
          */
         util.constlize = function (s) {
-            s = pascalize(s);
+            s = util.pascalize(s);
             return s.toUpperCase();
         };
 
@@ -166,41 +166,31 @@ define(
          *
          * @param {number} number 输入的数字
          * @param {number} [decimals=0] 保留小数位数
-         * @param {Object} [options] 配置项
-         * @param {string} [decimalSeparator="."] 小数点符号
-         * @param {string} [thousandSeparator=","] 千位分隔符
-         * @param {string} [prefix=""] 返回的字符串的前缀
          * @param {string} [emptyValue=""] 当输入为空或不是数字时的返回内容，会加前缀
+         * @param {string} [prefix=""] 返回的字符串的前缀
          * @return {string}
          */
-        util.formatNumber = function (number, decimals, options) {
-            // 共4个重载：
+        util.formatNumber = function (number, decimals, emptyValue, prefix) {
+            // 共6个重载：
             //
             // - `formatNumber(s)`
+            // - `formatNumber(s, emptyValue)`
+            // - `formatNumber(s, emptyValue, prefix)`
             // - `formatNumber(s, decimals)`
-            // - `formatNumber(s, options)`
-            // - `formatNumber(s, decimals, options)
+            // - `formatNumber(s, decimals, emptyValue)`
+            // - `formatNumber(s, decimals, emptyValue, prefix)`
             //
-            // 主要看第2个参数的类型
-            if (arguments.length < 2) {
-                decimals = 0;
-                options = {};
-            }
-            else if (typeof arguments[1] === 'object') {
-                options = decimals;
+            // 主要看第2个参数的类型，不是数字的话参数往前移1个
+            if (typeof arguments[1] !== 'number') {
+                prefix = arguments[2];
+                emptyValue = arguments[1];
                 decimals = 0;
             }
-
-            var defaults = {
-                decimalSeparator: '.',
-                thousandSeparator: ',',
-                prefix: '',
-                emptyValue: ''
-            };
-            options = u.extend(defaults, options);
+            prefix = prefix || '';
+            emptyValue = emptyValue || '';
 
             if (isNaN(number)) {
-                return options.prefix + options.emptyValue;
+                return prefix + emptyValue;
             }
 
             number = parseFloat(number).toFixed(decimals);
@@ -209,13 +199,13 @@ define(
             var integer = parts[0];
             var decimal = parts[1];
             // 加上千位分隔
-            integer = integer.replace(
-                /(\d)(?=(?:\d{3})+$)/g,
-                '$1' + options.decimalSeparator
-            );
+            integer = integer.replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
             // 再拼起来
-            return options.prefix + integer
-                + options.decimalSeparator + decimal;
+            var result = prefix + integer;
+            if (decimal) {
+                result += '.' + decimal;
+            }
+            return result;
         };
 
         /**
