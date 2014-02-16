@@ -105,14 +105,18 @@ define(
          * 禁用提交操作
          */
         FormView.prototype.disableSubmit = function () {
-            this.getGroup('submit').disable();
+            if (this.viewContext) {
+                this.getGroup('submit').disable();
+            }
         };
 
         /**
          * 启用提交操作
          */
         FormView.prototype.enableSubmit = function () {
-            this.getGroup('submit').enable();
+            if (this.viewContext) {
+                this.getGroup('submit').enable();
+            }
         };
 
         return FormView;
