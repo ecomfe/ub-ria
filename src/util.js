@@ -82,7 +82,7 @@ define(
                     return c.toUpperCase();
                 }
             );
-            s = s[0].toUpperCase() + s.slice(1);
+            s = s.charAt(0).toUpperCase() + s.slice(1);
             return s;
         };
 
@@ -96,7 +96,7 @@ define(
          */
         util.camelize = function (s) {
             s = util.pascalize(s);
-            return s[0].toLowerCase() + s.slice(1);
+            return s.charAt(0).toLowerCase() + s.slice(1);
         };
 
         /**
