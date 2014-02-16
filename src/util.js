@@ -69,7 +69,7 @@ define(
         /**
          * 将一个符合一定规则的字符串转成`PascalCase`形式
          *
-         * 输入字符串必须以空格、横线`-`或下划线`_`分割各单词，否则无法分析
+         * 输入字符串必须以空格、横线`-`、斜杠`/`或下划线`_`分割各单词，否则无法分析
          *
          * @param {string} s 输入的字符串
          * @return {string}
@@ -77,7 +77,7 @@ define(
         util.pascalize = function (s) {
             s = s + '';
             s = s.replace(
-                /[\s-_]+(.)/g,
+                /[\s-\/_]+(.)/g,
                 function (w, c) {
                     return c.toUpperCase();
                 }
