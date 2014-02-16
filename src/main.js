@@ -14,6 +14,7 @@ define(
             enableExtensions: function () {
                 // 加载扩展
                 require('./extension/underscore').enable();
+                require('./extension/mvc').enable();
                 require('./extension/ajax').enable();
                 require('./extension/ui').enable();
             },
