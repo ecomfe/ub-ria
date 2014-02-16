@@ -30,6 +30,15 @@ define(
         FormAction.prototype.modelType = require('./FormModel');
 
         /**
+         * 当前页面的分类，始终为`"form"`
+         *
+         * @type {string}
+         * @readonly
+         * @override
+         */
+        FormAction.prototype.category = 'form';
+
+        /**
          * 设置表单提交成功后显示的信息，如果值为`null`或`undefined`则表示不显示任何信息
          *
          * 如果该字段有内容，则系统使用该字段与提交表单后服务器返回的数据进行模板格式化，

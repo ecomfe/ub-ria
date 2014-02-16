@@ -24,6 +24,15 @@ define(
 
         util.inherits(ReadAction, BaseAction);
 
+        /**
+         * 当前页面的分类，始终为`"read"`
+         *
+         * @type {string}
+         * @readonly
+         * @override
+         */
+        ReadAction.prototype.category = 'read';
+
         function returnBack() {
             // 默认返回列表页
             this.back('/' + this.getEntityName() + '/list');

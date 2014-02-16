@@ -30,6 +30,15 @@ define(
         ListAction.prototype.modelType = './ListModel';
 
         /**
+         * 当前页面的分类，始终为`"list"`
+         *
+         * @type {string}
+         * @readonly
+         * @override
+         */
+        ListAction.prototype.category = 'list';
+
+        /**
          * 进行查询
          *
          * @param {Object} args 查询参数

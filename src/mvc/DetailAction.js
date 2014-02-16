@@ -28,6 +28,15 @@ define(
         DetailAction.prototype.modelType = './DetailModel';
 
         /**
+         * 当前页面的分类，始终为`"detail"`
+         *
+         * @type {string}
+         * @readonly
+         * @override
+         */
+        DetailAction.prototype.category = 'detail';
+
+        /**
          * 获取指定页码的跳转URL
          *
          * @param {number} page 指定的页码

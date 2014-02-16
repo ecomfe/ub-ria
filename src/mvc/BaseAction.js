@@ -63,7 +63,6 @@ define(
          * 当前Action的所属分组名称，通常用于控制导航条的选中状态
          *
          * @type {string}
-         * @protected
          */
         BaseAction.prototype.group = '';
 
@@ -74,6 +73,33 @@ define(
          */
         BaseAction.prototype.getGroup = function () {
             return this.group;
+        };
+
+        /**
+         * 当前页面的分类，如列表为`"list"`
+         *
+         * @type {string}
+         * @readonly
+         */
+        BaseAction.prototype.category = '';
+
+        /**
+         * 获取当前页面的分类
+         *
+         * 默认分类为`[{category}-page, {entityName}-{category}-page]`
+         *
+         * @return {string[]}
+         */
+        BaseAction.prototype.getPageCategories = function () {
+            var categories = [];
+            if (this.category) {
+                categories.push(this.category + '-page');
+                var entityName = this.getEntityName();
+                if (entityName) {
+                    categories.push(entityName + '-' + this.category + '-page');
+                }
+            }
+            return categories;
         };
 
         /**
