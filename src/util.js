@@ -85,6 +85,7 @@ define(
             s = s.charAt(0).toUpperCase() + s.slice(1);
             return s;
         };
+        util.pascalize = u.memoize(util.pascalize);
 
         /**
          * 将一个符合一定规则的字符串转成`camelCase`形式
@@ -98,6 +99,7 @@ define(
             s = util.pascalize(s);
             return s.charAt(0).toLowerCase() + s.slice(1);
         };
+        util.camelize = u.memoize(util.camelize);
 
         /**
          * 将一个符合规则的字符串转成`split-by-dash`的横线分割形式
@@ -135,6 +137,7 @@ define(
             }
             return s;
         };
+        util.dasherize = u.memoize(util.dasherize);
 
         /**
          * 将一个符合规则的字符串转成`THIS_IS_A_CONST`的常量形式
@@ -148,6 +151,7 @@ define(
             s = util.pascalize(s);
             return s.toUpperCase();
         };
+        util.constlize = u.memoize(util.constlize);
 
         /**
          * 将一个单词转为复数
@@ -160,6 +164,7 @@ define(
         util.pluralize = function (s) {
             return s.replace(/y$/, 'ie') + 's';
         };
+        util.pluralize = u.memoize(util.pluralize);
 
         /**
          * 格式化数字
