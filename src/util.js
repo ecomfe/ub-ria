@@ -189,7 +189,7 @@ define(
             prefix = prefix || '';
             emptyValue = emptyValue || '';
 
-            if (isNaN(number)) {
+            if (number == null || isNaN(number)) {
                 return prefix + emptyValue;
             }
 
