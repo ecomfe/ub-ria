@@ -159,7 +159,7 @@ define(
 
                 this.model[adviceMethod](ids, items)
                     .then(u.bind(waitConfirmForAdvice, this, context))
-                    .then(u.delegate(updateEntities, this, context));
+                    .then(u.bind(updateEntities, this, context));
             }
             else {
                 updateEntities.call(this, context);
