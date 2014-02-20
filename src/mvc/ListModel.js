@@ -398,6 +398,8 @@ define(
         /**
          * 批量删除前确认
          *
+         * 此方法默认用于前端确认，如需后端检验则需要重写为调用`data().getRemoveAdvice`
+         *
          * @param {string[]} idx id集合
          * @return {er.meta.FakeXHR}
          */
