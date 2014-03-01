@@ -1,7 +1,7 @@
 /**
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
- 
+
  * @ignore
  * @file 详情页视图基类
  * @author otakustay
@@ -160,4 +160,4 @@ define(
 
         return DetailView;
     }
-);        
+);

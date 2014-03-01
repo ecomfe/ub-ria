@@ -78,7 +78,7 @@ define(
          * 获取table已经选择的列的数据
          *
          * @return {Object[]} 当前table的已选择列对应的数据
-         */ 
+         */
         ListView.prototype.getSelectedItems = function () {
             var table = this.get('table');
             return table ? table.getSelectedItems() : [];
@@ -102,7 +102,7 @@ define(
                 // 关键词去空格
                 args.keyword = require('../util').trim(keyword.getValue());
             }
-            
+
             return args;
         };
 
@@ -133,9 +133,9 @@ define(
          *
          * @param {Object} e 控件事件对象
          * @ignore
-         */ 
+         */
         function batchModify(e) {
-            var args = { 
+            var args = {
                 // `status`是`number`类型
                 status: +e.target.getData('status'),
                 // `statusName`是一个camelCase的格式

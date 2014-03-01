@@ -16,7 +16,7 @@ define(
             // 过滤的条件是自身符合`filter`，或子节点有任意一个能通过过滤（递归）
             if (node.children) {
                 node.children = u.filter(
-                    node.children, 
+                    node.children,
                     u.partial(filterNode, filter)
                 );
             }
@@ -60,4 +60,4 @@ define(
 
         return exports;
     }
-);        
+);

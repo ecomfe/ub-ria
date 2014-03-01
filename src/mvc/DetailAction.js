@@ -46,7 +46,7 @@ define(
             var url = this.context.url;
             var path = url.getPath();
             var query = url.getQuery();
-            
+
             if (page === 1) {
                 query = u.omit(query, 'list.page');
             }
@@ -126,7 +126,7 @@ define(
 
         function reloadEntityStatus(e) {
             e.preventDefault();
-            
+
             this.reload();
         }
 
@@ -174,7 +174,7 @@ define(
                 return false;
             }
         };
-        
+
         return DetailAction;
     }
 );

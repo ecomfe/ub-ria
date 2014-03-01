@@ -131,7 +131,7 @@ define(
                 args[this.entityName + 'Id'] = query.id;
             }
             var URL = require('er/URL');
-            var actionURL = 
+            var actionURL =
                 URL.withQuery('/' + activeTabType + '/list', args);
             return actionURL + '';
         };
@@ -168,7 +168,7 @@ define(
 
         /**
          * 默认数据源配置
-         * 
+         *
          * @param {Object}
          * @override
          */
@@ -209,14 +209,14 @@ define(
          * @param {er.meta.Promise}
          */
         DetailModel.prototype.load = function () {
-            var loading = 
+            var loading =
                 SingleEntityModel.prototype.load.apply(this, arguments);
             return loading
                 .then(u.bind(adjustTabs, this))
                 .then(u.bind(setListActionURL, this))
                 .then(u.bind(this.filterTreeDatasource, this));
         };
-        
+
         return DetailModel;
     }
-);        
+);

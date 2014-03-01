@@ -32,7 +32,7 @@ define(
 
         /**
          * 默认数据源配置
-         * 
+         *
          * @param {Object}
          * @override
          */
@@ -115,7 +115,7 @@ define(
 
             return data.update(entity);
         };
-        
+
         return FormModel;
     }
 );

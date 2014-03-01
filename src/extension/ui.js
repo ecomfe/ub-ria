@@ -69,7 +69,7 @@ define(
             }
 
             var Rule = require('esui/validator/Rule');
-            
+
             MaxRule.prototype.getErrorMessage = function (control) {
                 if (control.get('maxErrorMessage')) {
                     var getErrorMessage = Rule.prototype.getErrorMessage;
@@ -214,7 +214,7 @@ define(
         function addControlLinkMode() {
             var CommandMenu = require('esui/CommandMenu');
 
-            CommandMenu.prototype.linkTemplate = 
+            CommandMenu.prototype.linkTemplate =
                 '<a target="${target}" href="${href}">${text}</a>';
 
             CommandMenu.prototype.getItemHTML = function (item) {

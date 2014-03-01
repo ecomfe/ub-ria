@@ -1,13 +1,13 @@
 /**
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
- * 
+ *
  * @file tpl加载插件
  * @author otakustay
  * @date $DATE$
  */
 define(
-    function () {
+    function (require) {
         var ajax = require('er/ajax');
         var etpl = require('etpl');
         var template = etpl;

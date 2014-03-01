@@ -68,8 +68,8 @@ define(
             }
 
             // 如果没指定表单，就沿DOM结构向上找一个表单控件
-            var element = this.target 
-                && this.target.main 
+            var element = this.target
+                && this.target.main
                 && this.target.main.parentNode;
             while (element) {
                 var control = ui.getControlByDOM(element);
@@ -124,7 +124,7 @@ define(
                 },
                 this
             );
-            
+
             Extension.prototype.inactivate.apply(this, arguments);
         };
 

@@ -38,9 +38,9 @@ define(
 
         /**
          * 设定实体的状态迁移表
-         * 
+         *
          * 状态迁移每一项饱含以下3个属性：
-         * 
+         *
          * - `status`表示目标状态
          * - `deny`表示不能从其指定的状态进行迁移
          * - `accept`表示仅能从其指定的状态进行迁移
@@ -87,9 +87,9 @@ define(
 
         /**
          * 配置默认查询参数
-         * 
+         *
          * 如果某个参数与这里的值相同，则不会加到URL中
-         * 
+         *
          * 创建`Model`时，如果某个参数不存在，则会自动补上这里的值
          *
          * @type {Object}
@@ -138,7 +138,7 @@ define(
             pageSize: function (model) {
                 return model.getPageSize();
             },
-            
+
             // 分页URL模板，就是当前URL中把`page`字段替换掉
             urlTemplate: function (model) {
                 var url = model.get('url');
@@ -182,7 +182,7 @@ define(
             return BaseModel.prototype.load.apply(this, arguments)
                 .then(u.bind(processUIData, this));
         };
-        
+
         /**
          * 获取请求后端时的查询参数
          *
@@ -255,7 +255,7 @@ define(
             throw new Error('updatePageSize method is not implemented');
         };
 
-        /** 
+        /**
          * 获取每页显示条数
          *
          * @return {number}
@@ -394,7 +394,7 @@ define(
 
             return data.getAdvice(action, status, idx);
         };
-        
+
         /**
          * 批量删除前确认
          *
@@ -419,9 +419,9 @@ define(
          * @param {string[]} idx id集合
          * @return {er.meta.FakeXHR}
          */
-        ListModel.prototype.getRestoreAdvice = 
+        ListModel.prototype.getRestoreAdvice =
             u.partial(ListModel.prototype.getAdvice, 'restore', 1);
-        
+
         return ListModel;
     }
 );

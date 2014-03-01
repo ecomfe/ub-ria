@@ -16,9 +16,9 @@ define(
         //
         // - 有id为`form`的`Form`控件
         // - 所有触发提交的按钮，会触发`form`的`submit`事件
-        // 
+        //
         // 可选：
-        // 
+        //
         // - 可以有一个id为`cancel`的按钮，点击后会触发`cancel`事件
 
         /**
@@ -100,7 +100,7 @@ define(
 
             BaseView.prototype.bindEvents.apply(this, arguments);
         };
-        
+
         /**
          * 禁用提交操作
          */

@@ -1,7 +1,7 @@
 /**
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
- * 
+ *
  * @ignore
  * @file 工具模块
  * @author otakustay
@@ -9,7 +9,7 @@
 define(
     function (require) {
         var u = require('underscore');
-        
+
         var EMPTY_OBJECT = {};
 
         /**
@@ -38,13 +38,13 @@ define(
             u.each(
                 object,
                 function (value, key) {
-                    var isDefaultNull = 
+                    var isDefaultNull =
                         value == null || value === '';
-                    var isInDefaults = 
+                    var isInDefaults =
                         defaults.hasOwnProperty(key) && defaults[key] === value;
                     if (!isDefaultNull && !isInDefaults) {
                         if (deep && typeof value === 'object') {
-                            purifiedObject[key] = 
+                            purifiedObject[key] =
                                 purify(value, defaults[key], deep);
                         }
                         else {
@@ -129,7 +129,7 @@ define(
             );
             // 大写字符之间用横线连起来
             s = s.replace(
-                /[A-Z]/g, 
+                /[A-Z]/g,
                 function (match) { return '-' + match.toLowerCase(); }
             );
             if (s.charAt(0) === '-') {
@@ -241,7 +241,7 @@ define(
          * @param {number} length 补齐后的长度
          * @return {string}
          */
-        util.padRight = function () {
+        util.padRight = function (s, padding, length) {
             s = s + '';
             var padLength = s.length - length;
             if (padLength > 0) {

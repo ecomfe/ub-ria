@@ -69,7 +69,7 @@ define(
             var tip = ui.create('TipLayer', options);
             tip.appendTo(document.body);
             u.each(
-                elements, 
+                elements,
                 function (element) {
                     var options = {
                         targetDOM: element,
@@ -127,4 +127,4 @@ define(
 
         return TableTip;
     }
-);        
+);
