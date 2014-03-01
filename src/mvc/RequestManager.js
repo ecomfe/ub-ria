@@ -19,7 +19,10 @@ define(
          *
          * @constructor
          */
-        function RequestManager() {
+        function RequestManager(entityName, backendEntityName) {
+            this.entityName = entityName;
+            this.backendEntityName = backendEntityName;
+
             this.runningRequests = {};
         }
 
@@ -147,40 +150,91 @@ define(
         }
 
         /**
+         * 获取当前数据类负责的实体名称
+         *
+         * @return {string}
+         */
+        RequestManager.prototype.getEntityName = function () {
+            return this.entityName || '';
+        };
+
+        /**
+         * 获取当前数据类负责的后端实体名称
+         *
+         * @return {string}
+         */
+        RequestManager.prototype.getBackendEntityName = function () {
+            return this.backendEntityName || this.getEntityName();
+        };
+
+        /**
+         * 处理请求名称，具体业务可以使用此方法对请求名称进行一些替换操作，
+         * 如可以根据当前对象的`entityName`属性为请求名称加上前缀等
+         *
+         * @param {string} name 当前请求的名称
+         * @return {string}
+         */
+        RequestManager.prototype.formatRequestName = function (name) {
+            return name;
+        };
+
+        /**
+         * 处理请求的URL，具体业务可以使用此方法对请求的URL进行一些替换操作，
+         * 如可以根据当前对象的`entityName`来生成通用的URL等
+         *
+         * @param {string} url 当前请求的URL
+         * @return {string}
+         */
+        RequestManager.prototype.formatRequestURL = function (url) {
+            return url;
+        };
+
+        /**
          * 获取请求对象
          *
          * @return {meta.Request}
          * @protected
          */
         RequestManager.prototype.getRequest = function (name, data, options) {
-                if (typeof name !== 'string') {
-                    options = name;
-                    name = null;
-                }
+            if (typeof name !== 'string') {
+                options = name;
+                name = null;
+            }
 
-                var config = lookupRequestConfig(this, name);
+            name = this.formatRequestName(name);
 
-                options = util.mix({}, config && config.options, options);
-                if (typeof data === 'function') {
-                    data = data(this, options);
-                }
-                if (typeof options.data === 'function') {
-                    options.data = options.data(this, options);
-                }
-                if (data) {
-                    options.data = util.mix({}, options.data, data);
-                }
+            // 查找已经有的请求配置，如果存在的话需要把`options`进行合并
+            var config = lookupRequestConfig(this, name);
+            options = util.mix({}, config && config.options, options);
+            // 如果`data`是个函数，那么执行一下得到完整的数据对象
+            if (typeof data === 'function') {
+                data = data(this, options);
+            }
+            if (typeof options.data === 'function') {
+                options.data = options.data(this, options);
+            }
+            // 合并请求配置里的`data`和发起请求实时给的`data`
+            if (data) {
+                options.data = util.mix({}, options.data, data);
+            }
 
-                if (!options.dataType) {
-                    options.dataType = 'json';
-                }
+            // 默认使用JSON作为响应格式
+            if (!options.dataType) {
+                options.dataType = 'json';
+            }
 
-                return {
-                    name: name,
-                    options: options,
-                    config: config
-                };
+            var request = {
+                name: name,
+                options: options,
+                config: config
             };
+
+            if (request.options.url) {
+                request.options.url = this.formatRequestURL(request.options.url);
+            }
+
+            return request;
+        };
 
         var ajax = require('er/ajax');
 
