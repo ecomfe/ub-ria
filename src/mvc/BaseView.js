@@ -56,36 +56,37 @@ define(
          * @return {esui.Toast}
          */
         BaseView.prototype.showToast = function (content, options) {
-            if (!content) {
-                return;
-            }
+            // TODO: 待`Toast`迁移至ESUI后恢复这里的代码
+            // if (!content) {
+            //     return;
+            // }
 
-            if (!globalToast) {
-                // 此处直接new控件出来，
-                // 因为这个控件不能属于任何一个业务模块的ViewContext，
-                // 不然会随着跳转被销毁，造成下次用不了
-                var Toast = require('esui/Toast');
-                var toastOptions = { disposeOnHide: false, autoShow: false };
-                globalToast = new Toast(toastOptions);
-                globalToast.on(
-                    'hide',
-                    u.bind(globalToast.detach, globalToast)
-                );
-                globalToast.render();
-            }
+            // if (!globalToast) {
+            //     // 此处直接new控件出来，
+            //     // 因为这个控件不能属于任何一个业务模块的ViewContext，
+            //     // 不然会随着跳转被销毁，造成下次用不了
+            //     var Toast = require('esui/Toast');
+            //     var toastOptions = { disposeOnHide: false, autoShow: false };
+            //     globalToast = new Toast(toastOptions);
+            //     globalToast.on(
+            //         'hide',
+            //         u.bind(globalToast.detach, globalToast)
+            //     );
+            //     globalToast.render();
+            // }
 
-            // 如果这个信息无比素正好显示着内容，又有新内容要显示，
-            // 那么新内容也应该有个动画效果，以吸引用户眼球，
-            // 所以要先`detach`一次，让`animation`生效
-            globalToast.detach();
-            var properties = {
-                content: content,
-                status: undefined
-            };
-            properties = u.extend(properties, options);
-            globalToast.setProperties(properties);
-            globalToast.show();
-            return globalToast;
+            // // 如果这个信息无比素正好显示着内容，又有新内容要显示，
+            // // 那么新内容也应该有个动画效果，以吸引用户眼球，
+            // // 所以要先`detach`一次，让`animation`生效
+            // globalToast.detach();
+            // var properties = {
+            //     content: content,
+            //     status: undefined
+            // };
+            // properties = u.extend(properties, options);
+            // globalToast.setProperties(properties);
+            // globalToast.show();
+            // return globalToast;
         };
 
         /**
