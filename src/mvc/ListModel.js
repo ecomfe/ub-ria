@@ -252,7 +252,14 @@ define(
          * @abstract
          */
         ListModel.prototype.updatePageSize = function (pageSize) {
-            throw new Error('updatePageSize method is not implemented');
+            var data = this.data('global');
+            if (!data) {
+                throw new Error('No global data object attached to this Model');
+            }
+            if (typeof data.updatePageSize !== 'function') {
+                throw new Error('No updatePageSize method implemented on global data object');
+            }
+            return data.updatePageSize(pageSize);
         };
 
         /**
@@ -262,7 +269,14 @@ define(
          * @abstract
          */
         ListModel.prototype.getPageSize = function () {
-            throw new Error('getPageSize method is not implemented');
+            var data = this.data('global');
+            if (!data) {
+                throw new Error('No global data object attached to this Model');
+            }
+            if (typeof data.getPageSize !== 'function') {
+                throw new Error('No getPageSize method implemented on global data object');
+            }
+            return data.getPageSize();
         };
 
         /**
@@ -321,12 +335,10 @@ define(
         ListModel.prototype.search = function (query) {
             var data = this.data();
             if (!data) {
-                throw new Error(
-                    'No default data object attached to this Model');
+                throw new Error('No default data object attached to this Model');
             }
             if (typeof data.search !== 'function') {
-                throw new Error(
-                    'No search method implemented on default data object');
+                throw new Error('No search method implemented on default data object');
             }
 
             return data.search(query || {});
@@ -335,64 +347,55 @@ define(
         /**
          * 批量更新一个或多个实体的状态
          *
-         * @param {string} action 操作名称
          * @param {number} status 目标状态
-         * @param {string[]} idx id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        ListModel.prototype.updateStatus = function (action, status, idx) {
+        ListModel.prototype.updateStatus = function (status, ids) {
             var data = this.data();
             if (!data) {
-                throw new Error(
-                    'No default data object attached to this Model');
+                throw new Error('No default data object attached to this Model');
             }
             if (typeof data.updateStatus !== 'function') {
-                throw new Error(
-                    'No updateStatus method implemented '
-                    + 'on default data object');
+                throw new Error('No updateStatus method implemented on default data object');
             }
 
-            return data.updateStatus(action, status, idx);
+            return data.updateStatus(status, ids);
         };
 
         /**
          * 删除一个或多个实体
          *
-         * @param {string[]} idx id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        ListModel.prototype.remove =
-            u.partial(ListModel.prototype.updateStatus, 'remove', 0);
+        ListModel.prototype.remove = u.partial(ListModel.prototype.updateStatus, 0);
 
         /**
          * 恢复一个或多个实体
          *
-         * @param {string[]} idx id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        ListModel.prototype.restore =
-            u.partial(ListModel.prototype.updateStatus, 'restore', 1);
+        ListModel.prototype.restore = u.partial(ListModel.prototype.updateStatus, 1);
 
         /**
          * 获取批量操作前的确认
          *
-         * @param {string} action 操作名称
          * @param {number} status 目标状态
-         * @param {string[]} idx id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        ListModel.prototype.getAdvice = function (action, status, idx) {
+        ListModel.prototype.getAdvice = function (status, ids) {
             var data = this.data();
             if (!data) {
-                throw new Error(
-                    'No default data object attached to this Model');
+                throw new Error('No default data object attached to this Model');
             }
             if (typeof data.getAdvice !== 'function') {
-                throw new Error(
-                    'No getAdvice method implemented on default data object');
+                throw new Error('No getAdvice method implemented on default data object');
             }
 
-            return data.getAdvice(action, status, idx);
+            return data.getAdvice(status, ids);
         };
 
         /**
@@ -400,14 +403,14 @@ define(
          *
          * 此方法默认用于前端确认，如需后端检验则需要重写为调用`data().getRemoveAdvice`
          *
-         * @param {string[]} idx id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        ListModel.prototype.getRemoveAdvice = function (idx, entityName) {
+        ListModel.prototype.getRemoveAdvice = function (ids, entityName) {
             // 默认仅本地提示，有需要的子类重写为从远程获取信息
             var Deferred = require('er/Deferred');
             var advice = {
-                message: '您确定要删除已选择的' + idx.length + '个'
+                message: '您确定要删除已选择的' + ids.length + '个'
                     + this.get('entityDescription') + '吗？'
             };
             return Deferred.resolved(advice);
@@ -416,11 +419,10 @@ define(
         /**
          * 批量恢复前确认
          *
-         * @param {string[]} idx id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        ListModel.prototype.getRestoreAdvice =
-            u.partial(ListModel.prototype.getAdvice, 'restore', 1);
+        ListModel.prototype.getRestoreAdvice = u.partial(ListModel.prototype.getAdvice, 1);
 
         return ListModel;
     }
