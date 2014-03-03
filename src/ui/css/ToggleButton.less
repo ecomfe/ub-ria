@@ -1,0 +1,95 @@
+@ToggleButton-RightBorderRadius : 0 4px 4px 0;
+@ToggleButton-LeftBorderRadius : 4px 0 0 4px;
+@ToggleButton-Border: 1px solid #838383;
+
+.ui-togglebutton {
+    width: 68px;
+    height: 23px;
+    border-radius: 4px;
+    //ie8开状态时，滑块 border 会缺失右半部分，将 border 移到 main 元素上
+    line-height: 23px;
+    font-size: 12px;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    cursor: pointer;
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    span {
+        display: inline-block;
+        *display: inline;
+        zoom: 1;
+        width: 33px;
+        height: 21px;
+        line-height: 21px;
+        border: @ToggleButton-Border;
+        border-radius: 4px;
+        text-align: center;
+        // IE8下`:after`生成的元素始终会被原来的元素盖住，无论`z-index`有多大，
+        // 因此必须原来的元素设置`z-index: -1;`来避免这个问题
+        position: ~"relative\0";
+        z-index: ~"-1\0";
+        *vertical-align: top;
+    }
+
+    .ui-togglebutton-part-on {
+        border-radius: @ToggleButton-LeftBorderRadius;
+        border-right: none;
+        background-color: #8fbb57;
+
+        // IE7
+        *background-color: #fff;
+        //        *text-indent: -500px;
+        //用 text-indent 会影响兄弟inline元素的文本偏移。。
+        *font-size: 0;
+    }
+
+    .ui-togglebutton-part-off {
+        border-radius: @ToggleButton-RightBorderRadius;
+        border-left: none;
+        background-color: #d36759;
+    }
+
+    &:after {
+        content: "";
+        display: block;
+        border: @ToggleButton-Border;
+        border-right: none;
+        border-radius: @ToggleButton-LeftBorderRadius;
+        position: absolute;
+        width: 50%;
+        height: 21px;
+        top: 0;
+        left: 0;
+        background-color: #fcfcfc;
+        z-index: 1;
+        transition: left .3s ease-out;
+    }
+}
+
+.ui-togglebutton-checked {
+    &:after {
+        left: 50%;
+        margin-left: -1px;
+        border-left: none;
+        border-right: @ToggleButton-Border;
+        border-radius: @ToggleButton-RightBorderRadius;
+    }
+
+    .ui-togglebutton-part-on {
+        border-radius: @ToggleButton-LeftBorderRadius;
+        background-color: #8fbb57;
+        *font-size: 12px;
+    }
+
+    .ui-togglebutton-part-off {
+        // IE7
+        border-radius: @ToggleButton-RightBorderRadius;
+        *background-color: #fff;
+        *font-size: 0;
+    }
+}
