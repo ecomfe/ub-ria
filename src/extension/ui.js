@@ -20,8 +20,6 @@ define(
             // 加载所有验证规则
             require('esui/validator/MaxLengthRule');
             require('esui/validator/MinLengthRule');
-            require('ui/validator/OrientUrlRule');
-            require('ui/validator/CompareRule');
             var RequiredRule = require('esui/validator/RequiredRule');
             var PatternRule = require('esui/validator/PatternRule');
             var MaxRule = require('esui/validator/MaxRule');
@@ -69,7 +67,7 @@ define(
             }
 
             var Rule = require('esui/validator/Rule');
-            
+
             MaxRule.prototype.getErrorMessage = function (control) {
                 if (control.get('maxErrorMessage')) {
                     var getErrorMessage = Rule.prototype.getErrorMessage;
@@ -214,7 +212,7 @@ define(
         function addControlLinkMode() {
             var CommandMenu = require('esui/CommandMenu');
 
-            CommandMenu.prototype.linkTemplate = 
+            CommandMenu.prototype.linkTemplate =
                 '<a target="${target}" href="${href}">${text}</a>';
 
             CommandMenu.prototype.getItemHTML = function (item) {

@@ -38,9 +38,9 @@ define(
 
         /**
          * 设定实体的状态迁移表
-         * 
+         *
          * 状态迁移每一项饱含以下3个属性：
-         * 
+         *
          * - `status`表示目标状态
          * - `deny`表示不能从其指定的状态进行迁移
          * - `accept`表示仅能从其指定的状态进行迁移
@@ -87,9 +87,9 @@ define(
 
         /**
          * 配置默认查询参数
-         * 
+         *
          * 如果某个参数与这里的值相同，则不会加到URL中
-         * 
+         *
          * 创建`Model`时，如果某个参数不存在，则会自动补上这里的值
          *
          * @type {Object}
@@ -138,7 +138,7 @@ define(
             pageSize: function (model) {
                 return model.getPageSize();
             },
-            
+
             // 分页URL模板，就是当前URL中把`page`字段替换掉
             urlTemplate: function (model) {
                 var url = model.get('url');
@@ -182,7 +182,7 @@ define(
             return BaseModel.prototype.load.apply(this, arguments)
                 .then(u.bind(processUIData, this));
         };
-        
+
         /**
          * 获取请求后端时的查询参数
          *
@@ -252,17 +252,31 @@ define(
          * @abstract
          */
         ListModel.prototype.updatePageSize = function (pageSize) {
-            throw new Error('updatePageSize method is not implemented');
+            var data = this.data('global');
+            if (!data) {
+                throw new Error('No global data object attached to this Model');
+            }
+            if (typeof data.updatePageSize !== 'function') {
+                throw new Error('No updatePageSize method implemented on global data object');
+            }
+            return data.updatePageSize(pageSize);
         };
 
-        /** 
+        /**
          * 获取每页显示条数
          *
          * @return {number}
          * @abstract
          */
         ListModel.prototype.getPageSize = function () {
-            throw new Error('getPageSize method is not implemented');
+            var data = this.data('global');
+            if (!data) {
+                throw new Error('No global data object attached to this Model');
+            }
+            if (typeof data.getPageSize !== 'function') {
+                throw new Error('No getPageSize method implemented on global data object');
+            }
+            return data.getPageSize();
         };
 
         /**
@@ -321,12 +335,10 @@ define(
         ListModel.prototype.search = function (query) {
             var data = this.data();
             if (!data) {
-                throw new Error(
-                    'No default data object attached to this Model');
+                throw new Error('No default data object attached to this Model');
             }
             if (typeof data.search !== 'function') {
-                throw new Error(
-                    'No search method implemented on default data object');
+                throw new Error('No search method implemented on default data object');
             }
 
             return data.search(query || {});
@@ -335,79 +347,70 @@ define(
         /**
          * 批量更新一个或多个实体的状态
          *
-         * @param {string} action 操作名称
          * @param {number} status 目标状态
-         * @param {string[]} idx id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        ListModel.prototype.updateStatus = function (action, status, idx) {
+        ListModel.prototype.updateStatus = function (status, ids) {
             var data = this.data();
             if (!data) {
-                throw new Error(
-                    'No default data object attached to this Model');
+                throw new Error('No default data object attached to this Model');
             }
             if (typeof data.updateStatus !== 'function') {
-                throw new Error(
-                    'No updateStatus method implemented '
-                    + 'on default data object');
+                throw new Error('No updateStatus method implemented on default data object');
             }
 
-            return data.updateStatus(action, status, idx);
+            return data.updateStatus(status, ids);
         };
 
         /**
          * 删除一个或多个实体
          *
-         * @param {string[]} idx id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        ListModel.prototype.remove =
-            u.partial(ListModel.prototype.updateStatus, 'remove', 0);
+        ListModel.prototype.remove = u.partial(ListModel.prototype.updateStatus, 0);
 
         /**
          * 恢复一个或多个实体
          *
-         * @param {string[]} idx id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        ListModel.prototype.restore =
-            u.partial(ListModel.prototype.updateStatus, 'restore', 1);
+        ListModel.prototype.restore = u.partial(ListModel.prototype.updateStatus, 1);
 
         /**
          * 获取批量操作前的确认
          *
-         * @param {string} action 操作名称
          * @param {number} status 目标状态
-         * @param {string[]} idx id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        ListModel.prototype.getAdvice = function (action, status, idx) {
+        ListModel.prototype.getAdvice = function (status, ids) {
             var data = this.data();
             if (!data) {
-                throw new Error(
-                    'No default data object attached to this Model');
+                throw new Error('No default data object attached to this Model');
             }
             if (typeof data.getAdvice !== 'function') {
-                throw new Error(
-                    'No getAdvice method implemented on default data object');
+                throw new Error('No getAdvice method implemented on default data object');
             }
 
-            return data.getAdvice(action, status, idx);
+            return data.getAdvice(status, ids);
         };
-        
+
         /**
          * 批量删除前确认
          *
          * 此方法默认用于前端确认，如需后端检验则需要重写为调用`data().getRemoveAdvice`
          *
-         * @param {string[]} idx id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        ListModel.prototype.getRemoveAdvice = function (idx, entityName) {
+        ListModel.prototype.getRemoveAdvice = function (ids, entityName) {
             // 默认仅本地提示，有需要的子类重写为从远程获取信息
             var Deferred = require('er/Deferred');
             var advice = {
-                message: '您确定要删除已选择的' + idx.length + '个'
+                message: '您确定要删除已选择的' + ids.length + '个'
                     + this.get('entityDescription') + '吗？'
             };
             return Deferred.resolved(advice);
@@ -416,12 +419,11 @@ define(
         /**
          * 批量恢复前确认
          *
-         * @param {string[]} idx id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        ListModel.prototype.getRestoreAdvice = 
-            u.partial(ListModel.prototype.getAdvice, 'restore', 1);
-        
+        ListModel.prototype.getRestoreAdvice = u.partial(ListModel.prototype.getAdvice, 1);
+
         return ListModel;
     }
 );

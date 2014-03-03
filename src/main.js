@@ -1,7 +1,7 @@
 /**
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
- * 
+ *
  * @ignore
  * @file 入口模块
  * @author otakustay
@@ -9,7 +9,7 @@
 define(
     function (require) {
         var main = {
-            version: '0.8.0-alpha.4',
+            version: '0.8.0-alpha.5',
 
             enableExtensions: function () {
                 // 加载扩展

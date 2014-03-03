@@ -40,7 +40,7 @@ define(
 
         /**
          * 默认数据源配置
-         * 
+         *
          * 为了方便子类覆盖或者串行加载时放在指定位置，暴露到外面
          *
          * @param {Object}
@@ -87,7 +87,7 @@ define(
 
             return data.findById(id);
         };
-        
+
         return SingleEntityModel;
     }
-);        
+);

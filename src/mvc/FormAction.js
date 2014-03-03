@@ -161,7 +161,7 @@ define(
          */
         FormAction.prototype.submitEntity = function (entity) {
             entity = this.model.fillEntity(entity);
-            
+
             var localValidationResult = this.model.validateEntity(entity);
             if (typeof localValidationResult === 'object') {
                 var handleResult =
@@ -272,7 +272,7 @@ define(
             this.view.on('submit', submit, this);
             this.view.on('cancel', this.cancelEdit, this);
         };
-        
+
         return FormAction;
     }
 );

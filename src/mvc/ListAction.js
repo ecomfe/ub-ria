@@ -1,7 +1,7 @@
 /**
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
- * 
+ *
  * @ignore
  * @file 列表Action基类
  * @author otakustay, wangyaqiong(catkin2009@gmail.com)
@@ -75,7 +75,7 @@ define(
             var url = this.context.url;
             var path = url.getPath();
             var query = url.getQuery();
-            
+
             if (page === 1) {
                 query = u.omit(query, 'page');
             }
@@ -252,7 +252,7 @@ define(
         ListAction.prototype.adjustLayout = function () {
             this.view.adjustLayout();
         };
-        
+
         return ListAction;
     }
 );
