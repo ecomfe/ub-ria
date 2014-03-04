@@ -1,0 +1,76 @@
+.hide-text() {
+    font: 0/0 a;
+    color: transparent;
+    text-shadow: none;
+    background-color: transparent;
+    border: 0;
+}
+
+.ui-image {
+    width: 300px;
+    height: 250px;
+    padding: 25px;
+    border: 1px solid #ddd;
+    position: relative;
+}
+
+.ui-image-content {
+    width: 300px;
+    height: 250px;
+    overflow: hidden;
+
+    img,
+    object,
+    embed {
+        max-width: 100%;
+        max-height: 100%;
+        margin: 0 auto;
+        vertical-align: middle;
+        display: block;
+    }
+}
+
+.ui-image-footer {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+}
+
+.ui-image-magnifier {
+    float: right;
+    .hide-text();
+    background: transparent url(../img/ria-search.png) no-repeat 0 -4px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.ui-image-full-size-mask {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1300;
+    background-color: #000;
+    .opacity(80);
+}
+
+.ui-image-full-size-content {
+    background-color: #fff;
+    position: fixed;
+    top: 40px;
+    left: 40px;
+    z-index: 1301;
+}
+
+.ui-image-full-size-close {
+    font-size: 28px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    position: fixed;
+    z-index: 1301;
+    top: 20px;
+    right: 20px;
+}
