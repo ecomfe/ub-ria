@@ -53,8 +53,10 @@ define(
          */
         TogglePanel.prototype.initStructure = function () {
             var children = lib.getChildren(this.main);
-            var titleElem = children[0];
-            var contentElem = children[1];
+            //ie系列在获取子节点引用后，设置父元素 innerHTML，会将子元素的内容清空
+            //所以先从父元素移除节点
+            var titleElem = children[0] && this.main.removeChild(children[0]);
+            var contentElem = children[1] && this.main.removeChild(children[1]);
 
             this.main.innerHTML = getPanelHTML(this);
             this.initChildren();
