@@ -25,6 +25,10 @@ define(
 
         ToggleButton.prototype.type = 'ToggleButton';
 
+        ToggleButton.prototype.getCategory = function () {
+            return 'check';
+        };
+
         /**
          * 创建主元素
          *
@@ -57,15 +61,7 @@ define(
             }
 
             if (lib.isInput(this.main)) {
-                if (!properties.name) {
-                    properties.name = this.main.name;
-                }
-                if (!properties.value) {
-                    properties.value = this.main.value;
-                }
-                if (!options.hasOwnProperty('checked')) {
-                    properties.checked = this.main.checked;
-                }
+                this.helper.extractOptionsFromInput(this.main, properties);
             }
             else {
                 var children = lib.getChildren(this.main);
@@ -90,11 +86,7 @@ define(
         }
 
         ToggleButton.prototype.initStructure = function () {
-            this.main.innerHTML =
-                getPartHTML(this, 'on') + getPartHTML(this, 'off')
-                + '<input type="hidden"'
-                + (this.name ? ' name="' + this.name + '"' : '')
-                + ' />';
+            this.main.innerHTML = getPartHTML(this, 'on') + getPartHTML(this, 'off');
 
             this.helper.addDOMEvent(
                 this.main,
@@ -110,25 +102,19 @@ define(
          * @override
          * @protected
          */
-        ToggleButton.prototype.repaint = require('esui/painters').createRepaint(
+        ToggleButton.prototype.repaint = paint.createRepaint(
             InputControl.prototype.repaint,
             paint.text('onText', 'on'),
             paint.text('offText', 'off'),
             paint.attribute('title'),
             paint.style('width'),
             paint.style('height'),
+            paint.state('checked'),
             {
                 name: 'rawValue',
                 paint: function (button, value) {
                     var input = button.main.getElementsByTagName('input')[0];
                     input.value = value;
-                }
-            },
-            {
-                name: 'checked',
-                paint: function (button, checked) {
-                    var method = checked ? 'addState' : 'removeState';
-                    button[method]('checked');
                 }
             }
         );
