@@ -1,6 +1,6 @@
-@ToggleButton-RightBorderRadius : 0 4px 4px 0;
-@ToggleButton-LeftBorderRadius : 4px 0 0 4px;
-@ToggleButton-Border: 1px solid #838383;
+@toggleButton-RightBorderRadius : 0 4px 4px 0;
+@toggleButton-LeftBorderRadius : 4px 0 0 4px;
+@toggleButton-Border: 1px solid #838383;
 
 .ui-togglebutton {
     width: 68px;
@@ -26,7 +26,7 @@
         width: 33px;
         height: 21px;
         line-height: 21px;
-        border: @ToggleButton-Border;
+        border: @toggleButton-Border;
         border-radius: 4px;
         text-align: center;
         // IE8下`:after`生成的元素始终会被原来的元素盖住，无论`z-index`有多大，
@@ -37,7 +37,7 @@
     }
 
     .ui-togglebutton-part-on {
-        border-radius: @ToggleButton-LeftBorderRadius;
+        border-radius: @toggleButton-LeftBorderRadius;
         border-right: none;
         background-color: #8fbb57;
 
@@ -49,7 +49,7 @@
     }
 
     .ui-togglebutton-part-off {
-        border-radius: @ToggleButton-RightBorderRadius;
+        border-radius: @toggleButton-RightBorderRadius;
         border-left: none;
         background-color: #d36759;
     }
@@ -57,9 +57,9 @@
     &:after {
         content: "";
         display: block;
-        border: @ToggleButton-Border;
+        border: @toggleButton-Border;
         border-right: none;
-        border-radius: @ToggleButton-LeftBorderRadius;
+        border-radius: @toggleButton-LeftBorderRadius;
         position: absolute;
         width: 50%;
         height: 21px;
@@ -76,19 +76,19 @@
         left: 50%;
         margin-left: -1px;
         border-left: none;
-        border-right: @ToggleButton-Border;
-        border-radius: @ToggleButton-RightBorderRadius;
+        border-right: @toggleButton-Border;
+        border-radius: @toggleButton-RightBorderRadius;
     }
 
     .ui-togglebutton-part-on {
-        border-radius: @ToggleButton-LeftBorderRadius;
+        border-radius: @toggleButton-LeftBorderRadius;
         background-color: #8fbb57;
         *font-size: 12px;
     }
 
     .ui-togglebutton-part-off {
         // IE7
-        border-radius: @ToggleButton-RightBorderRadius;
+        border-radius: @toggleButton-RightBorderRadius;
         *background-color: #fff;
         *font-size: 0;
     }

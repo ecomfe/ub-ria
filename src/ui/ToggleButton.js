@@ -109,14 +109,7 @@ define(
             paint.attribute('title'),
             paint.style('width'),
             paint.style('height'),
-            paint.state('checked'),
-            {
-                name: 'rawValue',
-                paint: function (button, value) {
-                    var input = button.main.getElementsByTagName('input')[0];
-                    input.value = value;
-                }
-            }
+            paint.state('checked')
         );
 
         ToggleButton.prototype.setProperties = function () {
