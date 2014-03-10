@@ -15,8 +15,6 @@ define(
 
         require('esui/Panel');
 
-        var EMPTY = {};
-
         /**
          * 折叠控件
          */
@@ -35,8 +33,6 @@ define(
          */
         TogglePanel.prototype.initOptions = function (options) {
             var defaults = {
-                title: EMPTY,
-                content: EMPTY,
                 expanded: false
             };
 
@@ -53,80 +49,79 @@ define(
          */
         TogglePanel.prototype.initStructure = function () {
             var children = lib.getChildren(this.main);
-            //ie系列在获取子节点引用后，设置父元素 innerHTML，会将子元素的内容清空
-            //所以先从父元素移除节点
+            // ie系列在获取子节点引用后，设置父元素 innerHTML，会将子元素的内容清空
+            // 所以先从父元素移除节点
             var titleElem = children[0] && this.main.removeChild(children[0]);
             var contentElem = children[1] && this.main.removeChild(children[1]);
+            var tmpDiv = document.createElement('div');
+
 
             this.main.innerHTML = getPanelHTML(this);
-            this.initChildren();
+            this.helper.initChildren();
 
             var titlePanel = this.getChild('title');
-            titlePanel.helper.addDOMEvent(titlePanel.main, 'click', lib.bind(this.toggle, this));
+            titlePanel.helper.addDOMEvent(titlePanel.main, 'click', lib.bind(onToggle, this));
 
-            titleElem && titlePanel.main.appendChild(titleElem);
-            contentElem && this.getChild('content').main.appendChild(contentElem);
+            if (titleElem) {
+                var title = titleElem.outerHTML;
+                if (!title) {
+                    tmpDiv.appendChild(titleElem);
+                    title = tmpDiv.innerHTML;
+                    tmpDiv.removeChild(titleElem);
+                }
+                this.set('title', title)
+            }
+
+            if (contentElem) {
+                var content = contentElem.outerHTML;
+                if (!content) {
+                    tmpDiv.appendChild(contentElem);
+                    content = tmpDiv.innerHTML;
+                    tmpDiv.removeChild(contentElem);
+                }
+                this.set('content', content);
+            }
         };
 
         function getPanelHTML(control) {
             var title = control.helper.getPartClassName('title');
             var content = control.helper.getPartClassName('content');
 
-            //因为 Label 仅暴露 text 接口，所以这里的 title用 Panel 代替
+            // 因为 Label 仅暴露 text 接口，所以这里的 title用 Panel 代替
             return '<div data-ui-type="Panel" data-ui-child-name="title" class="' + title
                 + '"></div><div data-ui-type="Panel" data-ui-child-name="content" class="'
                 + content + '"></div>';
         }
 
+
+        function onToggle() {
+            this.toggleState('expanded');
+            this.fire('change');
+        }
+
+        var painters = require('esui/painters');
         /**
          * 重绘
          *
          * @override
          * @protected
          */
-        TogglePanel.prototype.repaint = require('esui/painters').createRepaint(
+        TogglePanel.prototype.repaint = painters.createRepaint(
             Control.prototype.repaint,
+            painters.state('expanded'),
             {
                 name: 'title',
                 paint: function (panel, title) {
-                    if (title !== EMPTY) {
-                        panel.getChild('title').set('content', title);
-                    }
+                    panel.getChild('title').set('content', title);
                 }
             },
             {
                 name: 'content',
                 paint: function (panel, content) {
-                    if (content !== EMPTY) {
-                        panel.getChild('content').set('content', content);
-                    }
-                }
-            },
-            {
-                name: 'expanded',
-                paint: function (panel, expanded) {
-                    var method = expanded ? 'addState' : 'removeState';
-                    panel[method]('expanded');
+                    panel.getChild('content').set('content', content);
                 }
             }
         );
-
-        /**
-         * 获取是否展开状态
-         *
-         * @return {boolean}
-         */
-        TogglePanel.prototype.isExpanded = function () {
-            return this.hasState('expanded');
-        };
-
-        /**
-         * 切换展开/收起状态
-         */
-        TogglePanel.prototype.toggle = function () {
-            this.toggleState('expanded');
-            this.fire('change');
-        };
 
         lib.inherits(TogglePanel, Control);
         ui.register(TogglePanel);
