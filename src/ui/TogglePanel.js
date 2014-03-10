@@ -65,6 +65,7 @@ define(
         };
 
         function onToggle() {
+            console.log(this)
             this.toggleState('expanded');
             this.fire('change');
         }
