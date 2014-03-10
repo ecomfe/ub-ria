@@ -1,0 +1,131 @@
+/**
+  * ADM 2.0
+  * Copyright 2014 Baidu Inc. All rights reserved.
+  * 
+  * @ignore
+  * @file 富选择器
+  * @author lixiang
+  */
+@ui-richselector-frame-border: 1px solid #ebebeb;
+.ui-richselector {
+    font-size: 12px;
+    .box-sizing(border-box);
+    border: @ui-richselector-frame-border;
+}
+
+@ui-richselector-head-bg: #ebebeb;
+@ui-richselector-head-border-bottom: 1px solid #ebebeb;
+@ui-richselector-batch-action-link-color: #67c1a5;
+.ui-richselector-head {
+    height: 26px;
+    line-height: 26px;
+    padding: 0 10px;
+    border-bottom: @ui-richselector-head-border-bottom;
+    background: @ui-richselector-head-bg;
+
+    h3 {
+        margin: 0;
+        padding: 0;
+        font-weight: bold;
+        font-size: 12px;
+        float: left;
+    }
+
+    .ui-richselector-batch-action-link {
+        float: right;
+        text-decoration: none;
+        cursor: pointer;
+        color: @ui-richselector-batch-action-link-color;
+    }
+}
+
+@ui-richselector-body-bg: #fcfcfc;
+.ui-richselector-body {
+    overflow-x: hidden;
+    clear: both;
+    background: @ui-richselector-body-bg;
+}
+
+.ui-richselector-search-wrapper {
+    height: 25px;
+    padding: 10px 5px;
+}
+
+// 搜索结果概要
+.ui-richselector-query-result-general {
+    background: none repeat scroll 0 0 #FFFDD8;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 10px;
+    display: none;
+
+    .ui-richselector-clear-query-link {
+        text-decoration: underline;
+        color: blue;
+        cursor: pointer;
+        line-height: 30px;
+        float: right;
+    }
+}
+
+
+.ui-richselector-content-wrapper {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.ui-richselector-empty-text {
+    display: none;
+}
+
+.ui-richselector-foot {
+    height: 25px;
+    color: #555;
+    line-height: 25px;
+    background: #f9f9f9;
+    padding: 0 10px;
+}
+
+
+.ui-richselector-validity-invalid {
+    border: 1px solid red;
+}
+.ui-richselector-validity-label {
+    display:block;
+    margin-top: 5px;
+}
+.ui-richselector-validity-label-invalid {
+    background: url('../img/icon-alert.png') no-repeat scroll 15px center #FEDBDC;
+    border: 1px solid #F0CCCC;
+    color: #dd6767;
+    padding: 5px 0 5px 50px;
+}
+
+// 搜索状态
+.ui-richselector-queried {
+    .ui-richselector-query-result-general {
+        display: block;
+    }
+}
+
+// 无结果状态
+.ui-richselector-empty {
+    .ui-richselector-empty-text {
+        display: block;
+    }
+
+    .ui-richselector-query-list {
+        display: none;
+    }
+
+    .ui-richselector-query-result-general {
+        display: none;
+    }
+}
+
+// 搜索状态
+.ui-richselector-queried {
+    .ui-richselector-query-result-general {
+        display: block;
+    }
+}
