@@ -51,48 +51,20 @@ define(
             var children = lib.getChildren(this.main);
             // ie系列在获取子节点引用后，设置父元素 innerHTML，会将子元素的内容清空
             // 所以先从父元素移除节点
-            var titleElem = children[0] && this.main.removeChild(children[0]);
-            var contentElem = children[1] && this.main.removeChild(children[1]);
-            var tmpDiv = document.createElement('div');
+            var titleElem = children[0];
+            var contentElem = children[1];
 
-
-            this.main.innerHTML = getPanelHTML(this);
-            this.helper.initChildren();
-
-            var titlePanel = this.getChild('title');
+            var titlePanel = ui.create('Panel', { main: titleElem });
+            this.helper.addPartClasses('title', titlePanel.main);
+            this.addChild(titlePanel, 'title');
+            this.set('title', titleElem && titleElem.innerHTML);
             titlePanel.helper.addDOMEvent(titlePanel.main, 'click', lib.bind(onToggle, this));
 
-            if (titleElem) {
-                var title = titleElem.outerHTML;
-                if (!title) {
-                    tmpDiv.appendChild(titleElem);
-                    title = tmpDiv.innerHTML;
-                    tmpDiv.removeChild(titleElem);
-                }
-                this.set('title', title)
-            }
-
-            if (contentElem) {
-                var content = contentElem.outerHTML;
-                if (!content) {
-                    tmpDiv.appendChild(contentElem);
-                    content = tmpDiv.innerHTML;
-                    tmpDiv.removeChild(contentElem);
-                }
-                this.set('content', content);
-            }
+            var contentPanel = ui.create('Panel', { main: contentElem });
+            this.helper.addPartClasses('content', contentPanel.main);
+            this.addChild(contentPanel, 'content');
+            this.set('content', contentElem && contentElem.innerHTML);
         };
-
-        function getPanelHTML(control) {
-            var title = control.helper.getPartClassName('title');
-            var content = control.helper.getPartClassName('content');
-
-            // 因为 Label 仅暴露 text 接口，所以这里的 title用 Panel 代替
-            return '<div data-ui-type="Panel" data-ui-child-name="title" class="' + title
-                + '"></div><div data-ui-type="Panel" data-ui-child-name="content" class="'
-                + content + '"></div>';
-        }
-
 
         function onToggle() {
             this.toggleState('expanded');
