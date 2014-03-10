@@ -65,6 +65,7 @@ define(
         };
 
         function onToggle() {
+            console.log(this)
             this.toggleState('expanded');
             this.fire('change');
         }
@@ -92,6 +93,10 @@ define(
                 }
             }
         );
+
+        TogglePanel.prototype.isExpanded = function () {
+            return this.hasState('expanded');
+        }
 
         lib.inherits(TogglePanel, Control);
         ui.register(TogglePanel);
