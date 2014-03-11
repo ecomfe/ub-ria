@@ -95,7 +95,7 @@ define(
 
         TogglePanel.prototype.isExpanded = function () {
             return this.hasState('expanded');
-        }
+        };
 
         lib.inherits(TogglePanel, Control);
         ui.register(TogglePanel);
