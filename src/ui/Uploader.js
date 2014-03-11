@@ -29,6 +29,18 @@ define(
 
         Uploader.prototype.type = 'Uploader';
 
+
+        var mimeTypes = {
+            image: {
+                '.jpg': true, '.jpeg': true, '.gif': true,
+                '.bmp': true, '.tif': true, '.tiff': true, '.png': true
+            },
+
+            flash: {
+                '.flv': true, '.swf': true
+            }
+        };
+
         /**
          * 默认属性
          *
@@ -45,7 +57,9 @@ define(
             busyText: '正在上传...',
             completeText: '上传完成',
             autoUpload: true,
-            extraArgs: {}
+            extraArgs: {},
+            action: '',
+            mimeTypes: mimeTypes
         };
 
         /**
@@ -56,9 +70,7 @@ define(
          * @protected
          */
         Uploader.prototype.initOptions = function (options) {
-            var properties = {
-                action: ''
-            };
+            var properties = { };
             lib.extend(properties, Uploader.defaultProperties, options);
 
             if (lib.isInput(this.main)) {
@@ -73,7 +85,7 @@ define(
             }
 
             if (typeof properties.accept === 'string') {
-                properties.accept = properties.accept.split(',');
+                properties.accept = lib.splitTokenList(properties.accept);
             }
 
             if (properties.autoUpload === 'false') {
@@ -272,16 +284,6 @@ define(
             }
         );
 
-        var mimeTypes = {
-            image: {
-                '.jpg': true, '.jpeg': true, '.gif': true,
-                '.bmp': true, '.tif': true, '.tiff': true, '.png': true
-            },
-
-            flash: {
-                '.flv': true, '.swf': true
-            }
-        };
 
         /**
          * 检查文件格式是否正确，不正确时直接提示
@@ -309,10 +311,10 @@ define(
                     // image/*之类的，表示一个大类
                     if (acceptPattern.slice(-1)[0] === '*') {
                         var mimeType = acceptPattern.split('/')[0];
-                        var targetExtensions = mimeTypes[mimeType];
+                        var targetExtensions = this.mimeTypes[mimeType];
                         if (targetExtensions
                             && targetExtensions.hasOwnProperty(extension)
-                            ) {
+                        ) {
                             isValid = true;
                             break;
                         }
