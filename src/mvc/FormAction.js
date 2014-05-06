@@ -229,10 +229,10 @@ define(
          * 取消编辑
          */
         FormAction.prototype.cancelEdit = function () {
-            var entity = this.view.getEntity();
-            entity = this.model.fillEntity(entity);
+            // 从model中拿出表单最初数据，判断是否被更改
+            var initialFormData = this.model.get('initialFormData');
 
-            if (this.model.isEntityChanged(entity)) {
+            if (this.view.isInitialFormDataChanged(initialFormData)) {
                 var options = {
                     title: this.getCancelConfirmTitle(),
                     content: this.getCancelConfirmMessage()
@@ -269,6 +269,10 @@ define(
          */
         FormAction.prototype.initBehavior = function () {
             BaseAction.prototype.initBehavior.apply(this, arguments);
+            // 保存一份最初的form表单内容到model，用于判断表单内容是否被更改
+            var initialFormData = this.view.getEntity();
+            this.model.set('initialFormData', initialFormData, { silent: true });
+
             this.view.on('submit', submit, this);
             this.view.on('cancel', this.cancelEdit, this);
         };

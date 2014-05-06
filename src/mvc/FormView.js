@@ -10,6 +10,7 @@
 define(
     function (require) {
         var util = require('er/util');
+        var u = require('underscore');
         var BaseView = require('./BaseView');
 
         // 使用表单视图，有以下要求：
@@ -118,6 +119,16 @@ define(
                 this.getGroup('submit').enable();
             }
         };
+
+        /**
+         * 判断表单信息是否被更改，默认返回false
+         
+         * @param {Object} initialFormData model中保存的表单初始数据
+         * @return {Boolean}
+         */
+        FormView.prototype.isInitialFormDataChanged = function (initialFormData) {
+            return false;
+        }
 
         return FormView;
     }
