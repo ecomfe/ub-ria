@@ -1,0 +1,34 @@
+/**
+  * ADM2.0
+  * Copyright 2014 Baidu Inc. All rights reserved.
+  * 
+  * @ignore
+ * @file 折叠控件样式
+  * @author wangyaqiong
+  */
+
+.ui-togglepanel {
+    .ui-togglepanel-title {
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 14px;
+        margin-left: 3px;
+        padding-left: 16px;
+        background: transparent url(../img/ria-open-icon.png) no-repeat 0 center;
+        cursor: pointer;
+    }
+
+    .ui-togglepanel-content {
+        display: none;
+    }
+}
+
+.ui-togglepanel-expanded {
+    .ui-togglepanel-title {
+        background-image: url(../img/ria-close-icon.png);
+    }
+
+    .ui-togglepanel-content {
+        display: block;
+    }
+}
