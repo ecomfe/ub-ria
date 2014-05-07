@@ -40,8 +40,7 @@ define(
          * @return {Object}
          */
         FormView.prototype.getEntity = function () {
-            var form = this.get('form');
-            return form ? form.getData() : {};
+            return this.getFormData();
         };
 
         /**
@@ -121,13 +120,13 @@ define(
         };
 
         /**
-         * 判断表单信息是否被更改，默认返回false
-         
-         * @param {Object} initialFormData model中保存的表单初始数据
-         * @return {Boolean}
+         * 获取表单数据
+         *
+         * @return {Object}
          */
-        FormView.prototype.isInitialFormDataChanged = function (initialFormData) {
-            return false;
+        FormView.prototype.getFormData = function () {
+            var form = this.get('form');
+            return form ? form.getData() : {};
         }
 
         return FormView;
