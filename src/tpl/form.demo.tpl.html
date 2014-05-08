@@ -1,0 +1,128 @@
+<!-- target: orderForm(master=formPage) -->
+<!-- content: crumb -->
+    <!-- import: orderFormCrumb -->
+<!-- /content -->
+<!-- content: formMain -->
+    <!-- import: orderFormMain -->
+<!-- /content -->
+
+
+<!-- target: orderFormCrumb(master=crumb) -->
+<!-- content: path -->
+    <a href="#/order/all">所有订单</a>
+    <span>新建订单</span>
+<!-- /content -->
+
+<!-- target: orderFormMain -->
+<!-- use: formHead(entityName="order") -->
+    <!-- import: orderFormBasicSection -->
+    <!-- use: orderFormAdditionalSection(sectionId = 'additional-panel') -->
+    <!-- import: orderFormSlotsSection -->
+    <!-- import: orderFormSubmitSection -->
+<!-- use: formTail -->
+
+<!-- target: orderFormBasicSection -->
+<section class="form-section">
+    <h3 class="form-section-title">基本信息</h3>
+    <!-- field必须；name不设置则默认为field；id不设置则默认为name。-->
+    <!-- 其余属性均有默认值，不设置就取默认值，具体属性列表参考定义模版。-->
+    <!-- 而且，除了field以外，其余取自model中的数据一律在引用时就使用@或$标识。-->
+    <!-- use:
+        textboxField(
+            title = '名称', field = 'name', name = 'name', id = 'name',
+            required = true, maxLength = ${rule.maxLength}, countWord = true
+        )
+    -->
+    <div class="form-field">
+        <label class="form-field-name">广告客户：</label>
+        <div class="form-field-value">
+            <!-- 有的时候字段结构比较复杂，无法使用field模版，那么可以直接引用控件单元模版 -->
+            <!-- use:
+                toggleSelector(
+                     title = '广告客户', field = 'adowner.id', name = 'adowner', required = 'true', requiredErrorMessage = '请选择广告客户', itemName = '广告客户', datasource = '@companies', disabled = '@disableModify', canSelectNone = 'true'
+                )
+            -->
+        </div>
+        <!-- if: ${formType} == 'create' -->
+        <div data-ui-type="Button"
+             data-ui-id="create-company"
+             data-ui-skin="spring-add-tiny"
+             id="order-form-create-company">新建
+        </div>
+        <!-- /if -->
+    </div>
+    <!-- use:
+        toggleSelectorField(
+            title = '销售人员', field = 'saler.id', name = 'saler',
+            itemName = '销售人员', datasource = '@salers', disabled = '@disableModify', canSelectNone = 'true'
+        )
+    -->
+</section>
+
+<!-- target: orderFormAdditionalSection(master=formToggleSection) -->
+<!-- content: title -->
+    附加信息<em class="form-section-title-hint">（选填）</em>
+<!-- /content -->
+<!-- content: content -->
+    <section>
+        <!-- use:
+            moneyTextboxField(
+                title = '合同价', field = 'price', required = true, min = 0, max = 1000000000
+            )
+        -->
+        <!-- use:
+            toggleSelectorField(
+                title = '广告客户联系人',
+                field = 'adownerContactor.id', name = 'adownerContactor', id = 'adowner-contactor', datasource = '@adownerContactors', disabled = 'disabled', canSelectNone = 'true',
+                tip = '广告客户的联系人、合作对接人。'
+            )
+        -->
+        <div class="form-hint-field">
+            <div data-ui-type="Label" data-ui-id="adowner-contactor-label">请先选择广告客户，再选择广告客户联系人。
+            </div>
+        </div>
+        <!-- use:
+            toggleSelectorField(
+                title = '代理机构', field = 'agent.id', name = 'agent', datasource = '@agents', canSelectNone = 'true',
+                tip = '代理广告客户购买广告的第三方机构。'
+            )
+        -->
+        <!-- use:
+            toggleSelectorField(
+                title = '代理机构联系人', field = 'agentContactor.id', name = 'agentContactor', id = 'agent-contactor', datasource = '@agentContactors', disabled = 'disabled', canSelectNone = 'true',
+                tip = '代理机构的联系人、 合作接口人。'
+            )
+        -->
+        <div class="form-hint-field">
+            <div data-ui-type="Label" data-ui-id="agent-contactor-label">请先选择代理结构，再选择代理机构联系人。
+            </div>
+        </div>
+        <!-- use:
+            toggleSelectorField(
+                title = '其他联系人：', field = 'otherContactor.id', name = 'otherContactor', id = 'other-contactor', datasource = '@otherContactors', canSelectNone = 'true',
+                tip = '任意与订单相关的联系人'
+            )
+        -->
+        <!-- use:
+            textboxField(
+                title = '外部ID', id ='out', field = 'outId',
+                maxLength = 180, tipTitle = '外部ID', tip = '外部ID可以填写您与广告客户、代理机构签订的合同编号、发票编号等。'
+            )
+        -->
+        <!-- use:
+            textareaField(
+                title = '备注', field = 'description', maxLength = ${rule.description.maxLength}
+            )
+        -->
+    </section>
+<!-- /content -->
+
+<!-- target: orderFormSlotsSection -->
+<section data-ui-type="PartialForm" data-ui-id="slots" data-ui-name="deliveries"
+  data-ui-url="/order/slots" data-ui-action-options="@slotSectionData">
+</section>
+
+<!-- target: orderFormSubmitSection -->
+<section class="form-section">
+    <!-- import: formSubmitField -->
+</section>
