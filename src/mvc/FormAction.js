@@ -232,7 +232,7 @@ define(
             // 从model中拿出表单最初数据，判断是否被更改
             var initialFormData = this.model.get('initialFormData');
 
-            if (this.isInitialFormDataChanged(initialFormData)) {
+            if (this.isFormDataChanged(initialFormData)) {
                 var options = {
                     title: this.getCancelConfirmTitle(),
                     content: this.getCancelConfirmMessage()
@@ -259,7 +259,7 @@ define(
          * @param {Object} initialFormData model中保存的表单初始数据
          * @return {Boolean}
          */
-        FormAction.prototype.isInitialFormDataChanged = function (initialFormData) {
+        FormAction.prototype.isFormDataChanged = function (initialFormData) {
             return false;
         }
 
