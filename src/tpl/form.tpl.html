@@ -16,7 +16,11 @@
 <!-- 由label + value + tip组成的表单field模板，content可以是任意内容 -->
 <!-- master: formLabelValueField -->
 <!-- var: id = ${id} || ${name} || ${field} -->
+<!-- if: ${fieldClasses} -->
 <div class="form-field ${fieldClasses}">
+<!-- else -->
+<div class="form-field">
+<!-- /if -->
     <label class="form-field-name">${title}：</label>
     <div class="form-field-value">
         <!-- contentplaceholder: value --><!-- /contentplaceholder-->
@@ -35,13 +39,19 @@
     <!-- contentplaceholder: formMain --><!-- /contentplaceholder-->
 </div>
 
-<!-- master: formToggleSection -->
+<!-- target: formToggleSectionHead -->
 <section class="form-section" data-ui-type="TogglePanel"
-    data-ui-id="${sectionId}">
+    data-ui-id="${id}">
     <h3 class="form-section-title">
-        <!-- contentplaceholder: title --><!-- /contentplaceholder-->
+        ${title}
+        <!-- if: ${optional} -->
+        <em class="form-section-title-hint">（选填）</em>
+        <!-- /if -->
     </h3>
-    <!-- contentplaceholder: content --><!-- /contentplaceholder-->
+    <section>
+
+<!-- target: formToggleSectionTail -->
+    </section>
 </section>
 
 <!-- target: textbox -->
@@ -88,14 +98,50 @@
 <!-- var: id = ${id} || ${name} -->
 <!-- var: itemName = ${itemName} || ${title} -->
 <!-- var: tipTitle = ${tipTitle} || ${itemName} -->
-<div data-ui-type="ToggleSelector" data-ui-id="${id}" data-ui-item-name="${itemName}" data-ui-value="@${field}" name="${name}" title="${title}"
-class="${classNames}"
+<!-- var: width = ${width} || 200 -->
+<!-- var: height = ${height} || 340 -->
+<div name="${name}" title="${title}" class="${classNames}"
+    data-ui-type="ToggleSelector" data-ui-id="${id}"
+    data-ui-item-name="${itemName}" data-ui-value="@${field}" 
+    data-ui-datasource="${datasource}"
     <!-- if: ${required} -->data-ui-required="required"<!-- /if -->
     <!-- if: ${requiredErrorMessage} -->data-ui-required-error-message="${requiredErrorMessage}"<!-- /if -->
-    <!-- if: ${datasource} -->data-ui-datasource="${datasource}"<!-- /if -->
-    <!-- if: ${disabled} -->data-ui-disabled="${disabled}"<!-- /if -->
-    <!-- if: ${canSelectNone} -->data-ui-can-select-none="${canSelectNone}"<!-- /if --> ></div>
+    <!-- if: ${disabled} -->data-ui-disabled="${disabled}"<!-- /if -->>
+</div>
 
+<!-- target: cascadingSelector -->
+<!-- var: name = ${name} || ${field} -->
+<!-- var: id = ${id} || ${name} -->
+<!-- var: itemName = ${itemName} || ${title} -->
+<!-- var: tipTitle = ${tipTitle} || ${itemName} -->
+<!-- var: width = ${width} || 200 -->
+<!-- var: height = ${height} || 340 -->
+<div name="${name}" title="${title}" class="${classNames}"
+    data-ui-type="CascadingSelector" data-ui-id="${id}"
+    data-ui-item-name="${itemName}" 
+    data-ui-source-title="${sourceTitle}" 
+    data-ui-target-title="${targetTitle}" 
+    data-ui-source-empty-text="没有符合条件的${itemName}" 
+    data-ui-target-empty-text="请从左侧选择要添加的${itemName}" 
+    data-ui-has-height="${height}" 
+    data-ui-has-width="${width}" 
+    data-ui-datasource="${datasource}"
+    <!-- if: ${required} -->data-ui-required="required"<!-- /if -->
+    <!-- if: ${requiredErrorMessage} -->data-ui-required-error-message="${requiredErrorMessage}"<!-- /if -->
+    <!-- if: ${disabled} -->data-ui-disabled="${disabled}"<!-- /if -->>
+</div>
+
+
+<!-- target: calendar -->
+<!-- var: name = ${name} || ${field} -->
+<!-- var: id = ${id} || ${name} -->
+<div data-ui-type="Calendar" data-ui-id="${id}"
+    data-ui-name="${name}" data-ui-value="@${field}"
+    data-ui-auto-hide-layer="true"
+    <!-- if: ${group} -->data-ui-group="${group}"<!-- /if -->
+    <!-- if: ${range} -->data-ui-range="${range}"<!-- /if -->
+    <!-- if: ${validityLabel} -->data-ui-validity-label="${validityLabel}"<!-- /if --> >
+</div>
 
 <!-- target: moneyTextboxField(master = formLabelValueField) -->
 <!-- content: value -->
@@ -166,6 +212,17 @@ class="${classNames}"
 <!-- content: value -->
     <!-- var: classNames = 'form-field-control' -->
     <!-- import: toggleSelector -->
+<!-- /content -->
+
+<!-- target: cascadingSelectorField(master = formLabelValueField) -->
+<!-- content: value -->
+    <!-- var: classNames = 'form-field-control' -->
+    <!-- import: cascadingSelector -->
+<!-- /content -->
+
+<!-- target: calendarField(master = formLabelValueField) -->
+<!-- content: value -->
+    <!-- import: calendar -->
 <!-- /content -->
 
 <!-- TODO: 后续补充 cascadingSelector的field -->
