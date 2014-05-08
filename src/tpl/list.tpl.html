@@ -1,0 +1,105 @@
+<!-- target: listSearchBox -->
+<!-- var: field = ${field} || 'keyword' -->
+<!-- var: name = ${name} || ${field} -->
+<!-- var: id = ${id} || ${name} -->
+<!-- var: width = ${width} || 128 -->
+<!-- var: height = ${height} || 19 -->
+<!-- var: maxlength = ${maxlength} || 200 -->
+<input class="list-keyword"
+    maxlength="${maxlength}" name="${name}" 
+    data-ui-type="SearchBox" data-ui-id="${id}"
+    data-ui-height="${height}"
+    data-ui-width="${width}"
+    data-ui-text="@${field}"
+    data-ui-placeholder="${placeholder}"
+    data-ui-group='filter'
+    data-ui-extension-submit-type="AutoSubmit" />
+
+<!-- target: listSearchInfo -->
+<p>搜索文字：
+    <span class="list-search-keyword" title="${keyword}">${keyword}</span>
+    <span class="list-search-clear link-like" data-ui-id='list-search-clear' data-ui-type='Label'>清空</span>
+</p>
+
+<!-- target: filterSelect -->
+<!-- var: name = ${name} || ${field} -->
+<!-- var: id = ${id} || ${name} -->
+<div data-ui-type="Select" data-ui-id="${id}" data-ui-name="${name}"
+    data-ui-datasource="@${datasource}" data-ui-value="@${field}"
+    data-ui-extension-submit-type="AutoSubmit"></div>
+
+<!-- target: listTable -->
+<div data-ui-type="Table" data-ui-id="table" data-ui-datasource="@results"
+    data-ui-order-by="@orderBy" data-ui-order="@order" data-ui-select="@selectMode" data-ui-skin="noGrid" data-ui-extension-tip-type="TableTip"
+    <!-- if: ${useTableCommand} -->
+        data-ui-extension-command-type="Command"
+    <!-- /if -->
+    <!-- if: ${useTableCustomData} -->
+        data-ui-extension-data-type="CustomData" data-ui-data="${data}"
+    <!-- /if -->
+    <!-- if: ${useTableSubrow} -->
+        data-ui-extension-tablesubrow-type="TableSubrow"
+    <!-- /if -->
+    <!-- if: ${useTableRowStatus} -->
+        data-ui-extension-rowstatus-type="TableRowStatus"
+    <!-- /if -->
+    >
+</div>
+
+<!-- target: listPager -->
+<footer data-ui-type="Pager" data-ui-id="pager"
+    data-ui-count="@totalCount" data-ui-page="@page" data-ui-page-size="@pageSize"
+    data-ui-page-type="plain" data-ui-layout="alignRight">
+</footer>
+
+<!-- master: listPage -->
+<div class="list-page">
+    <!-- contentplaceholder: crumb --><!-- /contentplaceholder -->
+    <div class="list-page-content">
+        <!-- contentplaceholder: main --><!-- /contentplaceholder -->
+    </div>
+</div>
+
+<!-- master: listView -->
+<div class="list-view">
+    <div class="list-summary">
+    <!-- contentplaceholder: summary --><!-- /contentplaceholder -->
+    </div>
+    <div class="list-meta">
+        <div class="list-action">
+        <!-- contentplaceholder: actionButtons --><!-- /contentplaceholder -->
+        </div>
+        <div class="list-operation">
+            <!-- contentplaceholder: bacthOperation --><!-- /contentplaceholder -->
+        </div>
+        <div class="list-filter">
+            <form class="list-filter" data-ui-type="Form" data-ui-id="filter"
+            method="GET" novalidate="novalidate">
+                <!-- contentplaceholder: filter --><!-- /contentplaceholder -->
+                <!-- contentplaceholder: searchbox --><!-- /contentplaceholder -->
+            </form>
+        </div>
+    </div>
+    <!-- contentplaceholder: table --><!-- /contentplaceholder -->
+    <!-- import: listPager -->
+    <!-- contentplaceholder: advancedFilter -->
+    <!-- /contentplaceholder -->
+</div>
+
+<!-- 高级筛选的结构现在UE还没有给出最终版本的设计，基于tab切换的形式不知是否是全局通用的，这里暂时权当是通用的。。。 -->
+<!-- master: advancedFilter -->
+<div class="advanced-filter">
+    <div class="advanced-filter-content">
+        <div data-ui-type="Tab" data-ui-id="advanced-filter-tab" data-ui-orientation="horizontal">
+            <ul data-role="navigator">
+                <!-- contentplaceholder: tabNavigator --><!-- /contentplaceholder -->
+            </ul>
+            <!-- contentplaceholder: tabContent --><!-- /contentplaceholder -->
+        </div>
+    </div>
+    <div class="advanced-filter-operation">
+        <button type="submit" data-ui-type="Button" data-ui-id="submit" data-ui-group="submit">筛选</button>
+        <div data-ui-type="Button" data-ui-id="cancel" data-ui-group="submit" data-ui-skin="link">取消</div>
+        <div data-ui-type="Panel" data-ui-id="advanced-filter-result" class="advanced-filter-result"></div>
+    </div>
+</div>

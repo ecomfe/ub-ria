@@ -1,0 +1,173 @@
+<!-- target: formSubmitField -->
+<div class="form-field form-submit-field">
+    <button type="submit" data-ui-type="Button"
+        data-ui-skin="spring" data-ui-id="submit" data-ui-group="submit">保存</button>
+    <div data-ui-type="Button" data-ui-id="cancel" data-ui-group="submit"
+        data-ui-skin="link">取消</div>
+</div>
+
+<!-- target: formHead -->
+<div class="form-page-content" id="${entityName}-form">
+    <form data-ui-type="Form" data-ui-id="form" novalidate="novalidate">
+<!-- target: formTail -->
+    </form>
+</div>
+
+<!-- 由label + value + tip组成的表单field模板，content可以是任意内容 -->
+<!-- master: formLabelValueField -->
+<!-- var: id = ${id} || ${name} || ${field} -->
+<div class="form-field ${fieldClasses}">
+    <label class="form-field-name">${title}：</label>
+    <div class="form-field-value">
+        <!-- contentplaceholder: value --><!-- /contentplaceholder-->
+        <!-- if: ${tipTitle} && ${tip} -->
+        <aside data-ui-type="Tip" class="form-field-tip" title="${tipTitle}">${tip}</aside>
+        <!-- /if -->
+        <!-- if: ${singleLinHint} -->
+        <div class="form-field-hint" data-ui-type="Label">${singleLinHint}</div>
+        <!-- /if -->
+    </div>
+</div>
+
+<!-- master: formPage -->
+<div class="form-page">
+    <!-- contentplaceholder: crumb --><!-- /contentplaceholder -->
+    <!-- contentplaceholder: formMain --><!-- /contentplaceholder-->
+</div>
+
+<!-- master: formToggleSection -->
+<section class="form-section" data-ui-type="TogglePanel"
+    data-ui-id="${sectionId}">
+    <h3 class="form-section-title">
+        <!-- contentplaceholder: title --><!-- /contentplaceholder-->
+    </h3>
+    <!-- contentplaceholder: content --><!-- /contentplaceholder-->
+</section>
+
+<!-- target: textbox -->
+<!-- var: name = ${name} || ${field} -->
+<!-- var: id = ${id} || ${name} -->
+<!-- var: width = ${width} || 190 -->
+<!-- var: maxLength = ${maxLength} || '@rule.maxLength' -->
+<input data-ui-type="TextBox" data-ui-id="${id}" data-ui-value="@${field}"
+    name="${name}" title="${title}"
+    <!-- if: ${required} -->data-ui-required="required"<!-- /if -->
+    <!-- if: ${width} -->data-ui-width="${width}"<!-- /if -->
+    <!-- if: ${maxLength} -->data-ui-max-length="${maxLength}"<!-- /if -->
+    <!-- if: ${min} -->data-ui-min="${min}"<!-- /if -->
+    <!-- if: ${max} -->data-ui-max="${max}"<!-- /if -->
+    <!-- if: ${pattern} -->data-ui-pattern="${pattern}"<!-- /if -->
+    <!-- if: ${countWord} -->data-ui-extension-count-type="WordCount"<!-- /if -->
+    <!-- if: ${hint} -->data-ui-hint="${hint}"<!-- /if -->
+    <!-- if: ${hintType} -->data-ui-hint-type="${hintType}"<!-- /if --> ></input>
+
+
+<!-- target: textarea -->
+<!-- var: name = ${name} || ${field} -->
+<!-- var: id = ${id} || ${name} -->
+<!-- var: width = ${width} || 190 -->
+<!-- var: height = ${height} || 108 -->
+<textarea data-ui-type="TextBox" data-ui-id="${id}" data-ui-value="@${field}"
+    name="${name}" title="${title}"
+    <!-- if: ${required} -->data-ui-required="required"<!-- /if -->
+    <!-- if: ${width} -->data-ui-width="${width}"<!-- /if -->
+    <!-- if: ${height} -->data-ui-height="${height}"<!-- /if -->
+    <!-- if: ${maxLength} -->data-ui-length="${maxLength}"<!-- /if -->
+    <!-- if: ${countWord} -->data-ui-extension-count-type="WordCount"<!-- /if --> >
+</textarea>
+
+<!-- target: checkbox -->
+<!-- var: name = ${name} || ${field} -->
+<!-- var: id = ${id} || ${name} -->
+<input type="checkbox" name="${name}" title="${text}"
+    data-ui-type="CheckBox" data-ui-id="${id}" data-ui-value="@${field}" >
+</input>
+
+<!-- target: toggleSelector -->
+<!-- var: name = ${name} || ${field} -->
+<!-- var: id = ${id} || ${name} -->
+<!-- var: itemName = ${itemName} || ${title} -->
+<!-- var: tipTitle = ${tipTitle} || ${itemName} -->
+<div data-ui-type="ToggleSelector" data-ui-id="${id}" data-ui-item-name="${itemName}" data-ui-value="@${field}" name="${name}" title="${title}"
+class="${classNames}"
+    <!-- if: ${required} -->data-ui-required="required"<!-- /if -->
+    <!-- if: ${requiredErrorMessage} -->data-ui-required-error-message="${requiredErrorMessage}"<!-- /if -->
+    <!-- if: ${datasource} -->data-ui-datasource="${datasource}"<!-- /if -->
+    <!-- if: ${disabled} -->data-ui-disabled="${disabled}"<!-- /if -->
+    <!-- if: ${canSelectNone} -->data-ui-can-select-none="${canSelectNone}"<!-- /if --> ></div>
+
+
+<!-- target: moneyTextboxField(master = formLabelValueField) -->
+<!-- content: value -->
+    <!-- var: hint = '@dictionary.money.hint' || '¥' -->
+    <!-- var: hintType =  '@dictionary.money.hintType' || 'prefix' -->
+    <!-- var: pattern = '@rule.money.pattern' -->
+    <!-- import: textbox -->
+<!-- /content -->
+
+<!-- target: urlTextboxField(master = formLabelValueField) -->
+<!-- content: value -->
+    <!-- var: hint = '@dictionary.url.hint' || 'http://' -->
+    <!-- var: hintType =  '@dictionary.url.hintType' || 'prefix' -->
+    <!-- import: textbox -->
+<!-- /content -->
+
+<!-- target: sizeTextboxField(master = formLabelValueField) -->
+<!-- content: value -->
+    <!-- var: hint = '@dictionary.size.hint' || 'px' -->
+    <!-- var: hintType =  '@dictionary.size.hintType' || 'suffix' -->
+    <!-- import: textbox -->
+<!-- /content -->
+
+<!-- target: frequencyTextboxField(master = formLabelValueField) -->
+<!-- content: value -->
+    <!-- var: hint = '@dictionary.frequency.hint' || '次' -->
+    <!-- var: hintType =  '@dictionary.frequency.hintType' || 'suffix' -->
+    <!-- var: pattern = '@rule.positiveInteger.pattern' -->
+    <!-- import: textbox -->
+<!-- /content -->
+
+<!-- target: secondTextboxField(master = formLabelValueField) -->
+<!-- content: value -->
+    <!-- var: hint = '@dictionary.second.hint' || '秒' -->
+    <!-- var: hintType =  '@dictionary.second.hintType' || 'suffix' -->
+    <!-- var: pattern = '@rule.positiveInteger.pattern' -->
+    <!-- import: textbox -->
+<!-- /content -->
+
+<!-- target: percentTextboxField(master = formLabelValueField) -->
+<!-- content: value -->
+    <!-- var: hint = '@dictionary.percent.hint' || ' %' -->
+    <!-- var: hintType =  '@dictionary.percent.hintType' || 'suffix' -->
+    <!-- var: pattern = '@rule.money.pattern' -->
+    <!-- import: textbox -->
+<!-- /content -->
+
+<!-- target: textboxField(master = formLabelValueField) -->
+<!-- content: value -->
+    <!-- import: textbox -->
+<!-- /content -->
+
+
+<!-- target: textareaField(master = formLabelValueField) -->
+<!-- content: value -->
+    <!-- import: textarea -->
+<!-- /content -->
+
+<!-- target: checkboxField(master = formLabelValueField) -->
+<!-- content: value -->
+    <!-- var: title = '@dictionary.percent.hint' || ' %' -->
+    <!-- var: hintType =  '@dictionary.percent.hintType' || 'suffix' -->
+    <!-- var: pattern = '@rule.money.pattern' -->
+    <!-- import: checkbox -->
+<!-- /content -->
+
+<!-- target: toggleSelectorField(master = formLabelValueField) -->
+<!-- content: value -->
+    <!-- var: classNames = 'form-field-control' -->
+    <!-- import: toggleSelector -->
+<!-- /content -->
+
+<!-- TODO: 后续补充 cascadingSelector的field -->
+
+
