@@ -1,0 +1,59 @@
+<!-- target: adposList(master=listPage) -->
+<!-- content: crumb -->
+    <!-- import: adposListCrumb -->
+<!-- /content -->
+<!-- content: main -->
+<!-- import: adposListMain -->
+<!-- /content -->
+
+<!-- target: adposListCrumb(master=crumb) -->
+<!-- content: path -->
+    <span>所有订单</span>
+<!-- /content -->
+
+<!-- target: adposListMain(master=listView) -->
+<!-- content: summary -->
+    <span class="li-summary-text">已生效代码位： <span class="text-status text-avaliable">${enableCount}</span>个</span>
+    <span class="li-summary-separator">|</span>
+    <span class="li-summary-text">已失效代码位:：<span class="text-status text-stoped">${disableCount}</span>个</span>
+<!-- /content -->
+<!-- content: actionButtons -->
+    <button data-ui-type="Button" data-ui-id="create" data-ui-skin="add">新建代码位</button>
+<!-- /content -->
+<!-- content: bacthOperation --><!-- /content -->
+<!-- content: filter -->
+    <!-- use:
+        filterSelect(
+            field = 'status', datasource = '@statuses'
+        )
+    -->
+    <!-- use:
+        filterSelect(
+            field = 'size', datasource = '@adsizeList'
+        )
+    -->
+    <div data-ui-type="DropDown" data-ui-skin="filter-select" 
+        data-ui-id="filter-select" data-ui-group="filter"
+        data-ui-layerid="filter-panel"
+    >筛选器</div>
+    <!-- TODO: 如有其它筛选条件在此添加 -->
+<!-- /content -->
+<!-- content: searchbox -->
+    <!-- use: listSearchBox(placeholder = "请输入adpos名称") -->
+<!-- /content -->
+<!-- content: table -->
+    <!-- use: listTable(useTableCommand = true) -->
+<!-- /content -->
+<!-- content: advancedFilter -->
+    <!-- import: adposListAdvancedFilter -->
+<!-- /content -->
+
+<!-- target: adposListAdvancedFilter -->
+<div id="adpos-list-advanced-filter-panel" data-ui-type="PartialForm" data-ui-id="advanced-filter-panel" data-ui-group="child-action"
+    data-ui-name="filter" data-ui-url="/adpos/filter" class="advanced-filter-panel"
+    data-ui-action-options="@filters" 
+    <!-- if: !${forceFilter} -->
+        data-ui-hidden="1"
+    <!-- /if -->   
+>
+</div>
