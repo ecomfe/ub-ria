@@ -40,20 +40,6 @@ define(
             defaultDatasource, SingleEntityModel.prototype.defaultDatasource);
 
         /**
-         * 判断实体是否有变化
-         *
-         * 默认实现使用最简单的比较提交的实体和预先存放在`Model`中的实体，
-         * 基本上所有表单都要重写此方法来进行符合业务逻辑的相等性判断
-         *
-         * @param {Object} entity 新的实体
-         * @return {boolean}
-         */
-        FormModel.prototype.isEntityChanged = function (entity) {
-            var original = this.get('entity');
-            return !u.isEqual(original, entity);
-        };
-
-        /**
          * 检查实体数据完整性，可在此补充一些视图无法提供的属性
          *
          * @param {Object} entity 实体数据

@@ -10,6 +10,7 @@
 define(
     function (require) {
         var util = require('er/util');
+        var u = require('underscore');
         var BaseView = require('./BaseView');
 
         // 使用表单视图，有以下要求：
@@ -39,8 +40,7 @@ define(
          * @return {Object}
          */
         FormView.prototype.getEntity = function () {
-            var form = this.get('form');
-            return form ? form.getData() : {};
+            return this.getFormData();
         };
 
         /**
@@ -118,6 +118,16 @@ define(
                 this.getGroup('submit').enable();
             }
         };
+
+        /**
+         * 获取表单数据
+         *
+         * @return {Object}
+         */
+        FormView.prototype.getFormData = function () {
+            var form = this.get('form');
+            return form ? form.getData() : {};
+        }
 
         return FormView;
     }
