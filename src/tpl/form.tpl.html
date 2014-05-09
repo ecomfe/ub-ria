@@ -6,13 +6,6 @@
         data-ui-skin="link">取消</div>
 </div>
 
-<!-- target: formHead -->
-<div class="form-page-content" id="${entityName}-form">
-    <form data-ui-type="Form" data-ui-id="form" novalidate="novalidate">
-<!-- target: formTail -->
-    </form>
-</div>
-
 <!-- 由label + value + tip组成的表单field模板，content可以是任意内容 -->
 <!-- master: formLabelValueField -->
 <!-- var: id = ${id} || ${name} || ${field} -->
@@ -39,6 +32,14 @@
     <!-- contentplaceholder: formMain --><!-- /contentplaceholder-->
 </div>
 
+<!-- master: formView -->
+<div class="form-view">
+    <form data-ui-type="Form" data-ui-id="form" novalidate="novalidate">
+    <!-- contentplaceholder: sections --><!-- /contentplaceholder -->
+    </form>
+</div>
+
+
 <!-- target: formToggleSectionHead -->
 <section class="form-section" data-ui-type="TogglePanel"
     data-ui-id="${id}">
@@ -59,7 +60,7 @@
 <!-- var: id = ${id} || ${name} -->
 <!-- var: width = ${width} || 190 -->
 <!-- var: maxLength = ${maxLength} || '@rule.maxLength' -->
-<input data-ui-type="TextBox" data-ui-id="${id}" data-ui-value="@${field}"
+<input data-ui-type="TextBox" data-ui-id="${id | dasherize}" data-ui-value="@${field}"
     name="${name}" title="${title}"
     <!-- if: ${required} -->data-ui-required="required"<!-- /if -->
     <!-- if: ${width} -->data-ui-width="${width}"<!-- /if -->
@@ -77,7 +78,7 @@
 <!-- var: id = ${id} || ${name} -->
 <!-- var: width = ${width} || 190 -->
 <!-- var: height = ${height} || 108 -->
-<textarea data-ui-type="TextBox" data-ui-id="${id}" data-ui-value="@${field}"
+<textarea data-ui-type="TextBox" data-ui-id="${id | dasherize}" data-ui-value="@${field}"
     name="${name}" title="${title}"
     <!-- if: ${required} -->data-ui-required="required"<!-- /if -->
     <!-- if: ${width} -->data-ui-width="${width}"<!-- /if -->
@@ -90,7 +91,7 @@
 <!-- var: name = ${name} || ${field} -->
 <!-- var: id = ${id} || ${name} -->
 <input type="checkbox" name="${name}" title="${text}"
-    data-ui-type="CheckBox" data-ui-id="${id}" data-ui-value="@${field}" >
+    data-ui-type="CheckBox" data-ui-id="${id | dasherize}" data-ui-value="@${field}" >
 </input>
 
 <!-- target: toggleSelector -->
@@ -101,7 +102,7 @@
 <!-- var: width = ${width} || 200 -->
 <!-- var: height = ${height} || 340 -->
 <div name="${name}" title="${title}" class="${classNames}"
-    data-ui-type="ToggleSelector" data-ui-id="${id}"
+    data-ui-type="ToggleSelector" data-ui-id="${id | dasherize}"
     data-ui-item-name="${itemName}" data-ui-value="@${field}" 
     data-ui-datasource="${datasource}"
     <!-- if: ${required} -->data-ui-required="required"<!-- /if -->
@@ -117,7 +118,7 @@
 <!-- var: width = ${width} || 200 -->
 <!-- var: height = ${height} || 340 -->
 <div name="${name}" title="${title}" class="${classNames}"
-    data-ui-type="CascadingSelector" data-ui-id="${id}"
+    data-ui-type="CascadingSelector" data-ui-id="${id | dasherize}"
     data-ui-item-name="${itemName}" 
     data-ui-source-title="${sourceTitle}" 
     data-ui-target-title="${targetTitle}" 
@@ -135,7 +136,7 @@
 <!-- target: calendar -->
 <!-- var: name = ${name} || ${field} -->
 <!-- var: id = ${id} || ${name} -->
-<div data-ui-type="Calendar" data-ui-id="${id}"
+<div data-ui-type="Calendar" data-ui-id="${id | dasherize}"
     data-ui-name="${name}" data-ui-value="@${field}"
     data-ui-auto-hide-layer="true"
     <!-- if: ${group} -->data-ui-group="${group}"<!-- /if -->
@@ -224,7 +225,5 @@
 <!-- content: value -->
     <!-- import: calendar -->
 <!-- /content -->
-
-<!-- TODO: 后续补充 cascadingSelector的field -->
 
 
