@@ -107,6 +107,40 @@ define(
         };
 
         /**
+         * 表格的列配置，供重写
+         *
+         * @type {Object[]}
+         */
+        ListView.prototype.tableFields = [];
+
+        /**
+         * 获取表格的列配置
+         *
+         * @return {Object[]}
+         */
+        ListView.prototype.getTableFields = function () {
+            return this.tableFields;
+        };
+
+        /**
+         * 获取视图属性
+         *
+         * @return {Object}
+         * @protected
+         * @override
+         */
+        ListView.prototype.getUIProperties = function () {
+            var properties = BaseView.prototype.getUIProperties.apply(this, arguments) || {};
+
+            if (!properties.table) {
+                properties.table = {};
+            }
+            properties.table.fields = this.getTableFields();
+
+            return properties;
+        };
+
+        /**
          * 更新每页显示数
          *
          * @param {mini-event.Event} e 事件对象
