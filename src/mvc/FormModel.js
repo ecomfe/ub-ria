@@ -12,6 +12,8 @@ define(
         var u = require('underscore');
         var util = require('er/util');
         var SingleEntityModel = require('./SingleEntityModel');
+        var Deferred = require('er/Deferred');
+        var EntityValidator = require('./EntityValidator');
 
         /**
          * 表单数据模型基类
@@ -21,6 +23,8 @@ define(
          */
         function FormModel() {
             SingleEntityModel.apply(this, arguments);
+
+            this.createEntityValidator();
         }
 
         util.inherits(FormModel, SingleEntityModel);
@@ -50,13 +54,18 @@ define(
         };
 
         /**
-         * 检验实体有效性
-         *
-         * @param {Object} entity 提交的实体
-         * @return {meta.FieldError[] | true} 返回`true`则验证通过，否则返回错误集合
+         * 为FormModel对象添加validator的函数，需要被重写
+         *  XXXModel.prototype.createEntityValidator = function() {
+         *      FormModel.prototype.createEntityValidator.apply(this, arguments);
+
+         *      var entityDefine = require('./EntityDefine');
+         *      this.validator.setEntityDefine(entityDefine);
+         *  }
+         * 
          */
-        FormModel.prototype.validateEntity = function (entity) {
-            return true;
+        FormModel.prototype.createEntityValidator = function () {
+            var rule = require('./rule');
+            this.validator = new EntityValidator(rule);
         };
 
         /**
@@ -76,7 +85,13 @@ define(
                     'No save method implemented on default data object');
             }
 
-            return data.save(entity);
+            entity = this.fillEntity(entity);
+
+            var deferred = new Deferred();
+
+            syncValidateSubmit.call(this, entity, deferred, 'save'); 
+
+            return deferred.promise; 
         };
 
         /**
@@ -96,11 +111,42 @@ define(
                     'No update method implemented on default data object');
             }
 
+            entity = this.fillEntity(entity);
+
             // 更新默认加上id
             entity.id = this.get('id');
 
-            return data.update(entity);
+            var deferred = new Deferred();
+
+            syncValidateSubmit.call(this, entity, deferred, 'update');
+
+            return deferred.promise;  
         };
+
+        /**
+         * 根据实体定义验证传入的实体，若成功，调用update或save方法，
+         * 若失败，reject错误消息；此外，将验证与提交的promise状态同步
+         *
+         * @param {object} entity 待提交的实体
+         * @param {er.Deferred} deferred 用于同步验证、提交状态的deferred对象
+         * @param {string} type 保存或更新
+         * @ignore
+         */
+        function syncValidateSubmit(entity, deferred, type) {
+            var data = this.data();
+            var promise = this.validator.validate(entity);
+            promise.then(
+                function () {
+                    data[type](entity).then(
+                        deferred.resolver.resolve,
+                        deferred.resolver.reject
+                    );
+                }, 
+                function (errors) {
+                    deferred.reject(errors);
+                }
+            );
+        }
 
         return FormModel;
     }

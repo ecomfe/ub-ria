@@ -79,18 +79,23 @@ define(
         /**
          * 处理提交数据时发生的错误，默认无行为，如验证信息显示等需要实现此方法
          *
-         * @param {er.meta.FakeXHR} xhr `XMLHttpRequest`对象
+         * @param {er.meta.FakeXHR | meta.FieldError[]}，
+         * errors `XMLHttpRequest`对象，或者model校验的错误结果集
          * @return {boolean} 返回`true`表示错误已经处理完毕
          */
-        FormAction.prototype.handleSubmitError = function (xhr) {
-            // 默认只处理409的验证失败，其它错误如果子类能处理则重写这个函数
-            if (xhr.status === 409) {
-                var errors = util.parseJSON(xhr.responseText);
+        FormAction.prototype.handleSubmitError = function (errors) {
+            // 处理model校验产生的错误信息
+            if (errors.fields) {
+                this.view.notifyErrors(errors);
+                return true;
+            }
+            // 处理409的验证失败
+            if (errors.status === 409) {
+                var errors = util.parseJSON(errors.responseText);
                 this.view.notifyErrors(errors);
                 return true;
             }
             return false;
-
         };
 
         /**
@@ -127,31 +132,16 @@ define(
         /**
          * 处理提交错误
          *
-         * @param {er.FakeXHR} xhr `XMLHttpRequest`对象
+         * @param {er.FakeXHR | meta.FieldError[]}，
+         * errors `XMLHttpRequest`对象，或者model校验的错误信息集
          * @ignore
          */
-        function handleError(xhr) {
-            var handled = this.handleSubmitError(xhr);
+        function handleError(errors) {
+            var handled = this.handleSubmitError(errors);
             if (!handled) {
-                require('er/events').notifyError(xhr.responseText);
+                require('er/events').notifyError(errors.responseText);
             }
         }
-
-        /**
-         * 处理本地的验证错误
-         *
-         * @param {meta.FieldError[]} errors 本地验证得到的错误集合
-         * @return {Mixed} 处理完后的返回值，返回对象的情况下将显示错误，
-         * 其它情况认为没有本地的验证错误，将进入正常的提交流程
-         */
-        FormAction.prototype.handleLocalValidationErrors = function (errors) {
-            var wrappedError = {
-                fields: errors
-            };
-            this.view.notifyErrors(wrappedError);
-
-            return wrappedError;
-        };
 
         /**
          * 提交实体（新建或更新）
@@ -160,15 +150,6 @@ define(
          * @param {er.Promise}
          */
         FormAction.prototype.submitEntity = function (entity) {
-            entity = this.model.fillEntity(entity);
-
-            var localValidationResult = this.model.validateEntity(entity);
-            if (typeof localValidationResult === 'object') {
-                var handleResult =
-                    this.handleLocalValidationErrors(localValidationResult);
-                return Deferred.rejected(handleResult);
-            }
-
             var method = this.context.formType === 'update' ? 'update' : 'save';
             try {
                 return this.model[method](entity)
@@ -261,7 +242,7 @@ define(
          */
         FormAction.prototype.isFormDataChanged = function (initialFormData) {
             return false;
-        }
+        };
 
         function submit() {
             var entity = this.view.getEntity();
