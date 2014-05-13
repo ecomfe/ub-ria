@@ -21,18 +21,17 @@ define(
          * 表单实体验证基类
          *
          * 作为{ub-ria.FormModel}的属性，用于对表单提交的数据在发送至后端前进行
-         * 检验，检验规则由模块下相应的{EntityDefine}决定。
+         * 检验，检验规则由模块下相应的{Schema}决定。
          * 
          * 默认提供required, type, maxLength, minLength, rangeLength,
          * min, max, range, enum, pattern十种校验器，每种检验器具有不同的优先级
          * 用户自定义的检验器可通过{EntityValidator.addCheckers}进行全局配置
          *
-         * @param {object} rule 预定义的规则
          * @class EntityValidator
          * @constructor
          */        
-        function EntityValidator(rule) {
-            this.rule = rule;
+        function EntityValidator() {
+
         }
 
         /**
@@ -135,35 +134,38 @@ define(
         };
 
         /**
-         * 获取所有校验器
+         * 设置validator的属性，包括'Schema'、'rule'等
          *
+         * @param {string} property 属性名
+         * @param {object} rule 属性值
          * @return {object} entityDefine model的实体定义
          */
-        EntityValidator.prototype.getEntityDefine = function () {
-            return this.entityDefine || null;
+        EntityValidator.prototype.set = function (property, value) {
+            this[property] = value;
         };
 
         /**
-         * 设置validator所属model的实体定义
+         * 获取validator对应property的值
          *
-         * @param {object} entityDefine model的实体定义
+         * @param {string} property 属性名
+         * @return {object} 对应属性的值
          */
-        EntityValidator.prototype.setEntityDefine = function (entityDefine) {
-            this.entityDefine = entityDefine;
+        EntityValidator.prototype.get = function (property) {
+            return this[property];
         };
 
         /**
          * 调用该方法对model的实体值进行检验，默认检验规则定义与相应模块内的
-         * {EntityDefine}中
+         * {Schema}中
          *
          * @param {object} entity, 表单提交的实体
          * @return {er.Promise} 全部字段检验完成后返回
          */
         EntityValidator.prototype.validate = function (entity) {
-            var entityDefine = this.entityDefine;
+            var Schema = this.get('Schema');
 
             // 如果没有实体定义，返回一个resolved的promise
-            if (!entityDefine) {
+            if (!Schema) {
                 return Deferred.resolved();
             }
 
@@ -172,7 +174,7 @@ define(
             // 校验过程有异步操作的promise存放处
             var parsers = [];
 
-            actualValidate.call(this, entityDefine, entity, null);
+            actualValidate.call(this, Schema, entity, null);
 
             // 如果有异步操作，等所有异步完成后resolve或reject
             if (parsers.length > 0) {
@@ -200,41 +202,41 @@ define(
                 return Deferred.resolved();
             }
 
-            function actualValidate(entityDefine, entity, path) {
+            function actualValidate(Schema, entity, path) {
                 if (!path) {
                     path = [];
                 }
 
-                for (var field in entityDefine) {
+                for (var field in Schema) {
                     // 跳过id的检查
                     if ('id' === field) {
                         continue;
                     }
 
                     var localPath = path.slice();
-                    var definition = entityDefine[field];
+                    var schema = Schema[field];
                     var options = {
                         field: field,
-                        definition: definition,
+                        schema: schema,
                         entity: entity,
                         path: localPath,
                         errors: errors,
                         _this: this
                     };
-                    var fieldType = definition[0];
+                    var fieldType = schema[0];
 
                     // field为enum类型时，需要异步校验，其他类型同步校验
                     if (fieldType === 'enum') {
                         (
                             function (options) {
-                                var promise = asyncParseDefinition.call(null, options);
+                                var promise = asyncParseSchema.call(null, options);
                                 promise.then(u.bind(startCheck, options._this));
                                 parsers.push(promise);
                             }
                         )(options);
                     }
                     else {
-                        var options = syncParseDefinition.call(this, options);
+                        var options = syncParseSchema.call(this, options);
                         startCheck.call(this, options);
                     }
                 }
@@ -243,19 +245,19 @@ define(
             function startCheck(options) {
                 var field = options.field;
                 var entity = options.entity;
-                var definition = options.definition;
+                var schema = options.schema;
                 var path = options.path;
                 var fieldPath = path.length > 0 
                     ? path.join('.') + '.' + field
                     : field;
                 var errors = options.errors;
 
-                // 根据解析后的definition生成当前字段的校验器数组，按优先级高低排序
-                var fieldCheckers = this.getFieldCheckers(definition);
+                // 根据解析后的schema生成当前字段的校验器数组，按优先级高低排序
+                var fieldCheckers = this.getFieldCheckers(schema);
                 var args = {
                     value: entity[field],
                     fieldPath: fieldPath,
-                    definition: definition
+                    schema: schema
                 };
                 // 传入实体对应字段值、字段路径、字段定义、检查器集合，
                 // 检查该字段的值是否满足定义的要求
@@ -267,8 +269,8 @@ define(
                     return;
                 }
 
-                var typeOption = definition[2] || {};
-                var fieldType = definition[0];
+                var typeOption = schema[2] || {};
+                var fieldType = schema[0];
 
                 // field值为对象类型，如果之前的检查没错误，就递归检查
                 if ('object' === fieldType) {
@@ -291,14 +293,14 @@ define(
                     }
 
                     for (var i = 0; i < value.length; i++) {
-                        var itemDefinition = {};
+                        var itemSchema = {};
                         // 为了拼出形如deliveries.1的字段名
-                        itemDefinition[i] = typeOption.item;
+                        itemSchema[i] = typeOption.item;
 
                         // 复制一份路径，以免影响到上一层的路径数据
                         var localPath = path.slice();
                         localPath.push(field);
-                        actualValidate.call(this, itemDefinition, value, localPath);
+                        actualValidate.call(this, itemSchema, value, localPath);
                     }
                 }
             }
@@ -308,10 +310,10 @@ define(
             var result = true;
             var value = checkerOptions.value;
             var fieldPath = checkerOptions.fieldPath;
-            var definition = checkerOptions.definition;
+            var schema = checkerOptions.schema;
 
             for (var i = 0; i < fieldCheckers.length; i++) {
-                result = fieldCheckers[i].check(value, fieldPath, definition);
+                result = fieldCheckers[i].check(value, fieldPath, schema);
 
                 if (result !== true) {
                     break;
@@ -326,21 +328,21 @@ define(
          *
          * @param {object} options
          * @param {string} options.field, 字段名
-         * @param {array} options.definition, 字段定义
+         * @param {array} options.schema, 字段定义
          * @param {object} options.entity, 实体
          * @param {array} options.path，路径数组
          * @param {array} options.errors, 错误信息集合
          * @param {object} options._this, 指向{EntityValidator}对象
-         * @return {er.Promise} 完成后参数包含解析后的定义definition
+         * @return {er.Promise} 完成后参数包含解析后的定义schema
          * @ignore
          */        
-        function asyncParseDefinition(options) {
+        function asyncParseSchema(options) {
             var deferred = new Deferred();
 
-            var definition = options.definition;
+            var schema = options.schema;
             
-            if ('enum' === definition[0]) {
-                var typeOption = definition[2];
+            if ('enum' === schema[0]) {
+                var typeOption = schema[2];
                 var datasource = typeOption.datasource;
                 var index = datasource.lastIndexOf('/');
                 var moduleId = datasource.substring(0, index);
@@ -364,17 +366,17 @@ define(
          *
          * @param {object} options
          * @param {string} options.field, 字段名
-         * @param {array} options.definition, 字段定义
+         * @param {array} options.schema, 字段定义
          * @param {object} options.entity, 实体
          * @param {array} options.path，路径数组
          * @param {array} options.errors, 错误信息集合
          * @param {object} options._this, 指向{EntityValidator}对象
-         * @return {object} 包含解析后的定义parsedDefinition的对象
+         * @return {object} 包含解析后的定义schema的对象
          * @ignore
          */
-        function syncParseDefinition(options) {
-            var definition = options.definition;
-            var typeOption = definition[2];
+        function syncParseSchema(options) {
+            var schema = options.schema;
+            var typeOption = schema[2];
 
             // 
             if (!typeOption) {
@@ -426,11 +428,11 @@ define(
         /**
          * 生成某一字段的按优先级高低排序的检验器数组
          * 
-         * @param {array} fieldDefinition为字段定义
+         * @param {array} fieldSchema为字段定义
          * @return {array} 检验器对象组成的有序数组
          */
-        EntityValidator.prototype.getFieldCheckers = function (fieldDefinition) {
-            var checkerNames = getFieldCheckerNames(fieldDefinition);
+        EntityValidator.prototype.getFieldCheckers = function (fieldSchema) {
+            var checkerNames = getFieldCheckerNames(fieldSchema);
             var checkers = this.getCheckers();
             var fieldCheckers = [];
 
@@ -452,16 +454,16 @@ define(
         /**
          * 根据field定义，生成该字段的检验器名组成的数组
          * 
-         * @param {array} definition，长度为2或3的数组, 字段的定义
+         * @param {array} schema, 字段的定义
          * @return {array} 检验器名组成的数组
          * @ignore
          */
-        function getFieldCheckerNames(definition) {
+        function getFieldCheckerNames(schema) {
             // 与字段校验无关的属性
             var keys = ['content', 'item'];
             var checkerNames = [];
-            var fieldType = definition[0];
-            var typeOption = definition[2] || {};
+            var fieldType = schema[0];
+            var typeOption = schema[2] || {};
 
             // 非枚举类型的datasource属性不作为检验器
             if ('enum' !== fieldType) {
@@ -524,14 +526,14 @@ define(
          * @return {object} 检验失败时返回field与errorMessage组成的对象
          * @return {boolean} 检验成功时返回true
          */
-        function requiredCheck(value, field, fieldDefinition) {
+        function requiredCheck(value, field, schema) {
             var result = true;
             var type = typeof value;
             if (u.isEmpty(value)
                 && type !== 'number'
                 && type !== 'boolean'
             ) {
-                var data = { title: fieldDefinition[1] };
+                var data = { title: schema[1] };
                 result = getErrorMessage(this.errorMessage, data, field);
             }
 
@@ -549,9 +551,9 @@ define(
          * @return {object} 检验失败时返回field与errorMessage组成的对象
          * @return {boolean} 检验成功时返回true
          */
-        function typeCheck(value, field, fieldDefinition) {
+        function typeCheck(value, field, schema) {
             var result = true;
-            var expectedType = fieldDefinition[0];
+            var expectedType = schema[0];
 
             // typeMapping的key为值类型，value为与key匹配的定义中的类型数组
             var typeMapping = {
@@ -585,7 +587,7 @@ define(
             }
 
             if (typeMapping[key] !== true && u.indexOf(typeMapping[key], expectedType) < 0) {
-                var data = { title: fieldDefinition[1] };
+                var data = { title: schema[1] };
                 result = getErrorMessage(this.errorMessage, data, field);
             }
 
@@ -601,15 +603,15 @@ define(
          * @return {object} 检验失败时返回field与errorMessage组成的对象
          * @return {boolean} 检验成功时返回true
          */
-        function rangeLengthCheck(value, field, fieldDefinition) {
+        function rangeLengthCheck(value, field, schema) {
             var result = true;
-            var typeOption = fieldDefinition[2];
+            var typeOption = schema[2];
             var minLength = typeOption.minLength;
             var maxLength = typeOption.maxLength;
 
             if (value && (value.length > maxLength || value.length < minLength)) {
                 var data = {
-                    title: fieldDefinition[1],
+                    title: schema[1],
                     minLength: minLength,
                     maxLength: maxLength
                 };
@@ -627,14 +629,14 @@ define(
          * @return {object} 检验失败时返回field与errorMessage组成的对象
          * @return {boolean} 检验成功时返回true
          */
-        function maxLengthCheck(value, field, fieldDefinition) {
+        function maxLengthCheck(value, field, schema) {
             var result = true;
-            var typeOption = fieldDefinition[2];
+            var typeOption = schema[2];
             var maxLength = typeOption.maxLength;
 
             if (value && value.length > maxLength) {
                 var data = {
-                    title: fieldDefinition[1],
+                    title: schema[1],
                     maxLength: maxLength
                 };
                 result = getErrorMessage(this.errorMessage, data, field);
@@ -651,14 +653,14 @@ define(
          * @return {object} 检验失败时返回field与errorMessage组成的对象
          * @return {boolean} 检验成功时返回true
          */
-        function minLengthCheck(value, field, fieldDefinition) {
+        function minLengthCheck(value, field, schema) {
             var result = true;
-            var typeOption = fieldDefinition[2];
+            var typeOption = schema[2];
             var minLength = typeOption.minLength;
 
             if (value && value.length < minLength) {
                 var data = {
-                    title: fieldDefinition[1],
+                    title: schema[1],
                     minLength: minLength
                 };
                 result = getErrorMessage(this.errorMessage, data, field);
@@ -675,16 +677,16 @@ define(
          * @return {object} 检验失败时返回field与errorMessage组成的对象
          * @return {boolean} 检验成功时返回true
          */
-        function rangeCheck(value, field, fieldDefinition) {
+        function rangeCheck(value, field, schema) {
             var result = true;
-            var typeOption = fieldDefinition[2];
+            var typeOption = schema[2];
             var min = typeOption.min;
             var max = typeOption.max;
 
             // 
             if (!u.isUndefined(value) && !u.isNull(value) && (value > max || value < min)) {
                 var data = {
-                    title: fieldDefinition[1],
+                    title: schema[1],
                     min: min,
                     max: max
                 };
@@ -702,14 +704,14 @@ define(
          * @return {object} 检验失败时返回field与errorMessage组成的对象
          * @return {boolean} 检验成功时返回true
          */
-        function maxCheck(value, field, fieldDefinition) {
+        function maxCheck(value, field, schema) {
             var result = true;
-            var typeOption = fieldDefinition[2];
+            var typeOption = schema[2];
             var max = typeOption.max;
 
             if (!u.isUndefined(value) && !u.isNull(value) && value > max) {
                 var data = {
-                    title: fieldDefinition[1],
+                    title: schema[1],
                     max: max
                 };
                 result = getErrorMessage(this.errorMessage, data, field);
@@ -726,14 +728,14 @@ define(
          * @return {object} 检验失败时返回field与errorMessage组成的对象
          * @return {boolean} 检验成功时返回true
          */
-        function minCheck(value, field, fieldDefinition) {
+        function minCheck(value, field, schema) {
             var result = true;
-            var typeOption = fieldDefinition[2];
+            var typeOption = schema[2];
             var min = typeOption.min;
 
             if (!u.isUndefined(value) && !u.isNull(value) && value < min) {
                 var data = {
-                    title: fieldDefinition[1],
+                    title: schema[1],
                     min: min
                 };
                 result = getErrorMessage(this.errorMessage, data, field);
@@ -750,17 +752,17 @@ define(
          * @return {object} 检验失败时返回field与errorMessage组成的对象
          * @return {boolean} 检验成功时返回true
          */
-        function patternCheck(value, field, fieldDefinition) {
+        function patternCheck(value, field, schema) {
             // 如果value为null, undefined, '', 不做检查
             if (!value && value !== 0) {
                 return true;
             }
 
             var result = true;
-            var regex = new RegExp(fieldDefinition[2].pattern);
+            var regex = new RegExp(schema[2].pattern);
             if (!regex.test(value)) {
                 var data = {
-                    title: fieldDefinition[1]
+                    title: schema[1]
                 };
                 result = getErrorMessage(this.errorMessage, data, field);
             }
@@ -776,17 +778,17 @@ define(
          * @return {object} 检验失败时返回field与errorMessage组成的对象
          * @return {boolean} 检验成功时返回true
          */
-        function enumCheck(value, field, fieldDefinition) {
+        function enumCheck(value, field, schema) {
             // 如果value为null, undefined, '', 不做检查
             if (!value && value !== 0) {
                 return true;
             }
             var result = true;
-            var enumObject = fieldDefinition[2].datasource;
+            var enumObject = schema[2].datasource;
             var item = enumObject.fromValue(value);
             if (!item) {
                 var data = {
-                    title: fieldDefinition[1]
+                    title: schema[1]
                 };
                 result = getErrorMessage(this.errorMessage, data, field);
             }

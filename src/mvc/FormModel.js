@@ -58,14 +58,17 @@ define(
          *  XXXModel.prototype.createEntityValidator = function() {
          *      FormModel.prototype.createEntityValidator.apply(this, arguments);
 
-         *      var entityDefine = require('./EntityDefine');
-         *      this.validator.setEntityDefine(entityDefine);
+         *      var Schema = require('./Schema');
+         *      this.validator.set('Schema', Schema);
          *  }
          * 
          */
         FormModel.prototype.createEntityValidator = function () {
-            var rule = require('./rule');
-            this.validator = new EntityValidator(rule);
+            var rule = this.model.get('rule');
+            var EntityValidator = require('./EntityValidator');
+            
+            this.validator = new EntityValidator();
+            this.validator.set('rule', rule);
         };
 
         /**
