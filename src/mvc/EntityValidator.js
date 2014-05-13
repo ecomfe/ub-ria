@@ -109,24 +109,39 @@ define(
         };
 
         /**
-         * 设置validator的属性，包括'Schema'、'rule'等
+         * 设置validator的'schema'属性
          *
-         * @param {string} property 属性名
-         * @param {object} rule 属性值
-         * @return {object} entityDefine model的实体定义
+         * @param {object} value 实体的schema定义
          */
-        EntityValidator.prototype.set = function (property, value) {
-            this[property] = value;
+        EntityValidator.prototype.setSchema = function (value) {
+            this.schema = value;
         };
 
         /**
-         * 获取validator对应property的值
+         * 获取validator的schema
          *
-         * @param {string} property 属性名
-         * @return {object} 对应属性的值
+         * @return {object | undefined}
          */
-        EntityValidator.prototype.get = function (property) {
-            return this[property];
+        EntityValidator.prototype.getSchema = function () {
+            return this.schema;
+        };
+
+        /**
+         * 设置validator的'rule'属性
+         *
+         * @param {object} value model上绑定的rule
+         */
+        EntityValidator.prototype.setRule = function (value) {
+            this.rule = value;
+        };
+
+        /**
+         * 获取validator的rule
+         *
+         * @return {object | undefined} 
+         */
+        EntityValidator.prototype.getRule = function () {
+            return this.rule;
         };
 
         /**
@@ -137,7 +152,7 @@ define(
          * @return {er.Promise} 全部字段检验完成后返回
          */
         EntityValidator.prototype.validate = function (entity) {
-            var schema = this.get('schema');
+            var schema = this.getSchema();
 
             // 如果没有实体定义，返回一个resolved的promise
             if (!schema) {
@@ -194,14 +209,14 @@ define(
                         field: field,
                         fieldSchema: fieldSchema,
                         entity: entity,
-                        path: localPath,
-                        errors: errors,
-                        _this: this
+                        path: localPath
                     };
                     var fieldType = fieldSchema[0];
 
                     // field为enum类型时，需要异步校验，其他类型同步校验
                     if (fieldType === 'enum') {
+                        // startCheck执行时的this需要指向EntityValidator
+                        options._this = this;
                         (
                             function (options) {
                                 var promise = asyncParseFieldSchema.call(null, options);
@@ -218,14 +233,14 @@ define(
             }
 
             function startCheck(options) {
-                var field = options.field;
-                var entity = options.entity;
-                var fieldSchema = options.fieldSchema;
-                var path = options.path;
+                var field = options.field,
+                    entity = options.entity,
+                    fieldSchema = options.fieldSchema,
+                    path = options.path;
+
                 var fieldPath = path.length > 0 
                     ? path.join('.') + '.' + field
                     : field;
-                var errors = options.errors;
 
                 // 根据解析后的schema生成当前字段的校验器数组，按优先级高低排序
                 var fieldCheckers = this.getFieldCheckers(fieldSchema);
@@ -306,7 +321,6 @@ define(
          * @param {array} options.fieldSchema, 字段定义
          * @param {object} options.entity, 实体
          * @param {array} options.path，路径数组
-         * @param {array} options.errors, 错误信息集合
          * @param {object} options._this, 指向{EntityValidator}对象
          * @return {er.Promise} 完成后参数包含解析后的fieldSchema
          * @ignore
@@ -344,8 +358,6 @@ define(
          * @param {array} options.fieldSchema, 字段定义
          * @param {object} options.entity, 实体
          * @param {array} options.path，路径数组
-         * @param {array} options.errors, 错误信息集合
-         * @param {object} options._this, 指向{EntityValidator}对象
          * @return {object} 包含解析后的fieldSchema的对象
          * @ignore
          */
@@ -464,22 +476,28 @@ define(
             }
 
             // maxLength、minLength同时存在的情况下使用rangeLength检验器
-            if (u.indexOf(checkerNames, 'minLength') >= 0
-                && u.indexOf(checkerNames, 'maxLength') >= 0
-            ) {
-                checkerNames = u.without(checkerNames, 'minLength', 'maxLength');
-                checkerNames.push('rangeLength');
-            }
-
+            addRangeChecker(checkerNames, 'rangeLength', 'minLength', 'maxLength');
             // max、min同时存在的情况下使用range检验器
-            if (u.indexOf(checkerNames, 'min') >= 0
-                && u.indexOf(checkerNames, 'max') >= 0
-            ) {
-                checkerNames = u.without(checkerNames, 'min', 'max');
-                checkerNames.push('range');
-            }
+            addRangeChecker(checkerNames, 'range', 'min', 'max');
 
             return checkerNames;
+        }
+
+        /**
+         * 
+         * @param {array} list 检查器名数组
+         * @param {string} range 上下界检查器名
+         * @param {string} min 下界检查器名
+         * @param {string} max 上界检查器名
+         * @ignore
+         */
+        function addRangeChecker(list, range, min, max) {
+            if (u.indexOf(list, min) >=0 
+                && u.indexOf(list, max) >=0
+            ) {
+                list = u.without(list, min, max);
+                list.push(range);
+            }
         }
 
         return EntityValidator;

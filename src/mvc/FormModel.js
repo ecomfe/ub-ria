@@ -68,7 +68,7 @@ define(
             var EntityValidator = require('./EntityValidator');
             
             this.validator = new EntityValidator();
-            this.validator.set('rule', rule);
+            this.validator.setRule(rule);
         };
 
         /**

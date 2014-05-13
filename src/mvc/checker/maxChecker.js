@@ -6,7 +6,6 @@ define(
         };
 
         var checker = {
-            name: 'max',
             errorMessage: '${title}不能大于${max}',
             priority: 20,
             check: check

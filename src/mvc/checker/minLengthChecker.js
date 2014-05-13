@@ -6,7 +6,6 @@ define(
         };
 
         var checker = {
-            name: 'minLength',
             errorMessage: '${title}不能小于${minLength}个字符',
             priority: 20,
             check: check
