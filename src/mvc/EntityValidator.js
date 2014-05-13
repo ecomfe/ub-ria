@@ -169,12 +169,10 @@ define(
 
             // 错误信息集合
             var errors = [];
-            // 用于记录当前正在检验的字段所属的层次
-            var path = [];
-            // 需要异步校验的字段，promise存放处
+            // 校验过程有异步操作的promise存放处
             var parsers = [];
 
-            actualValidate.call(this, entityDefine, entity, path);
+            actualValidate.call(this, entityDefine, entity, null);
 
             // 如果有异步操作，等所有异步完成后resolve或reject
             if (parsers.length > 0) {
@@ -203,6 +201,10 @@ define(
             }
 
             function actualValidate(entityDefine, entity, path) {
+                if (!path) {
+                    path = [];
+                }
+
                 for (var field in entityDefine) {
                     // 跳过id的检查
                     if ('id' === field) {
@@ -259,7 +261,7 @@ define(
                 // 检查该字段的值是否满足定义的要求
                 var result = excuteCheckers(fieldCheckers, args);
 
-                // 若返回值不是true，说明该字段值不满足定义，直接return
+                // 若返回值不是true，说明该字段值不满足定义中的某个规则，直接return
                 if (result !== true) {
                     errors.push(result);
                     return;
@@ -280,9 +282,14 @@ define(
                     localPath.push(field);
                     actualValidate.call(this, typeOption.content, entity[field], localPath);
                 }
-                // field为数组类型，先检查值类型，通过值类型检查后对每项递归检查
+                // field为数组类型，并且通过了之前的检查，这里对每项递归检查
                 else if ('array' === fieldType) {
+                    // 若该字段值不存在，不用递归检查了
                     var value = entity[field];
+                    if (!value) {
+                        return;
+                    }
+
                     for (var i = 0; i < value.length; i++) {
                         var itemDefinition = {};
                         // 为了拼出形如deliveries.1的字段名
