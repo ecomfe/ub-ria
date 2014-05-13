@@ -88,12 +88,15 @@ define(
             }
 
             var checkers = this.getCheckers();
-            for( var key in errorMessages) {
-                var checker = checkers[key];
-                if (checker) {
-                    checker.errorMessage = errorMessages[key];
+            u.each(
+                errorMessages,
+                function (item) {
+                    var checker = checkers[key];
+                    if (checker) {
+                        checker.errorMessage = setErrorMessages[key];
+                    }
                 }
-            }
+            );
         };
 
         /**
