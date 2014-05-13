@@ -58,8 +58,8 @@ define(
          *  XXXModel.prototype.createEntityValidator = function() {
          *      FormModel.prototype.createEntityValidator.apply(this, arguments);
 
-         *      var Schema = require('./Schema');
-         *      this.validator.set('Schema', Schema);
+         *      var schema = require('./schema');
+         *      this.validator.set('schema', schema);
          *  }
          * 
          */

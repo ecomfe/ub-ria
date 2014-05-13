@@ -29,7 +29,7 @@ define(
          * 表单实体验证基类
          *
          * 作为{ub-ria.FormModel}的属性，用于对表单提交的数据在发送至后端前进行
-         * 检验，检验规则由模块下相应的{Schema}决定。
+         * 检验，检验规则由模块下相应的schema.js决定。
          * 
          * 默认提供required, type, maxLength, minLength, rangeLength,
          * min, max, range, enum, pattern十种校验器，每种检验器具有不同的优先级
@@ -128,16 +128,16 @@ define(
 
         /**
          * 调用该方法对model的实体值进行检验，默认检验规则定义与相应模块内的
-         * {Schema}中
+         * schema.js中
          *
          * @param {object} entity, 表单提交的实体
          * @return {er.Promise} 全部字段检验完成后返回
          */
         EntityValidator.prototype.validate = function (entity) {
-            var Schema = this.get('Schema');
+            var schema = this.get('schema');
 
             // 如果没有实体定义，返回一个resolved的promise
-            if (!Schema) {
+            if (!schema) {
                 return Deferred.resolved();
             }
 
@@ -146,7 +146,7 @@ define(
             // 校验过程有异步操作的promise存放处
             var parsers = [];
 
-            actualValidate.call(this, Schema, entity, null);
+            actualValidate.call(this, schema, entity, null);
 
             // 如果有异步操作，等所有异步完成后resolve或reject
             if (parsers.length > 0) {
@@ -174,41 +174,41 @@ define(
                 return Deferred.resolved();
             }
 
-            function actualValidate(Schema, entity, path) {
+            function actualValidate(schema, entity, path) {
                 if (!path) {
                     path = [];
                 }
 
-                for (var field in Schema) {
+                for (var field in schema) {
                     // 跳过id的检查
                     if ('id' === field) {
                         continue;
                     }
 
                     var localPath = path.slice();
-                    var schema = Schema[field];
+                    var fieldSchema = schema[field];
                     var options = {
                         field: field,
-                        schema: schema,
+                        fieldSchema: fieldSchema,
                         entity: entity,
                         path: localPath,
                         errors: errors,
                         _this: this
                     };
-                    var fieldType = schema[0];
+                    var fieldType = fieldSchema[0];
 
                     // field为enum类型时，需要异步校验，其他类型同步校验
                     if (fieldType === 'enum') {
                         (
                             function (options) {
-                                var promise = asyncParseSchema.call(null, options);
+                                var promise = asyncParseFieldSchema.call(null, options);
                                 promise.then(u.bind(startCheck, options._this));
                                 parsers.push(promise);
                             }
                         )(options);
                     }
                     else {
-                        var options = syncParseSchema.call(this, options);
+                        var options = syncParseFieldSchema.call(this, options);
                         startCheck.call(this, options);
                     }
                 }
@@ -217,7 +217,7 @@ define(
             function startCheck(options) {
                 var field = options.field;
                 var entity = options.entity;
-                var schema = options.schema;
+                var fieldSchema = options.fieldSchema;
                 var path = options.path;
                 var fieldPath = path.length > 0 
                     ? path.join('.') + '.' + field
@@ -225,11 +225,11 @@ define(
                 var errors = options.errors;
 
                 // 根据解析后的schema生成当前字段的校验器数组，按优先级高低排序
-                var fieldCheckers = this.getFieldCheckers(schema);
+                var fieldCheckers = this.getFieldCheckers(fieldSchema);
                 var args = {
                     value: entity[field],
                     fieldPath: fieldPath,
-                    schema: schema
+                    fieldSchema: fieldSchema
                 };
                 // 传入实体对应字段值、字段路径、字段定义、检查器集合，
                 // 检查该字段的值是否满足定义的要求
@@ -241,8 +241,8 @@ define(
                     return;
                 }
 
-                var typeOption = schema[2] || {};
-                var fieldType = schema[0];
+                var typeOption = fieldSchema[2] || {};
+                var fieldType = fieldSchema[0];
 
                 // field值为对象类型，如果之前的检查没错误，就递归检查
                 if ('object' === fieldType) {
@@ -282,10 +282,10 @@ define(
             var result = true;
             var value = checkerOptions.value;
             var fieldPath = checkerOptions.fieldPath;
-            var schema = checkerOptions.schema;
+            var fieldSchema = checkerOptions.fieldSchema;
 
             for (var i = 0; i < fieldCheckers.length; i++) {
-                result = fieldCheckers[i].check(value, fieldPath, schema);
+                result = fieldCheckers[i].check(value, fieldPath, fieldSchema);
 
                 if (result !== true) {
                     break;
@@ -300,21 +300,21 @@ define(
          *
          * @param {object} options
          * @param {string} options.field, 字段名
-         * @param {array} options.schema, 字段定义
+         * @param {array} options.fieldSchema, 字段定义
          * @param {object} options.entity, 实体
          * @param {array} options.path，路径数组
          * @param {array} options.errors, 错误信息集合
          * @param {object} options._this, 指向{EntityValidator}对象
-         * @return {er.Promise} 完成后参数包含解析后的定义schema
+         * @return {er.Promise} 完成后参数包含解析后的fieldSchema
          * @ignore
          */        
-        function asyncParseSchema(options) {
+        function asyncParseFieldSchema(options) {
             var deferred = new Deferred();
 
-            var schema = options.schema;
+            var fieldSchema = options.fieldSchema;
             
-            if ('enum' === schema[0]) {
-                var typeOption = schema[2];
+            if ('enum' === fieldSchema[0]) {
+                var typeOption = fieldSchema[2];
                 var datasource = typeOption.datasource;
                 var index = datasource.lastIndexOf('/');
                 var moduleId = datasource.substring(0, index);
@@ -338,17 +338,17 @@ define(
          *
          * @param {object} options
          * @param {string} options.field, 字段名
-         * @param {array} options.schema, 字段定义
+         * @param {array} options.fieldSchema, 字段定义
          * @param {object} options.entity, 实体
          * @param {array} options.path，路径数组
          * @param {array} options.errors, 错误信息集合
          * @param {object} options._this, 指向{EntityValidator}对象
-         * @return {object} 包含解析后的定义schema的对象
+         * @return {object} 包含解析后的fieldSchema的对象
          * @ignore
          */
-        function syncParseSchema(options) {
-            var schema = options.schema;
-            var typeOption = schema[2];
+        function syncParseFieldSchema(options) {
+            var fieldSchema = options.fieldSchema;
+            var typeOption = fieldSchema[2];
 
             // 
             if (!typeOption) {
@@ -426,16 +426,16 @@ define(
         /**
          * 根据field定义，生成该字段的检验器名组成的数组
          * 
-         * @param {array} schema, 字段的定义
+         * @param {array} fieldSchema, 字段的定义
          * @return {array} 检验器名组成的数组
          * @ignore
          */
-        function getFieldCheckerNames(schema) {
+        function getFieldCheckerNames(fieldSchema) {
             // 与字段校验无关的属性
             var keys = ['content', 'item'];
             var checkerNames = [];
-            var fieldType = schema[0];
-            var typeOption = schema[2] || {};
+            var fieldType = fieldSchema[0];
+            var typeOption = fieldSchema[2] || {};
 
             // 非枚举类型的datasource属性不作为检验器
             if ('enum' !== fieldType) {
