@@ -13,9 +13,17 @@ define(
         var Deferred = require('er/Deferred');
         var u = require('underscore');
 
-        var TEMPLATE_SETTINGS = {
-            interpolate: /\$\{(.+?)\}/g
-        };
+        // 加载所有的检查器对象
+        var requiredChecker = require('./checker/requiredChecker'),
+            typeChecker = require('./checker/typeChecker'),
+            rangeLengthChecker = require('./checker/rangeLengthChecker'),
+            maxLengthChecker = require('./checker/maxLengthChecker'),
+            minLengthChecker = require('./checker/minLengthChecker'),
+            rangeChecker = require('./checker/rangeChecker'),
+            maxChecker = require('./checker/maxChecker'),
+            minChecker = require('./checker/minChecker'),
+            enumChecker = require('./checker/enumChecker'),
+            patternChecker = require('./checker/patternChecker');
 
         /**
          * 表单实体验证基类
@@ -35,62 +43,26 @@ define(
         }
 
         /**
-         * 默认的检验器
-         *
-         * @type {object}
+         * 默认的检验器，检查器对象的结构如下
+         *   checker = {
+         *       errorMessage: '${title}不合法',
+         *       priority: 10,
+         *       check: function (value, field, schema) {}
+         *   }
+         * @type {object} 
          * @private
          */
         EntityValidator.prototype.checkers = {
-            required: {
-                priority: 1,
-                errorMessage: '${title}不能为空',
-                check: requiredCheck
-            },
-            type: {
-                priority: 10,
-                errorMessage: '${title}的类型不符合要求',
-                check: typeCheck
-            },
-            rangeLength: {
-                priority: 20,
-                errorMessage: '${title}不能小于${minLength}个字符，且不能超过${maxLength}个字符',
-                check: rangeLengthCheck
-            },
-            maxLength: {
-                priority: 20,
-                errorMessage: '${title}不能超过${maxLength}个字符',
-                check: maxLengthCheck
-            },
-            minLength: {
-                priority: 20,
-                errorMessage: '${title}不能小于${minLength}个字符',
-                check: minLengthCheck
-            },
-            range: {
-                priority: 20,
-                errorMessage: '${title}必须是≥${min}且≤${max}的数字',
-                check: rangeCheck
-            },
-            max: {
-                priority: 20,
-                errorMessage: '${title}不能大于${max}',
-                check: maxCheck
-            },
-            min: {
-                priority: 20,
-                errorMessage: '${title}不能小于${min}',
-                check: minCheck
-            },
-            pattern: {
-                priority: 30,
-                errorMessage: '${title}格式不符合要求',
-                check: patternCheck
-            },
-            'enum': {
-                priority: 20,
-                errorMessage: '${title}的值不合法',
-                check: enumCheck
-            }
+            'required': requiredChecker,
+            'type': typeChecker,
+            'rangeLength': rangeLengthChecker,
+            'maxLength': maxLengthChecker,
+            'minLength': minLengthChecker,
+            'range': rangeChecker,
+            'max': maxChecker,
+            'min': minChecker,
+            'enum': enumChecker,
+            'pattern': patternChecker
         };
 
         /**
@@ -505,294 +477,6 @@ define(
             }
 
             return checkerNames;
-        }
-
-        // 生成错误信息
-        function getErrorMessage(template, data, field) {
-            var errorMessage = u.template(template, data, TEMPLATE_SETTINGS);
-            return {
-                field: field,
-                message: errorMessage
-            };
-        }
-
-        /**
-         * required检验器
-         * 检验逻辑：undefined, null, {}, [], ''均无法通过校验
-         * 
-         * @param {string | boolean | number | object | array | undefined}
-         * @param {field} 字符串，该属性相对于entity的完整路径
-         * @param {array} 字段的定义, 长度为3或2的数组
-         * @return {object} 检验失败时返回field与errorMessage组成的对象
-         * @return {boolean} 检验成功时返回true
-         */
-        function requiredCheck(value, field, schema) {
-            var result = true;
-            var type = typeof value;
-            if (u.isEmpty(value)
-                && type !== 'number'
-                && type !== 'boolean'
-            ) {
-                var data = { title: schema[1] };
-                result = getErrorMessage(this.errorMessage, data, field);
-            }
-
-            return result;
-        }
-
-        /**
-         * 类型检验器
-         * value值为undefined、null时，不做检查，enum、number类型字段值为number
-         * 时通过检查，
-         * 
-         * @param {string | boolean | number | object | array | undefined}
-         * @param {field} 字符串，该属性相对于entity的完整路径
-         * @param {array} 字段的定义, 长度为3或2的数组
-         * @return {object} 检验失败时返回field与errorMessage组成的对象
-         * @return {boolean} 检验成功时返回true
-         */
-        function typeCheck(value, field, schema) {
-            var result = true;
-            var expectedType = schema[0];
-
-            // typeMapping的key为值类型，value为与key匹配的定义中的类型数组
-            var typeMapping = {
-                'undefined': true,
-                'null': true,
-                'array': [ 'array' ],
-                'string': [ 'string' ],
-                'number': [ 'number', 'enum' ],
-                'boolean': [ 'bool' ],
-                'object': [ 'object' ]
-            };
-
-            var key = typeof value;
-            if ('object' === key) {
-                if (u.isArray(value)) {
-                    key = 'array';
-                }
-                else if (u.isNull(value)) {
-                    key = 'null';
-                }
-                // TODO 以下分支可能没啥用处
-                else if (value instanceof String) {
-                    key = 'string';
-                }
-                else if (value instanceof Number) {
-                    key = 'number';
-                }
-                else if (value instanceof Boolean) {
-                    key = 'boolean';
-                }
-            }
-
-            if (typeMapping[key] !== true && u.indexOf(typeMapping[key], expectedType) < 0) {
-                var data = { title: schema[1] };
-                result = getErrorMessage(this.errorMessage, data, field);
-            }
-
-            return result;
-        }
-
-        /**
-         * 字符串最小最大长度检验器
-         * 
-         * @param {string}
-         * @param {field} 字符串，该属性相对于entity的完整路径
-         * @param {array} 字段的定义, 长度为3或2的数组
-         * @return {object} 检验失败时返回field与errorMessage组成的对象
-         * @return {boolean} 检验成功时返回true
-         */
-        function rangeLengthCheck(value, field, schema) {
-            var result = true;
-            var typeOption = schema[2];
-            var minLength = typeOption.minLength;
-            var maxLength = typeOption.maxLength;
-
-            if (value && (value.length > maxLength || value.length < minLength)) {
-                var data = {
-                    title: schema[1],
-                    minLength: minLength,
-                    maxLength: maxLength
-                };
-                result = getErrorMessage(this.errorMessage, data, field);
-            }
-            return result;
-        }
-
-        /**
-         * 字符串最大长度检验器
-         * 
-         * @param {string}
-         * @param {field} 字符串，该属性相对于entity的完整路径
-         * @param {array} 字段的定义, 长度为3或2的数组
-         * @return {object} 检验失败时返回field与errorMessage组成的对象
-         * @return {boolean} 检验成功时返回true
-         */
-        function maxLengthCheck(value, field, schema) {
-            var result = true;
-            var typeOption = schema[2];
-            var maxLength = typeOption.maxLength;
-
-            if (value && value.length > maxLength) {
-                var data = {
-                    title: schema[1],
-                    maxLength: maxLength
-                };
-                result = getErrorMessage(this.errorMessage, data, field);
-            }
-            return result;
-        }
-
-        /**
-         * 字符串最小长度检验器
-         * 
-         * @param {string}
-         * @param {field} 字符串，该属性相对于entity的完整路径
-         * @param {array} 字段的定义, 长度为3或2的数组
-         * @return {object} 检验失败时返回field与errorMessage组成的对象
-         * @return {boolean} 检验成功时返回true
-         */
-        function minLengthCheck(value, field, schema) {
-            var result = true;
-            var typeOption = schema[2];
-            var minLength = typeOption.minLength;
-
-            if (value && value.length < minLength) {
-                var data = {
-                    title: schema[1],
-                    minLength: minLength
-                };
-                result = getErrorMessage(this.errorMessage, data, field);
-            }
-            return result;
-        }
-
-        /**
-         * 数字上下界检验器
-         * 
-         * @param {number}
-         * @param {field} 字符串，该属性相对于entity的完整路径
-         * @param {array} 字段的定义, 长度为3或2的数组
-         * @return {object} 检验失败时返回field与errorMessage组成的对象
-         * @return {boolean} 检验成功时返回true
-         */
-        function rangeCheck(value, field, schema) {
-            var result = true;
-            var typeOption = schema[2];
-            var min = typeOption.min;
-            var max = typeOption.max;
-
-            // 
-            if (!u.isUndefined(value) && !u.isNull(value) && (value > max || value < min)) {
-                var data = {
-                    title: schema[1],
-                    min: min,
-                    max: max
-                };
-                result = getErrorMessage(this.errorMessage, data, field);
-            }
-            return result;
-        }
-
-        /**
-         * 数字上界检验器
-         * 
-         * @param {number}
-         * @param {field} 字符串，该属性相对于entity的完整路径
-         * @param {array} 字段的定义, 长度为3或2的数组
-         * @return {object} 检验失败时返回field与errorMessage组成的对象
-         * @return {boolean} 检验成功时返回true
-         */
-        function maxCheck(value, field, schema) {
-            var result = true;
-            var typeOption = schema[2];
-            var max = typeOption.max;
-
-            if (!u.isUndefined(value) && !u.isNull(value) && value > max) {
-                var data = {
-                    title: schema[1],
-                    max: max
-                };
-                result = getErrorMessage(this.errorMessage, data, field);
-            }
-            return result;
-        }
-
-        /**
-         * 数字下界检验器
-         * 
-         * @param {number}
-         * @param {field} 字符串，该属性相对于entity的完整路径
-         * @param {array} 字段的定义, 长度为3或2的数组
-         * @return {object} 检验失败时返回field与errorMessage组成的对象
-         * @return {boolean} 检验成功时返回true
-         */
-        function minCheck(value, field, schema) {
-            var result = true;
-            var typeOption = schema[2];
-            var min = typeOption.min;
-
-            if (!u.isUndefined(value) && !u.isNull(value) && value < min) {
-                var data = {
-                    title: schema[1],
-                    min: min
-                };
-                result = getErrorMessage(this.errorMessage, data, field);
-            }
-            return result;
-        }
-
-        /**
-         * 正则检验器
-         * 
-         * @param {string | number}
-         * @param {field} 字符串，该属性相对于entity的完整路径
-         * @param {array} 字段的定义, 长度为3或2的数组
-         * @return {object} 检验失败时返回field与errorMessage组成的对象
-         * @return {boolean} 检验成功时返回true
-         */
-        function patternCheck(value, field, schema) {
-            // 如果value为null, undefined, '', 不做检查
-            if (!value && value !== 0) {
-                return true;
-            }
-
-            var result = true;
-            var regex = new RegExp(schema[2].pattern);
-            if (!regex.test(value)) {
-                var data = {
-                    title: schema[1]
-                };
-                result = getErrorMessage(this.errorMessage, data, field);
-            }
-            return result;
-        }
-
-        /**
-         * 枚举类型字段值检验器
-         * 
-         * @param {number}
-         * @param {field} 字符串，该属性相对于entity的完整路径
-         * @param {array} 字段的定义, 长度为3或2的数组
-         * @return {object} 检验失败时返回field与errorMessage组成的对象
-         * @return {boolean} 检验成功时返回true
-         */
-        function enumCheck(value, field, schema) {
-            // 如果value为null, undefined, '', 不做检查
-            if (!value && value !== 0) {
-                return true;
-            }
-            var result = true;
-            var enumObject = schema[2].datasource;
-            var item = enumObject.fromValue(value);
-            if (!item) {
-                var data = {
-                    title: schema[1]
-                };
-                result = getErrorMessage(this.errorMessage, data, field);
-            }
-            return result;
         }
 
         return EntityValidator;
