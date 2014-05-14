@@ -34,9 +34,9 @@ define(
          *   checker = {
          *       errorMessage: '${title}不合法',
          *       priority: 10,
-         *       check: function (value, field, schema) {}
+         *       check: function (value, schema) {}
          *   }
-         * @type {object} 
+         *
          * @private
          */
         EntityValidator.prototype.checkers = {
@@ -55,7 +55,7 @@ define(
         /**
          * 用于添加自定义的检验器的静态方法
          *
-         * @param {object} checkers，要添加的自定义检验器key-value
+         * @param {object} checkers 要添加的自定义检验器key-value
          * 对组成的对象
          * 
          */
@@ -135,8 +135,8 @@ define(
          * 调用该方法对model的实体值进行检验，默认检验规则定义与相应模块内的
          * schema.js中
          *
-         * @param {object} entity, 表单提交的实体
-         * @return {er.Promise} 全部字段检验完成后返回
+         * @param {object} entity 表单提交的实体
+         * @return {object[]} 错误字段及错误信息数组
          */
         EntityValidator.prototype.validate = function (entity) {
             var schema = this.getSchema();
@@ -353,7 +353,7 @@ define(
         /**
          * 根据field定义，生成该字段的检验器名组成的数组
          * 
-         * @param {array} fieldSchema, 字段的定义
+         * @param {array} fieldSchema 字段的定义
          * @return {string[]} 检验器名组成的数组
          * @ignore
          */

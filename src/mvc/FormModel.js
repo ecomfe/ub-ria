@@ -94,7 +94,7 @@ define(
             var result = this.validator.validate(entity);
 
             if (result.length > 0) {
-                return Deferred.rejected(result);
+                return Deferred.rejected({ fields: result });
             }
 
             return data.save(); 
@@ -129,7 +129,7 @@ define(
             var result = this.validator.validate(entity);
 
             if (result.length > 0) {
-                return Deferred.rejected(result);
+                return Deferred.rejected({ fields: result });
             }
 
             return data.update();  
