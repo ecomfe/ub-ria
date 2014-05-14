@@ -13,7 +13,6 @@ define(
         var util = require('er/util');
         var SingleEntityModel = require('./SingleEntityModel');
         var Deferred = require('er/Deferred');
-        var EntityValidator = require('./EntityValidator');
 
         /**
          * 表单数据模型基类
@@ -23,8 +22,6 @@ define(
          */
         function FormModel() {
             SingleEntityModel.apply(this, arguments);
-
-            this.createEntityValidator();
         }
 
         util.inherits(FormModel, SingleEntityModel);
@@ -55,15 +52,15 @@ define(
 
         /**
          * 为FormModel对象添加validator的函数，需要被重写
-         *  XXXModel.prototype.createEntityValidator = function() {
-         *      FormModel.prototype.createEntityValidator.apply(this, arguments);
+         *  XXXModel.prototype.initEntityValidator = function() {
+         *      FormModel.prototype.initEntityValidator.apply(this, arguments);
 
          *      var schema = require('./schema');
          *      this.validator.set('schema', schema);
          *  }
          * 
          */
-        FormModel.prototype.createEntityValidator = function () {
+        FormModel.prototype.initEntityValidator = function () {
             var rule = this.model.get('rule');
             var EntityValidator = require('./EntityValidator');
             
@@ -90,11 +87,17 @@ define(
 
             entity = this.fillEntity(entity);
 
-            var deferred = new Deferred();
+            if (!this.validator) {
+                this.initEntityValidator();
+            }
 
-            syncValidateSubmit.call(this, entity, deferred, 'save'); 
+            var result = this.validator.validate(entity);
 
-            return deferred.promise; 
+            if (result.length > 0) {
+                return Deferred.rejected(result);
+            }
+
+            return data.save(); 
         };
 
         /**
@@ -119,37 +122,18 @@ define(
             // 更新默认加上id
             entity.id = this.get('id');
 
-            var deferred = new Deferred();
+            if (!this.validator) {
+                this.initEntityValidator();
+            }
 
-            syncValidateSubmit.call(this, entity, deferred, 'update');
+            var result = this.validator.validate(entity);
 
-            return deferred.promise;  
+            if (result.length > 0) {
+                return Deferred.rejected(result);
+            }
+
+            return data.update();  
         };
-
-        /**
-         * 根据实体定义验证传入的实体，若成功，调用update或save方法，
-         * 若失败，reject错误消息；此外，将验证与提交的promise状态同步
-         *
-         * @param {object} entity 待提交的实体
-         * @param {er.Deferred} deferred 用于同步验证、提交状态的deferred对象
-         * @param {string} type 保存或更新
-         * @ignore
-         */
-        function syncValidateSubmit(entity, deferred, type) {
-            var data = this.data();
-            var promise = this.validator.validate(entity);
-            promise.then(
-                function () {
-                    data[type](entity).then(
-                        deferred.resolver.resolve,
-                        deferred.resolver.reject
-                    );
-                }, 
-                function (errors) {
-                    deferred.reject(errors);
-                }
-            );
-        }
 
         return FormModel;
     }

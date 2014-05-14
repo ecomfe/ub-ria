@@ -84,14 +84,12 @@ define(
          * @return {boolean} 返回`true`表示错误已经处理完毕
          */
         FormAction.prototype.handleSubmitError = function (errors) {
-            // 处理model校验产生的错误信息
-            if (errors.fields) {
-                this.view.notifyErrors(errors);
-                return true;
-            }
             // 处理409的验证失败
             if (errors.status === 409) {
-                var errors = util.parseJSON(errors.responseText);
+                errors = util.parseJSON(errors.responseText);
+            }
+            // 处理model校验产生的错误信息，或者后端校验返回的错误信息
+            if (errors.fields) {
                 this.view.notifyErrors(errors);
                 return true;
             }

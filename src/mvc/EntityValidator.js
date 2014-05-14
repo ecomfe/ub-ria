@@ -10,20 +10,7 @@
 define(
     function (require) {
         var util = require('er/util');
-        var Deferred = require('er/Deferred');
         var u = require('underscore');
-
-        // 加载所有的检查器对象
-        var requiredChecker = require('./checker/requiredChecker'),
-            typeChecker = require('./checker/typeChecker'),
-            rangeLengthChecker = require('./checker/rangeLengthChecker'),
-            maxLengthChecker = require('./checker/maxLengthChecker'),
-            minLengthChecker = require('./checker/minLengthChecker'),
-            rangeChecker = require('./checker/rangeChecker'),
-            maxChecker = require('./checker/maxChecker'),
-            minChecker = require('./checker/minChecker'),
-            enumChecker = require('./checker/enumChecker'),
-            patternChecker = require('./checker/patternChecker');
 
         /**
          * 表单实体验证基类
@@ -53,16 +40,16 @@ define(
          * @private
          */
         EntityValidator.prototype.checkers = {
-            'required': requiredChecker,
-            'type': typeChecker,
-            'rangeLength': rangeLengthChecker,
-            'maxLength': maxLengthChecker,
-            'minLength': minLengthChecker,
-            'range': rangeChecker,
-            'max': maxChecker,
-            'min': minChecker,
-            'enum': enumChecker,
-            'pattern': patternChecker
+            'required': require('./checker/requiredChecker'),
+            'type': require('./checker/typeChecker'),
+            'rangeLength': require('./checker/rangeLengthChecker'),
+            'maxLength': require('./checker/maxLengthChecker'),
+            'minLength': require('./checker/minLengthChecker'),
+            'range': require('./checker/rangeChecker'),
+            'max': require('./checker/maxChecker'),
+            'min': require('./checker/minChecker'),
+            'enum': require('./checker/enumChecker'),
+            'pattern': require('./checker/patternChecker')
         };
 
         /**
@@ -73,13 +60,13 @@ define(
          * 
          */
         EntityValidator.addCheckers = function (checkers) {
-            util.mix(this.checkers, checkers);
+            util.mix(EntityValidator.prototype.checkers, checkers);
         };
 
         /**
          * 用于自定义校验器错误提示信息的静态方法
          *
-         * @param {object} errorMessages, 每一项为校验器名与信息模板内容组成
+         * @param {object} errorMessages 每一项为校验器名与信息模板内容组成
          * key-value对
          */
         EntityValidator.setErrorMessages = function (errorMessages) {
@@ -87,13 +74,13 @@ define(
                 return;
             }
 
-            var checkers = this.getCheckers();
+            var checkers = EntityValidator.prototype.checkers;
             u.each(
                 errorMessages,
-                function (item) {
+                function (value, key) {
                     var checker = checkers[key];
                     if (checker) {
-                        checker.errorMessage = setErrorMessages[key];
+                        checker.errorMessage = value;
                     }
                 }
             );
@@ -154,94 +141,51 @@ define(
         EntityValidator.prototype.validate = function (entity) {
             var schema = this.getSchema();
 
-            // 如果没有实体定义，返回一个resolved的promise
-            if (!schema) {
-                return Deferred.resolved();
-            }
-
             // 错误信息集合
             var errors = [];
-            // 校验过程有异步操作的promise存放处
-            var parsers = [];
 
-            actualValidate.call(this, schema, entity, null);
+            actualValidate.call(this, schema, entity, errors, null);
 
-            // 如果有异步操作，等所有异步完成后resolve或reject
-            if (parsers.length > 0) {
-                var deferred = new Deferred();
+            return errors;            
+        };
 
-                // TODO 检验过程出错处理
-                var allParsers = Deferred.all.apply(Deferred, parsers);
-                allParsers.done(function () {
-                    if (errors.length > 0) {
-                        deferred.reject({ fields: errors });
-                    }
-                    else {
-                        deferred.resolve();
-                    }
-                });
-
-                return deferred.promise;
-            }
-            // 同步状态下，直接返回相应状态的promise
-            else {
-                if (errors.length > 0) {
-                    return Deferred.rejected({ fields: errors });
-                }
-
-                return Deferred.resolved();
+        /**
+         * 实际校验函数，遍历schema中每个字段的定义
+         * 
+         * @param {object} schema 实体定义
+         * @param {object} entity 表单提交的实体
+         * @param {object[]} errors 错误字段、错误信息数组
+         * @param {string[]} path 记录字段层次的数组
+         * @ignore
+         */
+        function actualValidate(schema, entity, errors, path) {
+            if (!path) {
+                path = [];
             }
 
-            function actualValidate(schema, entity, path) {
-                if (!path) {
-                    path = [];
+            for (var field in schema) {
+                // 跳过id的检查
+                if (field === 'id') {
+                    continue;
                 }
 
-                for (var field in schema) {
-                    // 跳过id的检查
-                    if ('id' === field) {
-                        continue;
-                    }
-
-                    var localPath = path.slice();
-                    var fieldSchema = schema[field];
-                    var options = {
-                        field: field,
-                        fieldSchema: fieldSchema,
-                        entity: entity,
-                        path: localPath
-                    };
-                    var fieldType = fieldSchema[0];
-
-                    // field为enum类型时，需要异步校验，其他类型同步校验
-                    if (fieldType === 'enum') {
-                        // startCheck执行时的this需要指向EntityValidator
-                        options._this = this;
-                        (
-                            function (options) {
-                                var promise = asyncParseFieldSchema.call(null, options);
-                                promise.then(u.bind(startCheck, options._this));
-                                parsers.push(promise);
-                            }
-                        )(options);
-                    }
-                    else {
-                        var options = syncParseFieldSchema.call(this, options);
-                        startCheck.call(this, options);
-                    }
-                }
+                var fieldSchema = schema[field];
+                // 解析定义中约束字段，用rule中相应值进行替换
+                parseFieldSchema.call(this, fieldSchema);
+                // 开始一个字段的校验
+                startCheck.call(this);
             }
 
-            function startCheck(options) {
-                var field = options.field,
-                    entity = options.entity,
-                    fieldSchema = options.fieldSchema,
-                    path = options.path;
-
-                var fieldPath = path.length > 0 
-                    ? path.join('.') + '.' + field
-                    : field;
-
+            /**
+             * 校验逻辑如下：
+             * 普通字段：根据定义获取该字段需要的校验器，执行校验器，如果有错误，放入errors中
+             * 对象字段：首先做与普通字段相同的处理，如果没有错误，递归校验对象content字段
+             * 数组对象：首先做与普通字段相同的处理，如果没有错误，递归校验数组中每一项
+             *
+             * @ignore
+             */
+            function startCheck() {
+                var fieldPath = path.length > 0 ? (path.join('.') + '.' + field) : field;
                 // 根据解析后的schema生成当前字段的校验器数组，按优先级高低排序
                 var fieldCheckers = this.getFieldCheckers(fieldSchema);
                 var args = {
@@ -249,133 +193,103 @@ define(
                     fieldPath: fieldPath,
                     fieldSchema: fieldSchema
                 };
-                // 传入实体对应字段值、字段路径、字段定义、检查器集合，
-                // 检查该字段的值是否满足定义的要求
-                var result = excuteCheckers(fieldCheckers, args);
 
-                // 若返回值不是true，说明该字段值不满足定义中的某个规则，直接return
+                // 传入实体对应字段值、字段路径、字段定义、检查器集合，检查该字段的值是否满足定义的要求
+                var result = excuteCheckers(fieldCheckers, args);
                 if (result !== true) {
                     errors.push(result);
                     return;
                 }
 
                 var typeOption = fieldSchema[2] || {};
-                var fieldType = fieldSchema[0];
-
-                // field值为对象类型，如果之前的检查没错误，就递归检查
-                if ('object' === fieldType) {
+                if (fieldSchema[0] === 'object') {
                     // 若该字段值不存在，没有进行下去的必要了
                     if (!entity[field]) {
                         return;
                     }
 
-                    // 复制一份路径，以免影响到上一层的路径数据
-                    var localPath = path.slice();
-                    localPath.push(field);
-                    actualValidate.call(this, typeOption.content, entity[field], localPath);
+                    path.push(field);
+                    actualValidate.call(this, typeOption.content, entity[field], errors, path);
+                    path.pop();
                 }
-                // field为数组类型，并且通过了之前的检查，这里对每项递归检查
-                else if ('array' === fieldType) {
+                if (fieldSchema[0] === 'array') {
                     // 若该字段值不存在，不用递归检查了
                     var value = entity[field];
                     if (!value) {
                         return;
                     }
 
+                    path.push(field);
                     for (var i = 0; i < value.length; i++) {
                         var itemSchema = {};
                         // 为了拼出形如deliveries.1的字段名
                         itemSchema[i] = typeOption.item;
-
-                        // 复制一份路径，以免影响到上一层的路径数据
-                        var localPath = path.slice();
-                        localPath.push(field);
-                        actualValidate.call(this, itemSchema, value, localPath);
+                        actualValidate.call(this, itemSchema, value, errors, path);
                     }
+                    path.pop();
                 }
             }
-        };
+        }
 
         function excuteCheckers(fieldCheckers, checkerOptions) {
-            var result = true;
             var value = checkerOptions.value;
             var fieldPath = checkerOptions.fieldPath;
             var fieldSchema = checkerOptions.fieldSchema;
 
             for (var i = 0; i < fieldCheckers.length; i++) {
-                result = fieldCheckers[i].check(value, fieldPath, fieldSchema);
+                var checker = fieldCheckers[i];
+                var result = checker.check(value, fieldSchema);
 
-                if (result !== true) {
-                    break;
+                if (!result) {
+                    var errorMessage = getErrorMessage(checker.errorMessage, fieldSchema);
+                    var error = {
+                        field: fieldPath,
+                        message: errorMessage
+                    };
+
+                    return error;
                 }
             }
 
-            return result;
+            return true;
         }
 
-        /**
-         * 异步解析字段定义中的预定义规则字段，主要用于解析enum类型字段的datasource
-         *
-         * @param {object} options
-         * @param {string} options.field, 字段名
-         * @param {array} options.fieldSchema, 字段定义
-         * @param {object} options.entity, 实体
-         * @param {array} options.path，路径数组
-         * @param {object} options._this, 指向{EntityValidator}对象
-         * @return {er.Promise} 完成后参数包含解析后的fieldSchema
-         * @ignore
-         */        
-        function asyncParseFieldSchema(options) {
-            var deferred = new Deferred();
+        function getErrorMessage(template, fieldSchema) {
+            var data = {};
+            var regex = /\$\{(.+?)\}/g;
+            var match = regex.exec(template);
+            var typeOption = fieldSchema[2] || {};
 
-            var fieldSchema = options.fieldSchema;
-            
-            if ('enum' === fieldSchema[0]) {
-                var typeOption = fieldSchema[2];
-                var datasource = typeOption.datasource;
-                var index = datasource.lastIndexOf('/');
-                var moduleId = datasource.substring(0, index);
-                var conditionName = datasource.substring(index + 1);
+            while (match) {
+                var key = match[1];
 
-                require(
-                    [moduleId],
-                    function (enumObject) {
-                        typeOption.datasource = enumObject[conditionName];
-                        deferred.resolve(options);
-                    }
-                );   
+                data[key] = typeOption[key];
+                if (!data[key]) {
+                    data[key] = fieldSchema[1];
+                }
+
+                match = regex.exec(template);
             }
 
-            return deferred.promise;
+            return u.template(template, data, { interpolate: regex });
         }
 
         /**
          * 同步解析字段定义中的预定义规则字段，包括maxLength, minLength
          * min, max, pattern, 当其值为以'@'为前缀的字符串时，进行解析
          *
-         * @param {object} options
-         * @param {string} options.field, 字段名
-         * @param {array} options.fieldSchema, 字段定义
-         * @param {object} options.entity, 实体
-         * @param {array} options.path，路径数组
-         * @return {object} 包含解析后的fieldSchema的对象
+         * @param {array} fieldSchema, 字段定义
          * @ignore
          */
-        function syncParseFieldSchema(options) {
-            var fieldSchema = options.fieldSchema;
+        function parseFieldSchema(fieldSchema) {
             var typeOption = fieldSchema[2];
 
-            // 
             if (!typeOption) {
-                return options;
+                return;
             }
 
             // 可能需要被解析的规则集
-            var ruleName = [
-                'maxLength', 'minLength',
-                'min', 'max',
-                'pattern'
-            ];
+            var ruleName = ['maxLength', 'minLength', 'min', 'max', 'pattern'];
             var keys = u.keys(typeOption);
             // 与定义中的规则取交集，得到需要被解析的规则集
             var ruleNeedParsed = u.intersection(ruleName, keys);
@@ -399,8 +313,6 @@ define(
 
                 typeOption[key] = actualValue;
             }
-
-            return options;
         }
 
         function getProperty(target, path) {
@@ -442,36 +354,26 @@ define(
          * 根据field定义，生成该字段的检验器名组成的数组
          * 
          * @param {array} fieldSchema, 字段的定义
-         * @return {array} 检验器名组成的数组
+         * @return {string[]} 检验器名组成的数组
          * @ignore
          */
         function getFieldCheckerNames(fieldSchema) {
             // 与字段校验无关的属性
-            var keys = ['content', 'item'];
+            var keys = ['content', 'item', 'datasource'];
             var checkerNames = [];
             var fieldType = fieldSchema[0];
             var typeOption = fieldSchema[2] || {};
 
-            // 非枚举类型的datasource属性不作为检验器
-            if ('enum' !== fieldType) {
-                keys.push('datasource');
-            }
-
             // 处理required为false的情况
             typeOption = u.omit(typeOption, keys);
-            if (false === typeOption.required) {
+            if (typeOption.required === false) {
                 delete typeOption.required;
             }
 
             [].push.apply(checkerNames, u.keys(typeOption));
 
-            // enum类型字段增加enum检验器
-            if ('enum' === fieldType) {
-                checkerNames.push('enum');
-            }
-
             // reference、referen-set类型字段不做类型检查
-            if ('reference' !== fieldType && 'reference-set' !== fieldType) {
+            if (fieldType !== 'reference' && fieldType !== 'reference-set') {
                 checkerNames.push('type');
             }
 
@@ -485,15 +387,15 @@ define(
 
         /**
          * 
-         * @param {array} list 检查器名数组
+         * @param {string[]} list 检查器名数组
          * @param {string} range 上下界检查器名
          * @param {string} min 下界检查器名
          * @param {string} max 上界检查器名
          * @ignore
          */
         function addRangeChecker(list, range, min, max) {
-            if (u.indexOf(list, min) >=0 
-                && u.indexOf(list, max) >=0
+            if (u.indexOf(list, min) >= 0 
+                && u.indexOf(list, max) >= 0
             ) {
                 list = u.without(list, min, max);
                 list.push(range);
