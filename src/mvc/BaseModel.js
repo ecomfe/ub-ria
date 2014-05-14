@@ -30,7 +30,7 @@ define(
          *
          * @param {string} [name="default"] 数据对象的名称，没有则使用
          * @param {mvc.RequestManager} instance 一个数据对象
-         * @return {mvc.RequestManager} 返回`instance`
+         * @protected
          */
         BaseModel.prototype.addData = function (name, instance) {
             if (!this.dataPool) {
@@ -48,8 +48,15 @@ define(
             if (!this.dataPool[name]) {
                 this.dataPool[name] = instance;
             }
+        };
 
-            return this.dataPool[name];
+        /**
+         * 设置当前所属模块的默认`Data`实现
+         *
+         * @param {mvc.RequestManager} instance 一个数据对象
+         */
+        BaseModel.prototype.setData = function (instance) {
+            this.addData(instance);
         };
 
         /**
