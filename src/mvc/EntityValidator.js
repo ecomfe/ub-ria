@@ -187,7 +187,7 @@ define(
             function startCheck() {
                 var fieldPath = path.length > 0 ? (path.join('.') + '.' + field) : field;
                 // 根据解析后的schema生成当前字段的校验器数组，按优先级高低排序
-                var fieldCheckers = this.getFieldCheckers(fieldSchema);
+                var fieldCheckers = getFieldCheckers.call(this, fieldSchema);
                 var args = {
                     value: entity[field],
                     fieldPath: fieldPath,
@@ -231,6 +231,16 @@ define(
             }
         }
 
+        /**
+         * 执行对当前字段的校验
+         * 
+         * @param {object[]} fieldCheckers 针对某字段的检验器数组，按优先级高低排序
+         * @param {object[]} checkerOptions
+         * @param {string} checkerOptions.value 待检验的字段值
+         * @param {string} checkerOptions.fieldPath 待检验字段在实体entity中的访问路径
+         * @param {object[]} checkerOptions.fieldSchema 待检验字段的定义、约束
+         * @ignore
+         */
         function excuteCheckers(fieldCheckers, checkerOptions) {
             var value = checkerOptions.value;
             var fieldPath = checkerOptions.fieldPath;
@@ -254,6 +264,16 @@ define(
             return true;
         }
 
+        /**
+         * 根据字段定义和错误信息模板，生成错误消息
+         * 
+         * @param {string} template 错误信息模板
+         * @param {fieldSchema} fieldSchema 字段定义
+         * @param {string} checkerOptions.value 待检验的字段值
+         * @param {string} checkerOptions.fieldPath 待检验字段在实体entity中的访问路径
+         * @param {object[]} checkerOptions.fieldSchema 待检验字段的定义、约束
+         * @ignore
+         */
         function getErrorMessage(template, fieldSchema) {
             var data = {};
             var regex = /\$\{(.+?)\}/g;
@@ -275,7 +295,7 @@ define(
         }
 
         /**
-         * 同步解析字段定义中的预定义规则字段，包括maxLength, minLength
+         * 解析字段定义中的预定义规则字段，包括maxLength, minLength
          * min, max, pattern, 当其值为以'@'为前缀的字符串时，进行解析
          *
          * @param {array} fieldSchema, 字段定义
@@ -329,8 +349,9 @@ define(
          * 
          * @param {array} fieldSchema为字段定义
          * @return {array} 检验器对象组成的有序数组
+         * @ignore
          */
-        EntityValidator.prototype.getFieldCheckers = function (fieldSchema) {
+        function getFieldCheckers(fieldSchema) {
             var checkerNames = getFieldCheckerNames(fieldSchema);
             var checkers = this.getCheckers();
             var fieldCheckers = [];
