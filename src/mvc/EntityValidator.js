@@ -90,7 +90,7 @@ define(
                 && checker.check
                 && checker.priority
             ) {
-                var checkers = this.getCheckers() || {};
+                var checkers = this.getCheckers();
                 checkers[checker.name] = checker;
 
                 return this.checkers[checker.name];
@@ -107,11 +107,8 @@ define(
          */
         EntityValidator.prototype.removeChecker = function (checkerName) {
             var checkers = this.getCheckers();
-            if (checkers || checkers[checkerName]) {
-                return delete checkers[checkerName];
-            }
 
-            return false;
+            return delete checkers[checkerName];
         };
 
         /**
@@ -120,7 +117,7 @@ define(
          * @return {object} 返回localCheckers
          */
         EntityValidator.prototype.getCheckers = function () {
-            return this.checkers;
+            return this.checkers || {};
         };
 
         /**
@@ -171,8 +168,10 @@ define(
 
             // 错误信息集合
             var errors = [];
+            // 用在递归中记录当前字段访问层次的数组
+            var path = [];
 
-            actualValidate.call(this, schema, entity, errors, null);
+            actualValidate.call(this, schema, entity, errors, path);
 
             return errors;            
         };
@@ -187,50 +186,41 @@ define(
          * @ignore
          */
         function actualValidate(schema, entity, errors, path) {
-            if (!path) {
-                path = [];
-            }
-
             for (var field in schema) {
                 // 跳过id的检查
                 if (field === 'id') {
                     continue;
                 }
 
+                var value = entity[field];
                 var fieldSchema = schema[field];
                 var fieldCheckers = this.getFieldCheckers(fieldSchema);
                 var fieldPath = path.length > 0 ? (path.join('.') + '.' + field) : field;
 
                 var args = {
-                    value: entity[field],
+                    value: value,
                     fieldPath: fieldPath,
                     fieldSchema: fieldSchema
                 };
                 // 传入实体对应字段值、字段路径、字段定义、检查器集合，检查该字段的值是否满足定义的要求
                 var result = this.excuteCheckers(fieldCheckers, args);
                 // 如果发现错误，继续检查下一字段
-                if (result !== true) {
+                if (result) {
                     errors.push(result);
                     continue;
                 }
 
-                if (fieldSchema[0] === 'object') {
-                    // 若该字段值不存在，没有进行下去的必要了
-                    if (!entity[field]) {
-                        continue;
-                    }
+                // 若该字段值不存在，没有进行下去的必要了
+                if (u.isEmpty(value)) {
+                    continue;
+                }
 
+                if (fieldSchema[0] === 'object') {
                     path.push(field);
                     actualValidate.call(this, fieldSchema[2].content, entity[field], errors, path);
                     path.pop();
                 }
                 else if (fieldSchema[0] === 'array') {
-                    // 若该字段值不存在，不用递归检查了
-                    var value = entity[field];
-                    if (!value) {
-                        continue;
-                    }
-
                     path.push(field);
                     for (var i = 0; i < value.length; i++) {
                         var itemSchema = {};
@@ -275,7 +265,7 @@ define(
                 }
             }
 
-            return true;
+            return null;
         };
 
         /**
