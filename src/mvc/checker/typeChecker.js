@@ -2,6 +2,7 @@ define(
     function (require) {
         var u = require('underscore');
         var checker = {
+            name: 'type',
             errorMessage: '${title}的类型不符合要求',
             priority: 10,
             check: check

@@ -1,6 +1,7 @@
 define(
     function (require) {
         var checker = {
+            name: 'range',
             errorMessage: '${title}必须是≥${min}且≤${max}的数字',
             priority: 20,
             check: check

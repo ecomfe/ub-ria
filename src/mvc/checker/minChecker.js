@@ -1,6 +1,7 @@
 define(
     function (require) {
         var checker = {
+            name: 'min',
             errorMessage: '${title}不能小于${min}',
             priority: 20,
             check: check

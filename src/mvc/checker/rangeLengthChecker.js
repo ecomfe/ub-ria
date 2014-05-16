@@ -1,6 +1,7 @@
 define(
     function (require) {
         var checker = {
+            name: 'rangeLength',
             errorMessage: '${title}不能小于${minLength}个字符，且不能超过${maxLength}个字符',
             priority: 20,
             check: check

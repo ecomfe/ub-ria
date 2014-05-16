@@ -1,6 +1,7 @@
 define(
     function (require) {
         var checker = {
+            name: 'pattern',
             errorMessage: '${title}格式不符合要求',
             priority: 30,
             check: check

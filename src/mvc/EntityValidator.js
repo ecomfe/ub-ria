@@ -9,9 +9,20 @@
  */
 define(
     function (require) {
-        var util = require('er/util');
-        var riaUtil = require('../util');
+        var util = require('../util');
         var u = require('underscore');
+        var checkers = {
+            'required': require('./checker/requiredChecker'),
+            'type': require('./checker/typeChecker'),
+            'rangeLength': require('./checker/rangeLengthChecker'),
+            'maxLength': require('./checker/maxLengthChecker'),
+            'minLength': require('./checker/minLengthChecker'),
+            'range': require('./checker/rangeChecker'),
+            'max': require('./checker/maxChecker'),
+            'min': require('./checker/minChecker'),
+            'enum': require('./checker/enumChecker'),
+            'pattern': require('./checker/patternChecker')
+        };
 
         /**
          * 表单实体验证基类
@@ -27,55 +38,30 @@ define(
          * @constructor
          */        
         function EntityValidator() {
-
+            this.initCheckers();
         }
 
         /**
-         * 默认的检验器，检查器对象的结构如下
-         *   checker = {
-         *       errorMessage: '${title}不合法',
-         *       priority: 10,
-         *       check: function (value, schema) {}
-         *   }
+         * 用于初始化EntityValidator实例的checkers属性，有需要可以通过override
+         * 实现对EntityValidator检查器的全局配置
          *
-         * @private
          */
-        EntityValidator.prototype.checkers = {
-            'required': require('./checker/requiredChecker'),
-            'type': require('./checker/typeChecker'),
-            'rangeLength': require('./checker/rangeLengthChecker'),
-            'maxLength': require('./checker/maxLengthChecker'),
-            'minLength': require('./checker/minLengthChecker'),
-            'range': require('./checker/rangeChecker'),
-            'max': require('./checker/maxChecker'),
-            'min': require('./checker/minChecker'),
-            'enum': require('./checker/enumChecker'),
-            'pattern': require('./checker/patternChecker')
+        EntityValidator.prototype.initCheckers = function () {
+            this.checkers = util.deepClone(checkers);
         };
 
         /**
-         * 用于添加自定义的检验器的静态方法
-         *
-         * @param {object} checkers 要添加的自定义检验器key-value
-         * 对组成的对象
-         * 
-         */
-        EntityValidator.addCheckers = function (checkers) {
-            util.mix(EntityValidator.prototype.checkers, checkers);
-        };
-
-        /**
-         * 用于自定义校验器错误提示信息的静态方法
+         * 用于自定义EntityValidator实例的校验器错误提示信息
          *
          * @param {object} errorMessages 每一项为校验器名与信息模板内容组成
          * key-value对
          */
-        EntityValidator.setErrorMessages = function (errorMessages) {
+        EntityValidator.prototype.setErrorMessages = function (errorMessages) {
             if (!errorMessages) {
                 return;
             }
 
-            var checkers = EntityValidator.prototype.checkers;
+            var checkers = this.getCheckers();
             u.each(
                 errorMessages,
                 function (value, key) {
@@ -88,9 +74,50 @@ define(
         };
 
         /**
-         * 获取所有校验器
+         * 为某个EntityValidator实例添加自定义校验器
          *
-         * @return {object} 返回全部的校验器
+         * @param {object} checker 要添加的自定义检验器
+         * @param {string} checker.name 校验器名称
+         * @param {string} checker.errorMessage 错误信息模板
+         * @param {number} checker.priority 校验器优先级
+         * @param {function} checker.check 校验函数
+         * @return {object} 添加成功返回checker，失败返回null 
+         */
+        EntityValidator.prototype.addChecker = function (checker) {
+            if (checker
+                && checker.name
+                && checker.errorMessage
+                && checker.check
+                && checker.priority
+            ) {
+                var checkers = this.getCheckers() || {};
+                checkers[checker.name] = checker;
+
+                return this.checkers[checker.name];
+            }
+
+            return null;
+        };
+
+        /**
+         * 移除EntityValidator实例上指定名称的校验器
+         *
+         * @param {string} checkerName 校验器名称
+         * @return {boolean} 删除成功返回true，失败返回false
+         */
+        EntityValidator.prototype.removeChecker = function (checkerName) {
+            var checkers = this.getCheckers();
+            if (checkers || checkers[checkerName]) {
+                return delete checkers[checkerName];
+            }
+
+            return false;
+        };
+
+        /**
+         * 获取EntityValidator实例上的校验器checkers
+         *
+         * @return {object} 返回localCheckers
          */
         EntityValidator.prototype.getCheckers = function () {
             return this.checkers;
@@ -229,7 +256,7 @@ define(
         EntityValidator.prototype.excuteCheckers = function (fieldCheckers, checkerOptions) {
             var value = checkerOptions.value;
             var fieldPath = checkerOptions.fieldPath;
-            var fieldSchema = riaUtil.deepClone(fieldSchema);
+            var fieldSchema = util.deepClone(checkerOptions.fieldSchema);
 
             fieldSchema = parseFieldSchema.call(this, fieldSchema);
 
@@ -334,8 +361,8 @@ define(
         /**
          * 生成某一字段的按优先级高低排序的检验器数组
          * 
-         * @param {array} fieldSchema为字段定义
-         * @return {array} 检验器对象组成的有序数组
+         * @param {object} fieldSchema为字段定义
+         * @return {object} 检验器对象组成的有序数组
          */
         EntityValidator.prototype.getFieldCheckers = function(fieldSchema) {
             var checkerNames = getFieldCheckerNames(fieldSchema);
@@ -360,7 +387,7 @@ define(
         /**
          * 根据field定义，生成该字段的检验器名组成的数组
          * 
-         * @param {array} fieldSchema 字段的定义
+         * @param {object} fieldSchema 字段的定义
          * @return {string[]} 检验器名组成的数组
          * @ignore
          */

@@ -1,6 +1,7 @@
 define(
     function (require) {
         var checker = {
+            name: 'maxLength',
             errorMessage: '${title}不能超过${maxLength}个字符',
             priority: 20,
             check: check

@@ -1,6 +1,7 @@
 define(
     function (require) {
         var checker = {
+            name: 'enum',
             errorMessage: '${title}的值不合法',
             priority: 20,
             check: check

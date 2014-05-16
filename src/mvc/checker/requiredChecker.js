@@ -2,6 +2,7 @@ define(
     function (require) {
         var u = require('underscore');
         var checker = {
+            name: 'required',
             errorMessage: '${title}不能为空',
             priority: 1,
             check: check
