@@ -21,10 +21,8 @@ define(
 
             var enumObject = schema[2].datasource;
             var item = enumObject.fromValue(value);
-            if (!item) {
-                return false;
-            }
-            return true;
+
+            return !!item;
         }
 
         return checker;

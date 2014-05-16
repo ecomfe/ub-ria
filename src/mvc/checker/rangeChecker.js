@@ -22,10 +22,7 @@ define(
             var min = schema[2].min;
             var max = schema[2].max;
 
-            if (value > max || value < min) {
-                return false;
-            }
-            return true;
+            return value >= min && value <= max;
         }
         
         return checker;

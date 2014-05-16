@@ -16,14 +16,7 @@ define(
          * @return {boolean} 检验成功返回true，失败返回false
          */
         function check(value, schema) {
-            if (u.isEmpty(value)
-                && !u.isNumber(value)
-                && !u.isBoolean(value)
-            ) {
-                return false;
-            }
-
-            return true;
+            return !u.isEmpty(value) || u.isNumber(value) || u.isBoolean(value);
         }
         
         return checker;

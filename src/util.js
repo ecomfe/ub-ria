@@ -269,14 +269,14 @@ define(
             }
 
             if (u.isArray(obj)) {
-                return u.map(obj, u.deepClone);
+                return u.map(obj, util.deepClone);
             }
 
             var clone = {};
             u.each(
                 obj,
                 function (value, key) {
-                    clone[key] = u.deepClone(value);
+                    clone[key] = util.deepClone(value);
                 }
             );
             return clone;

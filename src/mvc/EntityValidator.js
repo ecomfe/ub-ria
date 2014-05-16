@@ -10,6 +10,7 @@
 define(
     function (require) {
         var util = require('er/util');
+        var riaUtil = require('../util');
         var u = require('underscore');
 
         /**
@@ -170,60 +171,44 @@ define(
                 }
 
                 var fieldSchema = schema[field];
-                // 解析定义中约束字段，用rule中相应值进行替换
-                parseFieldSchema.call(this, fieldSchema);
-                // 开始一个字段的校验
-                startCheck.call(this);
-            }
-
-            /**
-             * 校验逻辑如下：
-             * 普通字段：根据定义获取该字段需要的校验器，执行校验器，如果有错误，放入errors中
-             * 对象字段：首先做与普通字段相同的处理，如果没有错误，递归校验对象content字段
-             * 数组对象：首先做与普通字段相同的处理，如果没有错误，递归校验数组中每一项
-             *
-             * @ignore
-             */
-            function startCheck() {
+                var fieldCheckers = this.getFieldCheckers(fieldSchema);
                 var fieldPath = path.length > 0 ? (path.join('.') + '.' + field) : field;
-                // 根据解析后的schema生成当前字段的校验器数组，按优先级高低排序
-                var fieldCheckers = getFieldCheckers.call(this, fieldSchema);
+
                 var args = {
                     value: entity[field],
                     fieldPath: fieldPath,
                     fieldSchema: fieldSchema
                 };
-
                 // 传入实体对应字段值、字段路径、字段定义、检查器集合，检查该字段的值是否满足定义的要求
-                var result = excuteCheckers(fieldCheckers, args);
+                var result = this.excuteCheckers(fieldCheckers, args);
+                // 如果发现错误，继续检查下一字段
                 if (result !== true) {
                     errors.push(result);
-                    return;
+                    continue;
                 }
 
-                var typeOption = fieldSchema[2] || {};
                 if (fieldSchema[0] === 'object') {
                     // 若该字段值不存在，没有进行下去的必要了
                     if (!entity[field]) {
-                        return;
+                        continue;
                     }
 
                     path.push(field);
-                    actualValidate.call(this, typeOption.content, entity[field], errors, path);
+                    actualValidate.call(this, fieldSchema[2].content, entity[field], errors, path);
                     path.pop();
                 }
-                if (fieldSchema[0] === 'array') {
+                else if (fieldSchema[0] === 'array') {
                     // 若该字段值不存在，不用递归检查了
                     var value = entity[field];
                     if (!value) {
-                        return;
+                        continue;
                     }
 
                     path.push(field);
                     for (var i = 0; i < value.length; i++) {
                         var itemSchema = {};
                         // 为了拼出形如deliveries.1的字段名
-                        itemSchema[i] = typeOption.item;
+                        itemSchema[i] = fieldSchema[2].item;
                         actualValidate.call(this, itemSchema, value, errors, path);
                     }
                     path.pop();
@@ -232,19 +217,21 @@ define(
         }
 
         /**
-         * 执行对当前字段的校验
+         * 执行对当前字段的校验，校验通过返回true，不通过返回对象
          * 
          * @param {object[]} fieldCheckers 针对某字段的检验器数组，按优先级高低排序
          * @param {object[]} checkerOptions
          * @param {string} checkerOptions.value 待检验的字段值
          * @param {string} checkerOptions.fieldPath 待检验字段在实体entity中的访问路径
          * @param {object[]} checkerOptions.fieldSchema 待检验字段的定义、约束
-         * @ignore
+         * @return {object | true}
          */
-        function excuteCheckers(fieldCheckers, checkerOptions) {
+        EntityValidator.prototype.excuteCheckers = function (fieldCheckers, checkerOptions) {
             var value = checkerOptions.value;
             var fieldPath = checkerOptions.fieldPath;
-            var fieldSchema = checkerOptions.fieldSchema;
+            var fieldSchema = riaUtil.deepClone(fieldSchema);
+
+            fieldSchema = parseFieldSchema.call(this, fieldSchema);
 
             for (var i = 0; i < fieldCheckers.length; i++) {
                 var checker = fieldCheckers[i];
@@ -262,16 +249,14 @@ define(
             }
 
             return true;
-        }
+        };
 
         /**
-         * 根据字段定义和错误信息模板，生成错误消息
+         * 根据字段定义和错误信息模板，生成错误信息
          * 
          * @param {string} template 错误信息模板
          * @param {fieldSchema} fieldSchema 字段定义
-         * @param {string} checkerOptions.value 待检验的字段值
-         * @param {string} checkerOptions.fieldPath 待检验字段在实体entity中的访问路径
-         * @param {object[]} checkerOptions.fieldSchema 待检验字段的定义、约束
+         * @return {string} 错误信息
          * @ignore
          */
         function getErrorMessage(template, fieldSchema) {
@@ -298,14 +283,14 @@ define(
          * 解析字段定义中的预定义规则字段，包括maxLength, minLength
          * min, max, pattern, 当其值为以'@'为前缀的字符串时，进行解析
          *
-         * @param {array} fieldSchema, 字段定义
-         * @ignore
+         * @param {object[]} fieldSchema 字段定义
+         * @return {object[]} 解析后的字段定义
          */
         function parseFieldSchema(fieldSchema) {
             var typeOption = fieldSchema[2];
 
             if (!typeOption) {
-                return;
+                return {};
             }
 
             // 可能需要被解析的规则集
@@ -313,6 +298,7 @@ define(
             var keys = u.keys(typeOption);
             // 与定义中的规则取交集，得到需要被解析的规则集
             var ruleNeedParsed = u.intersection(ruleName, keys);
+
             for (var i = 0; i < ruleNeedParsed.length; i++) {
                 var key = ruleNeedParsed[i];
                 var value = typeOption[key];
@@ -330,9 +316,10 @@ define(
                 actualValue = path.length > 1
                     ? getProperty(actualValue, path.slice(1))
                     : actualValue;
-
                 typeOption[key] = actualValue;
             }
+
+            return fieldSchema;
         }
 
         function getProperty(target, path) {
@@ -349,9 +336,8 @@ define(
          * 
          * @param {array} fieldSchema为字段定义
          * @return {array} 检验器对象组成的有序数组
-         * @ignore
          */
-        function getFieldCheckers(fieldSchema) {
+        EntityValidator.prototype.getFieldCheckers = function(fieldSchema) {
             var checkerNames = getFieldCheckerNames(fieldSchema);
             var checkers = this.getCheckers();
             var fieldCheckers = [];

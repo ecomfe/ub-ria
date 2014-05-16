@@ -20,40 +20,19 @@ define(
             var expectedType = schema[0];
             // typeMapping的key为值类型，value为与key匹配的定义中的类型数组
             var typeMapping = {
-                'undefined': true,
-                'null': true,
-                'array': [ 'array' ],
-                'string': [ 'string' ],
-                'number': [ 'number', 'enum' ],
-                'boolean': [ 'bool' ],
-                'object': [ 'object' ]
+                'Undefined': true,
+                'Null': true,
+                'Array': [ 'array' ],
+                'String': [ 'string' ],
+                'Number': [ 'number', 'enum' ],
+                'Boolean': [ 'bool' ],
+                'Object': [ 'object' ]
             };
-            var key = typeof value;
+            var key = Object.prototype.toString.call(value);
 
-            if (key === 'object') {
-                if (u.isArray(value)) {
-                    key = 'array';
-                }
-                else if (u.isNull(value)) {
-                    key = 'null';
-                }
-                // TODO 以下分支可能没啥用处
-                else if (value instanceof String) {
-                    key = 'string';
-                }
-                else if (value instanceof Number) {
-                    key = 'number';
-                }
-                else if (value instanceof Boolean) {
-                    key = 'boolean';
-                }
-            }
+            key = key.substring(8, key.length-1);
 
-            if (typeMapping[key] !== true && u.indexOf(typeMapping[key], expectedType) < 0) {
-                return false;
-            }
-
-            return true;
+            return typeMapping[key] === true || u.indexOf(typeMapping[key], expectedType) >= 0;
         }
         
         return checker;

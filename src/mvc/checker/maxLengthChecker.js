@@ -17,11 +17,7 @@ define(
         function check(value, schema) {
             var maxLength = schema[2].maxLength;
 
-            if (value && value.length > maxLength) {
-                return false;
-            }
-
-            return true;
+            return !(value && value.length > maxLength);
         }
 
         return checker;

@@ -21,11 +21,7 @@ define(
 
             var max = schema[2].max;
 
-            if (value > max) {
-                return false;
-            }
-
-            return true;
+            return value <= max;
         }
 
         return checker;

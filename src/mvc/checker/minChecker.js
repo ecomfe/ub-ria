@@ -21,11 +21,7 @@ define(
 
             var min = schema[2].min;
 
-            if (value < min) {
-                return false;
-            }
-
-            return true;
+            return value >= min;
         }
         
         return checker;

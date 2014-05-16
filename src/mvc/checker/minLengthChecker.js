@@ -16,11 +16,7 @@ define(
         function check(value, schema) {
             var minLength = schema[2].minLength;
 
-            if (value && value.length < minLength) {
-                return false;
-            }
-
-            return true;
+            return !(value && value.length < minLength);
         }
         
         return checker;

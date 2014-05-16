@@ -21,11 +21,7 @@ define(
 
             var regex = new RegExp(schema[2].pattern);
 
-            if (!regex.test(value)) {
-                return false;
-            }
-
-            return true;
+            return regex.test(value);
         }
         
         return checker;
