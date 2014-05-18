@@ -1,0 +1,439 @@
+// 针对产品线统一化规范对esui-flat-theme变量的重赋值
+
+/** Button Begin **/
+// 产品线内统一
+@Button-border-style: solid;
+@Button-border-width: 1px;
+@Button-radius: 0;
+@Button-font-size: 13px;
+@Button-padding: 0 15px;
+@Button-height: 35px - 2 * @Button-border-width;
+
+// 系统内自定
+@Button-background: #6dcec0;
+@Button-color: #fff;
+@Button-border-color: @Button-background;
+
+@Button-background-hover: #72dccd;
+@Button-color-hover: @Button-color;
+@Button-border-color-hover: @Button-background-hover;
+
+@Button-background-active: #65cabd;
+@Button-color-active: @Button-color;
+@Button-border-color-active: #46B3A5 #59C0B2 #66C9BB;
+
+@Button-background-disabled: #eaeaea;
+@Button-color-disabled: #656565;
+@Button-border-color-disabled: @Button-background-disabled;
+/** Button End **/
+
+/** Select Begin **/
+// 产品线内统一
+@Select-font-color: #666;
+@Select-border: none;
+@Select-height: 12px;
+@Select-width: auto;
+@Select-height: 12px;
+@Select-padding: 0 18px 0 20px;
+
+@Select-arrow-icon-width: 9px;
+@Select-arrow-icon-height: 5px;
+@Select-arrow-icon: url(../img/esui-combo-arrow-normal.png);
+@Select-arrow-icon-hover: url(../img/esui-combo-arrow-hover.png);
+@Select-arrow-icon-active: url(../img/esui-combo-arrow-active.png);
+@Select-arrow-icon-disabled: url(../img/esui-combo-arrow-normal.png);
+
+//layer
+@Select-layer-split-border: 0;
+@Select-layer-background: #f7f7f7;
+@Select-item-color: #666;
+@Select-item-height: 30px;
+@Select-item-background-hover: #f1f1f1;
+@Select-item-background-selected: #fffaee;
+
+// 系统自定
+@Select-background-color: transparent;
+@Select-background-color-hover: transparent;
+@Select-background-color-active: transparent;
+@Select-background-color-disabled: transparent;
+/** Select End **/
+
+
+/** TextBox Begin **/
+// 产品线内统一
+@TextBox-border: 1px solid #ddd;
+@TextBox-width: 240px;
+@TextBox-input-height: 28px;
+@TextBox-color : #333;
+@TextBox-background: #fff;
+
+@TextBox-hint-background: #f7f7f7;
+@TextBox-hint-border: @TextBox-border;
+
+// 系统自定
+@TextBox-border-hover: 1px solid #65cabd;
+/** TextBox End **/
+
+
+/** Searchbox Begin **/
+// 产品线内统一
+@Searchbox-search-icon-img: url(../img/esui-search-normal.png);
+@Searchbox-search-icon-img-active: url(../img/esui-search-active.png);
+@Searchbox-search-icon-img-width: 15px;
+@Searchbox-search-icon-img-height: 15px;
+@Searchbox-search-icon-width: 25px;
+@Searchbox-search-icon-height: 25px;
+
+@Searchbox-2x-search-icon-background-image: url(../img/search@2x.png);
+@Searchbox-2x-search-icon-background-size: 15px 50px;
+
+@Searchbox-border: 1px solid #ddd;
+@SearchBox-height: 23px;
+
+// 系统自定
+@Searchbox-hover-border: 1px solid #65cabd;
+@Searchbox-focus-border: 1px solid #65cabd;
+/** Searchbox End **/
+
+
+/** Table Begin **/
+// 产品线内统一
+@Table-font-color: #555;
+
+@Table-head-background-color: #f7f7f7;
+@Table-head-border-lr-color: @Table-head-background-color;
+@Table-head-border-top-color: @Table-head-background-color;
+@Table-head-border-bottom-color: @Table-head-background-color;
+@Table-head-font-weight: normal;
+@Table-head-font-color: @Table-font-color;
+@Table-hcell-border-color: @Table-head-background-color;
+
+@Table-hcell-text-height: 35px;
+@Table-hcell-text-padding: 0 8px;
+ 
+
+/* 表头单元格提示 */
+@Table-hcell-tip-margin: 0 4px 0 0;
+
+/* 表头单元格排序标识 */
+@Table-sort-icon-margin: 2px 0 0 2px;
+@Table-sort-icon-height: 10px;
+@Table-sort-icon-width: 7px;
+@Table-hcell-sort-hover-background: #FDE8C4;
+
+
+@Table-body-background: #fff;
+@Table-body-border-color: @Table-body-background;
+@Table-row-background: @Table-body-background;
+@Table-row-background-hover: #fffbed;
+@Table-row-border-color: #f0f0f0;
+
+@Table-row-background-selected: #f0f0f0;
+@Table-row-background-unfolded: #f0f0f0;
+@Table-subrow-background: #FFF9EE;
+@Table-subrow-border-color: #ddd;
+@Table-subrow-padding: 1px 0 0 36px;
+
+@Table-cell-border-color: @Table-row-background;
+@Table-cell-border-color-hover: @Table-row-background-hover;
+
+@Table-cell-height: 28px;
+@Table-cell-padding: 4px 8px;
+@Table-cell-head-padding: 12px;
+@Table-cell-tail-padding: 12px;
+
+@Table-cell-sel-padding: 3px 8px 0;
+@Table-cell-sel-padding-IE: 0 4px;
+
+@Table-foot-background: @Table-head-background-color;
+@Table-foot-border-color: @Table-body-border-color;
+@Table-footcell-border-color: @Table-cell-border-color;
+
+
+/* 拖拽显示的竖线 */
+@Table-mark-height: 400px;
+@Table-mark-background: #000;
+
+@Table-scrollX-height: 20px;
+
+@Table-subentry-icon-width: 7px;
+@Table-subentry-icon-height: 7px;
+@Table-subentry-icon-img-width: 5px;
+@Table-subentry-icon-img-height: 7px;
+@Table-subentry-icon: url(../img/esui-open-icon.png);
+
+@Table-subentry-icon-img-width-open: 7px;
+@Table-subentry-icon-img-height-open: 5px;
+@Table-subentry-icon-open: url(../img/esui-close-icon.png);
+
+@Table-subentry-icon-img-width-hover: 5px;
+@Table-subentry-icon-img-height-hover: 7px;
+@Table-subentry-icon-hover: url(../img/esui-open-icon.png);
+
+@Table-subentry-icon-img-width-opened-hover: 7px;
+@Table-subentry-icon-img-height-opened-hover: 5px;
+@Table-subentry-icon-opened-hover: url(../img/esui-close-icon.png);
+
+// 系统自定
+/** Table End **/
+
+
+/** Dialog Begin **/
+// 产品线内统一
+@Dialog-background: #fff;
+@Dialog-border: 1px solid #ddd;
+@Dialog-width: 470px;
+
+@Dialog-head-background: @Dialog-background;
+@Dialog-color: #333;
+@Dialog-head-height: 43px;
+
+@Dialog-title-padding: 0 0 0 15px;
+@Dialog-title-font-size: 14px;
+@Dialog-title-height: @Dialog-head-height;
+
+@Dialog-close-icon-image: url(../img/esui-dialog-head-close.png);
+@Dialog-close-icon-height: 13px;
+@Dialog-close-icon-width: 13px;
+@Dialog-close-icon-right: 15px;
+@Dialog-close-icon-top: 15px;
+
+@Dialog-body-padding: 5px 25px;
+
+@Dialog-foot-panel-padding: 25px 30px;
+
+@Dialog-foot-button-align: left;
+
+// 系统自定
+/** Dialog End **/
+
+
+/** Pager Begin **/
+// 产品线内统一
+@Pager-margin: 14px;
+@Pager-height: 18px;
+@Pager-color: #666;
+@Pager-padding: 0 20px;
+
+@Pager-select-background-color: transparent;
+@Pager-select-icon: url(../img/esui-combo-arrow.png);
+
+@Pager-item-background: transparent;
+@Pager-item-border: 0;
+@Pager-item-width: @Pager-height;
+@Pager-item-height: @Pager-item-width;
+@Pager-item-current-background: #cacaca;
+@Pager-item-current-color: #fff;
+
+// 系统自定
+/** Pager End **/
+
+
+/** Tree Begin **/
+// 产品线内统一
+@Tree-node-line-height: 35px;
+
+@Tree-node-indicator-icon-height-collapsed: 7px;
+@Tree-node-indicator-icon-width-collapsed: 5px;
+@Tree-node-indicator-icon-collapsed: url(../img/esui-open-icon.png);
+
+@Tree-node-indicator-icon-height-expanded: 5px;
+@Tree-node-indicator-icon-width-expanded: 7px;
+@Tree-node-indicator-icon-expanded: url(../img/esui-close-icon.png);
+
+@Tree-node-indicator-height: 7px;
+@Tree-node-indicator-width: 7px;
+@Tree-node-indicator-margin: 14px 9px 14px 4px;
+
+// TODO：这里应该也开放出来同形式的变量
+@Tree-node-indicator-empty-background: none;
+@Tree-node-indicator-previous-background: none;
+@Tree-node-indicator-far-previous-background: none;
+
+@Tree-node-item-font-color: #666;
+
+
+// 选中的节点
+@Tree-node-wrapper-background-selected: #fffaee;
+@Tree-node-item-font-color-selected: #333;
+@Tree-node-item-icon-selected: none;
+// 悬浮的节点
+@Tree-node-wrapper-background-hover: #fffaee;
+@Tree-node-item-font-color-hover: #333;
+@Tree-node-item-icon-hover: none;
+
+// 系统自定
+
+/** Tree End **/
+
+
+/** MonthView Begin **/
+// 产品线统一
+@Montview-month-item-width: 30px;
+@Montview-month-item-height: 30px;
+
+@Monthview-background: #fff;
+@Monthview-border: 1px solid #e1e1e1;
+
+@Monthview-head-button-width: 21px;
+@Monthview-head-button-height: 21px;
+@Monthview-head-button-icon-width: 5px;
+@Monthview-head-button-icon-height: 9px;
+
+@Monthview-month-border: none;
+
+@Monthview-month-title-background: #f6f6f6;
+@Monthview-month-title-color: #666;
+@Monthview-month-title-background-selected: #CCCED4;
+
+@Monthview-month-item-color: #333;
+@Monthview-month-item-border: 1px solid #fff;
+
+@Monthview-month-item-background-selected: none; 
+@Monthview-month-item-color-virtual: #999;
+@Monthview-month-item-background-virtual: none;
+@Monthview-month-item-background-disabled: none;
+@Monthview-month-item-color-disabled: #999;
+
+@Monthview-month-row-select-background: #fffbed;
+@Monthview-month-row-select-background-selected: #fffbed;
+
+
+@Monthview-back-button-background: url(../img/esui-monthview-prev-icon.png);
+/** TODO: 变量名修改，需做兼容 **/
+@Monthview-back-button-background-active: url(../img/esui-monthview-prev-icon-active.png);
+@Monthview-back-button-background-disabled: url(../img/esui-monthview-prev-icon-disable.png);
+
+@Monthview-forward-button-background: url(../img/esui-monthview-next-icon.png);
+/** TODO: 变量名修改，需做兼容 **/
+@Monthview-forward-button-background-active: url(../img/esui-monthview-next-icon-active.png);
+@Monthview-forward-button-background-disabled: url(../img/esui-monthview-next-icon-disable.png);
+
+@Monthview-select-background: #fff;
+@Monthview-select-icon: url(../img/esui-monthview-select-icon.png);
+
+@Monthview-select-background-hover: #fff;
+@Monthview-select-icon-hover: url(../img/esui-monthview-select-icon-active.png);
+
+@Monthview-select-background-active: #fff;
+@Monthview-select-icon-active: url(../img/esui-monthview-select-icon-active.png);
+
+@Monthview-select-icon-height: 5px;
+@Monthview-select-icon-width: 9px;
+
+@Monthview-select-height: 21px;
+@Monthview-year-select-width: 56px;
+@Monthview-year-select-margin: 3px 6px 0;
+@Monthview-month-select-width: 40px;
+@Monthview-month-select-margin: 3px 6px 0;
+@MonthView-select-layer-background: #efefef;
+
+// 系统自定
+@Monthview-head-background: #e1f5f1;
+@Monthview-month-item-background-hover: #e2f4ef;
+@Monthview-month-item-color-selected: #68c1a4;
+
+/** MonthView End **/
+
+
+/** Calendar Begin **/
+// 产品线内统一
+@Calendar-border: none;
+@Calendar-border-radius: 0;
+@Calendar-background: #fff;
+@Calendar-color: #333;
+
+@Calendar-arrow-icon-background: url(../img/esui-cal.png);
+@Calendar-arrow-icon-height: 16px;
+@Calendar-arrow-icon-width: 16px;
+
+// 系统自定
+@Calendar-border-color-hover: #a9adb6;
+/** Calendar End **/
+
+
+
+/** RangeCalendar Begin **/
+// 产品线内统一
+@RangeCalendar-main-background: none repeat scroll 0 0 transparent;
+@RangeCalendar-main-border: none;
+@RangeCalendar-main-border-radius: 0;
+@RangeCalendar-main-width: 220px;
+@RangeCalendar-main-height: 55px;
+@RangeCalendar-main-font-size: 12px;
+@RangeCalendar-main-font-color: #666;
+@RangeCalendar-main-hover-border-color: none;
+@RangeCalendar-month-item-color-highlight: #fffbed;
+
+@RangeCalendar-arrow-icon: url(../img/esui-monthview-select-icon.png);
+@RangeCalendar-arrow-icon-active: url(../img/esui-monthview-select-icon-active.png);
+@RangeCalendar-arrow-icon-width: 9px;
+@RangeCalendar-arrow-icon-height: 5px;
+
+@RangeCalendar-layer-background: #f6f6f6;
+@RangeCalendar-layer-border-top-color: #dfdfdf;
+@RangeCalendar-layer-border-top: 3px solid @RangeCalendar-layer-border-top-color;
+@RangeCalendar-layer-border-bottom: none;
+@RangeCalendar-layer-border-left: none;
+@RangeCalendar-layer-border-right: none;
+@RangeCalendar-layer-padding: 11px;
+
+@RangeCalendar-layer-close-icon: url(../img/esui-rangecalendar-layer-close-icon.png);
+@RangeCalendar-layer-close-icon-width: 10px;
+@RangeCalendar-layer-close-icon-height: 10px;
+
+
+// 系统自定
+@RangeCalendar-shortcut-item-color: #68c1a6;
+@RangeCalendar-link-text-color: #66c4a5;
+@RangeCalendar-link-text-color-hover: #74dcce;
+/** RangeCalendar End **/
+
+/** Tip Begin **/
+@Tip-icon: url(../img/esui-tip.png);
+@Tip-icon-width: 15px;
+@Tip-icon-height: 16px;
+/** Tip End **/
+
+/** TipLayer Begin **/
+@TipLayer-background: #FFF3D9;
+@TipLayer-font-color: #555;
+
+@TipLayer-border-color: #D9CBA8;
+@TipLayer-border-width: 1px;
+@TipLayer-border-style: solid;
+@TipLayer-border: @TipLayer-border-width @TipLayer-border-style @TipLayer-border-color;
+
+@TipLayer-padding: 10px;
+
+@TipLayer-arrow-width-lr: 6px;
+@TipLayer-arrow-height-lr: 9px;
+@TipLayer-arrow-width-tb: 9px;
+@TipLayer-arrow-height-tb: 6px;
+
+@TipLayer-arrow-top-lr: 2px;
+@TipLayer-arrow-bottom-lr: 2px;
+
+@TipLayer-arrow-left-tb: 2px;
+@TipLayer-arrow-right-tb: 2px;
+
+@TipLayer-arrow-icon-tl: url(../img/tip-arrow-down.png);
+@TipLayer-arrow-icon-tr: url(../img/tip-arrow-down.png);
+@TipLayer-arrow-icon-bl: url(../img/tip-arrow-up.png);
+@TipLayer-arrow-icon-br: url(../img/tip-arrow-up.png);
+@TipLayer-arrow-icon-lt: url(../img/tip-arrow-right.png);
+@TipLayer-arrow-icon-lb: url(../img/tip-arrow-right.png);
+@TipLayer-arrow-icon-rt: url(../img/tip-arrow-left.png);
+@TipLayer-arrow-icon-rb: url(../img/tip-arrow-left.png);
+
+@TipLayer-title-padding: 0px;
+@TipLayer-title-margin: .5em 0;
+@TipLayer-title-font-size: 12px;
+@TipLayer-title-line-height: 18px;
+
+@TipLayer-body-padding: 0px;
+@TipLayer-body-margin: 0 0 5px;
+@TipLayer-body-font-size: 12px;
+@TipLayer-body-line-height: 18px;
+
+/** TipLayer End **/
