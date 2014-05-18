@@ -12,6 +12,7 @@ define(
         var u = require('underscore');
         var util = require('er/util');
         var SingleEntityModel = require('./SingleEntityModel');
+        var Deferred = require('er/Deferred');
 
         /**
          * 表单数据模型基类
@@ -50,13 +51,21 @@ define(
         };
 
         /**
-         * 检验实体有效性
-         *
-         * @param {Object} entity 提交的实体
-         * @return {meta.FieldError[] | true} 返回`true`则验证通过，否则返回错误集合
+         * 为FormModel对象添加validator的函数，需要被重写
+         *  XXXModel.prototype.initEntityValidator = function() {
+         *      FormModel.prototype.initEntityValidator.apply(this, arguments);
+
+         *      var schema = require('./schema');
+         *      this.validator.set('schema', schema);
+         *  }
+         * 
          */
-        FormModel.prototype.validateEntity = function (entity) {
-            return true;
+        FormModel.prototype.initEntityValidator = function () {
+            var rule = this.model.get('rule');
+            var EntityValidator = require('./EntityValidator');
+            
+            this.validator = new EntityValidator();
+            this.validator.setRule(rule);
         };
 
         /**
@@ -76,7 +85,19 @@ define(
                     'No save method implemented on default data object');
             }
 
-            return data.save(entity);
+            entity = this.fillEntity(entity);
+
+            if (!this.validator) {
+                this.initEntityValidator();
+            }
+
+            var result = this.validator.validate(entity);
+
+            if (result.length > 0) {
+                return Deferred.rejected({ fields: result });
+            }
+
+            return data.save(); 
         };
 
         /**
@@ -96,10 +117,22 @@ define(
                     'No update method implemented on default data object');
             }
 
+            entity = this.fillEntity(entity);
+
             // 更新默认加上id
             entity.id = this.get('id');
 
-            return data.update(entity);
+            if (!this.validator) {
+                this.initEntityValidator();
+            }
+
+            var result = this.validator.validate(entity);
+
+            if (result.length > 0) {
+                return Deferred.rejected({ fields: result });
+            }
+
+            return data.update();  
         };
 
         return FormModel;
