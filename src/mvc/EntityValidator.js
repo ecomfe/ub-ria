@@ -402,9 +402,9 @@ define(
             }
 
             // maxLength、minLength同时存在的情况下使用rangeLength检验器
-            addRangeChecker(checkerNames, 'rangeLength', 'minLength', 'maxLength');
+            checkerNames = addRangeChecker(checkerNames, 'rangeLength', 'minLength', 'maxLength');
             // max、min同时存在的情况下使用range检验器
-            addRangeChecker(checkerNames, 'range', 'min', 'max');
+            checkerNames = addRangeChecker(checkerNames, 'range', 'min', 'max');
 
             return checkerNames;
         }
@@ -415,6 +415,7 @@ define(
          * @param {string} range 上下界检查器名
          * @param {string} min 下界检查器名
          * @param {string} max 上界检查器名
+         * @return {string[]} 返回经过处理的新数组
          * @ignore
          */
         function addRangeChecker(list, range, min, max) {
@@ -424,6 +425,8 @@ define(
                 list = u.without(list, min, max);
                 list.push(range);
             }
+
+            return list;
         }
 
         return EntityValidator;

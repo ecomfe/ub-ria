@@ -18,6 +18,12 @@ define(
             var minLength = schema[2].minLength;
             var maxLength = schema[2].maxLength;
 
+            if (maxLength < minLength) {
+                var temp = maxLength;
+                maxLength = minLength;
+                minLength = temp;
+            }
+
             return !value || (value.length >= minLength && value.length <= maxLength);
         }
         

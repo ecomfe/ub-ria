@@ -23,6 +23,12 @@ define(
             var min = schema[2].min;
             var max = schema[2].max;
 
+            if (max < min) {
+                var temp = max;
+                max = min;
+                min = temp;
+            }
+            
             return value >= min && value <= max;
         }
         
