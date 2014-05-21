@@ -25,10 +25,11 @@ define(
          * 如可以根据当前对象的`entityName`属性为请求名称加上前缀等
          *
          * @param {string} name 当前请求的名称
+         * @param {Object} options 请求的配置，此配置为调用{@link mvc.RequestManager#request}时提供的初始配置
          * @return {string}
          * @protected
          */
-        RequestStrategy.prototype.formatName = function (name) {
+        RequestStrategy.prototype.formatName = function (name, options) {
             return name;
         };
 
@@ -37,10 +38,11 @@ define(
          * 如可以根据当前对象的`entityName`来生成通用的URL等
          *
          * @param {string} url 当前请求的URL
+         * @param {Object} options 请求的配置，此配置为已经被处理过的完整的配置
          * @return {string}
          * @protected
          */
-        RequestStrategy.prototype.formatURL = function (url) {
+        RequestStrategy.prototype.formatURL = function (url, options) {
             return url;
         };
 

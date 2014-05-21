@@ -199,7 +199,7 @@ define(
                 name = null;
             }
 
-            name = strategy.formatName(name);
+            name = strategy.formatName(name, options);
 
             // 查找已经有的请求配置，如果存在的话需要把`options`进行合并
             var config = lookupRequestConfig(this, name);
@@ -225,7 +225,7 @@ define(
             };
 
             if (request.options.url) {
-                request.options.url = strategy.formatURL(request.options.url);
+                request.options.url = strategy.formatURL(request.options.url, request.options);
             }
 
             return request;
