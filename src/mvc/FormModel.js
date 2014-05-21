@@ -9,7 +9,6 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
         var util = require('er/util');
         var SingleEntityModel = require('./SingleEntityModel');
         var Deferred = require('er/Deferred');
@@ -26,20 +25,6 @@ define(
 
         util.inherits(FormModel, SingleEntityModel);
 
-        var datasource = require('er/datasource');
-        var defaultDatasource = {
-            rule: datasource.constant(require('./rule'))
-        };
-
-        /**
-         * 默认数据源配置
-         *
-         * @param {Object}
-         * @override
-         */
-        FormModel.prototype.defaultDatasource = u.extend(
-            defaultDatasource, SingleEntityModel.prototype.defaultDatasource);
-
         /**
          * 检查实体数据完整性，可在此补充一些视图无法提供的属性
          *
@@ -52,18 +37,19 @@ define(
 
         /**
          * 为FormModel对象添加validator的函数，需要被重写
-         *  XXXModel.prototype.initEntityValidator = function() {
-         *      FormModel.prototype.initEntityValidator.apply(this, arguments);
-
-         *      var schema = require('./schema');
-         *      this.validator.set('schema', schema);
-         *  }
-         * 
+         *
+         *    XxxModel.prototype.initEntityValidator = function() {
+         *        FormModel.prototype.initEntityValidator.apply(this, arguments);
+         *
+         *        var schema = require('./schema');
+         *        this.validator.set('schema', schema);
+         *    }
+         *
          */
         FormModel.prototype.initEntityValidator = function () {
             var rule = this.model.get('rule');
             var EntityValidator = require('./EntityValidator');
-            
+
             this.validator = new EntityValidator();
             this.validator.setRule(rule);
         };
@@ -77,12 +63,10 @@ define(
         FormModel.prototype.save = function (entity) {
             var data = this.data();
             if (!data) {
-                throw new Error(
-                    'No default data object attached to this Model');
+                throw new Error('No default data object attached to this Model');
             }
             if (typeof data.save !== 'function') {
-                throw new Error(
-                    'No save method implemented on default data object');
+                throw new Error('No save method implemented on default data object');
             }
 
             entity = this.fillEntity(entity);
@@ -97,7 +81,7 @@ define(
                 return Deferred.rejected({ fields: result });
             }
 
-            return data.save(); 
+            return data.save();
         };
 
         /**
@@ -109,12 +93,10 @@ define(
         FormModel.prototype.update = function (entity) {
             var data = this.data();
             if (!data) {
-                throw new Error(
-                    'No default data object attached to this Model');
+                throw new Error('No default data object attached to this Model');
             }
             if (typeof data.update !== 'function') {
-                throw new Error(
-                    'No update method implemented on default data object');
+                throw new Error('No update method implemented on default data object');
             }
 
             entity = this.fillEntity(entity);
@@ -132,7 +114,7 @@ define(
                 return Deferred.rejected({ fields: result });
             }
 
-            return data.update();  
+            return data.update();
         };
 
         return FormModel;

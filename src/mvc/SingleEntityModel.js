@@ -14,18 +14,6 @@ define(
         var BaseModel = require('./BaseModel');
 
         /**
-         * 以单个实体为主要数据源的页面的数据模型基类
-         *
-         * @extends BaseModel
-         * @constructor
-         */
-        function SingleEntityModel() {
-            BaseModel.apply(this, arguments);
-        }
-
-        util.inherits(SingleEntityModel, BaseModel);
-
-        /**
          * 把实体信息展开到`Model`自身上，以便直接访问到某些属性
          *
          * @param {Object} entity 加载来的实体信息
@@ -38,14 +26,7 @@ define(
             return entity;
         }
 
-        /**
-         * 默认数据源配置
-         *
-         * 为了方便子类覆盖或者串行加载时放在指定位置，暴露到外面
-         *
-         * @param {Object}
-         */
-        SingleEntityModel.prototype.defaultDatasource = {
+        var ENTITY_DATASOURCE = {
             entity: function (model) {
                 // 如新建页之类的是不需要这个实体的，因此通过是否有固定的`id`字段来判断
                 var id = model.get('id');
@@ -69,6 +50,20 @@ define(
         };
 
         /**
+         * 以单个实体为主要数据源的页面的数据模型基类
+         *
+         * @extends BaseModel
+         * @constructor
+         */
+        function SingleEntityModel() {
+            BaseModel.apply(this, arguments);
+
+            this.putDatasource(ENTITY_DATASOURCE);
+        }
+
+        util.inherits(SingleEntityModel, BaseModel);
+
+        /**
          * 根据id获取实体
          *
          * @param {string | number} id 实体的id
@@ -77,12 +72,10 @@ define(
         SingleEntityModel.prototype.findById = function (id) {
             var data = this.data();
             if (!data) {
-                throw new Error(
-                    'No default data object attached to this Model');
+                throw new Error('No default data object attached to this Model');
             }
             if (typeof data.findById !== 'function') {
-                throw new Error(
-                    'No findById method implemented on default data object');
+                throw new Error('No findById method implemented on default data object');
             }
 
             return data.findById(id);
