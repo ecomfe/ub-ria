@@ -226,7 +226,7 @@ define(
          */
         util.pad = function (s, padding, length) {
             s = s + '';
-            var padLength = s.length - length;
+            var padLength = length - s.length;
             if (padLength > 0) {
                 var left = new Array(padLength + 1).join(padding);
                 return left + s;
@@ -246,7 +246,7 @@ define(
          */
         util.padRight = function (s, padding, length) {
             s = s + '';
-            var padLength = s.length - length;
+            var padLength = length - s.length;
             if (padLength > 0) {
                 var right = new Array(padLength + 1).join(padding);
                 return s + right;
