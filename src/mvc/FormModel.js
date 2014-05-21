@@ -55,6 +55,20 @@ define(
         };
 
         /**
+         * 校验实体
+         *
+         * @param {Object} entity 需要校验的实体
+         * @return {Object[]}
+         */
+        FormModel.prototype.validateEntity = function (entity) {
+            if (!this.validator) {
+                this.initEntityValidator();
+            }
+
+            return this.validator.validate(entity);
+        };
+
+        /**
          * 保存新建的实体
          *
          * @param {Object} 新建的实体对象
@@ -71,14 +85,10 @@ define(
 
             entity = this.fillEntity(entity);
 
-            if (!this.validator) {
-                this.initEntityValidator();
-            }
+            var validationResult = this.validateEntity(entity);
 
-            var result = this.validator.validate(entity);
-
-            if (result.length > 0) {
-                return Deferred.rejected({ fields: result });
+            if (validationResult.length > 0) {
+                return Deferred.rejected({ fields: validationResult });
             }
 
             return data.save();
@@ -104,14 +114,10 @@ define(
             // 更新默认加上id
             entity.id = this.get('id');
 
-            if (!this.validator) {
-                this.initEntityValidator();
-            }
+            var validationResult = this.validateEntity(entity);
 
-            var result = this.validator.validate(entity);
-
-            if (result.length > 0) {
-                return Deferred.rejected({ fields: result });
+            if (validationResult.length > 0) {
+                return Deferred.rejected({ fields: validationResult });
             }
 
             return data.update();
