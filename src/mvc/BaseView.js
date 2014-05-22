@@ -13,6 +13,8 @@ define(
         var u = require('underscore');
         var UIView = require('ef/UIView');
 
+        require('esui/Toast');
+
         /**
          * 视图基类
          *
