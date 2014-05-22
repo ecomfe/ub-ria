@@ -102,18 +102,28 @@ define(
          * @param {Object} entity 提交成功后返回的实体
          */
         FormAction.prototype.handleSubmitResult = function (entity) {
-            // 默认成功后跳转回列表页
-            var toast = this.getToastMessage(entity);
-            if (toast) {
-                this.view.showToast(toast);
-            }
+            this.notifySubmitSuccess(entity);
 
+            // 默认成功后跳转回列表页
             var entitySaveEvent = this.fire('entitysave', { entity: entity });
             var handleFinishEvent = this.fire('handlefinish');
             if (!entitySaveEvent.isDefaultPrevented()
                 && !handleFinishEvent.isDefaultPrevented()
             ) {
                 this.redirectAfterSubmit(entity);
+            }
+        };
+
+        /**
+         * 提示用户表单提交成功
+         *
+         * @param {Object} entity 提交成功后返回的实体
+         */
+        FormAction.prototype.notifySubmitSuccess = function (entity) {
+
+            var toast = this.getToastMessage(entity);
+            if (toast) {
+                this.view.showToast(toast);
             }
         };
 
@@ -234,7 +244,7 @@ define(
 
         /**
          * 判断表单信息是否被更改，默认返回false
-         
+
          * @param {Object} initialFormData model中保存的表单初始数据
          * @return {Boolean}
          */
