@@ -36,22 +36,21 @@ define(
         };
 
         /**
-         * 为FormModel对象添加validator的函数，需要被重写
+         * 设置当前对象关联的{@link mvc.EntityValidator}实例
          *
-         *    XxxModel.prototype.initEntityValidator = function() {
-         *        FormModel.prototype.initEntityValidator.apply(this, arguments);
-         *
-         *        var schema = require('./schema');
-         *        this.validator.set('schema', schema);
-         *    }
-         *
+         * @param {mvc.EntityValidator} 关联的实例
          */
-        FormModel.prototype.initEntityValidator = function () {
-            var rule = this.model.get('rule');
-            var EntityValidator = require('./EntityValidator');
+        FormModel.prototype.setValidator = function (validator) {
+            this.validator = validator;
+        };
 
-            this.validator = new EntityValidator();
-            this.validator.setRule(rule);
+        /**
+         * 获取当前对象关联的{@link mvc.EntityValidator}实例
+         *
+         * @return {mvc.EntityValidator}
+         */
+        FormModel.prototype.getValidator = function () {
+            return this.validator;
         };
 
         /**
@@ -61,11 +60,12 @@ define(
          * @return {Object[]}
          */
         FormModel.prototype.validateEntity = function (entity) {
-            if (!this.validator) {
-                this.initEntityValidator();
+            var validator = this.getValidator();
+            if (!validator) {
+                throw new Error('No validator object attached to this Model');
             }
 
-            return this.validator.validate(entity);
+            return validator.validate(entity);
         };
 
         /**
