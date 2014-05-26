@@ -181,8 +181,7 @@ define(
                 status: this.get('status'),
                 order: this.get('order'),
                 orderBy: this.get('orderBy'),
-                pageNo: this.get('page') || 1,
-                pageSize: this.getPageSize()
+                pageNo: this.get('page') || 1
             };
 
             // 调整“状态”属性
@@ -248,24 +247,6 @@ define(
                 throw new Error('No updatePageSize method implemented on global data object');
             }
             return data.updatePageSize(pageSize);
-        };
-
-        /**
-         * 更新全局每页显示条数
-         *
-         * @param {number} pageSize 每页显示条数
-         * @return {er.Promise}
-         * @abstract
-         */
-        ListModel.prototype.getPageSize = function () {
-            var data = this.data('global');
-            if (!data) {
-                throw new Error('No global data object attached to this Model');
-            }
-            if (typeof data.updatePageSize !== 'function') {
-                throw new Error('No updatePageSize method implemented on global data object');
-            }
-            return data.getPageSize();
         };
 
         /**
