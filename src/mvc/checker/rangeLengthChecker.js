@@ -3,7 +3,7 @@ define(
         var checker = {
             name: 'rangeLength',
             errorMessage: {
-                array: '${title}不能小于${minLength}个，且不能大于${maxLength}个',
+                array: '${title}不能小于${minLength}个，且不能超过${maxLength}个',
                 string: '${title}不能小于${minLength}个字符，且不能超过${maxLength}个字符'
             },
             priority: 20,
