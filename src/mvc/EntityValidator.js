@@ -78,7 +78,8 @@ define(
          *
          * @param {object} checker 要添加的自定义检验器
          * @param {string} checker.name 校验器名称
-         * @param {string} checker.errorMessage 错误信息模板
+         * @param {string | object} checker.errorMessage 错误信息模板,
+         *     或者多个错误信息模板组成的对象
          * @param {number} checker.priority 校验器优先级
          * @param {function} checker.check 校验函数
          * @return {object} 添加成功返回checker，失败返回null 
@@ -255,7 +256,17 @@ define(
                 var result = checker.check(value, fieldSchema);
 
                 if (!result) {
-                    var errorMessage = getErrorMessage(checker.errorMessage, fieldSchema);
+                    var messageTemplate = checker.errorMessage;
+                    // 处理同一个checker检查不同类型字段时错误消息模版不同的情况
+                    if (typeof messageTemplate === 'object') {
+                        messageTemplate = messageTemplate[fieldSchema[0]]
+                    }
+
+                    if (!u.isString(messageTemplate)) {
+                        throw new Error('未找到对应错误信息模板');
+                    }
+
+                    var errorMessage = getErrorMessage(messageTemplate, fieldSchema);
                     var error = {
                         field: fieldPath,
                         message: errorMessage
