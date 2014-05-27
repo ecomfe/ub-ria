@@ -12,6 +12,15 @@ define(
         var etpl = require('etpl');
         var template = etpl;
 
+        // 添加一堆`filter`用用
+        var util = require('./util');
+        template.addFilter('trim', util.trim);
+        template.addFilter('pascalize', util.pascalize);
+        template.addFilter('camelize', util.camelize);
+        template.addFilter('dasherize', util.dasherize);
+        template.addFilter('constlize', util.constlize);
+        template.addFilter('pluralize', util.pluralize);
+
         var controlModulePrefix = {
             // Sidebar不使用esui的，那个不大符合要求
             BoxGroup: 'esui',
