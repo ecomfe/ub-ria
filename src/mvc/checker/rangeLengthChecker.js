@@ -27,7 +27,7 @@ define(
                 minLength = temp;
             }
 
-            return !value || value.length == 0 || (value.length >= minLength && value.length <= maxLength);
+            return !value || value.length === 0 || (value.length >= minLength && value.length <= maxLength);
         }
         
         return checker;
