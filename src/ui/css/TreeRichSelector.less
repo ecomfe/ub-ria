@@ -1,19 +1,24 @@
-@TreeRichSelector-treeItem-bacground-hover: transparent;
 .ui-tree-richselector {
     .ui-richselector-query-list {
+        // 第一个indicator不占位
+        .ui-tree-hide-root {
+            .ui-tree-root {
+                .ui-tree-content-wrapper {
+                    .ui-tree-node-indicator-level-0 {
+                        margin: 0;
+                        width: 0;
+                    }
+                }
+            }
+        }
         .ui-tree-content-wrapper {
             border-left: medium none;
-            padding: 0 5px;
+            padding: 0 10px;
             line-height: 35px;
             .clearfix();
             &:hover {
-                background: @TreeRichSelector-treeItem-bacground-hover;
+                background: transparent;
             }
-        }
-
-        .ui-tree-node-indicator {
-            float: left;
-            margin-top: 5px;
         }
 
         .ui-tree-item-content {
@@ -34,10 +39,6 @@
                 color: #333;
             }
         }
-    }
-
-    &.ui-richselector-load {
-
     }
 }
 
