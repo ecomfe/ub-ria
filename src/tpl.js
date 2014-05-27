@@ -59,7 +59,11 @@ define(
             Uploader: 'ub-ria/ui',
             RichSelector: 'ub-ria/ui',
             TableRichSelector: 'ub-ria/ui',
-            TreeRichSelector: 'ub-ria/ui'
+            SelectorTreeStrategy: 'ub-ria/ui',
+            TreeRichSelector: 'ub-ria/ui',
+            AbstractBoxGroup: 'ub-ria/ui',
+            Sidebar: 'ub-ria/ui',
+            PartialForm: 'ub-ria/ui'
         };
 
         var extensionModulePrefix = {
