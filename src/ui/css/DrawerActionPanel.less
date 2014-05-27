@@ -1,0 +1,27 @@
+.ui-draweractionpanel {
+    position:absolute;
+    top: 0;
+    width: 0;
+    right: 0;
+    z-index: 1000;
+    background: #fff;
+    
+}
+
+.ui-draweractionpanel-transition {
+    transition:width 500ms;
+}
+
+.ui-draweractionpanel-mask {
+    .ui-dialog-mask-mixin();
+}
+
+.ui-draweractionpanel-close-btn {
+    .background("@{UiImgUrl}/esui-dialog-head-close.png");
+    height: 13px;
+    width: 13px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    cursor: pointer;
+}
