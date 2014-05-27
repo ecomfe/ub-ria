@@ -1,3 +1,8 @@
+.list-unstyled {
+  padding-left: 0;
+  list-style: none;
+}
+
 .ui-sidebar {
     border: 0;
     border-radius: 0;
@@ -12,10 +17,10 @@
 }
 
 .ui-sidebar-menu {
-    color: @color-dark;
+    color: #333;
     position: relative;
     a {
-        color: @color-dark;
+        color: #333;
         display: block;
     }
 }
@@ -27,7 +32,7 @@
 .ui-sidebar-subMenu {
     display: none;
     width: @sidebar-width;
-    background: #dddddd;
+    background: #ddd;
     z-index: 50;
     padding: 5px 0;
     a {
@@ -55,7 +60,7 @@
     line-height: 30px;
     display: block;
     &:hover {
-        background: @bg-gray-light;
+        background: #f3f5f4;
     }
 }
 
@@ -68,7 +73,7 @@
         top: @sidebar-menu-item-height/2 - 3px;
         right: 15px;
         cursor: pointer ;
-        background: url("@{UiImgUrl}/icons.png") 0 -358px no-repeat;
+        .normal-icon(url(../img/esui-open-icon.png), 7px, 7px);
     }
     .ui-sidebar-collapse & {
         .ui-sidebar-subMenu-dropdown {
@@ -79,12 +84,12 @@
 
 
 .ui-sidebar-menu-item-hover {
-    background: @bg-gray-light;
+    background: #f3f5f4;
 }
 
 .ui-sidebar-menu-item-opened {
     .ui-sidebar-subMenu-dropdown {
-        background-position: 0 -351px;
+        .normal-icon(url(../img/esui-close-icon.png), 7px, 7px);
         margin-top: -1px;
     }
 }
@@ -109,7 +114,7 @@
 
     .ui-sidebar-menu-item-active & {
         font-weight: bold;
-        color: @color-lightest;
+        color: #fff;
     }
 
     .ui-sidebar-collapse & {
@@ -133,7 +138,7 @@
         height: 0;
         border-style: solid;
         border-width: 5px 5px 5px 0;
-        border-color: transparent @bg-lightest transparent transparent;
+        border-color: transparent #fff transparent transparent;
         content: "";
         position: absolute;
         top: 50%;
