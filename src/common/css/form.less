@@ -1,5 +1,7 @@
+@form-field-line-height: 30px;
+
 .form-view .content-main {
-    background: none repeat scroll 0 0 #FFFFFF;
+    background: none repeat scroll 0 0 #fff;
     padding: 25px 30px;
 }
 
@@ -19,7 +21,7 @@
 }
 
 .form-section-title-hint {
-    color: #999999;
+    color: #999;
     font-size: 12px;
     padding: 0 8px;
     font-weight: normal;
@@ -37,20 +39,20 @@
     float: left;
     zoom: 1;
     width: 104px;
-    line-height: 30px;
+    line-height: @form-field-line-height;
     text-align: left;
     vertical-align: top;
 }
 
 .form-field-value {
-    line-height: 30px;
+    line-height: @form-field-line-height;
     float: left;
     padding-left: 8px;
 
-    .ui-textbox input,
-    .ui-textbox textarea {
-        font-size: 14px;
-    }
+    .ui-textbox {
+        input, textarea {
+            font-size: 14px;
+        }
 }
 
 .form-field-required .form-field-value {
