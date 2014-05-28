@@ -312,6 +312,9 @@ define(
         TreeRichSelector.prototype.selectItems =
             function (nodes, toBeSelected) {
                 var indexData = this.indexData;
+                if (!indexData) {
+                    return;
+                }
                 var control = this;
                 u.each(
                     nodes,

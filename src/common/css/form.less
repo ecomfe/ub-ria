@@ -1,8 +1,10 @@
 @form-field-line-height: 30px;
+@form-field-required-star-width: 12px;
 
 .form-view .content-main {
     background: none repeat scroll 0 0 #fff;
-    padding: 25px 30px;
+    padding: 25px 50px;
+    color: #656565;
 }
 
 .form-section {
@@ -30,7 +32,7 @@
 
 .form-field,
 .form-field-required {
-    margin: 15px 0;
+    margin: 30px 0;
     .clearfix();
     font-size: 14px;
 }
@@ -47,12 +49,13 @@
 .form-field-value {
     line-height: @form-field-line-height;
     float: left;
-    padding-left: 8px;
+    padding-left: @form-field-required-star-width;
 
     .ui-textbox {
         input, textarea {
             font-size: 14px;
         }
+    }
 }
 
 .form-field-required .form-field-value {
@@ -60,9 +63,9 @@
 }
 
 .form-field-value-required-star {
-    display: inline-block;
+    float: left;
     color: red;
-    width: 8px;
+    width: @form-field-required-star-width;
     text-align: left;
 }
 
@@ -76,9 +79,14 @@
     margin: 0 0 0 10px;
 }
 
+.form-submit-section {
+    border-top: 1px solid #EAEAEA;
+    margin: 0 0 0 30px;
+    padding-top: 20px;
 
-.form-submit-field {
-    margin: 60px 0 0;
+    .ui-button {
+        padding: 0 50px;
+    }
 }
 
 .form-notice-field {

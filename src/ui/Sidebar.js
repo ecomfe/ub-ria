@@ -320,7 +320,6 @@ define(
          * @protected
          */
         Sidebar.prototype.initStructure = function () {
-            debugger;
             // 只支持2种模式，要么全部从HTML中生成，要么全部从JS中生成，不支持混合
             buildDOMStructure(this);
 
