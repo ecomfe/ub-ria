@@ -91,7 +91,7 @@ define(
                 return Deferred.rejected({ fields: validationResult });
             }
 
-            return data.save();
+            return data.save(entity);
         };
 
         /**
@@ -120,7 +120,7 @@ define(
                 return Deferred.rejected({ fields: validationResult });
             }
 
-            return data.update();
+            return data.update(entity);
         };
 
         return FormModel;
