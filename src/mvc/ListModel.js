@@ -13,6 +13,39 @@ define(
         var util = require('er/util');
         var u = require('underscore');
 
+        // 加载列表
+        var LIST_DATASOURCE = {
+            list: {
+                retrieve: function (model) {
+                    var query = model.getQuery();
+                    query = require('../util').purify(query, null, true);
+
+                    return model.search(query);
+                },
+                dump: true
+            }
+        };
+
+        // 加载没有搜索词时的URL，用于搜索词后的“清空”链接
+        var LIST_WITHOUT_KEYWORD_URL_DATASOURCE = {
+            listWithoutKeywordURL: function(model) {
+                var url = model.get('url');
+                var path = url.getPath();
+                var query = url.getQuery();
+                query = u.omit(query, 'keyword');
+                var template = '#' + require('er/URL').withQuery(path, query);
+                return template;
+            }
+        };
+
+        // 加载是否有列表数据的值
+        var HAS_RESULT_DATASOURCE = {
+            hasResult: function (model) {
+                // 有返回内容，或者有查询参数的情况下，认为是有内容的
+                return model.get('results').length || !u.isEmpty(model.get('url').getQuery());
+            }
+        };
+
         /**
          * 列表数据模型基类
          *
@@ -32,6 +65,10 @@ define(
                 },
                 this
             );
+
+            this.putDatasource(LIST_DATASOURCE, 0);
+            this.putDatasource(LIST_WITHOUT_KEYWORD_URL_DATASOURCE, 0);
+            this.putDatasource(HAS_RESULT_DATASOURCE, 1);
         }
 
         util.inherits(ListModel, BaseModel);
@@ -112,56 +149,6 @@ define(
                 args.status = defaultStatusValue;
             }
             return args;
-        };
-
-        ListModel.prototype.defaultDatasource = {
-            list: [
-                {
-                    retrieve: function (model) {
-                        var query = model.getQuery();
-                        query = require('../util').purify(query, null, true);
-
-                        return model.search(query);
-                    },
-                    dump: true
-                },
-                {
-                    name: 'hasResult',
-                    retrieve: function (model) {
-                        // 有返回内容，或者有查询参数的情况下，认为是有内容的
-                        return model.get('results').length
-                            || !u.isEmpty(model.get('url').getQuery());
-                    }
-                }
-            ],
-
-            pageSize: function (model) {
-                return model.getPageSize();
-            },
-
-            // 分页URL模板，就是当前URL中把`page`字段替换掉
-            urlTemplate: function (model) {
-                var url = model.get('url');
-                var path = url.getPath();
-                // 由于`withQuery`会做URL编码，因此不能直接`query.page = '${page}'`，
-                // 会被编码成`%24%7Bpage%7D`，此处只能直接操作字符串
-                var query = url.getQuery();
-                delete query.page;
-                var template = '#' + require('er/URL').withQuery(path, query);
-                var delimiter = u.isEmpty(query) ? '~' : '&';
-                template += delimiter + 'page=${page}';
-                return template;
-            },
-
-            // 清除搜索选项的html
-            listWithoutKeywordURL: function(model) {
-                var url = model.get('url');
-                var path = url.getPath();
-                var query = url.getQuery();
-                query = u.omit(query, 'keyword');
-                var template = '#' + require('er/URL').withQuery(path, query);
-                return template;
-            }
         };
 
         /**
@@ -260,23 +247,6 @@ define(
                 throw new Error('No updatePageSize method implemented on global data object');
             }
             return data.updatePageSize(pageSize);
-        };
-
-        /**
-         * 获取每页显示条数
-         *
-         * @return {number}
-         * @abstract
-         */
-        ListModel.prototype.getPageSize = function () {
-            var data = this.data('global');
-            if (!data) {
-                throw new Error('No global data object attached to this Model');
-            }
-            if (typeof data.getPageSize !== 'function') {
-                throw new Error('No getPageSize method implemented on global data object');
-            }
-            return data.getPageSize();
         };
 
         /**
@@ -410,8 +380,7 @@ define(
             // 默认仅本地提示，有需要的子类重写为从远程获取信息
             var Deferred = require('er/Deferred');
             var advice = {
-                message: '您确定要删除已选择的' + ids.length + '个'
-                    + this.get('entityDescription') + '吗？'
+                message: '您确定要删除已选择的' + ids.length + '个' + this.get('entityDescription') + '吗？'
             };
             return Deferred.resolved(advice);
         };

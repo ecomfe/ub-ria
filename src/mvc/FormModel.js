@@ -9,7 +9,6 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
         var util = require('er/util');
         var SingleEntityModel = require('./SingleEntityModel');
         var Deferred = require('er/Deferred');
@@ -26,20 +25,6 @@ define(
 
         util.inherits(FormModel, SingleEntityModel);
 
-        var datasource = require('er/datasource');
-        var defaultDatasource = {
-            rule: datasource.constant(require('./rule'))
-        };
-
-        /**
-         * 默认数据源配置
-         *
-         * @param {Object}
-         * @override
-         */
-        FormModel.prototype.defaultDatasource = u.extend(
-            defaultDatasource, SingleEntityModel.prototype.defaultDatasource);
-
         /**
          * 检查实体数据完整性，可在此补充一些视图无法提供的属性
          *
@@ -51,21 +36,36 @@ define(
         };
 
         /**
-         * 为FormModel对象添加validator的函数，需要被重写
-         *  XXXModel.prototype.initEntityValidator = function() {
-         *      FormModel.prototype.initEntityValidator.apply(this, arguments);
-
-         *      var schema = require('./schema');
-         *      this.validator.set('schema', schema);
-         *  }
-         * 
+         * 设置当前对象关联的{@link mvc.EntityValidator}实例
+         *
+         * @param {mvc.EntityValidator} 关联的实例
          */
-        FormModel.prototype.initEntityValidator = function () {
-            var rule = this.model.get('rule');
-            var EntityValidator = require('./EntityValidator');
-            
-            this.validator = new EntityValidator();
-            this.validator.setRule(rule);
+        FormModel.prototype.setValidator = function (validator) {
+            this.validator = validator;
+        };
+
+        /**
+         * 获取当前对象关联的{@link mvc.EntityValidator}实例
+         *
+         * @return {mvc.EntityValidator}
+         */
+        FormModel.prototype.getValidator = function () {
+            return this.validator;
+        };
+
+        /**
+         * 校验实体
+         *
+         * @param {Object} entity 需要校验的实体
+         * @return {Object[]}
+         */
+        FormModel.prototype.validateEntity = function (entity) {
+            var validator = this.getValidator();
+            if (!validator) {
+                throw new Error('No validator object attached to this Model');
+            }
+
+            return validator.validate(entity);
         };
 
         /**
@@ -77,27 +77,21 @@ define(
         FormModel.prototype.save = function (entity) {
             var data = this.data();
             if (!data) {
-                throw new Error(
-                    'No default data object attached to this Model');
+                throw new Error('No default data object attached to this Model');
             }
             if (typeof data.save !== 'function') {
-                throw new Error(
-                    'No save method implemented on default data object');
+                throw new Error('No save method implemented on default data object');
             }
 
             entity = this.fillEntity(entity);
 
-            if (!this.validator) {
-                this.initEntityValidator();
+            var validationResult = this.validateEntity(entity);
+
+            if (validationResult.length > 0) {
+                return Deferred.rejected({ fields: validationResult });
             }
 
-            var result = this.validator.validate(entity);
-
-            if (result.length > 0) {
-                return Deferred.rejected({ fields: result });
-            }
-
-            return data.save(); 
+            return data.save();
         };
 
         /**
@@ -109,12 +103,10 @@ define(
         FormModel.prototype.update = function (entity) {
             var data = this.data();
             if (!data) {
-                throw new Error(
-                    'No default data object attached to this Model');
+                throw new Error('No default data object attached to this Model');
             }
             if (typeof data.update !== 'function') {
-                throw new Error(
-                    'No update method implemented on default data object');
+                throw new Error('No update method implemented on default data object');
             }
 
             entity = this.fillEntity(entity);
@@ -122,17 +114,13 @@ define(
             // 更新默认加上id
             entity.id = this.get('id');
 
-            if (!this.validator) {
-                this.initEntityValidator();
+            var validationResult = this.validateEntity(entity);
+
+            if (validationResult.length > 0) {
+                return Deferred.rejected({ fields: validationResult });
             }
 
-            var result = this.validator.validate(entity);
-
-            if (result.length > 0) {
-                return Deferred.rejected({ fields: result });
-            }
-
-            return data.update();  
+            return data.update();
         };
 
         return FormModel;

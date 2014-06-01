@@ -1,0 +1,66 @@
+@FlatRadio-icon-normal: url(../img/flat-radio-normal.png);
+@FlatRadio-icon-hover: url(../img/flat-radio-hovered.png);
+@FlatRadio-icon-checked: url(../img/flat-radio-checked.png);
+
+@SwitchButton-background-color: #6ccdc0;
+
+.ui-abstractboxgroup-horizontal {
+    .ui-abstractboxgroup-wrapper {
+        display: inline-block;
+    }
+}
+
+.ui-abstractboxgroup-radio, 
+.ui-abstractboxgroup-checkbox {
+    cursor: pointer;
+}
+
+.ui-abstractboxgroup-disabled {
+    .ui-abstractboxgroup-radio, 
+    .ui-abstractboxgroup-checkbox {
+        cursor: default;
+    }
+}
+
+.ui-abstractboxgroup-validity-label {
+    display: inline-block;
+    line-height: 30px;
+    color: #ff0000;
+}
+
+// 自定义样式radio
+.skin-flat-radio-abstractboxgroup-radio {
+    height: 18px;
+    line-height: 18px;
+    padding-left: 27px;
+    margin-right: 60px;
+    font-size: 14px;
+    .pseudo-icon(@FlatRadio-icon-normal, 18px, 18px, left, 0px);
+
+    &:hover {
+        .pseudo-icon(@FlatRadio-icon-hover, 18px, 18px, left, 0px);
+    }
+
+    .ui-abstractboxgroup-wrapper-checked & {
+        .pseudo-icon(@FlatRadio-icon-checked, 18px, 18px, left, 0px);
+    }
+}
+
+// 色块样式切换button
+.skin-switch-button-abstractboxgroup {
+    height: 30px;
+    line-height: 30px;
+    .ui-abstractboxgroup-wrapper {
+        width: 118px;
+        border: 1px solid @SwitchButton-background-color;
+        color: #333;
+        font-size: 14px;
+        text-align: center;
+        margin: 0;
+    }
+    .ui-abstractboxgroup-wrapper-checked  {
+        width: 120px;
+        color: #fff;
+        background: @SwitchButton-background-color;
+    }
+}

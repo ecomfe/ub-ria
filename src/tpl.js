@@ -12,6 +12,15 @@ define(
         var etpl = require('etpl');
         var template = etpl;
 
+        // 添加一堆`filter`用用
+        var util = require('./util');
+        template.addFilter('trim', util.trim);
+        template.addFilter('pascalize', util.pascalize);
+        template.addFilter('camelize', util.camelize);
+        template.addFilter('dasherize', util.dasherize);
+        template.addFilter('constlize', util.constlize);
+        template.addFilter('pluralize', util.pluralize);
+
         var controlModulePrefix = {
             // Sidebar不使用esui的，那个不大符合要求
             BoxGroup: 'esui',
@@ -44,7 +53,17 @@ define(
             Validity: 'esui',
             Wizard: 'esui',
             ActionPanel: 'ef',
-            ActionDialog: 'ef'
+            ActionDialog: 'ef',
+            TogglePanel: 'ub-ria/ui',
+            ToggleButton: 'ub-ria/ui',
+            Uploader: 'ub-ria/ui',
+            RichSelector: 'ub-ria/ui',
+            TableRichSelector: 'ub-ria/ui',
+            SelectorTreeStrategy: 'ub-ria/ui',
+            TreeRichSelector: 'ub-ria/ui',
+            AbstractBoxGroup: 'ub-ria/ui',
+            Sidebar: 'ub-ria/ui',
+            PartialForm: 'ub-ria/ui'
         };
 
         var extensionModulePrefix = {
@@ -68,10 +87,10 @@ define(
             var dependencies = [];
             var defined = {};
 
-            var regex = /data-ui-type="(\w+)"/g;
+            var regex = /<\s*esui-([\w-]+)[^>]*>|data-ui-type="(\w+)"/g;
             var match = regex.exec(text);
             while (match) {
-                var type = match[1];
+                var type = match[1] && util.pascalize(match[1]) || match[2];
                 if (!defined[type]) {
                     defined[type] = true;
 

@@ -168,25 +168,21 @@ define(
         };
 
         /**
-         * 处理请求名称，具体业务可以使用此方法对请求名称进行一些替换操作，
-         * 如可以根据当前对象的`entityName`属性为请求名称加上前缀等
+         * 设置关联的{@link mvc.RequestStrategy}对象
          *
-         * @param {string} name 当前请求的名称
-         * @return {string}
+         * @param {mvc.RequestStrategy} requestStrategy 设置的实例
          */
-        RequestManager.prototype.formatRequestName = function (name) {
-            return name;
+        RequestManager.prototype.setRequestStrategy = function (requestStrategy) {
+            this.requestStrategy = requestStrategy;
         };
 
         /**
-         * 处理请求的URL，具体业务可以使用此方法对请求的URL进行一些替换操作，
-         * 如可以根据当前对象的`entityName`来生成通用的URL等
+         * 获取关联的{@link mvc.RequestStrategy}对象
          *
-         * @param {string} url 当前请求的URL
-         * @return {string}
+         * @return {mvc.RequestStrategy}
          */
-        RequestManager.prototype.formatRequestURL = function (url) {
-            return url;
+        RequestManager.prototype.getRequestStrategy = function () {
+            return this.requestStrategy;
         };
 
         /**
@@ -196,12 +192,14 @@ define(
          * @protected
          */
         RequestManager.prototype.getRequest = function (name, data, options) {
+            var strategy = this.getRequestStrategy();
+
             if (typeof name !== 'string') {
                 options = name;
                 name = null;
             }
 
-            name = this.formatRequestName(name);
+            name = strategy.formatName(name, options);
 
             // 查找已经有的请求配置，如果存在的话需要把`options`进行合并
             var config = lookupRequestConfig(this, name);
@@ -218,10 +216,7 @@ define(
                 options.data = util.mix({}, options.data, data);
             }
 
-            // 默认使用JSON作为响应格式
-            if (!options.dataType) {
-                options.dataType = 'json';
-            }
+            options = strategy.formatOptions(options);
 
             var request = {
                 name: name,
@@ -230,7 +225,7 @@ define(
             };
 
             if (request.options.url) {
-                request.options.url = this.formatRequestURL(request.options.url);
+                request.options.url = strategy.formatURL(request.options.url, request.options);
             }
 
             return request;

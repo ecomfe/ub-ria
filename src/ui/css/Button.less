@@ -1,0 +1,54 @@
+/** 提供一些产品线内通用的按钮皮肤 **/
+@LinkButton-color: #66c2a4;
+@LinkButton-color-hover: #999;
+@LinkButton-color-active: #999;
+
+@AddButton-icon: url(../img/esui-add-button-icon.png);
+
+
+/** 文字按钮 */
+.skin-link-button {
+    background: none;
+    border: 0 none;
+    height: @Button-height;
+    line-height: @Button-height;
+    color: @LinkButton-color;
+    &:active,
+    &:hover {
+        background: none;
+        border: 0 none;
+        height: @Button-height;
+        line-height: @Button-height;
+        overflow: hidden;
+        color: @LinkButton-color-hover;
+    }
+
+    &:active {
+        color: @LinkButton-color-active;
+    }
+}
+
+button.skin-link-button {
+    *height: @Button-height + 2px;
+}
+button.skin-link-button:active,
+button.skin-link-button:hover {
+    height: @Button-height;
+}
+
+
+/** 添加按钮 */
+.skin-add-button,
+.skin-add-button:hover,
+.skin-add-button:active {
+    padding-left: 40px;
+    height: 33px;
+    line-height: 34px;
+    font-size: 15px;
+    font-weight: bold;
+    .pseudo-icon(@AddButton-icon, 11px, 11px, left, 15px);
+}
+
+a.skin-add-button {
+    text-decoration: none;
+}

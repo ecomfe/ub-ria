@@ -1,0 +1,95 @@
+// 表格
+@ui-table-richselector-th-bg: transparent; 
+@ui-table-richselector-tr-bg: transparent;
+@ui-table-richselector-tr-active-bg: transparent; 
+.ui-table-richselector {
+    .ui-richselector-query-list {
+        table {
+            border-collapse: collapse;
+            width: 100%;
+
+            th {
+                background-color: @ui-table-richselector-th-bg;
+                font-weight: bold;
+                height: 35px;
+                text-align: left;
+                padding-left: 10px;
+            }
+
+
+            td {
+                height: 35px;
+                vertical-align: middle;
+                padding-left: 10px;
+                .ellipsis();
+            }   
+        }
+        .ui-richselector-content-table {
+
+        }
+    }
+
+    // 添加型
+    &.ui-richselector-add {            
+        .ui-richselector-row {
+            cursor:pointer;
+            &:hover {
+                background: #f8f9fb;
+                .ui-richselector-row-action-icon {
+                    display: block;
+                }
+            }
+        }
+
+        .ui-richselector-row-selected {
+            cursor: default;
+            color: #666666;
+            &:hover {
+                background: #fff;
+                .ui-richselector-row-action-icon {
+                    display: none;
+                }
+            }
+        }
+
+        .ui-richselector-row-disabled {
+            cursor: default;
+            color: #666666;
+            &:hover {
+                background: #fff;
+                .ui-richselector-row-action-icon {
+                    display: none;
+                }
+            }
+        }
+
+        .ui-richselector-row-action-icon {
+            background: url("../img/treeselector-arrow.png");
+            height: 14px;
+            margin-top: -1px;
+            width: 17px;
+            display: none;
+        }
+    }
+
+    // 删除型
+    &.ui-richselector-del {            
+        .ui-richselector-row {
+            cursor:pointer;
+            &:hover {
+                background: #f8f9fb;
+                .ui-richselector-row-action-icon {
+                    display: block;
+                }
+            }
+        }
+
+        .ui-richselector-row-action-icon {
+            background: url("../img/treeselector-del.png");
+            height: 9px;
+            margin-top: -1px;
+            width: 9px;
+            display: none;
+        }
+    }
+}

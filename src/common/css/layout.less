@@ -1,0 +1,202 @@
+// 产品线统一
+@header-color: #fff;
+@header-height: 60px;
+@header-link-color: #fff;
+
+@sidebar-width: 168px;
+@sidebar-collapse-width: 55px;
+@sidebar-menu-item-height:55px;
+@sidebar-bg: #efefef;
+@sidebar-menu-item-hover-bg: #e0e0e0;
+@sidebar-menu-item-selected-bg: #c8caca;
+
+
+// 系统自定义
+@loading-mask-background-color: #c0ede8;
+@header-bg: #0fb4a0;
+@sidebar-inverse-bg: #1da290;
+
+@logo-image-url: none;
+@logo-image-width: 0;
+@logo-image-height: 0;
+
+
+// 始终显示纵向滚动条，以免页面高度导致内容横移
+body {
+    overflow-y: scroll;
+    width: 100%;
+}
+
+// 进度加载遮挡
+.global-loading {
+    .loading-mask {
+        background: @loading-mask-background-color;
+        bottom: 0;
+        left: 0;
+        opacity: 0.9;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 5000;
+    }
+
+    .loading-bounce {
+        text-align: center;
+        position: fixed;
+        width: 120px;
+        top: 360px;
+        left: 46%;
+        height: 60px;
+        z-index: 6000;
+    }
+
+    .loading-bounce-point {
+        background-color: #fff;
+        border-radius: 100%;
+        display: inline-block;
+        height: 18px;
+        width: 18px;
+        -webkit-animation: bouncedelay 1.4s infinite ease-in-out;
+        animation: bouncedelay 1.4s infinite ease-in-out;
+        /* Prevent first frame from flickering when animation starts */
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+    }
+
+    .loading-bounce-one {
+        -webkit-animation-delay: -0.32s;
+        animation-delay: -0.32s;
+    }
+    .loading-bounce-two {
+        -webkit-animation-delay: -0.16s;
+        animation-delay: -0.16s;
+    }
+
+    .loading-bounce-three {
+    }
+}
+
+header {
+    background: @header-bg;
+    height:  @header-height;
+    width: 100%;
+    z-index: 100;
+    color:  @header-color;
+    a {
+        color: @header-link-color;
+    }
+    transition: opacity 500ms;
+    position: relative;
+}
+
+.header-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.header-logo {
+    margin: 10px 30px 0 83px;
+    .inline-block;
+    a {
+        display: block;
+        .normal-icon(@logo-image-url, @logo-image-width, @logo-image-height);
+        text-indent: -99999px;
+    }
+}
+
+.nav {
+    position: absolute;
+    right: 142px;
+    top: 0;
+}
+
+.nav-main {
+    overflow: hidden;
+    margin-top: 21px;
+    li {
+        .list-unstyled;
+        a {
+            width: 56px;
+            text-indent: -99999px;
+            display: block;
+            width: 17px;
+            height: 17px;
+        } 
+    }
+}
+
+.toolbar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    .toolbar-account {
+        padding: 27px 30px 0 0;
+        height: @header-height - 27;
+        cursor: pointer;
+        .ui-dropdown-icon {
+            top: 30px;
+        }
+    }
+    .toolbar-tools {
+        padding-bottom: 10px;
+        background: #f6f6f6;
+        li {
+            margin-top: 10px;
+        }
+        a {
+            display: block;
+            background: #fffaee;
+            padding: 10px;
+            color: #666;
+        }
+        .top-pointer(#dfdfdf, 0, 30px);
+    }
+}
+
+.page-container {}
+
+.page-sidebar {}
+
+.inverse-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 101;
+    background: @sidebar-inverse-bg;
+    height: @header-height;
+    width: @sidebar-collapse-width;
+    text-align: center; 
+    cursor: pointer;
+    i {
+    }
+    &:hover {
+        i {
+        }
+    }
+}
+
+.inverse-sidebar-collapse {
+    i {
+    }
+    &:hover {
+        i {
+        }
+    }
+}
+
+.ui-sidebar-menu-icon {
+}
+
+// sidebar 旁边的页面
+.page-content {
+    min-width: 960px;
+    margin-left: @sidebar-width; 
+}
+
+.skin-action-dialog {
+    .content-main {
+        padding:25px 50px;
+    }
+}
+

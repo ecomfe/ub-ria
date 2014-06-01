@@ -1,0 +1,70 @@
+@table-operation-field-text-color: #67c1a5;
+@list-meta-height: 35px;
+@list-action-button-bacth-gap: 10px;
+@list-action-button-width: 155px;
+
+.list-view {
+    position: relative;
+    background: none repeat scroll 0 0 #FFF;
+    padding: 15px 30px;
+
+    .ui-pager {
+        .ui-pager-select-wrapper {
+            margin: 0;
+            margin-right: 18px;
+        }
+
+        .ui-select {
+            padding-left: 0;
+        }
+    }
+}
+
+
+.list-summary {
+    line-hegiht: 16px;
+}
+
+
+.list-meta {
+    overflow: hidden;
+    position: relative;
+    height: @list-meta-height;
+    margin-bottom: 10px;
+    .clearfix();
+}
+
+.list-action {
+    height: @list-meta-height;
+    float: left;
+    z-index: 1;
+    width: @list-action-button-width;
+}
+.list-filter {
+    height: @list-meta-height;
+    .clearfix();
+    background: #efefef;
+    margin-left: @list-action-button-width + @list-action-button-bacth-gap;
+    .ui-searchbox {
+        float: right;
+        margin: 5px 10px;
+    }
+    .ui-select {
+        // TODO
+    }
+    .list-filter-fields {
+        float: right;
+    }
+    .list-batch-operation {
+        float: right;
+    }
+}
+
+.table-operation {
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+.ui-table-cell-field-operation {
+    color: @table-operation-field-text-color;
+}

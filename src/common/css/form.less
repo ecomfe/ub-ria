@@ -1,0 +1,94 @@
+@form-field-line-height: 30px;
+@form-field-required-star-width: 12px;
+
+.form-view .content-main {
+    background: none repeat scroll 0 0 #fff;
+    padding: 25px 50px;
+    color: #656565;
+}
+
+.form-section {
+    margin: 0 0 60px;
+}
+
+// toggle型的section因为要与普通section的文字对齐，所以要挪出去一个箭头的位置
+.form-toggle-section {
+    margin-left: -11px;
+}
+
+.form-section-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.form-section-title-hint {
+    color: #999;
+    font-size: 12px;
+    padding: 0 8px;
+    font-weight: normal;
+}
+
+
+.form-field,
+.form-field-required {
+    margin: 30px 0;
+    .clearfix();
+    font-size: 14px;
+}
+
+.form-field-label {
+    float: left;
+    zoom: 1;
+    width: 104px;
+    line-height: @form-field-line-height;
+    text-align: left;
+    vertical-align: top;
+}
+
+.form-field-value {
+    line-height: @form-field-line-height;
+    float: left;
+    padding-left: @form-field-required-star-width;
+
+    .ui-textbox {
+        input, textarea {
+            font-size: 14px;
+        }
+    }
+}
+
+.form-field-required .form-field-value {
+    padding-left: 0px;
+}
+
+.form-field-value-required-star {
+    float: left;
+    color: red;
+    width: @form-field-required-star-width;
+    text-align: left;
+}
+
+// 放在field中的控件，其实我忘了为啥有这个样式了，先放着吧。。。
+.form-field-control {
+    float: left;
+}
+
+// 问号注释
+.form-field-tip {
+    margin: 0 0 0 10px;
+}
+
+.form-submit-section {
+    border-top: 1px solid #EAEAEA;
+    margin: 0 0 0 30px;
+    padding-top: 20px;
+
+    .ui-button {
+        padding: 0 50px;
+    }
+}
+
+.form-notice-field {
+    margin-top: 30px;
+}

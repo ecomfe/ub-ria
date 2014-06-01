@@ -1,0 +1,6 @@
+[submodule "dep/ef"]
+	path = dep/ef
+	url = git@github.com:ecomfe/ef.git
+[submodule "dep/er"]
+	path = dep/er
+	url = git@github.com:ecomfe/er.git

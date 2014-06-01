@@ -10,7 +10,6 @@
 define(
     function (require) {
         var util = require('er/util');
-        var u = require('underscore');
         var BaseView = require('./BaseView');
 
         // 使用表单视图，有以下要求：
@@ -127,7 +126,7 @@ define(
         FormView.prototype.getFormData = function () {
             var form = this.get('form');
             return form ? form.getData() : {};
-        }
+        };
 
         return FormView;
     }

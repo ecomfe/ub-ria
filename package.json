@@ -1,6 +1,6 @@
 {
     "name": "ub-ria",
-    "version": "0.8.0-alpha.5",
+    "version": "1.0.0-alpha.5",
     "maintainers": [
         {
             "name": "otakustay",
@@ -16,9 +16,9 @@
         }
     ],
     "dependencies": {
-        "er": ">=3.1.0-alpha.6",
-        "esui": ">=3.1.0-alpha.6",
-        "ef": ">=3.1.0-alpha.3",
+        "er": ">=3.1.x",
+        "esui": ">=3.1.x",
+        "ef": ">=3.1.x",
         "underscore": "1.5.x",
         "mini-event": "1.x",
         "etpl": "2.x",
