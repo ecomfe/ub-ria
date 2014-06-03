@@ -135,14 +135,20 @@ define(
         }
 
         /**
-         * 批量修改事件处理
+         * 修改实体状态，事件对象无id属性时表示该操作非批量操作
          *
-         * @param {Object} 事件对象
-         * @ignore
+         * @param {mini-event.Event} e 事件对象
          */
-        function batchModifyStatus(e) {
+        ListAction.prototype.modifyStatus = function (e) {
             var status = e.status;
+            // 获取批量操作的实体
             var items = this.view.getSelectedItems();
+            // 获取非批量操作的实体
+            if (items.length === 0) {
+                var item = this.model.getItemById(e.id);
+                items = [item];
+            }
+
             var ids = u.pluck(items, 'id');
             var context = {
                 items: items,
@@ -164,25 +170,25 @@ define(
             else {
                 updateEntities.call(this, context);
             }
-        }
+        };
 
         /**
-         * 批量更新实体状态
+         * 更新实体状态
          *
-         * @param {meta.BatchUpdateContext} context 批量操作的上下文对象
+         * @param {meta.UpdateContext} context 操作的上下文对象
          */
         function updateEntities(context) {
             this.model[context.statusName](context.ids)
                 .then(
                     u.bind(updateListStatus, this, context),
-                    u.bind(this.notifyBatchFail, this, context)
+                    u.bind(this.notifyModifyFail, this, context)
                 );
         }
 
         /**
-         * 根据批量删除前确认
+         * 根据删除前确认
          *
-         * @param {meta.BatchUpdateContext} context 批量操作的上下文对象
+         * @param {meta.UpdateContext} context 操作的上下文对象
          */
         function waitConfirmForAdvice(context, advice) {
             var options = {
@@ -193,24 +199,32 @@ define(
         }
 
         /**
-         * 通知批量操作失败
+         * 通知修改状态操作失败
          *
-         * 默认提示用户“无法[操作名]部分或全部[实体名]”
+         * 默认提示用户“无法[操作名]部分或全部[实体名]”，或“无法[操作名]该[实体名]”
          *
-         * @param {meta.BatchUpdateContext} context 批量操作的上下文对象
+         * @param {meta.UpdateContext} context 批量操作的上下文对象
          */
-        ListAction.prototype.notifyBatchFail = function (context) {
+        ListAction.prototype.notifyModifyFail = function (context) {
             var entityDescription = this.getEntityDescription();
-            this.view.alert(
-                '无法' + context.command + '部分或全部' + entityDescription,
-                context.command + entityDescription
-            );
+            if (context.ids.length > 1) {
+                this.view.alert(
+                    '无法' + context.command + '部分或全部' + entityDescription,
+                    context.command + entityDescription
+                );        
+            }
+            else {
+                this.view.alert(
+                    '无法' + context.command + '该' + entityDescription,
+                    context.command + entityDescription
+                );                 
+            }
         };
 
         /**
-         * 根据批量删除、启用的状态更新当前Action，默认行为为直接刷新当前的Action
+         * 根据删除、启用的状态更新当前Action，默认行为为直接刷新当前的Action
          *
-         * @param {meta.BatchUpdateContext} context 批量操作的上下文对象
+         * @param {meta.UpdateContext} context 操作的上下文对象
          */
         function updateListStatus(context) {
             var toastMessage = context.command + '成功';
@@ -223,9 +237,9 @@ define(
         }
 
         /**
-         * 检查指定批量操作是否需要后端提示消息，默认删除操作时要求提示用户确认
+         * 检查指定操作是否需要后端提示消息，默认删除操作时要求提示用户确认
          *
-         * @param {meta.BatchUpdateContext} context 批量操作的上下文对象
+         * @param {meta.UpdateContext} context 操作的上下文对象
          * @return {boolean} 返回`true`表示需要提示用户
          */
         ListAction.prototype.requireAdviceFor = function (context) {
@@ -242,7 +256,7 @@ define(
             BaseAction.prototype.initBehavior.apply(this, arguments);
             this.view.on('search', search, this);
             this.view.on('pagesizechange', updatePageSize, this);
-            this.view.on('batchmodify', batchModifyStatus, this);
+            this.view.on('batchmodify', this.modifyStatus, this);
             this.view.on('pagechange', forwardToPage, this);
         };
 
