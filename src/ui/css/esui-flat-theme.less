@@ -2,178 +2,192 @@
 
 /** Button Begin **/
 // 产品线内统一
-@Button-border-style: solid;
-@Button-border-width: 1px;
-@Button-radius: 0;
-@Button-font-size: 13px;
-@Button-padding: 0 15px;
-@Button-height: 35px - 2 * @Button-border-width;
+@button-border-style: solid;
+@button-border-width: 1px;
+@button-radius: 0;
+@button-font-size: 14px;
+@button-padding: 0 15px;
+@button-height: 35px - 2 * @button-border-width;
 
 // 系统内自定
-@Button-background: #6dcec0;
-@Button-color: #fff;
-@Button-border-color: @Button-background;
+@button-background: #6dcec0;
+@button-color: #fff;
+@button-border-color: @button-background;
 
-@Button-background-hover: #72dccd;
-@Button-color-hover: @Button-color;
-@Button-border-color-hover: @Button-background-hover;
+@button-background-hover: #72dccd;
+@button-color-hover: @button-color;
+@button-border-color-hover: @button-background-hover;
 
-@Button-background-active: #65cabd;
-@Button-color-active: @Button-color;
-@Button-border-color-active: #46B3A5 #59C0B2 #66C9BB;
+@button-background-active: #65cabd;
+@button-color-active: @button-color;
+@button-border-color-active: #46B3A5 #59C0B2 #66C9BB;
 
-@Button-background-disabled: #eaeaea;
-@Button-color-disabled: #656565;
-@Button-border-color-disabled: @Button-background-disabled;
+@button-background-disabled: #eaeaea;
+@button-color-disabled: #656565;
+@button-border-color-disabled: @button-background-disabled;
 /** Button End **/
 
 /** Select Begin **/
 // 产品线内统一
-@Select-font-color: #666;
-@Select-border: none;
-@Select-height: 12px;
-@Select-width: auto;
-@Select-height: 12px;
-@Select-padding: 0 18px 0 20px;
+@select-arrow-icon-width: 9px;
+@select-arrow-icon-height: 5px;
+@select-arrow-icon: url(../img/esui-combo-arrow-normal.png);
+@select-arrow-icon-hover: url(../img/esui-combo-arrow-hover.png);
+@select-arrow-icon-active: url(../img/esui-combo-arrow-active.png);
+@select-arrow-icon-disabled: url(../img/esui-combo-arrow-normal.png);
 
-@Select-arrow-icon-width: 9px;
-@Select-arrow-icon-height: 5px;
-@Select-arrow-icon: url(../img/esui-combo-arrow-normal.png);
-@Select-arrow-icon-hover: url(../img/esui-combo-arrow-hover.png);
-@Select-arrow-icon-active: url(../img/esui-combo-arrow-active.png);
-@Select-arrow-icon-disabled: url(../img/esui-combo-arrow-normal.png);
+
+@select-background-color: transparent;
+@select-background-color-hover: transparent;
+@select-background-color-active: transparent;
+@select-background-color-disabled: transparent;
+
+@select-font-color: #666;
+@select-border: none;
+@select-height: 12px;
+@select-width: auto;
+@select-height: 12px;
+@select-padding-left: 18px;
+
 
 //layer
-@Select-layer-split-border: 0;
-@Select-layer-background: #f7f7f7;
-@Select-item-color: #666;
-@Select-item-height: 30px;
-@Select-item-background-hover: #f1f1f1;
-@Select-item-background-selected: #fffaee;
+@select-layer-split-border: 0;
+@select-layer-background: #f7f7f7;
+@select-item-color: #666;
+@select-item-height: 30px;
+@select-item-background-hover: #f1f1f1;
+@select-item-background-selected: #fffaee;
 
 // 系统自定
-@Select-background-color: transparent;
-@Select-background-color-hover: transparent;
-@Select-background-color-active: transparent;
-@Select-background-color-disabled: transparent;
+@select-background-color: transparent;
+@select-background-color-hover: transparent;
+@select-background-color-active: transparent;
+@select-background-color-disabled: transparent;
 /** Select End **/
 
 
 /** TextBox Begin **/
 // 产品线内统一
-@TextBox-border: 1px solid #ddd;
-@TextBox-width: 240px;
-@TextBox-input-height: 24px;
-@TextBox-font-size: 13px;
-@TextBox-color : #333;
-@TextBox-background: #fff;
+@text-box-border: 1px solid #ddd;
+@text-box-width: 240px;
+@text-box-input-height: 24px;
+@text-box-font-size: 13px;
+@text-box-color : #333;
+@text-box-background: #fff;
 
-@TextBox-hint-background: #f7f7f7;
-@TextBox-hint-border: @TextBox-border;
+@text-box-hint-background: #f7f7f7;
+@text-box-hint-border: @text-box-border;
 
 // 系统自定
-@TextBox-border-hover: 1px solid #65cabd;
+@text-box-border-hover: 1px solid #65cabd;
 /** TextBox End **/
 
 
 /** Searchbox Begin **/
 // 产品线内统一
-@Searchbox-search-icon-img: url(../img/esui-search-normal.png);
-@Searchbox-search-icon-img-active: url(../img/esui-search-active.png);
-@Searchbox-search-icon-img-width: 15px;
-@Searchbox-search-icon-img-height: 15px;
-@Searchbox-search-icon-width: 25px;
-@Searchbox-search-icon-height: 25px;
+@search-box-height: 25px;
 
-@Searchbox-2x-search-icon-background-image: url(../img/search@2x.png);
-@Searchbox-2x-search-icon-background-size: 15px 50px;
+@search-box-search-icon-img: url(../img/esui-search-normal.png);
+@search-box-search-icon-img-active: url(../img/esui-search-active.png);
+@search-box-search-icon-img-width: 15px;
+@search-box-search-icon-img-height: 15px;
+@search-box-search-icon-width: 25px;
+@search-box-search-icon-height: 25px;
 
-@Searchbox-border: 1px solid #ddd;
-@SearchBox-height: 23px;
+@search-box-2x-search-icon-background-image: url(../img/search@2x.png);
+@search-box-2x-search-icon-background-size: 15px 50px;
+
+@search-box-border-width: 1px;
+@search-box-border-color: #ddd;
+
+@search-box-padding-top: 2px;
+@search-box-padding-bottom: 2px;
+@search-box-padding-left: 4px;
+@search-box-padding-right: 2px;
 
 // 系统自定
-@Searchbox-hover-border: 1px solid #65cabd;
-@Searchbox-focus-border: 1px solid #65cabd;
+@search-box-border-color-hover: #65cabd;
+@search-box-border-color-focus: #65cabd;
 /** Searchbox End **/
 
 
 /** Table Begin **/
 // 产品线内统一
-@Table-font-color: #555;
+@table-font-color: #555;
 
-@Table-head-background-color: #f7f7f7;
-@Table-head-border-lr-color: @Table-head-background-color;
-@Table-head-border-top-color: @Table-head-background-color;
-@Table-head-border-bottom-color: @Table-head-background-color;
-@Table-head-font-weight: normal;
-@Table-head-font-color: @Table-font-color;
-@Table-hcell-border-color: @Table-head-background-color;
+@table-head-background-color: #f7f7f7;
+@table-head-border-lr-color: @table-head-background-color;
+@table-head-border-top-color: @table-head-background-color;
+@table-head-border-bottom-color: @table-head-background-color;
+@table-head-font-weight: normal;
+@table-head-font-color: @table-font-color;
+@table-hcell-border-color: @table-head-background-color;
 
-@Table-hcell-text-height: 35px;
-@Table-hcell-text-padding: 0 8px;
+@table-hcell-text-height: 35px;
+@table-hcell-text-padding: 0 8px;
  
 
 /* 表头单元格提示 */
-@Table-hcell-tip-margin: 0 4px 0 0;
+@table-hcell-tip-margin: 0 4px 0 0;
 
 /* 表头单元格排序标识 */
-@Table-sort-icon-margin: 2px 0 0 2px;
-@Table-sort-icon-height: 10px;
-@Table-sort-icon-width: 7px;
-@Table-hcell-sort-hover-background: #FDE8C4;
+@table-sort-icon-margin: 2px 0 0 2px;
+@table-sort-icon-height: 10px;
+@table-sort-icon-width: 7px;
+@table-hcell-sort-hover-background: #FDE8C4;
 
 
-@Table-body-background: #fff;
-@Table-body-border-color: @Table-body-background;
-@Table-row-background: @Table-body-background;
-@Table-row-background-hover: #fffbed;
-@Table-row-border-color: #f0f0f0;
+@table-body-background: #fff;
+@table-body-border-color: @table-body-background;
+@table-row-background: @table-body-background;
+@table-row-background-hover: #fffbed;
+@table-row-border-color: #f0f0f0;
 
-@Table-row-background-selected: #f0f0f0;
-@Table-row-background-unfolded: #f0f0f0;
-@Table-subrow-background: #FFF9EE;
-@Table-subrow-border-color: #ddd;
-@Table-subrow-padding: 1px 0 0 36px;
+@table-row-background-selected: #f0f0f0;
+@table-row-background-unfolded: #f0f0f0;
+@table-subrow-background: #FFF9EE;
+@table-subrow-border-color: #ddd;
+@table-subrow-padding: 1px 0 0 36px;
 
-@Table-cell-border-color: @Table-row-background;
-@Table-cell-border-color-hover: @Table-row-background-hover;
+@table-cell-border-color: @table-row-background;
+@table-cell-border-color-hover: @table-row-background-hover;
 
-@Table-cell-height: 28px;
-@Table-cell-padding: 4px 8px;
-@Table-cell-head-padding: 12px;
-@Table-cell-tail-padding: 12px;
+@table-cell-height: 28px;
+@table-cell-padding: 4px 8px;
+@table-cell-head-padding: 12px;
+@table-cell-tail-padding: 12px;
 
-@Table-cell-sel-padding: 3px 8px 0;
-@Table-cell-sel-padding-IE: 0 4px;
+@table-cell-sel-padding: 3px 8px 0;
+@table-cell-sel-padding-IE: 0 4px;
 
-@Table-foot-background: @Table-head-background-color;
-@Table-foot-border-color: @Table-body-border-color;
-@Table-footcell-border-color: @Table-cell-border-color;
+@table-foot-background: @table-head-background-color;
+@table-foot-border-color: @table-body-border-color;
+@table-footcell-border-color: @table-cell-border-color;
 
 
 /* 拖拽显示的竖线 */
-@Table-mark-height: 400px;
-@Table-mark-background: #000;
+@table-mark-height: 400px;
+@table-mark-background: #000;
 
-@Table-scrollX-height: 20px;
+@table-scrollX-height: 20px;
 
-@Table-subentry-icon-width: 7px;
-@Table-subentry-icon-height: 7px;
-@Table-subentry-icon-img-width: 5px;
-@Table-subentry-icon-img-height: 7px;
-@Table-subentry-icon: url(../img/esui-open-icon.png);
+@table-subentry-icon-width: 7px;
+@table-subentry-icon-height: 7px;
+@table-subentry-icon-img-width: 5px;
+@table-subentry-icon-img-height: 7px;
+@table-subentry-icon: url(../img/esui-open-icon.png);
 
-@Table-subentry-icon-img-width-open: 7px;
-@Table-subentry-icon-img-height-open: 5px;
-@Table-subentry-icon-open: url(../img/esui-close-icon.png);
+@table-subentry-icon-img-width-open: 7px;
+@table-subentry-icon-img-height-open: 5px;
+@table-subentry-icon-open: url(../img/esui-close-icon.png);
 
-@Table-subentry-icon-img-width-hover: 5px;
-@Table-subentry-icon-img-height-hover: 7px;
-@Table-subentry-icon-hover: url(../img/esui-open-icon.png);
+@table-subentry-icon-img-width-hover: 5px;
+@table-subentry-icon-img-height-hover: 7px;
+@table-subentry-icon-hover: url(../img/esui-open-icon.png);
 
-@Table-subentry-icon-img-width-opened-hover: 7px;
-@Table-subentry-icon-img-height-opened-hover: 5px;
-@Table-subentry-icon-opened-hover: url(../img/esui-close-icon.png);
+@table-subentry-icon-img-width-opened-hover: 7px;
+@table-subentry-icon-img-height-opened-hover: 5px;
+@table-subentry-icon-opened-hover: url(../img/esui-close-icon.png);
 
 // 系统自定
 /** Table End **/
@@ -181,30 +195,30 @@
 
 /** Dialog Begin **/
 // 产品线内统一
-@Dialog-background: #fff;
-@Dialog-border: 1px solid #ddd;
-@Dialog-width: 470px;
+@dialog-background: #fff;
+@dialog-border: 1px solid #ddd;
+@dialog-width: 470px;
 
-@Dialog-head-background: @Dialog-background;
-@Dialog-color: #333;
-@Dialog-head-height: 43px;
+@dialog-head-background: @dialog-background;
+@dialog-color: #333;
+@dialog-head-height: 43px;
 
-@Dialog-title-padding: 0 0 0 15px;
-@Dialog-title-font-size: 14px;
-@Dialog-title-height: @Dialog-head-height;
+@dialog-title-padding: 0 0 0 15px;
+@dialog-title-font-size: 14px;
+@dialog-title-height: @dialog-head-height;
 
-@Dialog-close-icon-image: url(../img/esui-dialog-head-close.png);
-@Dialog-close-icon-height: 13px;
-@Dialog-close-icon-width: 13px;
-@Dialog-close-icon-right: 15px;
-@Dialog-close-icon-top: 15px;
+@dialog-close-icon-image: url(../img/esui-dialog-head-close.png);
+@dialog-close-icon-height: 13px;
+@dialog-close-icon-width: 13px;
+@dialog-close-icon-right: 15px;
+@dialog-close-icon-top: 15px;
 
-@Dialog-body-padding: 5px 25px;
+@dialog-body-padding: 5px 25px;
 
-@Dialog-foot-panel-padding: 25px 30px;
+@dialog-foot-panel-padding: 25px 30px;
 
-@Dialog-foot-button-align: left;
-@Dialog-foot-button-height: 33px;
+@dialog-foot-button-align: left;
+@dialog-foot-button-height: 33px;
 
 // 系统自定
 /** Dialog End **/
@@ -212,20 +226,20 @@
 
 /** Pager Begin **/
 // 产品线内统一
-@Pager-margin: 14px;
-@Pager-height: 18px;
-@Pager-color: #666;
-@Pager-padding: 0 20px;
+@pager-margin: 14px;
+@pager-height: 18px;
+@pager-color: #666;
+@pager-padding: 0 20px;
 
-@Pager-select-background-color: transparent;
-@Pager-select-icon: url(../img/esui-combo-arrow.png);
+@pager-select-background-color: transparent;
+@pager-select-icon: url(../img/esui-combo-arrow.png);
 
-@Pager-item-background: transparent;
-@Pager-item-border: 0;
-@Pager-item-width: @Pager-height;
-@Pager-item-height: @Pager-item-width;
-@Pager-item-current-background: #cacaca;
-@Pager-item-current-color: #fff;
+@pager-item-background: transparent;
+@pager-item-border: 0;
+@pager-item-width: @pager-height;
+@pager-item-height: @pager-item-width;
+@pager-item-current-background: #cacaca;
+@pager-item-current-color: #fff;
 
 // 系统自定
 /** Pager End **/
@@ -233,36 +247,36 @@
 
 /** Tree Begin **/
 // 产品线内统一
-@Tree-node-line-height: 35px;
+@tree-node-line-height: 35px;
 
-@Tree-node-indicator-icon-height-collapsed: 7px;
-@Tree-node-indicator-icon-width-collapsed: 5px;
-@Tree-node-indicator-icon-collapsed: url(../img/esui-open-icon.png);
+@tree-node-indicator-icon-height-collapsed: 7px;
+@tree-node-indicator-icon-width-collapsed: 5px;
+@tree-node-indicator-icon-collapsed: url(../img/esui-open-icon.png);
 
-@Tree-node-indicator-icon-height-expanded: 5px;
-@Tree-node-indicator-icon-width-expanded: 7px;
-@Tree-node-indicator-icon-expanded: url(../img/esui-close-icon.png);
+@tree-node-indicator-icon-height-expanded: 5px;
+@tree-node-indicator-icon-width-expanded: 7px;
+@tree-node-indicator-icon-expanded: url(../img/esui-close-icon.png);
 
-@Tree-node-indicator-height: 7px;
-@Tree-node-indicator-width: 7px;
-@Tree-node-indicator-margin: 14px 9px 14px 4px;
+@tree-node-indicator-height: 7px;
+@tree-node-indicator-width: 7px;
+@tree-node-indicator-margin: 14px 9px 14px 4px;
 
 // TODO：这里应该也开放出来同形式的变量
-@Tree-node-indicator-empty-background: none;
-@Tree-node-indicator-previous-background: none;
-@Tree-node-indicator-far-previous-background: none;
+@tree-node-indicator-empty-background: none;
+@tree-node-indicator-previous-background: none;
+@tree-node-indicator-far-previous-background: none;
 
-@Tree-node-item-font-color: #666;
+@tree-node-item-font-color: #666;
 
 
 // 选中的节点
-@Tree-node-wrapper-background-selected: #fffaee;
-@Tree-node-item-font-color-selected: #333;
-@Tree-node-item-icon-selected: none;
+@tree-node-wrapper-background-selected: #fffaee;
+@tree-node-item-font-color-selected: #333;
+@tree-node-item-icon-selected: none;
 // 悬浮的节点
-@Tree-node-wrapper-background-hover: #fffaee;
-@Tree-node-item-font-color-hover: #333;
-@Tree-node-item-icon-hover: none;
+@tree-node-wrapper-background-hover: #fffaee;
+@tree-node-item-font-color-hover: #333;
+@tree-node-item-icon-hover: none;
 
 // 系统自定
 
@@ -271,199 +285,199 @@
 
 /** MonthView Begin **/
 // 产品线统一
-@Montview-month-item-width: 30px;
-@Montview-month-item-height: 30px;
+@month-view-month-item-width: 30px;
+@month-view-month-item-height: 30px;
 
-@Monthview-background: #fff;
-@Monthview-border: 1px solid #e1e1e1;
+@month-view-background: #fff;
+@month-view-border: 1px solid #e1e1e1;
 
-@Monthview-head-button-width: 21px;
-@Monthview-head-button-height: 21px;
-@Monthview-head-button-icon-width: 5px;
-@Monthview-head-button-icon-height: 9px;
+@month-view-head-button-width: 21px;
+@month-view-head-button-height: 21px;
+@month-view-head-button-icon-width: 5px;
+@month-view-head-button-icon-height: 9px;
 
-@Monthview-month-border: none;
+@month-view-month-border: none;
 
-@Monthview-month-title-background: #f6f6f6;
-@Monthview-month-title-color: #666;
-@Monthview-month-title-background-selected: #CCCED4;
+@month-view-month-title-background: #f6f6f6;
+@month-view-month-title-color: #666;
+@month-view-month-title-background-selected: #CCCED4;
 
-@Monthview-month-item-color: #333;
-@Monthview-month-item-border: 1px solid #fff;
+@month-view-month-item-color: #333;
+@month-view-month-item-border: 1px solid #fff;
 
-@Monthview-month-item-background-selected: none; 
-@Monthview-month-item-color-virtual: #999;
-@Monthview-month-item-background-virtual: none;
-@Monthview-month-item-background-disabled: none;
-@Monthview-month-item-color-disabled: #999;
+@month-view-month-item-background-selected: none; 
+@month-view-month-item-color-virtual: #999;
+@month-view-month-item-background-virtual: none;
+@month-view-month-item-background-disabled: none;
+@month-view-month-item-color-disabled: #999;
 
-@Monthview-month-row-select-background: #fffbed;
-@Monthview-month-row-select-background-selected: #fffbed;
+@month-view-month-row-select-background: #fffbed;
+@month-view-month-row-select-background-selected: #fffbed;
 
 
-@Monthview-back-button-background: url(../img/esui-monthview-prev-icon.png);
+@month-view-back-button-background: url(../img/esui-monthview-prev-icon.png);
 /** TODO: 变量名修改，需做兼容 **/
-@Monthview-back-button-background-active: url(../img/esui-monthview-prev-icon-active.png);
-@Monthview-back-button-background-disabled: url(../img/esui-monthview-prev-icon-disable.png);
+@month-view-back-button-background-active: url(../img/esui-monthview-prev-icon-active.png);
+@month-view-back-button-background-disabled: url(../img/esui-monthview-prev-icon-disable.png);
 
-@Monthview-forward-button-background: url(../img/esui-monthview-next-icon.png);
+@month-view-forward-button-background: url(../img/esui-monthview-next-icon.png);
 /** TODO: 变量名修改，需做兼容 **/
-@Monthview-forward-button-background-active: url(../img/esui-monthview-next-icon-active.png);
-@Monthview-forward-button-background-disabled: url(../img/esui-monthview-next-icon-disable.png);
+@month-view-forward-button-background-active: url(../img/esui-monthview-next-icon-active.png);
+@month-view-forward-button-background-disabled: url(../img/esui-monthview-next-icon-disable.png);
 
-@Monthview-select-background: #fff;
-@Monthview-select-icon: url(../img/esui-monthview-select-icon.png);
+@month-view-select-background: #fff;
+@month-view-select-icon: url(../img/esui-monthview-select-icon.png);
 
-@Monthview-select-background-hover: #fff;
-@Monthview-select-icon-hover: url(../img/esui-monthview-select-icon-active.png);
+@month-view-select-background-hover: #fff;
+@month-view-select-icon-hover: url(../img/esui-monthview-select-icon-active.png);
 
-@Monthview-select-background-active: #fff;
-@Monthview-select-icon-active: url(../img/esui-monthview-select-icon-active.png);
+@month-view-select-background-active: #fff;
+@month-view-select-icon-active: url(../img/esui-monthview-select-icon-active.png);
 
-@Monthview-select-icon-height: 5px;
-@Monthview-select-icon-width: 9px;
+@month-view-select-icon-height: 5px;
+@month-view-select-icon-width: 9px;
 
-@Monthview-select-height: 21px;
-@Monthview-year-select-width: 56px;
-@Monthview-year-select-margin: 3px 6px 0;
-@Monthview-month-select-width: 40px;
-@Monthview-month-select-margin: 3px 6px 0;
+@month-view-select-height: 21px;
+@month-view-year-select-width: 56px;
+@month-view-year-select-margin: 3px 6px 0;
+@month-view-month-select-width: 40px;
+@month-view-month-select-margin: 3px 6px 0;
 @MonthView-select-layer-background: #efefef;
 
 // 系统自定
-@Monthview-head-background: #e1f5f1;
-@Monthview-month-item-background-hover: #e2f4ef;
-@Monthview-month-item-color-selected: #68c1a4;
+@month-view-head-background: #e1f5f1;
+@month-view-month-item-background-hover: #e2f4ef;
+@month-view-month-item-color-selected: #68c1a4;
 
 /** MonthView End **/
 
 
 /** Calendar Begin **/
 // 产品线内统一
-@Calendar-border: none;
-@Calendar-border-radius: 0;
-@Calendar-background: #fff;
-@Calendar-color: #333;
+@calendar-border: none;
+@calendar-border-radius: 0;
+@calendar-background: #fff;
+@calendar-color: #333;
 
-@Calendar-arrow-icon-background: url(../img/esui-cal.png);
-@Calendar-arrow-icon-height: 16px;
-@Calendar-arrow-icon-width: 16px;
+@calendar-arrow-icon-background: url(../img/esui-cal.png);
+@calendar-arrow-icon-height: 16px;
+@calendar-arrow-icon-width: 16px;
 
 // 系统自定
-@Calendar-border-color-hover: #a9adb6;
+@calendar-border-color-hover: #a9adb6;
 /** Calendar End **/
 
 
 
 /** RangeCalendar Begin **/
 // 产品线内统一
-@RangeCalendar-main-background: none repeat scroll 0 0 transparent;
-@RangeCalendar-main-border: none;
-@RangeCalendar-main-border-radius: 0;
-@RangeCalendar-main-width: 220px;
-@RangeCalendar-main-height: 55px;
-@RangeCalendar-main-font-size: 12px;
-@RangeCalendar-main-font-color: #666;
-@RangeCalendar-main-hover-border-color: none;
-@RangeCalendar-month-item-color-highlight: #fffbed;
+@range-calendar-main-background: none repeat scroll 0 0 transparent;
+@range-calendar-main-border: none;
+@range-calendar-main-border-radius: 0;
+@range-calendar-main-width: 220px;
+@range-calendar-main-height: 55px;
+@range-calendar-main-font-size: 12px;
+@range-calendar-main-font-color: #666;
+@range-calendar-main-hover-border-color: none;
+@range-calendar-month-item-color-highlight: #fffbed;
 
-@RangeCalendar-arrow-icon: url(../img/esui-monthview-select-icon.png);
-@RangeCalendar-arrow-icon-active: url(../img/esui-monthview-select-icon-active.png);
-@RangeCalendar-arrow-icon-width: 9px;
-@RangeCalendar-arrow-icon-height: 5px;
+@range-calendar-arrow-icon: url(../img/esui-monthview-select-icon.png);
+@range-calendar-arrow-icon-active: url(../img/esui-monthview-select-icon-active.png);
+@range-calendar-arrow-icon-width: 9px;
+@range-calendar-arrow-icon-height: 5px;
 
-@RangeCalendar-layer-background: #f6f6f6;
-@RangeCalendar-layer-border-top-color: #dfdfdf;
-@RangeCalendar-layer-border-top: 3px solid @RangeCalendar-layer-border-top-color;
-@RangeCalendar-layer-border-bottom: none;
-@RangeCalendar-layer-border-left: none;
-@RangeCalendar-layer-border-right: none;
-@RangeCalendar-layer-padding: 11px;
+@range-calendar-layer-background: #f6f6f6;
+@range-calendar-layer-border-top-color: #dfdfdf;
+@range-calendar-layer-border-top: 3px solid @range-calendar-layer-border-top-color;
+@range-calendar-layer-border-bottom: none;
+@range-calendar-layer-border-left: none;
+@range-calendar-layer-border-right: none;
+@range-calendar-layer-padding: 11px;
 
-@RangeCalendar-layer-close-icon: url(../img/esui-rangecalendar-layer-close-icon.png);
-@RangeCalendar-layer-close-icon-width: 10px;
-@RangeCalendar-layer-close-icon-height: 10px;
+@range-calendar-layer-close-icon: url(../img/esui-rangecalendar-layer-close-icon.png);
+@range-calendar-layer-close-icon-width: 10px;
+@range-calendar-layer-close-icon-height: 10px;
 
 
 // 系统自定
-@RangeCalendar-shortcut-item-color: #68c1a6;
-@RangeCalendar-link-text-color: #66c4a5;
-@RangeCalendar-link-text-color-hover: #74dcce;
+@range-calendar-shortcut-item-color: #68c1a6;
+@range-calendar-link-text-color: #66c4a5;
+@range-calendar-link-text-color-hover: #74dcce;
 /** RangeCalendar End **/
 
 /** Tip Begin **/
-@Tip-icon: url(../img/esui-tip.png);
-@Tip-icon-width: 15px;
-@Tip-icon-height: 16px;
+@tip-icon: url(../img/esui-tip.png);
+@tip-icon-width: 15px;
+@tip-icon-height: 16px;
 /** Tip End **/
 
 /** TipLayer Begin **/
-@TipLayer-background: #FFF3D9;
-@TipLayer-font-color: #555;
+@tip-layer-background: #FFF3D9;
+@tip-layer-font-color: #555;
 
-@TipLayer-border-color: #D9CBA8;
-@TipLayer-border-width: 1px;
-@TipLayer-border-style: solid;
-@TipLayer-border: @TipLayer-border-width @TipLayer-border-style @TipLayer-border-color;
+@tip-layer-border-color: #D9CBA8;
+@tip-layer-border-width: 1px;
+@tip-layer-border-style: solid;
+@tip-layer-border: @tip-layer-border-width @tip-layer-border-style @tip-layer-border-color;
 
-@TipLayer-padding: 10px;
+@tip-layer-padding: 10px;
 
-@TipLayer-arrow-width-lr: 6px;
-@TipLayer-arrow-height-lr: 9px;
-@TipLayer-arrow-width-tb: 9px;
-@TipLayer-arrow-height-tb: 6px;
+@tip-layer-arrow-width-lr: 6px;
+@tip-layer-arrow-height-lr: 9px;
+@tip-layer-arrow-width-tb: 9px;
+@tip-layer-arrow-height-tb: 6px;
 
-@TipLayer-arrow-top-lr: 5px;
-@TipLayer-arrow-bottom-lr: 5px;
+@tip-layer-arrow-top-lr: 5px;
+@tip-layer-arrow-bottom-lr: 5px;
 
-@TipLayer-arrow-left-tb: 5px;
-@TipLayer-arrow-right-tb: 5px;
+@tip-layer-arrow-left-tb: 5px;
+@tip-layer-arrow-right-tb: 5px;
 
-@TipLayer-arrow-icon-tl: url(../img/tip-arrow-down.png);
-@TipLayer-arrow-icon-tr: url(../img/tip-arrow-down.png);
-@TipLayer-arrow-icon-bl: url(../img/tip-arrow-up.png);
-@TipLayer-arrow-icon-br: url(../img/tip-arrow-up.png);
-@TipLayer-arrow-icon-lt: url(../img/tip-arrow-left.png);
-@TipLayer-arrow-icon-lb: url(../img/tip-arrow-left.png);
-@TipLayer-arrow-icon-rt: url(../img/tip-arrow-right.png);
-@TipLayer-arrow-icon-rb: url(../img/tip-arrow-right.png);
+@tip-layer-arrow-icon-tl: url(../img/tip-arrow-down.png);
+@tip-layer-arrow-icon-tr: url(../img/tip-arrow-down.png);
+@tip-layer-arrow-icon-bl: url(../img/tip-arrow-up.png);
+@tip-layer-arrow-icon-br: url(../img/tip-arrow-up.png);
+@tip-layer-arrow-icon-lt: url(../img/tip-arrow-left.png);
+@tip-layer-arrow-icon-lb: url(../img/tip-arrow-left.png);
+@tip-layer-arrow-icon-rt: url(../img/tip-arrow-right.png);
+@tip-layer-arrow-icon-rb: url(../img/tip-arrow-right.png);
 
-@TipLayer-title-padding: 0px;
-@TipLayer-title-margin: .5em 0;
-@TipLayer-title-font-size: 12px;
-@TipLayer-title-line-height: 18px;
+@tip-layer-title-padding: 0px;
+@tip-layer-title-margin: .5em 0;
+@tip-layer-title-font-size: 12px;
+@tip-layer-title-line-height: 18px;
 
-@TipLayer-body-padding: 0px;
-@TipLayer-body-margin: 0 0 5px;
-@TipLayer-body-font-size: 12px;
-@TipLayer-body-line-height: 18px;
+@tip-layer-body-padding: 0px;
+@tip-layer-body-margin: 0 0 5px;
+@tip-layer-body-font-size: 12px;
+@tip-layer-body-line-height: 18px;
 
 /** TipLayer End **/
 
 /** Region Begin **/
-@Region-font-color: #000;
-@Region-border-color: #DDDDDD;
-@Region-border-color-disabled: #D8D8D8;
-@Region-border: 1px solid @Region-border-color;
+@region-font-color: #000;
+@region-border-color: #DDDDDD;
+@region-border-color-disabled: #D8D8D8;
+@region-border: 1px solid @region-border-color;
 
-@Region-country-row-border-color: #DDDDDD;
-@Region-country-row-border-bottom: 1px solid @Region-country-row-border-color;
+@region-country-row-border-color: #DDDDDD;
+@region-country-row-border-bottom: 1px solid @region-country-row-border-color;
 
-@Region-country-row-background-color: #F6F6F6;
+@region-country-row-background-color: #F6F6F6;
 
-@Region-region-row-border-odd: solid 1px #E6EEF6;
-@Region-region-row-background-odd: #F9FCFE;
+@region-region-row-border-odd: solid 1px #E6EEF6;
+@region-region-row-background-odd: #F9FCFE;
 
-@Region-region-row-border-even: solid 1px #FFFFFF;
-@Region-region-row-background-even: #F1F1F1;
+@region-region-row-border-even: solid 1px #FFFFFF;
+@region-region-row-background-even: #F1F1F1;
 
-@Region-city-box-border: solid 1px #97A5B2;
-@Region-city-box-background: #FFF;
+@region-city-box-border: solid 1px #97A5B2;
+@region-city-box-background: #FFF;
 
-@Region-city-box-border-hover: solid 1px #97A5B2;
-@Region-city-box-background-hover: #FFF;
+@region-city-box-border-hover: solid 1px #97A5B2;
+@region-city-box-background-hover: #FFF;
 
-@Region-select-info-tip-background: #3F8FE1;
-@Region-select-info-tip-color: #FFF;
+@region-select-info-tip-background: #3F8FE1;
+@region-select-info-tip-color: #FFF;
 
 /** Region End **/

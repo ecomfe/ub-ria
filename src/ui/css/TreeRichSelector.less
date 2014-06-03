@@ -1,5 +1,9 @@
 .ui-tree-richselector {
     .ui-richselector-query-list {
+        .ui-tree-node-indicator {
+            cursor: pointer;
+        }
+
         // 第一个indicator不占位
         .ui-tree-hide-root {
             .ui-tree-root {
@@ -11,15 +15,44 @@
                 }
             }
         }
+
+        // 二级文字颜色需要单独设置
+        .ui-tree-node-level-2 {
+            .ui-tree-item-content {
+                color: #999;
+            }
+        }
+
+        // 正常状态
         .ui-tree-content-wrapper {
             border-left: medium none;
             padding: 0 10px;
-            line-height: 35px;
+            line-height: @rich-selector-line-height;
             .clearfix();
             &:hover {
                 background: transparent;
             }
         }
+
+        // 鼠标悬浮状态
+        .ui-tree-content-wrapper:hover {
+            background: @rich-selector-item-background-color-hover;
+            .ui-tree-item-content {
+                background: none;
+            }
+        }
+
+
+        // 已选状态
+        .ui-tree-content-wrapper-selected,
+        .ui-tree-content-wrapper-selected:hover {
+            background: @rich-selector-item-background-color-selected;
+            .ui-tree-item-content {
+                background: none;
+                color: #333;
+            }
+        }
+
 
         .ui-tree-item-content {
             color: #666;
@@ -30,15 +63,37 @@
         }
 
         .ui-tree-node-empty .ui-tree-item-content {
-            color: #9a9a9a;
+            color: #999;
         }
 
-        .ui-tree-node-empty .ui-tree-content-wrapper-selected {
-            background: #fffaee;
+    }
+}
+
+
+// 单独存在，没有右侧备选栏的情况
+.ui-tree-richselector.no-move-richselector {
+    &.ui-richselector-add {
+        // 所有节点的未选择下的hover状态都没有图标
+        .ui-tree-content-wrapper:hover {
             .ui-tree-item-content {
-                color: #333;
+                .pseudo-icon ();
             }
         }
     }
 }
 
+// 父节点不可选的情况
+.ui-tree-richselector.root-not-select-tree-richselector {
+    // 一级节点没有hover状态
+    .ui-tree-node-level-1 {
+        >.ui-tree-content-wrapper {
+            cursor: default;
+            &:hover {
+                background: none;
+                .ui-tree-item-content {
+                    .pseudo-icon ();
+                }
+            }
+        }
+    }
+}

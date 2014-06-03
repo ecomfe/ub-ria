@@ -1,7 +1,10 @@
 // 表格
-@ui-table-richselector-th-bg: transparent; 
-@ui-table-richselector-tr-bg: transparent;
-@ui-table-richselector-tr-active-bg: transparent; 
+@table-rich-selector-th-bg: transparent; 
+@table-rich-selector-tr-bg: transparent;
+@table-rich-selector-tr-active-bg: transparent;
+
+@table-rich-selector-th-height: 35px;
+
 .ui-table-richselector {
     .ui-richselector-query-list {
         table {
@@ -9,87 +12,107 @@
             width: 100%;
 
             th {
-                background-color: @ui-table-richselector-th-bg;
+                background-color: @table-rich-selector-th-bg;
                 font-weight: bold;
-                height: 35px;
+                height: @table-rich-selector-th-height;
                 text-align: left;
                 padding-left: 10px;
             }
 
 
             td {
-                height: 35px;
+                height: @rich-selector-line-height;
                 vertical-align: middle;
                 padding-left: 10px;
                 .ellipsis();
             }   
         }
         .ui-richselector-content-table {
+            .ui-richselector-row {
+                cursor:pointer;
+                &:hover {
+                    background: @rich-selector-item-background-color-hover;
+                    .ui-richselector-row-action-icon {
+                        display: block;
+                    }
+                }
+            }
+
+            .ui-richselector-row-selected,
+            .ui-richselector-row-selected:hover {
+                cursor: default;
+                color: #666666;
+                background: @rich-selector-item-background-color-selected;
+                .ui-richselector-row-action-icon {
+                    display: block;
+                }
+            }
+
+            .ui-richselector-row-disabled,
+            .ui-richselector-row-disabled:hover {
+                cursor: default;
+                color: #666666;
+                background: @rich-selector-item-background-color-disabled;
+                .ui-richselector-row-action-icon {
+                    display: none;
+                }
+            }
+
+            .ui-richselector-row-action-icon {
+                background: none;
+                height: @rich-selector-line-height;
+                width: 100%;
+                display: none;
+            }
 
         }
     }
 
     // 添加型
-    &.ui-richselector-add {            
-        .ui-richselector-row {
-            cursor:pointer;
-            &:hover {
-                background: #f8f9fb;
-                .ui-richselector-row-action-icon {
-                    display: block;
-                }
-            }
-        }
-
-        .ui-richselector-row-selected {
-            cursor: default;
-            color: #666666;
-            &:hover {
-                background: #fff;
-                .ui-richselector-row-action-icon {
-                    display: none;
-                }
-            }
-        }
-
-        .ui-richselector-row-disabled {
-            cursor: default;
-            color: #666666;
-            &:hover {
-                background: #fff;
-                .ui-richselector-row-action-icon {
-                    display: none;
-                }
-            }
-        }
-
+    &.ui-richselector-add {
         .ui-richselector-row-action-icon {
-            background: url("../img/treeselector-arrow.png");
-            height: 14px;
-            margin-top: -1px;
-            width: 17px;
-            display: none;
+            .pseudo-icon(
+                @rich-selector-add-item-background-icon-hover,
+                @rich-selector-add-item-background-icon-width-hover,
+                @rich-selector-add-item-background-icon-height-hover,
+                center
+            );
+        }
+
+        .ui-richselector-row-selected,
+        .ui-richselector-row-selected:hover {
+            .ui-richselector-row-action-icon {
+                .pseudo-icon(
+                    @rich-selector-item-background-icon-selected,
+                    @rich-selector-item-background-icon-width-selected,
+                    @rich-selector-item-background-icon-height-selected,
+                    center
+                );
+            }
         }
     }
 
     // 删除型
-    &.ui-richselector-del {            
-        .ui-richselector-row {
-            cursor:pointer;
-            &:hover {
-                background: #f8f9fb;
-                .ui-richselector-row-action-icon {
-                    display: block;
-                }
-            }
-        }
-
+    &.ui-richselector-del {
         .ui-richselector-row-action-icon {
-            background: url("../img/treeselector-del.png");
-            height: 9px;
-            margin-top: -1px;
-            width: 9px;
-            display: none;
+            .pseudo-icon(
+                @rich-selector-delete-item-background-icon-hover,
+                @rich-selector-delete-item-background-icon-width-hover,
+                @rich-selector-delete-item-background-icon-height-hover,
+                center
+            );
         }
     }
 }
+
+// 单独存在，没有右侧备选栏的情况
+.no-move-richselector {
+    // 添加型
+    &.ui-richselector-add {
+        .ui-richselector-row-action-icon {
+            .pseudo-icon();
+        }
+    }
+}
+
+
