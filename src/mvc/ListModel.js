@@ -369,7 +369,7 @@ define(
         };
 
         /**
-         * 批量删除前确认
+         * 删除前确认
          *
          * 此方法默认用于前端确认，如需后端检验则需要重写为调用`data().getRemoveAdvice`
          *
@@ -379,14 +379,20 @@ define(
         ListModel.prototype.getRemoveAdvice = function (ids, entityName) {
             // 默认仅本地提示，有需要的子类重写为从远程获取信息
             var Deferred = require('er/Deferred');
+
+            var message = '您确定要删除已选择的' + ids.length + '个' + this.get('entityDescription') + '吗？';
+            if (ids.length <= 1) {
+                message = '您确定要删除该' + this.get('entityDescription') + '吗？';
+            }
             var advice = {
-                message: '您确定要删除已选择的' + ids.length + '个' + this.get('entityDescription') + '吗？'
+                message: message
             };
+
             return Deferred.resolved(advice);
         };
 
         /**
-         * 批量恢复前确认
+         * 恢复前确认
          *
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
