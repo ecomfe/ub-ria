@@ -140,7 +140,6 @@ define(
          * @param {mini-event.Event} e 事件对象
          */
         ListAction.prototype.modifyStatus = function (e) {
-            var status = e.status;
             // 获取批量操作的实体
             var items = this.view.getSelectedItems();
             // 获取非批量操作的实体
@@ -153,7 +152,7 @@ define(
             var context = {
                 items: items,
                 ids: ids,
-                status: status,
+                status: e.status,
                 statusName: e.statusName,
                 command: e.command
             };
