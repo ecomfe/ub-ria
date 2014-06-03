@@ -43,7 +43,9 @@ define(
                 // 选择数据
                 selectedData: [],
                 // 字段
-                fields: []
+                fields: [
+                    { field : 'name', content: 'name' }
+                ]
             };
 
             if (options.hasRowHead === 'false') {
