@@ -228,6 +228,10 @@ define(
             item['isSelected'] = true;
             //如果是单选，需要将其他的已选项置为未选
             if (!control.multi) {
+                // 如果以前选中了一个，要取消选择
+                if (control.curSeleId) {
+                    control['indexData'][control.curSeleId]['isSelected'] = false;
+                }
                 // 赋予新值
                 control.curSeleId = item['node'].id;
             }
