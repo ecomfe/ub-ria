@@ -135,19 +135,13 @@ define(
         }
 
         /**
-         * 修改实体状态，事件对象无id属性时表示该操作非批量操作
+         * 批量修改事件处理
          *
-         * @param {mini-event.Event} e 事件对象
+         * @param {mini-event.Event} 事件对象
+         * @ignore
          */
-        ListAction.prototype.modifyStatus = function (e) {
-            // 获取批量操作的实体
+        function batchModifyStatus(e) {
             var items = this.view.getSelectedItems();
-            // 获取非批量操作的实体
-            if (items.length === 0) {
-                var item = this.model.getItemById(e.id);
-                items = [item];
-            }
-
             var ids = u.pluck(items, 'id');
             var context = {
                 items: items,
@@ -155,14 +149,23 @@ define(
                 status: e.status,
                 statusName: e.statusName,
                 command: e.command
-            };
+            }
 
+            this.modifyStatus(context);
+        }
+
+        /**
+         * 修改实体状态
+         *
+         * @param {meta.UpdateContext} context 批量操作的上下文对象
+         */
+        ListAction.prototype.modifyStatus = function (context) {
             if (this.requireAdviceFor(context)) {
                 // 需要后端提示消息的，再额外加入用户确认的过程
-                var action = require('../util').pascalize(e.statusName);
+                var action = require('../util').pascalize(context.statusName);
                 var adviceMethod = 'get' + action + 'Advice';
 
-                this.model[adviceMethod](ids, items)
+                this.model[adviceMethod](context.ids, context.items)
                     .then(u.bind(waitConfirmForAdvice, this, context))
                     .then(u.bind(updateEntities, this, context));
             }
@@ -255,7 +258,7 @@ define(
             BaseAction.prototype.initBehavior.apply(this, arguments);
             this.view.on('search', search, this);
             this.view.on('pagesizechange', updatePageSize, this);
-            this.view.on('batchmodify', this.modifyStatus, this);
+            this.view.on('batchmodify', batchModifyStatus, this);
             this.view.on('pagechange', forwardToPage, this);
         };
 
