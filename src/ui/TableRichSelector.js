@@ -121,7 +121,7 @@ define(
             var selectedData = this.selectedData || [];
             // 单选模式，保存第一个值为当前选值
             if (!this.multi && selectedData.length) {
-                this.curSeleId = selectedData[0]['id'];
+                this.currentSelectedId = selectedData[0].id;
             }
             u.each(selectedData, function (item, index) {
                 var selectedIndex = indexData[item.id];
@@ -250,6 +250,7 @@ define(
             var fields = control.fields;
             var html = [];
             var fieldClasses = control.helper.getPartClassName('row-field');
+            var cursor = 0;
             u.each(fields, function (field, i) {
                 var content = field.content;
                 var innerHTML = ('function' == typeof content
@@ -272,14 +273,15 @@ define(
                         + '</td>';
                     html.push(contentHtml);
                 }
+                cursor ++;
             });
 
             //最后一列添加箭头
-            var arrowClasses = 
+            var arrowClasses =
                 control.helper.getPartClassName('row-action-icon');
             var arrowHTML = '<span class="' + arrowClasses + '"></span>';
-            if(tr) {
-                var td = tr.insertCell(i);
+            if (tr) {
+                var td = tr.insertCell(cursor);
                 td.style.width = '30px';
                 td.innerHTML = arrowHTML;
             }
@@ -346,7 +348,7 @@ define(
         };
 
         function actionForAdd(control, row, item) {
-            var selectedClasses = 
+            var selectedClasses =
                 control.helper.getPartClassName('row-selected');
             var fire = false;
             // 点击已选中的，在单选模式下，执行取消选择
@@ -390,20 +392,20 @@ define(
                 // 移除原有选项
                 unselectCurrent(control);
                 // 赋予新值
-                control.curSeleId = toBeSelected ? id : null;
+                control.currentSelectedId = toBeSelected ? id : null;
             }
             updateSingleItemStatus(control, item, toBeSelected);
         }
 
         //撤销选择当前项
         function unselectCurrent(control) {
-            var curId = control.curSeleId;
+            var curId = control.currentSelectedId;
             //撤销当前选中项
             if (curId) {
                 var index = control.indexData[curId];
                 var item = control.allData[index];
                 updateSingleItemStatus(control, item, false);
-                control.curSeleId = null;
+                control.currentSelectedId = null;
             }
         }
 
@@ -457,7 +459,7 @@ define(
                 var indexData = this.indexData;
                 var control = this;
                 u.each(items, function (item) {
-                    var id = item['id'] !== 'undefined' ? item['id'] : item;
+                    var id = item.id !== 'undefined' ? item.id : item;
                     var itemIndex = indexData[id];
                     if (itemIndex !== null && itemIndex !== undefined) {
                         var rawItem = allData[itemIndex];
@@ -511,7 +513,7 @@ define(
 
 
         function actionForLoad(control, row, item) {
-            var selectedClasses = 
+            var selectedClasses =
                 control.helper.getPartClassName('row-selected');
             // 点击未选中的，执行
             if (!lib.hasClass(row, selectedClasses)) {
@@ -563,10 +565,10 @@ define(
             var allData = this.allData;
             var mode = this.mode;
             if (mode === 'delete') {
-                return data;
+                return allData;
             }
             var selectedData = u.filter(rawData, function (item, index) {
-                return allData[index]['isSelected'];
+                return allData[index].isSelected;
             });
             return selectedData;
         };
