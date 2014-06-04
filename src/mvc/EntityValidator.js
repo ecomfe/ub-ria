@@ -259,7 +259,7 @@ define(
                     var messageTemplate = checker.errorMessage;
                     // 处理同一个checker检查不同类型字段时错误消息模版不同的情况
                     if (typeof messageTemplate === 'object') {
-                        messageTemplate = messageTemplate[fieldSchema[0]]
+                        messageTemplate = messageTemplate[fieldSchema[0]];
                     }
 
                     if (!u.isString(messageTemplate)) {
