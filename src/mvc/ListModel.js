@@ -382,10 +382,12 @@ define(
         ListModel.prototype.getRemoveAdvice = function (ids, entityName) {
             // 默认仅本地提示，有需要的子类重写为从远程获取信息
             var Deferred = require('er/Deferred');
+            var count = ids.length;
+            var description = this.get('entityDescription');
 
-            var message = '您确定要删除已选择的' + ids.length + '个' + this.get('entityDescription') + '吗？';
-            if (ids.length <= 1) {
-                message = '您确定要删除该' + this.get('entityDescription') + '吗？';
+            var message = '您确定要删除已选择的' + count + '个' + description + '吗？';
+            if (count <= 1) {
+                message = '您确定要删除该' + description + '吗？';
             }
             var advice = {
                 message: message
