@@ -122,6 +122,14 @@ define(
             // 这里把ABCD这种连续的大写，转成AbcD这种形式。
             // 如果`encodeURIComponent`，会变成`encodeUriComponent`，
             // 然后加横线后就是`encode-uri-component`得到正确的结果
+            // 但是如果连续的大写串后没有其它字母，则将其第二个字母起全部转成小写
+            s = s.replace(
+                /[A-Z]{2,}$/g,
+                function (match) {
+                    return match.charAt(0)
+                        + match.slice(1).toLowerCase();
+                }
+            );
             s = s.replace(
                 /[A-Z]{2,}/g,
                 function (match) {
