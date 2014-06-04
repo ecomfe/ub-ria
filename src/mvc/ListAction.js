@@ -142,26 +142,29 @@ define(
          */
         function batchModifyStatus(e) {
             var items = this.view.getSelectedItems();
-            var ids = u.pluck(items, 'id');
-            var context = {
-                items: items,
-                ids: ids,
-                status: e.status
-            };
 
-            this.modifyStatus(context);
+            this.modifyStatus(items, e.status);
         }
 
         /**
          * 修改实体状态
          *
-         * @param {meta.UpdateContext} context 批量操作的上下文对象
+         * @param {object[]} items 待修改状态的实体数组
+         * @param {number} status 修改后实体的状态值
          */
-        ListAction.prototype.modifyStatus = function (context) {
-            var transitionItem = u.findWhere(this.model.statusTransitions, { status: context.status });
-            // 在context中添加`status`对应的操作名和操作描述
-            context.statusName = transitionItem.statusName;
-            context.command = transitionItem.command;
+        ListAction.prototype.modifyStatus = function (items, status) {
+            var ids = u.pluck(items, 'id');
+            var transitionItem = u.findWhere(
+                this.model.statusTransitions,
+                { status: status }
+            );
+            var context = {
+                ids: ids,
+                items: items,
+                status: status,
+                statusName: transitionItem.statusName,
+                command: transitionItem.command
+            };
 
             if (this.requireAdviceFor(context)) {
                 // 需要后端提示消息的，再额外加入用户确认的过程
