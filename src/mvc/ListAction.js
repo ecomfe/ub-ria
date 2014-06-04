@@ -146,9 +146,7 @@ define(
             var context = {
                 items: items,
                 ids: ids,
-                status: e.status,
-                statusName: e.statusName,
-                command: e.command
+                status: e.status
             }
 
             this.modifyStatus(context);
@@ -160,6 +158,11 @@ define(
          * @param {meta.UpdateContext} context 批量操作的上下文对象
          */
         ListAction.prototype.modifyStatus = function (context) {
+            var transitionItem = u.findWhere(this.model.statusTransitions, { status: context.status });
+            // 在context中添加`status`对应的操作名和操作描述
+            context.statusName = transitionItem.statusName;
+            context.command = transitionItem.command;
+
             if (this.requireAdviceFor(context)) {
                 // 需要后端提示消息的，再额外加入用户确认的过程
                 var action = require('../util').pascalize(context.statusName);
