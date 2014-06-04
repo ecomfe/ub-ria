@@ -6,26 +6,62 @@
   * @file 富选择器
   * @author lixiang
   */
+@rich-selector-frame-border: 1px solid #ebebeb;
+
+@rich-selector-head-bg: #ebebeb;
+@rich-selector-head-border-bottom: 1px solid #ebebeb;
+@rich-selector-batch-action-link-color: #67c1a5;
+
+@rich-selector-query-result-bg: #fef9d4;
+@rich-selector-clear-query-link-color: #67c1a5;
+
+
+@rich-selector-line-height: 35px;
+
+@rich-selector-body-bg: #fcfcfc;
+@rich-selector-foot-bg: #f9f9f9;
+
+
+// RichSelector控件单项悬浮状态
+@rich-selector-item-background-color-hover: #fffaee;
+
+//// 添加型和加载型
+@rich-selector-add-item-background-icon-hover: url(../img/rich-selector-arrow.png);
+@rich-selector-add-item-background-icon-width-hover: 14px;
+@rich-selector-add-item-background-icon-height-hover: 14px;
+
+
+//// 删除型
+@rich-selector-delete-item-background-icon-hover: url(../img/richse-delete.png);
+@rich-selector-delete-item-background-icon-width-hover: 9px;
+@rich-selector-delete-item-background-icon-height-hover: 9px;
+
+// RichSelector控件单项选择状态
+@rich-selector-item-background-color-selected: none;
+@rich-selector-item-background-icon-selected: url(../img/richselector-selected.png);
+@rich-selector-item-background-icon-width-selected: 9px;
+@rich-selector-item-background-icon-height-selected: 7px;
+
+
+//不可选状态
+@rich-selector-item-background-color-disabled: none;
+
 esui-rich-selector {
     display: block;
 }
 
-@ui-richselector-frame-border: 1px solid #ebebeb;
 .ui-richselector {
     font-size: 12px;
     .box-sizing(border-box);
-    border: @ui-richselector-frame-border;
+    border: @rich-selector-frame-border;
 }
 
-@ui-richselector-head-bg: #ebebeb;
-@ui-richselector-head-border-bottom: 1px solid #ebebeb;
-@ui-richselector-batch-action-link-color: #67c1a5;
 .ui-richselector-head {
     height: 26px;
     line-height: 26px;
     padding: 0 10px;
-    border-bottom: @ui-richselector-head-border-bottom;
-    background: @ui-richselector-head-bg;
+    border-bottom: @rich-selector-head-border-bottom;
+    background: @rich-selector-head-bg;
 
     h3 {
         margin: 0;
@@ -39,15 +75,14 @@ esui-rich-selector {
         float: right;
         text-decoration: none;
         cursor: pointer;
-        color: @ui-richselector-batch-action-link-color;
+        color: @rich-selector-batch-action-link-color;
     }
 }
 
-@ui-richselector-body-bg: #fcfcfc;
 .ui-richselector-body {
     overflow-x: hidden;
     clear: both;
-    background: @ui-richselector-body-bg;
+    background: @rich-selector-body-bg;
 }
 
 .ui-richselector-search-wrapper {
@@ -57,15 +92,15 @@ esui-rich-selector {
 
 // 搜索结果概要
 .ui-richselector-query-result-general {
-    background: none repeat scroll 0 0 #FFFDD8;
+    background: @rich-selector-query-result-bg;
     height: 30px;
     line-height: 30px;
     padding: 0 10px;
     display: none;
 
     .ui-richselector-clear-query-link {
-        text-decoration: underline;
-        color: blue;
+        text-decoration: none;
+        color: @rich-selector-clear-query-link-color;
         cursor: pointer;
         line-height: 30px;
         float: right;
@@ -79,6 +114,7 @@ esui-rich-selector {
 }
 
 .ui-richselector-empty-text {
+    padding: 0 10px;
     display: none;
 }
 
@@ -86,23 +122,8 @@ esui-rich-selector {
     height: 25px;
     color: #555;
     line-height: 25px;
-    background: #f9f9f9;
+    background: @rich-selector-foot-bg;
     padding: 0 10px;
-}
-
-
-.ui-richselector-validity-invalid {
-    border: 1px solid red;
-}
-.ui-richselector-validity-label {
-    display:block;
-    margin-top: 5px;
-}
-.ui-richselector-validity-label-invalid {
-    background: url('../img/icon-alert.png') no-repeat scroll 15px center #FEDBDC;
-    border: 1px solid #F0CCCC;
-    color: #dd6767;
-    padding: 5px 0 5px 50px;
 }
 
 // 搜索状态
@@ -132,4 +153,17 @@ esui-rich-selector {
     .ui-richselector-query-result-general {
         display: block;
     }
+}
+
+
+// 错误提示
+.ui-richselector-validity-invalid {
+    .complex-component-validity-invalid();
+}
+.ui-richselector-validity-label {
+    .complex-component-validity-label();
+}
+
+.ui-richselector-validity-label-invalid {
+   .complex-component-validity-label-invalid();
 }

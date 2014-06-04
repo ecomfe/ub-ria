@@ -49,6 +49,23 @@ define(
             };
 
             lib.extend(properties, options);
+
+            if (properties.onlyLeafSelect === 'false') {
+                properties.onlyLeafSelect  = false;
+            }
+
+            if (properties.orientExpand === 'false') {
+                properties.orientExpand  = false;
+            }
+
+            if (properties.hideRoot === 'false') {
+                properties.hideRoot  = false;
+            }
+
+            if (properties.wideToggleArea === 'false') {
+                properties.wideToggleArea  = false;
+            }
+
             RichSelector.prototype.initOptions.call(this, properties);
         };
 
@@ -58,6 +75,10 @@ define(
                 this.main,
                 'ui-tree-richselector'
             );
+
+            if (this.onlyLeafSelect) {
+                this.addState('only-leaf-selectable');
+            }
         };
 
         /**
@@ -124,8 +145,8 @@ define(
          */
         TreeRichSelector.prototype.refreshContent = function () {
             var treeData = this.isQuery() ? this.queriedData : this.allData;
-            if (!treeData 
-                || !treeData.children 
+            if (!treeData
+                || !treeData.children
                 || !treeData.children.length) {
                 this.addState('empty');
             }
@@ -179,7 +200,7 @@ define(
                     function (e) {
                         var node = e.node;
                         if (indexData[node.id]) {
-                            indexData[node.id]['isSelected'] = false;
+                            indexData[node.id].isSelected = false;
                         }
                     }
                 );
@@ -200,7 +221,7 @@ define(
          */
         TreeRichSelector.prototype.handlerAfterClickNode = function (node) {
             // 这个item不一定是源数据元，为了连锁同步，再取一遍
-            var item = this['indexData'][node.id];
+            var item = this.indexData[node.id];
             if (!item) {
                 return;
             }
@@ -225,11 +246,15 @@ define(
          * @ignore
          */
         function actionForAdd(control, item) {
-            item['isSelected'] = true;
+            item.isSelected = true;
             //如果是单选，需要将其他的已选项置为未选
             if (!control.multi) {
+                // 如果以前选中了一个，要取消选择
+                if (control.currentSeletedId) {
+                    control.indexData[control.currentSeletedId].isSelected = false;
+                }
                 // 赋予新值
-                control.curSeleId = item['node'].id;
+                control.currentSeletedId = item.node.id;
             }
             control.fire('add');
         }
@@ -248,7 +273,7 @@ define(
         function selectItem(control, id, toBeSelected) {
             var tree = control.getQueryList().getChild('tree');
             // 完整数据
-            var indexData = control['indexData'];
+            var indexData = control.indexData;
             var item = indexData[id];
 
             if (!item) {
@@ -259,7 +284,7 @@ define(
             if (!control.multi && toBeSelected) {
                 unselectCurrent(control);
                 // 赋予新值
-                control.curSeleId = id;
+                control.currentSeletedId = id;
             }
 
             item.isSelected = toBeSelected;
@@ -277,12 +302,12 @@ define(
          * @ignore
          */
         function unselectCurrent(control) {
-            var curId = control.curSeleId;
+            var curId = control.currentSeletedId;
             //撤销当前选中项
             if (curId) {
                 var treeList = control.getQueryList().getChild('tree');
                 treeList.unselectNode(curId);
-                control.curSeleId = null;
+                control.currentSeletedId = null;
             }
         }
 
@@ -322,7 +347,7 @@ define(
                         var id = node.id !== undefined ? node.id : node;
                         var item = indexData[id];
                         if (item !== null && item !== undefined) {
-                            var node = item['node'];
+                            var node = item.node;
                             // 更新状态，但不触发事件
                             selectItem(control, node.id, toBeSelected);
                         }
@@ -339,9 +364,9 @@ define(
          * @ignore
          */
         function actionForDelete(control, item) {
-            deleteItem(control, item['node'].id);
+            deleteItem(control, item.node.id);
             // 外部需要知道什么数据被删除了
-            control.fire('delete', { items: [item['node']] });
+            control.fire('delete', { items: [item.node] });
         }
 
         /**
@@ -370,7 +395,7 @@ define(
             var children = node.children || [];
 
             // 从parentNode的children里删除
-            var newChildren = u.without(children, item['node']);
+            var newChildren = u.without(children, item.node);
             // 没有孩子了，父节点也删了吧
             if (newChildren.length === 0 && parentId !== -1) {
                 deleteItem(control, parentId);
