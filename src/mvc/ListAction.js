@@ -147,7 +147,7 @@ define(
                 items: items,
                 ids: ids,
                 status: e.status
-            }
+            };
 
             this.modifyStatus(context);
         }

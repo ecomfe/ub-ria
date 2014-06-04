@@ -90,7 +90,7 @@ define(
          */
         ListModel.prototype.statusTransitions = [
             { status: 0, deny: [0], statusName: 'remove', command: '删除' },
-            { status: 1, deny: [1], statusName: 'restore'， command: '启用' }
+            { status: 1, deny: [1], statusName: 'restore', command: '启用' }
         ];
 
         /**

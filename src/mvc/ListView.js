@@ -171,7 +171,7 @@ define(
         function batchModify(e) {
             var args = {
                 // `status`是`number`类型
-                status: +e.target.getData('status'),
+                status: +e.target.getData('status')
             };
 
             this.fire('batchmodify', args);
