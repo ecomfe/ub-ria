@@ -76,15 +76,16 @@ define(
         /**
          * 设定实体的状态迁移表
          *
-         * 状态迁移每一项饱含以下3个属性：
+         * 状态迁移每一项可包含以下5个属性
          *
-         * - `status`表示目标状态
+         * - `status`表示目标状态，必须
          * - `deny`表示不能从其指定的状态进行迁移
          * - `accept`表示仅能从其指定的状态进行迁移
-         * - `statusName`表示`status`对应的操作名, 是一个camelCase的格式
-         * - `command`表示`status`对应操作的中文描述
+         * - `statusName`表示`status`对应的操作名, 是一个camelCase的格式，必须
+         * - `command`表示`status`对应操作的中文描述，必须
          *
          * 如果`accept`和`deny`同时存在，则使用`accept`与`deny`的差集
+         * `status`, `statusName`, `command`三项必须有
          *
          * @type {Object[]}
          */
