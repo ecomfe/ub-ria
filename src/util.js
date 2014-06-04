@@ -272,7 +272,7 @@ define(
          */
         util.deepClone = function (obj) {
             // 非对象以及函数就直接返回
-            if (!u.isObject(obj) || u.isFunction(obj)) {
+            if (!u.isObject(obj) || u.isFunction(obj) || u.isRegExp(obj)) {
                 return obj;
             }
 
