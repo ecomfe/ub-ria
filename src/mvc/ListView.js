@@ -172,10 +172,6 @@ define(
             var args = {
                 // `status`是`number`类型
                 status: +e.target.getData('status'),
-                // `statusName`是一个camelCase的格式
-                statusName: require('../util').camelize(e.target.id),
-                // `command`是操作的中文说明
-                command: e.target.get('text')
             };
 
             this.fire('batchmodify', args);

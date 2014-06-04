@@ -81,14 +81,16 @@ define(
          * - `status`表示目标状态
          * - `deny`表示不能从其指定的状态进行迁移
          * - `accept`表示仅能从其指定的状态进行迁移
+         * - `statusName`表示`status`对应的操作名, 是一个camelCase的格式
+         * - `command`表示`status`对应操作的中文描述
          *
          * 如果`accept`和`deny`同时存在，则使用`accept`与`deny`的差集
          *
          * @type {Object[]}
          */
         ListModel.prototype.statusTransitions = [
-            { status: 0, deny: [0] },
-            { status: 1, deny: [1] }
+            { status: 0, deny: [0], statusName: 'remove', command: '删除' },
+            { status: 1, deny: [1], statusName: 'restore'， command: '启用' }
         ];
 
         /**
