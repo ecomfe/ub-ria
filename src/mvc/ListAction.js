@@ -155,7 +155,7 @@ define(
         ListAction.prototype.modifyStatus = function (items, status) {
             var ids = u.pluck(items, 'id');
             var transitionItem = u.findWhere(
-                this.model.statusTransitions,
+                this.model.getStatusTransitions(),
                 { status: status }
             );
             var context = {

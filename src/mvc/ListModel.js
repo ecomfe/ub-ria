@@ -95,6 +95,15 @@ define(
         ];
 
         /**
+         * 获取实体的状态迁移表
+         *
+         * @return {object[]}
+         */
+        ListModel.prototype.getStatusTransitions = function () {
+            return this.statusTransitions;
+        };
+
+        /**
          * 配置默认`status`参数值，即当URL中没有此参数时发给后端的代替值
          *
          * 通常“状态”的默认选项不是“全部”，而是“启用”等状态，就会遇上这样的情况：
@@ -208,7 +217,7 @@ define(
          */
         function checkStatusTransition(targetStatus, entity) {
             var config = u.findWhere(
-                this.statusTransitions,
+                this.getStatusTransitions(),
                 { status: targetStatus }
             );
 
