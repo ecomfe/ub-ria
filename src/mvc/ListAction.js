@@ -137,52 +137,66 @@ define(
         /**
          * 批量修改事件处理
          *
-         * @param {Object} 事件对象
+         * @param {mini-event.Event} 事件对象
          * @ignore
          */
         function batchModifyStatus(e) {
-            var status = e.status;
             var items = this.view.getSelectedItems();
+
+            this.modifyStatus(items, e.status);
+        }
+
+        /**
+         * 修改实体状态
+         *
+         * @param {object[]} items 待修改状态的实体数组
+         * @param {number} status 修改后实体的状态值
+         */
+        ListAction.prototype.modifyStatus = function (items, status) {
             var ids = u.pluck(items, 'id');
+            var transitionItem = u.findWhere(
+                this.model.getStatusTransitions(),
+                { status: status }
+            );
             var context = {
-                items: items,
                 ids: ids,
+                items: items,
                 status: status,
-                statusName: e.statusName,
-                command: e.command
+                statusName: transitionItem.statusName,
+                command: transitionItem.command
             };
 
             if (this.requireAdviceFor(context)) {
                 // 需要后端提示消息的，再额外加入用户确认的过程
-                var action = require('../util').pascalize(e.statusName);
+                var action = require('../util').pascalize(context.statusName);
                 var adviceMethod = 'get' + action + 'Advice';
 
-                this.model[adviceMethod](ids, items)
+                this.model[adviceMethod](context.ids, context.items)
                     .then(u.bind(waitConfirmForAdvice, this, context))
                     .then(u.bind(updateEntities, this, context));
             }
             else {
                 updateEntities.call(this, context);
             }
-        }
+        };
 
         /**
-         * 批量更新实体状态
+         * 更新实体状态
          *
-         * @param {meta.BatchUpdateContext} context 批量操作的上下文对象
+         * @param {meta.UpdateContext} context 操作的上下文对象
          */
         function updateEntities(context) {
             this.model[context.statusName](context.ids)
                 .then(
                     u.bind(updateListStatus, this, context),
-                    u.bind(this.notifyBatchFail, this, context)
+                    u.bind(this.notifyModifyFail, this, context)
                 );
         }
 
         /**
-         * 根据批量删除前确认
+         * 根据删除前确认
          *
-         * @param {meta.BatchUpdateContext} context 批量操作的上下文对象
+         * @param {meta.UpdateContext} context 操作的上下文对象
          */
         function waitConfirmForAdvice(context, advice) {
             var options = {
@@ -193,24 +207,32 @@ define(
         }
 
         /**
-         * 通知批量操作失败
+         * 通知修改状态操作失败
          *
-         * 默认提示用户“无法[操作名]部分或全部[实体名]”
+         * 默认提示用户“无法[操作名]部分或全部[实体名]”，或“无法[操作名]该[实体名]”
          *
-         * @param {meta.BatchUpdateContext} context 批量操作的上下文对象
+         * @param {meta.UpdateContext} context 批量操作的上下文对象
          */
-        ListAction.prototype.notifyBatchFail = function (context) {
+        ListAction.prototype.notifyModifyFail = function (context) {
             var entityDescription = this.getEntityDescription();
-            this.view.alert(
-                '无法' + context.command + '部分或全部' + entityDescription,
-                context.command + entityDescription
-            );
+            if (context.ids.length > 1) {
+                this.view.alert(
+                    '无法' + context.command + '部分或全部' + entityDescription,
+                    context.command + entityDescription
+                );        
+            }
+            else {
+                this.view.alert(
+                    '无法' + context.command + '该' + entityDescription,
+                    context.command + entityDescription
+                );                 
+            }
         };
 
         /**
-         * 根据批量删除、启用的状态更新当前Action，默认行为为直接刷新当前的Action
+         * 根据删除、启用的状态更新当前Action，默认行为为直接刷新当前的Action
          *
-         * @param {meta.BatchUpdateContext} context 批量操作的上下文对象
+         * @param {meta.UpdateContext} context 操作的上下文对象
          */
         function updateListStatus(context) {
             var toastMessage = context.command + '成功';
@@ -223,9 +245,9 @@ define(
         }
 
         /**
-         * 检查指定批量操作是否需要后端提示消息，默认删除操作时要求提示用户确认
+         * 检查指定操作是否需要后端提示消息，默认删除操作时要求提示用户确认
          *
-         * @param {meta.BatchUpdateContext} context 批量操作的上下文对象
+         * @param {meta.UpdateContext} context 操作的上下文对象
          * @return {boolean} 返回`true`表示需要提示用户
          */
         ListAction.prototype.requireAdviceFor = function (context) {

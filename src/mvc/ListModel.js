@@ -76,20 +76,32 @@ define(
         /**
          * 设定实体的状态迁移表
          *
-         * 状态迁移每一项饱含以下3个属性：
+         * 状态迁移每一项可包含以下5个属性
          *
-         * - `status`表示目标状态
+         * - `status`表示目标状态，必须
          * - `deny`表示不能从其指定的状态进行迁移
          * - `accept`表示仅能从其指定的状态进行迁移
+         * - `statusName`表示`status`对应的操作名, 是一个camelCase的格式，必须
+         * - `command`表示`status`对应操作的中文描述，必须
          *
          * 如果`accept`和`deny`同时存在，则使用`accept`与`deny`的差集
+         * `status`, `statusName`, `command`三项必须有
          *
          * @type {Object[]}
          */
         ListModel.prototype.statusTransitions = [
-            { status: 0, deny: [0] },
-            { status: 1, deny: [1] }
+            { status: 0, deny: [0], statusName: 'remove', command: '删除' },
+            { status: 1, deny: [1], statusName: 'restore', command: '启用' }
         ];
+
+        /**
+         * 获取实体的状态迁移表
+         *
+         * @return {object[]}
+         */
+        ListModel.prototype.getStatusTransitions = function () {
+            return this.statusTransitions;
+        };
 
         /**
          * 配置默认`status`参数值，即当URL中没有此参数时发给后端的代替值
@@ -205,7 +217,7 @@ define(
          */
         function checkStatusTransition(targetStatus, entity) {
             var config = u.findWhere(
-                this.statusTransitions,
+                this.getStatusTransitions(),
                 { status: targetStatus }
             );
 
@@ -369,7 +381,7 @@ define(
         };
 
         /**
-         * 批量删除前确认
+         * 删除前确认
          *
          * 此方法默认用于前端确认，如需后端检验则需要重写为调用`data().getRemoveAdvice`
          *
@@ -379,14 +391,22 @@ define(
         ListModel.prototype.getRemoveAdvice = function (ids, entityName) {
             // 默认仅本地提示，有需要的子类重写为从远程获取信息
             var Deferred = require('er/Deferred');
+            var count = ids.length;
+            var description = this.get('entityDescription');
+
+            var message = '您确定要删除已选择的' + count + '个' + description + '吗？';
+            if (count <= 1) {
+                message = '您确定要删除该' + description + '吗？';
+            }
             var advice = {
-                message: '您确定要删除已选择的' + ids.length + '个' + this.get('entityDescription') + '吗？'
+                message: message
             };
+
             return Deferred.resolved(advice);
         };
 
         /**
-         * 批量恢复前确认
+         * 恢复前确认
          *
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
