@@ -1,8 +1,8 @@
-@FlatRadio-icon-normal: url(../img/flat-radio-normal.png);
-@FlatRadio-icon-hover: url(../img/flat-radio-hovered.png);
-@FlatRadio-icon-checked: url(../img/flat-radio-checked.png);
+@flat-radio-icon-normal: url(../img/flat-radio-normal.png);
+@flat-radio-icon-hover: url(../img/flat-radio-hovered.png);
+@flat-radio-icon-checked: url(../img/flat-radio-checked.png);
 
-@SwitchButton-background-color: #6ccdc0;
+@switch-button-background-color: #6ccdc0;
 
 .ui-abstractboxgroup-horizontal {
     .ui-abstractboxgroup-wrapper {
@@ -35,14 +35,14 @@
     padding-left: 27px;
     margin-right: 60px;
     font-size: 14px;
-    .pseudo-icon(@FlatRadio-icon-normal, 18px, 18px, left, 0px);
+    .pseudo-icon(@flat-radio-icon-normal, 18px, 18px, left, 0px);
 
     &:hover {
-        .pseudo-icon(@FlatRadio-icon-hover, 18px, 18px, left, 0px);
+        .pseudo-icon(@flat-radio-icon-hover, 18px, 18px, left, 0px);
     }
 
     .ui-abstractboxgroup-wrapper-checked & {
-        .pseudo-icon(@FlatRadio-icon-checked, 18px, 18px, left, 0px);
+        .pseudo-icon(@flat-radio-icon-checked, 18px, 18px, left, 0px);
     }
 }
 
@@ -52,7 +52,7 @@
     line-height: 30px;
     .ui-abstractboxgroup-wrapper {
         width: 118px;
-        border: 1px solid @SwitchButton-background-color;
+        border: 1px solid @switch-button-background-color;
         color: #333;
         font-size: 14px;
         text-align: center;
@@ -61,6 +61,6 @@
     .ui-abstractboxgroup-wrapper-checked  {
         width: 120px;
         color: #fff;
-        background: @SwitchButton-background-color;
+        background: @switch-button-background-color;
     }
 }
