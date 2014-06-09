@@ -226,7 +226,7 @@ define(
                     title: this.getCancelConfirmTitle(),
                     content: this.getCancelConfirmMessage()
                 };
-                this.view.waitConfirm(options)
+                this.view.waitCancelConfirm(options)
                     .then(u.bind(cancel, this));
             }
             else {
