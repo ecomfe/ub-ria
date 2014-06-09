@@ -77,7 +77,7 @@ define(
          */
         FormView.prototype.waitCancelConfirm = function (options) {
             this.waitConfirm(options);
-        }
+        };
 
         /**
          * 取消编辑
