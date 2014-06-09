@@ -9,7 +9,7 @@
 define(
     function (require) {
         var main = {
-            version: '1.0.0-alpha.5',
+            version: '1.0.0-alpha.6',
 
             enableExtensions: function () {
                 // 加载扩展
