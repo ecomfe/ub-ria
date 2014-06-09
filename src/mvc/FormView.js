@@ -67,6 +67,19 @@ define(
             }
         };
 
+
+        /**
+         * 等待用户取消确认
+         *
+         * 默认使用BaseView的waitConfirm
+         *
+         * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，
+         * 用户取消则进入`rejected`状态
+         */
+        FormView.prototype.waitCancelConfirm = function (options) {
+            BaseView.prototype.waitConfirm.apply(this, arguments);
+        }
+
         /**
          * 取消编辑
          */
