@@ -1,5 +1,5 @@
 /**
- * ADM 2.0
+ * UB-RIA 1.0
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @ignore
@@ -286,6 +286,10 @@ define(
          */
         RichSelector.prototype.search = function (e) {
             var keyword = lib.trim(e.target.getValue());
+            this.doSearch(keyword);
+        };
+
+        RichSelector.prototype.doSearch = function (keyword) {
             // 查询
             this.queryItem(keyword);
             // 更新概要搜索结果区
@@ -472,35 +476,37 @@ define(
          * @ignore
          */
         RichSelector.prototype.refresh = function () {
+            var keyword;
+            var isQueried;
             // 刷新搜索区
             if (this.hasSearchBox) {
-                // 有的时候需要保留搜索状态
-                if (this.holdState && this.isQuery()) {
-                    var keyword = this.getKeyword();
-                    // 根据关键字获取结果
-                    this.queryItem(keyword);
-                }
-                else {
-                    // 清空搜索区
-                    this.clearQuery();
-                    // 重建数据
-                    this.adaptData();
-                    // 构建选区
-                    this.refreshContent();
-                }
+                // 保存一些状态信息，一会儿就没了。。。
+                keyword = this.getKeyword();
+                isQueried = this.isQuery();
+                // 清空搜索区
+                this.clearQuery();
+            }
+
+            // 重建数据
+            this.adaptData();
+            // 构建选区
+            this.refreshContent();
+
+            // 有一种场景（一般在删除型控件里）
+            // 在搜索状态下，删除了某个节点之后，希望还保留在搜索状态下
+            if (this.holdState && isQueried) {
+                // 清空搜索框
+                var searchBox = this.getSearchBox();
+                searchBox.set('text', keyword);
+                // 根据关键字获取结果
+                this.doSearch(keyword);
             }
             else {
-                // 重建数据
-                this.adaptData();
-                // 构建选区
-                this.refreshContent();
+                // 更新底部信息
+                this.refreshFoot();
+                // 更新高度
+                this.adjustHeight();
             }
-
-            // 更新底部信息
-            this.refreshFoot();
-
-            // 更新高度
-            this.adjustHeight();
         };
 
         /**
