@@ -136,8 +136,6 @@ define(
             // 其中包含父节点信息，以及节点选择状态
             var indexData = {};
             if (this.allData && this.allData.children) {
-                // 顶级id
-                this.topId = this.datasource.id;
                 walkTree(
                     this.allData,
                     this.allData.children,
@@ -401,6 +399,8 @@ define(
                 var brothers = parentItem.node.children || [];
                 var allSelected = true;
                 u.each(brothers, function (brother) {
+                    // brother是原生数据, 格式 { text: 'xxx', name: 'xxx', id: xx }
+                    // brotherItem是带状态值数据, 格式 { isSelected: false, node: {}, parentId }
                     var brotherItem = indexData[brother.id];
                     if (!brotherItem.isSelected) {
                         allSelected = false;
@@ -453,7 +453,7 @@ define(
             // 从parentNode的children里删除
             var newChildren = u.without(children, item.node);
             // 没有孩子了，父节点也删了吧，遇到顶级父节点就不要往上走了，直接删掉
-            if (newChildren.length === 0 && parentId !== control.topId) {
+            if (newChildren.length === 0 && parentId !== getTopId(control)) {
                 deleteItem(control, parentId);
             }
             else {
@@ -609,7 +609,7 @@ define(
             filteredTreeData = queryFromNode(keyword, this.allData);
             // 更新状态
             this.queriedData = {
-                id: this.topId, text: '符合条件的结果', children: filteredTreeData
+                id: getTopId(this), text: '符合条件的结果', children: filteredTreeData
             };
             this.addState('queried');
             this.refreshContent();
@@ -720,7 +720,7 @@ define(
             if (onlyLeaf) {
                 if (isLeaf(node)) {
                     // FIXME: 这里感觉不应该hardcode，后期想想办法
-                    if (!node.id || node.id === control.topId ) {
+                    if (!node.id || node.id === getTopId(control) ) {
                         return 0;
                     }
                     return 1;
@@ -730,7 +730,7 @@ define(
             }
             else {
                 // 顶级节点不算
-                if (node.id === control.topId) {
+                if (node.id === getTopId(control)) {
                     count = 0;
                 }
             }
@@ -743,6 +743,16 @@ define(
                 0
             );
             return count;
+        }
+
+        /**
+         * 获取顶级节点id
+         *
+         * @return {number}
+         */
+
+        function getTopId(control) {
+            return control.datasource.id;
         }
 
 

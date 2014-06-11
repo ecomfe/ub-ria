@@ -256,7 +256,7 @@ define(
 
             var searchBox = this.getSearchBox();
             if (searchBox) {
-                searchBox.on('search', this.search, this);
+                searchBox.on('search', search, this);
             }
 
             // 为备选区绑定事件
@@ -284,12 +284,12 @@ define(
          * @param {event} SearchBox的点击事件对象
          * @ignore
          */
-        RichSelector.prototype.search = function (e) {
+        function search(e) {
             var keyword = lib.trim(e.target.getValue());
-            this.doSearch(keyword);
+            this.search(keyword);
         };
 
-        RichSelector.prototype.doSearch = function (keyword) {
+        RichSelector.prototype.search = function (keyword) {
             // 查询
             this.queryItem(keyword);
             // 更新概要搜索结果区
@@ -476,13 +476,11 @@ define(
          * @ignore
          */
         RichSelector.prototype.refresh = function () {
-            var keyword;
-            var isQueried;
             // 刷新搜索区
             if (this.hasSearchBox) {
                 // 保存一些状态信息，一会儿就没了。。。
-                keyword = this.getKeyword();
-                isQueried = this.isQuery();
+                var keyword = this.getKeyword();
+                var isQueried = this.isQuery();
                 // 清空搜索区
                 this.clearQuery();
             }
@@ -499,7 +497,7 @@ define(
                 var searchBox = this.getSearchBox();
                 searchBox.set('text', keyword);
                 // 根据关键字获取结果
-                this.doSearch(keyword);
+                this.search(keyword);
             }
             else {
                 // 更新底部信息
