@@ -117,6 +117,7 @@ define(
                             control.selectItems(allData.children, false);
                             control.selectItems(selectedData, true);
                             control.fire('add');
+                            control.fire('change');
                         }
                     }
             }
@@ -275,6 +276,7 @@ define(
                 syncParentAndChildrenStates(control, item, true);
             }
             control.fire('add');
+            control.fire('change');
         }
 
 
@@ -345,6 +347,7 @@ define(
                 selectItem(control, item.id, true);
             });
             this.fire('add');
+            this.fire('change');
         };
 
         /**
@@ -420,6 +423,7 @@ define(
             deleteItem(control, item.node.id);
             // 外部需要知道什么数据被删除了
             control.fire('delete', { items: [item.node] });
+            control.fire('change');
         }
 
         /**
@@ -471,6 +475,7 @@ define(
             var items = util.deepClone(this.getSelectedItems());
             this.set('datasource', null);
             this.fire('delete', { items: items });
+            this.fire('change');
         };
 
         /**
@@ -484,6 +489,7 @@ define(
         function actionForLoad(control, item) {
             selectItem(control, item.id, true);
             control.fire('load');
+            control.fire('change');
         }
 
 

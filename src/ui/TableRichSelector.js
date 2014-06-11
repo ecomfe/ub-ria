@@ -365,6 +365,7 @@ define(
 
             if (fire) {
                 control.fire('add');
+                control.fire('change');
             }
         }
 
@@ -443,6 +444,7 @@ define(
                 selectItem(control, item.id, true);
             });
             this.fire('add');
+            this.fire('change');
         };
 
         /**
@@ -478,6 +480,7 @@ define(
             deleteItem(control, item.id);
             // 外部需要知道什么数据被删除了
             control.fire('delete', { items: [item] });
+            control.fire('change');
         }
 
         /**
@@ -509,6 +512,7 @@ define(
             var items = u.clone(this.datasource);
             this.set('datasource', []);
             this.fire('delete', { items: items });
+            this.fire('change');
         };
 
 
@@ -519,6 +523,7 @@ define(
             if (!lib.hasClass(row, selectedClasses)) {
                 selectItem(control, item.id, true);
                 control.fire('load');
+                control.fire('change');
             }
         }
 
