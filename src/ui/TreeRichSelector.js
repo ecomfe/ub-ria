@@ -384,7 +384,6 @@ define(
          * @param {ui.TreeRichSelector} control 类实例
          * @param {Object} item 保存在indexData中的item
          * @param {boolean} toBeSelected 目标状态 true是选择，false是取消
-         * @override
          */
         function syncParentAndChildrenStates(control, item, toBeSelected) {
             var indexData = control.indexData;
