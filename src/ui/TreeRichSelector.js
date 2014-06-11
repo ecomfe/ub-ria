@@ -750,11 +750,9 @@ define(
          *
          * @return {number}
          */
-
         function getTopId(control) {
             return control.datasource.id;
         }
-
 
         require('esui').register(TreeRichSelector);
         return TreeRichSelector;

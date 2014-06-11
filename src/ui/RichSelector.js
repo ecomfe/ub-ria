@@ -285,11 +285,12 @@ define(
          * @ignore
          */
         function search(e) {
-            var keyword = lib.trim(e.target.getValue());
+            var keyword = e.target.getValue();
             this.search(keyword);
-        };
+        }
 
         RichSelector.prototype.search = function (keyword) {
+            keyword = lib.trim(keyword);
             // 查询
             this.queryItem(keyword);
             // 更新概要搜索结果区
@@ -476,11 +477,13 @@ define(
          * @ignore
          */
         RichSelector.prototype.refresh = function () {
+            var keyword;
+            var isQueried;
             // 刷新搜索区
             if (this.hasSearchBox) {
                 // 保存一些状态信息，一会儿就没了。。。
-                var keyword = this.getKeyword();
-                var isQueried = this.isQuery();
+                keyword = this.getKeyword();
+                isQueried = this.isQuery();
                 // 清空搜索区
                 this.clearQuery();
             }
