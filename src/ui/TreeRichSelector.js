@@ -1,5 +1,5 @@
 /**
- * ADM 2.0
+ * UB-RIA 1.0
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @ignore
@@ -66,6 +66,17 @@ define(
                 properties.wideToggleArea  = false;
             }
 
+            // multi 这东西本来是在基类里面定义的，但是因为有特殊处理情境，这里先处理下
+            // 如果是单选的，那一定只能选择叶子节点
+            // (也可能遇到那种选了父节点并不代表叶子节点全选的奇葩需求，那就请自行创建一个控件吧。。。)
+            if (properties.multi === 'false') {
+                properties.multi = false;
+            }
+
+            if (properties.multi === false) {
+                properties.onlyLeafSelect = true;
+            }
+
             RichSelector.prototype.initOptions.call(this, properties);
         };
 
@@ -106,6 +117,7 @@ define(
                             control.selectItems(allData.children, false);
                             control.selectItems(selectedData, true);
                             control.fire('add');
+                            control.fire('change');
                         }
                     }
             }
@@ -237,7 +249,9 @@ define(
             }
         };
 
-       /**
+
+
+        /**
          * 添加动作
          *
          * @param {ui.TreeRichSelector} control 类实例
@@ -256,10 +270,16 @@ define(
                 // 赋予新值
                 control.currentSeletedId = item.node.id;
             }
+            else {
+                syncParentAndChildrenStates(control, item, true);
+            }
             control.fire('add');
+            control.fire('change');
         }
 
-       /**
+
+
+        /**
          * 选择或取消选择
          *   如果控件是单选的，则将自己置灰且将其他节点恢复可选
          *   如果控件是多选的，则仅将自己置灰
@@ -325,6 +345,7 @@ define(
                 selectItem(control, item.id, true);
             });
             this.fire('add');
+            this.fire('change');
         };
 
         /**
@@ -347,13 +368,47 @@ define(
                         var id = node.id !== undefined ? node.id : node;
                         var item = indexData[id];
                         if (item !== null && item !== undefined) {
-                            var node = item.node;
                             // 更新状态，但不触发事件
-                            selectItem(control, node.id, toBeSelected);
+                            selectItem(control, id, toBeSelected);
+                            syncParentAndChildrenStates(control, item, toBeSelected);
                         }
                     }
                 );
             };
+
+        /**
+         * 同步一个节点的父节点和子节点选择状态
+         * 比如：父节点选中与子节点全部选中的状态同步
+         * @param {ui.TreeRichSelector} control 类实例
+         * @param {Object} item 保存在indexData中的item
+         * @param {boolean} toBeSelected 目标状态 true是选择，false是取消
+         */
+        function syncParentAndChildrenStates(control, item, toBeSelected) {
+            var indexData = control.indexData;
+            var node = item.node;
+            // 如果选的是父节点，子节点也要连带选上
+            var children = node.children || [];
+            u.each(children, function (child) {
+                selectItem(control, child.id, toBeSelected);
+            });
+            // 选的是子节点，判断一下是不是全部选择了，全部选择了，也要勾上父节点
+            var parentId = item.parentId;
+            var parentItem = indexData[parentId];
+
+            if (parentItem) {
+                var brothers = parentItem.node.children || [];
+                var allSelected = true;
+                u.each(brothers, function (brother) {
+                    // brother是原生数据, 格式 { text: 'xxx', name: 'xxx', id: xx }
+                    // brotherItem是带状态值数据, 格式 { isSelected: false, node: {}, parentId }
+                    var brotherItem = indexData[brother.id];
+                    if (!brotherItem.isSelected) {
+                        allSelected = false;
+                    }
+                });
+                selectItem(control, parentId, allSelected);
+            }
+        }
 
         /**
          * 删除动作
@@ -367,6 +422,7 @@ define(
             deleteItem(control, item.node.id);
             // 外部需要知道什么数据被删除了
             control.fire('delete', { items: [item.node] });
+            control.fire('change');
         }
 
         /**
@@ -396,8 +452,8 @@ define(
 
             // 从parentNode的children里删除
             var newChildren = u.without(children, item.node);
-            // 没有孩子了，父节点也删了吧
-            if (newChildren.length === 0 && parentId !== -1) {
+            // 没有孩子了，父节点也删了吧，遇到顶级父节点就不要往上走了，直接删掉
+            if (newChildren.length === 0 && parentId !== getTopId(control)) {
                 deleteItem(control, parentId);
             }
             else {
@@ -418,6 +474,7 @@ define(
             var items = util.deepClone(this.getSelectedItems());
             this.set('datasource', null);
             this.fire('delete', { items: items });
+            this.fire('change');
         };
 
         /**
@@ -431,6 +488,7 @@ define(
         function actionForLoad(control, item) {
             selectItem(control, item.id, true);
             control.fire('load');
+            control.fire('change');
         }
 
 
@@ -472,6 +530,9 @@ define(
          * @public
          */
         TreeRichSelector.prototype.getSelectedItems = function () {
+            if (!this.allData) {
+                return [];
+            }
             var data = this.allData.children;
             return this.getLeafItems(data, true);
         };
@@ -520,8 +581,10 @@ define(
          */
         TreeRichSelector.prototype.clearQuery = function () {
             RichSelector.prototype.clearQuery.apply(this, arguments);
-            this.selectItems(this.selectedData, true);
-
+            if (this.mode !== 'delete') {
+                var selectedData = this.getSelectedItems();
+                this.selectItems(selectedData, true);
+            }
             return false;
         };
 
@@ -546,11 +609,15 @@ define(
             filteredTreeData = queryFromNode(keyword, this.allData);
             // 更新状态
             this.queriedData = {
-                id: '-1', text: '符合条件的结果', children: filteredTreeData
+                id: getTopId(this), text: '符合条件的结果', children: filteredTreeData
             };
             this.addState('queried');
             this.refreshContent();
-            this.selectItems(this.selectedData, true);
+            var selectedData = this.getSelectedItems();
+            // 删除型的不用设置
+            if (this.mode !== 'delete') {
+                this.selectItems(selectedData, true);
+            }
         };
 
         /**
@@ -567,19 +634,27 @@ define(
                 treeData,
                 function (data, key) {
                     var filteredData;
-                    // 命中，先保存副本
+                    // 命中节点，先保存副本，之后要修改children
                     if (data.text.indexOf(keyword) !== -1) {
                         filteredData = u.clone(data);
                     }
-                    // 如果子节点也有符合条件的，那么只把符合条件的子结点放进去
+                    
                     if (data.children && data.children.length) {
                         var filteredChildren = queryFromNode(keyword, data);
+                        // 如果子节点有符合条件的，那么只把符合条件的子结点放进去
                         if (filteredChildren.length > 0) {
                             if (!filteredData) {
                                 filteredData = u.clone(data);
                             }
                             filteredData.children = filteredChildren;
                         }
+                        // 这段逻辑我还是留着吧，以防哪天又改回来。。。
+                        // else {
+                        //     // 如果命中了父节点，又没有命中子节点，则只展示父节点
+                        //     if (filteredData) {
+                        //         filteredData.children = [];
+                        //     }
+                        // }
                     }
 
                     if (filteredData) {
@@ -611,25 +686,6 @@ define(
             return !node.children;
         }
 
-        function getLeavesCount(node) {
-            // 是叶子节点，但不是root节点
-            if (isLeaf(node)) {
-                // FIXME: 这里感觉不应该hardcode，后期想想办法
-                if (!node.id || node.id === '-1' || node.id === '0' ) {
-                    return 0;
-                }
-                return 1;
-            }
-            var count = u.reduce(
-                node.children,
-                function (sum, child) {
-                    return sum + getLeavesCount(child);
-                },
-                0
-            );
-            return count;
-        }
-
         /**
          * 获取当前列表的结果个数
          *
@@ -638,7 +694,7 @@ define(
          */
         TreeRichSelector.prototype.getFilteredItemsCount = function () {
             var node = this.isQuery() ? this.queriedData : this.allData;
-            var count = getLeavesCount(node);
+            var count = getChildrenCount(this, node, true);
             return count;
         };
 
@@ -654,10 +710,49 @@ define(
             if (!node) {
                 return 0;
             }
-            var count = getLeavesCount(node);
+            var count = getChildrenCount(this, node, true);
             return count;
         };
 
+        function getChildrenCount(control, node, onlyLeaf) {
+            var count = 1;
+            // 是叶子节点，但不是root节点
+            if (onlyLeaf) {
+                if (isLeaf(node)) {
+                    // FIXME: 这里感觉不应该hardcode，后期想想办法
+                    if (!node.id || node.id === getTopId(control) ) {
+                        return 0;
+                    }
+                    return 1;
+                }
+                // 如果只算叶子节点，父节点那一个不算数，从0计数
+                count = 0;
+            }
+            else {
+                // 顶级节点不算
+                if (node.id === getTopId(control)) {
+                    count = 0;
+                }
+            }
+
+            count += u.reduce(
+                node.children,
+                function (sum, child) {
+                    return sum + getChildrenCount(control, child, onlyLeaf);
+                },
+                0
+            );
+            return count;
+        }
+
+        /**
+         * 获取顶级节点id
+         *
+         * @return {number}
+         */
+        function getTopId(control) {
+            return control.datasource.id;
+        }
 
         require('esui').register(TreeRichSelector);
         return TreeRichSelector;

@@ -1,5 +1,5 @@
 /**
- * ADM 2.0
+ * UB-RIA 1.0
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @ignore
@@ -256,7 +256,7 @@ define(
 
             var searchBox = this.getSearchBox();
             if (searchBox) {
-                searchBox.on('search', this.search, this);
+                searchBox.on('search', search, this);
             }
 
             // 为备选区绑定事件
@@ -284,8 +284,13 @@ define(
          * @param {event} SearchBox的点击事件对象
          * @ignore
          */
-        RichSelector.prototype.search = function (e) {
-            var keyword = lib.trim(e.target.getValue());
+        function search(e) {
+            var keyword = e.target.getValue();
+            this.search(keyword);
+        }
+
+        RichSelector.prototype.search = function (keyword) {
+            keyword = lib.trim(keyword);
             // 查询
             this.queryItem(keyword);
             // 更新概要搜索结果区
@@ -304,20 +309,25 @@ define(
             this.helper.getPart('result-count').innerHTML = count;
         };
 
+        function resetSearchState(control) {
+            // 删除搜索状态
+            control.removeState('queried');
+
+            // 清空搜索框
+            var searchBox = control.getSearchBox();
+            if (searchBox) {
+                searchBox.set('text', '');
+            }
+        }
+
         /**
          * 清除搜索结果
          * @param {ui.RichSelector} richSelector 类实例
          * @ignore
          */
         RichSelector.prototype.clearQuery = function () {
-            // 更新状态
-            this.removeState('queried');
-
-            // 清空搜索框
-            var searchBox = this.getSearchBox();
-            if (searchBox) {
-                searchBox.set('text', '');
-            }
+            // 重置搜索
+            resetSearchState(this);
 
             // 清空数据
             this.clearData();
@@ -472,35 +482,35 @@ define(
          * @ignore
          */
         RichSelector.prototype.refresh = function () {
+            // 重建数据，包括索引数据的创建
+            this.adaptData();
+
+            var needRefreshContent = true;
             // 刷新搜索区
-            if (this.hasSearchBox) {
-                // 有的时候需要保留搜索状态
-                if (this.holdState && this.isQuery()) {
-                    var keyword = this.getKeyword();
+            if (this.hasSearchBox && this.isQuery()) {
+                // 有一种场景（一般在删除型控件里）
+                // 在搜索状态下，删除了某个节点之后，希望还保留在搜索状态下
+                if (this.holdState) {
                     // 根据关键字获取结果
-                    this.queryItem(keyword);
+                    this.search(this.getKeyword());
+                    // search方法里面已经执行过了
+                    needRefreshContent = false;
                 }
+                // 清空搜索区
                 else {
-                    // 清空搜索区
-                    this.clearQuery();
-                    // 重建数据
-                    this.adaptData();
-                    // 构建选区
-                    this.refreshContent();
+                    resetSearchState(this);
                 }
             }
-            else {
-                // 重建数据
-                this.adaptData();
-                // 构建选区
+
+            // 刷新主体
+            if (needRefreshContent) {
+                // 重绘视图
                 this.refreshContent();
+                // 更新底部信息
+                this.refreshFoot();
+                // 更新高度
+                this.adjustHeight();
             }
-
-            // 更新底部信息
-            this.refreshFoot();
-
-            // 更新高度
-            this.adjustHeight();
         };
 
         /**
