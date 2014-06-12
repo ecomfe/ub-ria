@@ -79,6 +79,9 @@ define(
          * @param {number} [index] 数据源放置的位置，如果不提供则放在最后，提供则和那个位置的并行
          */
         BaseModel.prototype.putDatasource = function (item, index) {
+            // 先复制一份，避免合并时相互污染
+            item = u.clone(item);
+
             if (!this.datasource) {
                 this.datasource = [];
             }
