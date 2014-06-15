@@ -10,10 +10,7 @@
 define(
     function (require) {
         var util = require('er/util');
-        var u = require('underscore');
         var UIView = require('ef/UIView');
-
-        require('esui/Toast');
 
         /**
          * 视图基类
@@ -46,27 +43,6 @@ define(
             }
 
             return templateName;
-        };
-
-        /**
-         * 显示toast提示信息，这个方法会控制一个单例，以免信息叠在一起
-         *
-         * @parma {string} content 显示的内容
-         * @param {Object} [options] 配置
-         * @return {esui.Toast}
-         */
-        BaseView.prototype.showToast = function (content, options) {
-            var properties = {
-                content: content,
-                disposeOnHide: true,
-                autoShow: true,
-                duration: 3000
-            };
-
-            u.extend(properties, options);
-
-            var toast = require('esui').create('Toast', properties);
-            toast.show();
         };
 
         /**

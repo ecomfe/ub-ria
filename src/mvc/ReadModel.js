@@ -26,7 +26,6 @@ define(
 
         // 全局所有Model都可能有的属性名，这些属性不需要被自动转为`'--'`
         var GLOBAL_MODEL_PROPERTIES = {
-            toast: true,
             url: true,
             referrer: true,
             isChildAction: true,
