@@ -79,9 +79,17 @@ define(
          * 当前页面的分类，如列表为`"list"`
          *
          * @type {string}
-         * @readonly
          */
         BaseAction.prototype.category = '';
+
+        /**
+         * 获取当前页面的分类
+         *
+         * @return {string}
+         */
+        BaseAction.prototype.getCategory = function () {
+            return this.category || '';
+        };
 
         /**
          * 获取当前页面的分类
@@ -92,13 +100,19 @@ define(
          */
         BaseAction.prototype.getPageCategories = function () {
             var categories = [];
-            if (this.category) {
-                categories.push(this.category + '-page');
-                var entityName = this.getEntityName();
-                if (entityName) {
-                    categories.push(entityName + '-' + this.category + '-page');
-                }
+            var category = require('../util').dasherize(this.getCategory());
+            var entityName = require('../util').dasherize(this.getEntityName());
+
+            if (category) {
+                categories.push(category + '-page');
             }
+            if (entityName) {
+                categories.push(entityName + '-page');
+            }
+            if (category && entityName) {
+                categories.push(entityName + '-' + this.category + '-page');
+            }
+
             return categories;
         };
 
