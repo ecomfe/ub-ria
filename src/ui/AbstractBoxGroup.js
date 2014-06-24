@@ -133,7 +133,7 @@ define(
          * @ignore
          */
         function syncValue(e) {
-            if (this.disabled || this.readOnly) {
+            if (this.disabled) {
                 return;
             }
 
@@ -262,19 +262,15 @@ define(
                 paint: render
             },
             {
-                name: ['disabled', 'readOnly'],
-                paint: function (group, disabled, readOnly) {
+                name: 'disabled',
+                paint: function (group, disabled) {
                     u.each(
                         group.getBoxElements(),
                         function (box) {
                             if (disabled !== undefined) {
                                 group.helper.addPartClasses('box-disabled', box);
                             }
-                            else if (readOnly !== undefined) {
-                                group.helper.addPartClasses('box-readonly', box);
-                            }
                             setAttr(box, 'disabled', disabled);
-                            setAttr(box, 'readonly', readOnly);
                         }
                     );
                 }
