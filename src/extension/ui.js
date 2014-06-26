@@ -155,9 +155,16 @@ define(
              * @return {string}
              */
             Table.operations = function (config) {
+                var separator = '';
                 var html = u.map(
                     config,
                     function (item) {
+                        // 字符串为分隔符
+                        if (u.isString(item)) {
+                            return separator = '<span class="table-operation-separator">'
+                                + u.escape(item) + '</span>';
+                        }
+
                         // 如果没有权限就不显示了
                         if (item.auth === false) {
                             return '';
@@ -179,13 +186,37 @@ define(
                                 className: className,
                                 text: item.text,
                                 command: item.command,
-                                args: item.args,
-                                tagName: config.tagName
+                                args: item.args
                             };
+                            // 单独处理tagName
+                            if (item.tagName) {
+                                options.tagName = item.tagName;
+                            }
+
                             return Table.command(options);
                         }
                     }
                 );
+
+                html = u.without(html, '');
+
+                // 处理连续的分隔符
+                var i = 0;
+                while (i < html.length - 1) {
+                    if (html[i] === separator && html[i + 1] === separator) {
+                        html.splice(i, 1);
+                    }
+                    else {
+                        i ++;
+                    }
+                }
+                // 去除首尾的分隔符
+                if (html[0] === separator) {
+                    html.shift();
+                }
+                if (html[html.length - 1] === separator) {
+                    html.pop();
+                }
 
                 return html.join('');
             };
