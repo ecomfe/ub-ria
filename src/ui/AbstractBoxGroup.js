@@ -133,7 +133,7 @@ define(
          * @ignore
          */
         function syncValue(e) {
-            if (this.disabled) {
+            if (this.disabled || this.readOnly) {
                 return;
             }
 
