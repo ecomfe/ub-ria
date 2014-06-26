@@ -31,7 +31,8 @@
     }
     .relative(@relativePos);
     &:after {
-        content: '';
+        content: '~"@{img}"';
+        .hide-text();
         position: absolute;
         .position-vertical(@vertical) when (@vertical = center) {
             top: 50%;
