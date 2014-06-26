@@ -36,34 +36,47 @@
 }
 
 // 自定义样式radio
-.skin-flat-radio-abstractboxgroup-radio {
+.skin-flat-radio-abstractboxgroup {
     .skin-flat-radio-icon-mixin (@url) {
         .pseudo-icon(@url, @flat-radio-icon-width, @flat-radio-icon-height, left, 0px);
     }
+    .ui-abstractboxgroup-radio {
+        height: @flat-radio-height;
+        line-height: @flat-radio-height;
+        padding-left: 27px;
+        margin-right: 60px;
+        font-size: 14px;
+        
+        .skin-flat-radio-icon-mixin(@flat-radio-icon-normal);
 
-    height: @flat-radio-height;
-    line-height: @flat-radio-height;
-    padding-left: 27px;
-    margin-right: 60px;
-    font-size: 14px;
+        &:hover {
+            .skin-flat-radio-icon-mixin(@flat-radio-icon-hover);
+        }
+    }
+
     
-    .skin-flat-radio-icon-mixin(@flat-radio-icon-normal);
-
-    &:hover {
-        .skin-flat-radio-icon-mixin(@flat-radio-icon-hover);
+    .ui-abstractboxgroup-wrapper-checked {
+        .ui-abstractboxgroup-radio,
+        .ui-abstractboxgroup-radio:hover {
+            .skin-flat-radio-icon-mixin(@flat-radio-icon-checked);
+        }
     }
 
-    // disabled
-    &.ui-abstractboxgroup-box-disabled,
-    &.ui-abstractboxgroup-box-disabled:hover {
-        .skin-flat-radio-icon-mixin(@flat-radio-icon-disabled);
-    }
+    // 只读和禁用状态
+    &.ui-abstractboxgroup-disabled, 
+    &.ui-abstractboxgroup-read-only {
+        .ui-abstractboxgroup-radio,
+        .ui-abstractboxgroup-radio:hover {
+            .skin-flat-radio-icon-mixin(@flat-radio-icon-disabled);
+        }
 
-    .ui-abstractboxgroup-wrapper-checked &,
-    .ui-abstractboxgroup-wrapper-checked &:hover {
-        .skin-flat-radio-icon-mixin(@flat-radio-icon-checked);
+        .ui-abstractboxgroup-wrapper-checked {
+            .ui-abstractboxgroup-radio,
+            .ui-abstractboxgroup-radio:hover {
+                .skin-flat-radio-icon-mixin(@flat-radio-icon-checked);
+            }
+        }
     }
-
 }
 
 // 色块样式切换button

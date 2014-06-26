@@ -262,20 +262,6 @@ define(
                 paint: render
             },
             {
-                name: 'disabled',
-                paint: function (group, disabled) {
-                    u.each(
-                        group.getBoxElements(),
-                        function (box) {
-                            if (disabled !== undefined) {
-                                group.helper.addPartClasses('box-disabled', box);
-                            }
-                            setAttr(box, 'disabled', disabled);
-                        }
-                    );
-                }
-            },
-            {
                 /**
                  * @property {string[]} rawValue
                  *
