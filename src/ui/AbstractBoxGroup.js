@@ -36,7 +36,7 @@ define(
         }
 
         function isChecked(box) {
-            return getAttr(box, 'checked') === 'checked'; 
+            return getAttr(box, 'checked') === 'checked';
         }
 
         /**
@@ -80,7 +80,7 @@ define(
                 // 提取`value`
                 if (getAttr(box, 'box-type') === boxType) {
                     datasource.push(
-                        { 
+                        {
                             value: getValue(box),
                             text: box.innerHTML || getAttr(box, 'text')
                         }
@@ -133,12 +133,12 @@ define(
          * @ignore
          */
         function syncValue(e) {
-            if (this.disabled || this.readOnly) {
+            if (this.disabled) {
                 return;
             }
 
             var box = e.target;
-            var rawValue = this.boxType === 'radio' 
+            var rawValue = this.boxType === 'radio'
                             ? [] : u.clone(this.rawValue);
             var value = getValue(box);
 
@@ -180,7 +180,6 @@ define(
             var valueIndex = lib.toDictionary(group.rawValue);
 
             // 分组的选择框必须有相同的`name`属性，所以哪怕没有也给造一个
-            var name = group.name || lib.getGUID();
             for (var i = 0; i < datasource.length; i++) {
                 var item = datasource[i];
                 var data = {
@@ -226,7 +225,7 @@ define(
                 properties.rawValue = [];
             }
 
-            var changes = 
+            var changes =
                 InputControl.prototype.setProperties.apply(this, arguments);
             if (changes.hasOwnProperty('rawValue')) {
                 /**
@@ -261,18 +260,6 @@ define(
                  */
                 name: ['datasource', 'boxType'],
                 paint: render
-            },
-            {
-                name: ['disabled', 'readOnly'],
-                paint: function (group, disabled, readOnly) {
-                    u.each(
-                        group.getBoxElements(),
-                        function (box) {
-                            setAttr(box, 'disabled', disabled);
-                            setAttr(box, 'readonly', readOnly);
-                        }
-                    );
-                }
             },
             {
                 /**
