@@ -75,6 +75,17 @@ define(
         };
 
         /**
+         * view渲染完成后根据所有筛选条件是否都为默认值来控制展开或闭合
+         *
+         */
+        ListView.prototype.updateFilterPanelStatus = function () {
+            if (!this.model.get('filtersInfo').isAllFiltersDefault) {
+                showFilter.call(this);
+                toggleFilterPanelContent.call(this);
+            }
+        };
+
+        /**
          * 获取table已经选择的列的数据
          *
          * @return {Object[]} 当前table的已选择列对应的数据
@@ -178,28 +189,66 @@ define(
         }
 
         /**
+         * 收起筛选面板，当有筛选条件时清除筛选条件
+         *
+         */
+        function toggleFilter() {
+            var filter = this.getSafely('filter');
+            filter.isHidden() ? showFilter.call(this) : cancelFilter.call(this);
+        }
+
+        function showFilter() {
+            this.getSafely('filter').show();
+            this.getSafely('filter-switch').addState('expand');
+        }
+
+        function hideFilter() {
+            this.getSafely('filter').hide();
+            this.getSafely('filter-switch').removeState('expand');
+        }
+
+        /**
+         * 有筛选条件时清除筛选条件
+         *
+         * @ignore
+         */
+
+        function cancelFilter() {
+            if (this.model.get('filtersInfo').isAllFiltersDefault) {
+                hideFilter.call(this);
+            }
+            else {
+                this.fire('filterreset');
+            }
+        }
+
+        /**
+         * 切换筛选面板和筛选条件显示面板
+         *
+         * @ignore
+         */
+
+        function toggleFilterPanelContent() {
+            this.getGroup('filter-content').toggle();
+        }
+
+        /**
          * 绑定控件事件
          *
          * @override
          */
         ListView.prototype.bindEvents = function () {
-            var pager = this.get('pager');
-            if (pager) {
-                // 切换每页大小
-                pager.on('pagesizechange', updatePageSize, this);
-                pager.on('pagechange', updatePageIndex, this);
-            }
+            var pager = this.getSafely('pager');
+            pager.on('pagesizechange', updatePageSize, this);
+            pager.on('pagechange', updatePageIndex, this);
 
-            var table = this.get('table');
-            if (table) {
-                // 选中表格行后控制批量更新按钮的启用/禁用状态
-                table.on('select', this.updateBatchButtonStatus, this);
-                // 表格排序触发查询
-                table.on('sort', this.submitSearch, this);
-            }
+            var table = this.getSafely('table');
+            // 选中表格行后控制批量更新按钮的启用/禁用状态
+            table.on('select', this.updateBatchButtonStatus, this);
+            // 表格排序触发查询
+            table.on('sort', this.submitSearch, this);
 
-            u.each(
-                this.getGroup('batch'),
+            this.getGroup('batch').each(
                 function (button) {
                     // 批量更新
                     button.on('click', batchModify, this);
@@ -207,11 +256,16 @@ define(
                 this
             );
 
-            var filter = this.get('filter');
-            if (filter) {
-                // 多条件查询
-                filter.on('submit', this.submitSearch, this);
-            }
+            this.getSafely('filter').on('submit', this.submitSearch, this);
+
+            // 展开或收起面板，或者清除筛选条件
+            this.getSafely('filter-switch').on('click', toggleFilter, this);
+
+            // 取消筛选，收起面板或者清除筛选条件
+            this.getSafely('filter-cancel').on('click', cancelFilter, this);
+
+            // 切换到筛选面板
+            this.getSafely('filter-modify').on('click', toggleFilterPanelContent, this);
 
             BaseView.prototype.bindEvents.apply(this, arguments);
         };
@@ -224,6 +278,7 @@ define(
         ListView.prototype.enterDocument = function () {
             BaseView.prototype.enterDocument.apply(this, arguments);
             this.updateBatchButtonStatus();
+            this.updateFilterPanelStatus();
         };
 
         /**

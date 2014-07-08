@@ -273,6 +273,7 @@ define(
             this.view.on('pagesizechange', updatePageSize, this);
             this.view.on('batchmodify', batchModifyStatus, this);
             this.view.on('pagechange', forwardToPage, this);
+            this.view.on('filterreset', this.resetFilters, this);
         };
 
         /**
@@ -280,6 +281,19 @@ define(
          */
         ListAction.prototype.adjustLayout = function () {
             this.view.adjustLayout();
+        };
+
+        /**
+         * 清除筛选条件
+         * @returns {ListAction}
+         */
+        ListAction.prototype.resetFilters = function () {
+            var model = this.model;
+            var filters = model.get('filtersInfo').filters;
+            var url = model.get('url');
+            var URL = require('er/URL');
+            var query = u.omit(url.getQuery(), u.keys(filters));
+            this.redirect(URL.withQuery(url.getPath(), query));
         };
 
         return ListAction;
