@@ -39,44 +39,6 @@ define(
         FormAction.prototype.category = 'form';
 
         /**
-         * 设置表单提交成功后显示的信息，如果值为`null`或`undefined`则表示不显示任何信息
-         *
-         * 如果该字段有内容，则系统使用该字段与提交表单后服务器返回的数据进行模板格式化，
-         * 因此可以使用服务器返回的字段为占位符。模板使用`underscore.template`方法
-         *
-         * @type {string | false | null}
-         */
-        FormAction.prototype.toastMessage = '';
-
-        /**
-         * 获取表单提交成功后显示的信息
-         *
-         * 默认提示信息为“您[创建|修改]的{实体名称}{name}已经成功保存”
-         *
-         * @param {Object} entity 提交后服务器端返回的实体信息
-         * @return {string}
-         */
-        FormAction.prototype.getToastMessage = function (entity) {
-            var message = this.toastMessage;
-            if (message == null) {
-                return '';
-            }
-
-            if (message) {
-                return u.template(message, entity || {});
-            }
-            else {
-                var actionType = this.context.formType === 'update'
-                    ? '修改'
-                    : '创建';
-                return '您' + actionType + '的'
-                    + this.getEntityDescription()
-                    + '[<strong>' + u.escape(entity.name) + '</strong>]'
-                    + '已经成功保存';
-            }
-        };
-
-        /**
          * 处理提交数据时发生的错误，默认无行为，如验证信息显示等需要实现此方法
          *
          * @param {er.meta.FakeXHR | meta.FieldError[]}，
@@ -120,11 +82,6 @@ define(
          * @param {Object} entity 提交成功后返回的实体
          */
         FormAction.prototype.notifySubmitSuccess = function (entity) {
-
-            var toast = this.getToastMessage(entity);
-            if (toast) {
-                this.view.showToast(toast);
-            }
         };
 
         /**

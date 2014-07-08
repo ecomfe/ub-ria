@@ -207,6 +207,14 @@ define(
         }
 
         /**
+         * 通知修改状态操作成功
+         *
+         * @param {meta.UpdateContext} context 批量操作的上下文对象
+         */
+        ListAction.prototype.notifyModifySuccess = function (context) {
+        };
+
+        /**
          * 通知修改状态操作失败
          *
          * 默认提示用户“无法[操作名]部分或全部[实体名]”，或“无法[操作名]该[实体名]”
@@ -219,13 +227,13 @@ define(
                 this.view.alert(
                     '无法' + context.command + '部分或全部' + entityDescription,
                     context.command + entityDescription
-                );        
+                );
             }
             else {
                 this.view.alert(
                     '无法' + context.command + '该' + entityDescription,
                     context.command + entityDescription
-                );                 
+                );
             }
         };
 
@@ -235,8 +243,7 @@ define(
          * @param {meta.UpdateContext} context 操作的上下文对象
          */
         function updateListStatus(context) {
-            var toastMessage = context.command + '成功';
-            this.view.showToast(toastMessage);
+            this.notifyModifySuccess(context);
 
             var event = this.fire('statusupdate', context);
             if (!event.isDefaultPrevented()) {
@@ -266,6 +273,7 @@ define(
             this.view.on('pagesizechange', updatePageSize, this);
             this.view.on('batchmodify', batchModifyStatus, this);
             this.view.on('pagechange', forwardToPage, this);
+            this.view.on('filterreset', this.resetFilters, this);
         };
 
         /**
@@ -273,6 +281,19 @@ define(
          */
         ListAction.prototype.adjustLayout = function () {
             this.view.adjustLayout();
+        };
+
+        /**
+         * 清除筛选条件
+         * @returns {ListAction}
+         */
+        ListAction.prototype.resetFilters = function () {
+            var model = this.model;
+            var filters = model.get('filtersInfo').filters;
+            var url = model.get('url');
+            var URL = require('er/URL');
+            var query = u.omit(url.getQuery(), u.keys(filters));
+            this.redirect(URL.withQuery(url.getPath(), query));
         };
 
         return ListAction;
