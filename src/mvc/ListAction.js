@@ -97,16 +97,6 @@ define(
         }
 
         /**
-         * 带上查询参数重新加载第1页
-         *
-         * @param {this} {ListAction} Action实例
-         */
-        function reloadWithSearchArgs() {
-            var args = this.view.getSearchArgs();
-            this.performSearch(args);
-        }
-
-        /**
          * 更新每页显示条数
          *
          * @param {mini-event.Event} e 事件对象
@@ -116,23 +106,46 @@ define(
         function updatePageSize(e) {
             // 先请求后端更新每页显示条数，然后直接刷新当前页
             this.model.updatePageSize(e.pageSize)
-                .then(u.bind(reloadWithSearchArgs, this));
+                .then(u.bind(afterPageSizeUpdate, this, e.pageSize));
         }
 
         /**
-         * 前往指定页
+         * 每页大小更新后重新加载操作
+         *
+         * @param {number} pageSize 新的页尺寸
+         * @ignore
+         */
+        function afterPageSizeUpdate(pageSize) {
+            var event = this.fire('pagesizechange', { pageSize: pageSize });
+            if (!event.isDefaultPrevented()) {
+                // 更新也尺寸以后，自动翻页到1
+                this.reloadWithPageUpdate(1);
+            }
+        }
+
+        /**
+         * 更新页码
          *
          * @param {mini-event.Event} e 事件对象
          * @param {number} e.page 前往的页码
          * @ignore
          */
-        function forwardToPage(e) {
+        function updatePage(e) {
             var event = this.fire('pagechange', { page: e.page });
             if (!event.isDefaultPrevented()) {
-                var url = this.getURLForPage(e.page);
-                this.redirect(url);
+                this.reloadWithPageUpdate(e.page);
             }
         }
+
+        /**
+         * 页码更新后重新加载操作
+         *
+         * @param {number} page 指定的页码
+         */
+        ListAction.prototype.reloadWithPageUpdate = function (page) {
+            var url = this.getURLForPage(page);
+            this.redirect(url, { force: true });
+        };
 
         /**
          * 批量修改事件处理
@@ -272,7 +285,7 @@ define(
             this.view.on('search', search, this);
             this.view.on('pagesizechange', updatePageSize, this);
             this.view.on('batchmodify', batchModifyStatus, this);
-            this.view.on('pagechange', forwardToPage, this);
+            this.view.on('pagechange', updatePage, this);
             this.view.on('filterreset', this.resetFilters, this);
         };
 
