@@ -85,6 +85,12 @@ define(
             }
         };
 
+        ListView.prototype.updateSearchBoxStatus = function () {
+            if (this.model.get('keyword')) {
+                this.getSafely('keyword').addState('clear');
+            }
+        };
+
         /**
          * 获取table已经选择的列的数据
          *
@@ -279,6 +285,7 @@ define(
             BaseView.prototype.enterDocument.apply(this, arguments);
             this.updateBatchButtonStatus();
             this.updateFilterPanelStatus();
+            this.updateSearchBoxStatus();
         };
 
         /**
