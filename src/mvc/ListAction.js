@@ -106,18 +106,22 @@ define(
         function updatePageSize(e) {
             // 先请求后端更新每页显示条数，然后直接刷新当前页
             this.model.updatePageSize(e.pageSize)
-                .then(u.bind(this.reloadWithPageSizeUpdate, this));
+                .then(u.bind(afterBackendPageSizeUpdate, this, e.pageSize));
         }
 
         /**
          * 每页大小更新后重新加载操作
-         *
+         * @param {mini-event.Event} e 事件对象
+         * @param {number} e.pageSize 新的页尺寸
+         * @ignore
          */
-        ListAction.prototype.reloadWithPageSizeUpdate = function () {
-            var args = this.view.getSearchArgs();
-            // 带上查询参数重新加载第1页
-            this.performSearch(args);
-        };
+        function afterBackendPageSizeUpdate(pageSize) {
+            var event = this.fire('pagesizechange', { pageSize: pageSize });
+            if (!event.isDefaultPrevented()) {
+                // 更新也尺寸以后，自动翻页到1
+                this.reloadWithPageUpdate(1);
+            }
+        }
 
         /**
          * 更新页码
@@ -133,7 +137,6 @@ define(
             }
         }
 
-
         /**
          * 页码更新后重新加载操作
          *
@@ -141,7 +144,7 @@ define(
          */
         ListAction.prototype.reloadWithPageUpdate = function (page) {
             var url = this.getURLForPage(page);
-            this.redirect(url);
+            this.redirect(url, { force: true });
         };
 
         /**
