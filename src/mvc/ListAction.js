@@ -106,16 +106,15 @@ define(
         function updatePageSize(e) {
             // 先请求后端更新每页显示条数，然后直接刷新当前页
             this.model.updatePageSize(e.pageSize)
-                .then(u.bind(afterBackendPageSizeUpdate, this, e.pageSize));
+                .then(u.bind(afterPageSizeUpdate, this, e.pageSize));
         }
 
         /**
          * 每页大小更新后重新加载操作
-         * @param {mini-event.Event} e 事件对象
-         * @param {number} e.pageSize 新的页尺寸
+         * @param {number} pageSize 新的页尺寸
          * @ignore
          */
-        function afterBackendPageSizeUpdate(pageSize) {
+        function afterPageSizeUpdate(pageSize) {
             var event = this.fire('pagesizechange', { pageSize: pageSize });
             if (!event.isDefaultPrevented()) {
                 // 更新也尺寸以后，自动翻页到1
