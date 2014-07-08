@@ -28,7 +28,7 @@ define(
 
         // 加载没有搜索词时的URL，用于搜索词后的“清空”链接
         var LIST_WITHOUT_KEYWORD_URL_DATASOURCE = {
-            listWithoutKeywordURL: function(model) {
+            listWithoutKeywordURL: function (model) {
                 var url = model.get('url');
                 var path = url.getPath();
                 var query = url.getQuery();
@@ -442,7 +442,6 @@ define(
          * @returns {Object}
          */
         ListModel.prototype.getFiltersInfo = function () {
-            var model = this;
             var isAllFiltersDefault = true;
             var defaultArgs = this.getDefaultArgs();
             var filters = {};
@@ -451,20 +450,22 @@ define(
                 function (rawFilter, name) {
                     var filter = {
                         text: typeof rawFilter.text === 'function' ? rawFilter.text(rawFilter) : rawFilter.text,
-                        clearURL: getClearURL(model, name),
+                        clearURL: getClearURL(this, name),
                         defaultValue: defaultArgs[name]
                     };
 
                     u.defaults(filter, rawFilter);
-                    filter.isDefaultValue = filter.hasOwnProperty('isDefaultValue') ? filter.isDefaultValue :
-                        filter.defaultValue == filter.value;
+                    filter.isDefaultValue = filter.hasOwnProperty('isDefaultValue')
+                        ? filter.isDefaultValue
+                        : filter.defaultValue == filter.value;
 
                     if (!filter.isDefaultValue) {
                         isAllFiltersDefault = false;
                     }
 
                     filters[name] = filter;
-                }
+                },
+                this
             );
 
             return {
