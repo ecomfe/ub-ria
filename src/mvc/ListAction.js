@@ -111,6 +111,7 @@ define(
 
         /**
          * 每页大小更新后重新加载操作
+         *
          * @param {number} pageSize 新的页尺寸
          * @ignore
          */
