@@ -137,6 +137,18 @@ define(
             }
         }
 
+
+        /**
+         * 表格排序更新后重新加载操作
+         *
+         * @param {object} tableProperties 表格排序配置
+         */
+        ListAction.prototype.reloadWithTableSortUpdate = function (tableProperties) {
+            var url = this.getURLForTableSort(tableProperties);
+            this.redirect(url, { force: true });
+        };
+
+
         /**
          * 页码更新后重新加载操作
          *
@@ -286,8 +298,55 @@ define(
             this.view.on('pagesizechange', updatePageSize, this);
             this.view.on('batchmodify', batchModifyStatus, this);
             this.view.on('pagechange', updatePage, this);
+            this.view.on('tablesort', updateTableSort, this);
             this.view.on('filterreset', this.resetFilters, this);
         };
+
+        /**
+         * 更新表格排序
+         *
+         * @param {mini-event.Event} e 事件对象
+         * @param {number} e.tableProperties 表格排序信息
+         * @ignore
+         */
+        function updateTableSort(e) {
+            var event = this.fire('tablesort', e.tableProperties);
+            if (!event.isDefaultPrevented()) {
+                this.reloadWithTableSortUpdate(e.tableProperties);
+            }
+        }
+
+        /**
+         * 每页大小更新后重新加载操作
+         *
+         * @param {number} pageSize 新的页尺寸
+         * @ignore
+         */
+        function afterPageSizeUpdate(pageSize) {
+            var event = this.fire('pagesizechange', { pageSize: pageSize });
+            if (!event.isDefaultPrevented()) {
+                // 更新也尺寸以后，自动翻页到1
+                this.reloadWithPageUpdate(1);
+            }
+        }
+
+        /**
+         * 获取指定排序的跳转URL
+         *
+         * @param {object} tableProperties 表格排序配置
+         * @return {string}
+         */
+        ListAction.prototype.getURLForTableSort = function (tableProperties) {
+            var url = this.context.url;
+            var path = url.getPath();
+            var query = url.getQuery();
+
+            query.order = tableProperties.order
+            query.orderBy = tableProperties.orderBy;
+
+            return require('er/URL').withQuery(path, query).toString();
+        };
+
 
         /**
          * 根据布局变化重新调整自身布局

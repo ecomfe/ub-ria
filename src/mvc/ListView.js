@@ -44,15 +44,22 @@ define(
          */
         ListView.prototype.submitSearch = function (e) {
             var args = this.getSearchArgs();
-
-            // 如果是表格排序引发的，把新的排序放进去
-            if (e.type === 'sort') {
-                args.orderBy = e.field.field;
-                args.order = e.order;
-            }
-
             this.fire('search', { args: args });
         };
+
+        /**
+         * 排列表格
+         *
+         * @param {mini-event.Event} e 控件事件对象
+         */
+        ListView.prototype.sortTable = function (e) {
+            var tableProperties = {
+                orderBy: e.field.field,
+                order: e.order
+            };
+            this.fire('tablesort', { tableProperties: tableProperties });
+        };
+
 
         /**
          * 根据表格中所选择的行来控制批量更新按钮的启用/禁用状态
@@ -246,7 +253,7 @@ define(
             // 选中表格行后控制批量更新按钮的启用/禁用状态
             table.on('select', this.updateBatchButtonStatus, this);
             // 表格排序触发查询
-            table.on('sort', this.submitSearch, this);
+            table.on('sort', this.sortTable, this);
 
             this.getGroup('batch').each(
                 function (button) {
