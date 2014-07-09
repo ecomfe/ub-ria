@@ -152,10 +152,11 @@ define(
         /**
          * 页码更新后重新加载操作
          *
-         * @param {number} page 指定的页码
+         * @param {Object} query 新的请求参数对象
+         * @protected
          */
-        ListAction.prototype.reloadWithPageUpdate = function (page) {
-            var url = this.getURLForPage(page);
+        ListAction.prototype.reloadWithQueryUpdate = function (query) {
+            var url = getURLForQuery.call(this, query);
             this.redirect(url, { force: true });
         };
 
@@ -312,7 +313,7 @@ define(
         function updateTableSort(e) {
             var event = this.fire('tablesort', e.tableProperties);
             if (!event.isDefaultPrevented()) {
-                this.reloadWithTableSortUpdate(e.tableProperties);
+                this.reloadWithQueryUpdate(e.tableProperties);
             }
         }
 
@@ -326,23 +327,21 @@ define(
             var event = this.fire('pagesizechange', { pageSize: pageSize });
             if (!event.isDefaultPrevented()) {
                 // 更新也尺寸以后，自动翻页到1
-                this.reloadWithPageUpdate(1);
+                this.reloadWithQueryUpdate({ page: 1 });
             }
         }
 
         /**
          * 获取指定排序的跳转URL
          *
-         * @param {object} tableProperties 表格排序配置
+         * @param {object} query 新的请求对象
          * @return {string}
          */
-        ListAction.prototype.getURLForTableSort = function (tableProperties) {
+        function getURLForQuery(query) {
             var url = this.context.url;
             var path = url.getPath();
-            var query = url.getQuery();
-
-            query.order = tableProperties.order
-            query.orderBy = tableProperties.orderBy;
+            var originQuery = url.getQuery();
+            query = u.extend(originQuery, query);
 
             return require('er/URL').withQuery(path, query).toString();
         };
