@@ -44,13 +44,11 @@ define(
          * @param {Object} args 查询参数
          */
         ListAction.prototype.performSearch = function (args) {
-            // 去除默认参数值
-            var defaultArgs = this.model.getDefaultArgs();
-            args = require('../util').purify(args, defaultArgs);
-
             var event = this.fire('search', { args: args });
             if (!event.isDefaultPrevented()) {
-                this.redirectForSearch(args);
+                // 自动翻页到1
+                args.page = 1;
+                this.reloadWithQueryUpdate(args);
             }
         };
 
@@ -66,7 +64,9 @@ define(
         };
 
         /**
-         * 获取指定页码的跳转URL
+         * 获取指定页码的跳转URL(此接口目前不用了，但是为了防止外部已被调用，所以维持)
+         * 
+         * @deprecated
          *
          * @param {number} page 指定的页码
          * @return {string}
@@ -119,7 +119,7 @@ define(
             var event = this.fire('pagesizechange', { pageSize: pageSize });
             if (!event.isDefaultPrevented()) {
                 // 更新也尺寸以后，自动翻页到1
-                this.reloadWithPageUpdate(1);
+                this.reloadWithQueryUpdate({ page: 1 });
             }
         }
 
@@ -133,29 +133,35 @@ define(
         function updatePage(e) {
             var event = this.fire('pagechange', { page: e.page });
             if (!event.isDefaultPrevented()) {
-                this.reloadWithPageUpdate(e.page);
+                this.reloadWithQueryUpdate({ page: e.page });
             }
         }
 
-
         /**
-         * 表格排序更新后重新加载操作
+         * 更新表格排序
          *
-         * @param {object} tableProperties 表格排序配置
+         * @param {mini-event.Event} e 事件对象
+         * @param {number} e.tableProperties 表格排序信息
+         * @ignore
          */
-        ListAction.prototype.reloadWithTableSortUpdate = function (tableProperties) {
-            var url = this.getURLForTableSort(tableProperties);
-            this.redirect(url, { force: true });
-        };
-
+        function updateTableSort(e) {
+            var event = this.fire('tablesort', { tableProperties: e.tableProperties });
+            if (!event.isDefaultPrevented()) {
+                // 重新排序要退回到第一页
+                var args = e.tableProperties;
+                args.page = 1;
+                this.reloadWithQueryUpdate(args);
+            }
+        }
 
         /**
          * 页码更新后重新加载操作
          *
-         * @param {number} page 指定的页码
+         * @param {Object} args 新的请求参数对象
+         * @protected
          */
-        ListAction.prototype.reloadWithPageUpdate = function (page) {
-            var url = this.getURLForPage(page);
+        ListAction.prototype.reloadWithQueryUpdate = function (args) {
+            var url = getURLForQuery.call(this, args);
             this.redirect(url, { force: true });
         };
 
@@ -302,51 +308,25 @@ define(
             this.view.on('filterreset', this.resetFilters, this);
         };
 
-        /**
-         * 更新表格排序
-         *
-         * @param {mini-event.Event} e 事件对象
-         * @param {number} e.tableProperties 表格排序信息
-         * @ignore
-         */
-        function updateTableSort(e) {
-            var event = this.fire('tablesort', e.tableProperties);
-            if (!event.isDefaultPrevented()) {
-                this.reloadWithTableSortUpdate(e.tableProperties);
-            }
-        }
-
-        /**
-         * 每页大小更新后重新加载操作
-         *
-         * @param {number} pageSize 新的页尺寸
-         * @ignore
-         */
-        function afterPageSizeUpdate(pageSize) {
-            var event = this.fire('pagesizechange', { pageSize: pageSize });
-            if (!event.isDefaultPrevented()) {
-                // 更新也尺寸以后，自动翻页到1
-                this.reloadWithPageUpdate(1);
-            }
-        }
 
         /**
          * 获取指定排序的跳转URL
          *
-         * @param {object} tableProperties 表格排序配置
+         * @param {Object} args 新的请求对象
          * @return {string}
          */
-        ListAction.prototype.getURLForTableSort = function (tableProperties) {
+        function getURLForQuery(args) {
             var url = this.context.url;
             var path = url.getPath();
-            var query = url.getQuery();
+            // 先扩展原有url
+            args = u.extend(url.getQuery(), args);
 
-            query.order = tableProperties.order
-            query.orderBy = tableProperties.orderBy;
+            // 如果跟默认的参数相同，去掉默认字段
+            var defaultArgs = this.model.getDefaultArgs();
+            args = require('../util').purify(args, defaultArgs);
 
-            return require('er/URL').withQuery(path, query).toString();
-        };
-
+            return require('er/URL').withQuery(path, args).toString();
+        }
 
         /**
          * 根据布局变化重新调整自身布局
