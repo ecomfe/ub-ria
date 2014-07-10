@@ -63,6 +63,28 @@ define(
             this.redirect(url, { force: true });
         };
 
+        /**
+         * 获取指定页码的跳转URL(此接口目前不用了，但是为了防止外部已被调用，所以维持)
+         * 
+         * @deprecated
+         *
+         * @param {number} page 指定的页码
+         * @return {string}
+         */
+        ListAction.prototype.getURLForPage = function (page) {
+            var url = this.context.url;
+            var path = url.getPath();
+            var query = url.getQuery();
+
+            if (page === 1) {
+                query = u.omit(query, 'page');
+            }
+            else {
+                query.page = page;
+            }
+
+            return require('er/URL').withQuery(path, query).toString();
+        };
 
         /**
          * 查询的事件处理函数
