@@ -318,7 +318,7 @@ define(
             var typeOption = fieldSchema[2];
 
             if (!typeOption) {
-                return {};
+                return fieldSchema;
             }
 
             // 可能需要被解析的规则集
