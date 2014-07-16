@@ -306,7 +306,10 @@ define(
 
         RichSelector.prototype.refreshResult = function () {
             var count = this.getCurrentStateItemsCount();
-            this.helper.getPart('result-count').innerHTML = count;
+            var resultCount = this.helper.getPart('result-count');
+            if (resultCount) {
+                resultCount.innerHTML = count;
+            }
         };
 
         function resetSearchState(control) {
@@ -343,6 +346,8 @@ define(
 
             // 调整高度
             this.adjustHeight();
+
+            this.fire('clearquery');
 
             return false;
         };

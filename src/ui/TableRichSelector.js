@@ -461,7 +461,7 @@ define(
                 var indexData = this.indexData;
                 var control = this;
                 u.each(items, function (item) {
-                    var id = item.id !== 'undefined' ? item.id : item;
+                    var id = item.id !== undefined ? item.id : item;
                     var itemIndex = indexData[id];
                     if (itemIndex !== null && itemIndex !== undefined) {
                         var rawItem = allData[itemIndex];
