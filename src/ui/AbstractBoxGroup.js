@@ -149,7 +149,6 @@ define(
             }
 
             this.set('rawValue', rawValue);
-            this.fire('change');
         }
 
         var itemTemplate = [
