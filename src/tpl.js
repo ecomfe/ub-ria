@@ -22,6 +22,7 @@ define(
         template.addFilter('pluralize', util.pluralize);
 
         var controlModulePrefix = {
+            // Sidebar不使用esui的，那个不大符合要求
             BoxGroup: 'esui',
             Button: 'esui',
             Calendar: 'esui',
@@ -61,6 +62,7 @@ define(
             SelectorTreeStrategy: 'ub-ria/ui',
             TreeRichSelector: 'ub-ria/ui',
             AbstractBoxGroup: 'ub-ria/ui',
+            Sidebar: 'ub-ria/ui',
             PartialForm: 'ub-ria/ui'
         };
 
@@ -71,6 +73,7 @@ define(
             TableEdit: 'esui/extension',
             AutoSubmit: 'ub-ria/ui/extension',
             TableTip: 'ub-ria/ui/extension',
+            ExternSearch: 'ub-ria/ui/extension',
             TableSubrow: 'esui/extension',
             WordCount: 'ub-ria/ui/extension'
         };
