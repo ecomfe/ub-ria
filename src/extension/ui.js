@@ -179,11 +179,14 @@ define(
                             if (item.target === '_blank') {
                                 link.push(' target="_blank"');
                             }
-                            if (item.isGlobal === 0) {
+                            if (!item.redirectOptions) {
+                                link.push(' data-redirect="global">');
+                            }
+                            else if (item.redirectOptions.length === 0) {
                                 link.push('>');
                             }
-                            else {
-                                link.push(' data-redirect="global">');
+                            else if (u.isArray(item.redirectOptions)) {
+                                link.push(' data-redirect="' + item.redirectOptions.join(' ') + '">');
                             }
                             link.push(u.escape(item.text));
                             link.push('</a>');
