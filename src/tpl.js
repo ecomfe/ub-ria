@@ -54,6 +54,7 @@ define(
             Wizard: 'esui',
             ActionPanel: 'ef',
             ActionDialog: 'ef',
+            ChildView: 'ef',
             TogglePanel: 'ub-ria/ui',
             ToggleButton: 'ub-ria/ui',
             Uploader: 'ub-ria/ui',

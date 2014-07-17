@@ -56,23 +56,27 @@ define(
          *
          * @override
          */
-        ExternSearch.prototype.activate = function () {           
+        ExternSearch.prototype.activate = function () {
             var searchbox = this.resolveSearchBox();
-            var target = this.target;
 
             // 代理搜索
-            searchbox.on('search', function (e) {
-                var keywords = e.target.getValue();
-                target.search(keywords);
-            });
+            searchbox.on('search', search, this);
 
             // 接收控件内清空搜索操作
-            target.on('clearquery', function (e) {
-                searchbox.set('text', '');
-            });
+            this.target.on('clearquery', clearQuery, this);
 
             Extension.prototype.activate.apply(this, arguments);
         };
+
+        function search(e) {
+            var keywords = e.target.getValue();
+            this.target.search(keywords);
+        }
+
+        function clearQuery() {
+            var searchbox = this.resolveSearchBox();
+            searchbox.set('text', '');
+        }
 
         /**
          * 取消激活
@@ -81,8 +85,8 @@ define(
          */
         ExternSearch.prototype.inactivate = function () {
             var searchbox = this.resolveSearchBox();
-            searchbox.un('search');
-            this.target.un('clearquery');
+            searchbox.un('search', search, this);
+            this.target.un('clearquery', clearQuery, this);
             Extension.prototype.inactivate.apply(this, arguments);
         };
 
