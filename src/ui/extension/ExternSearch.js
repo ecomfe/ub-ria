@@ -46,9 +46,15 @@ define(
          */
         ExternSearch.prototype.resolveSearchBox = function () {
             if (this.searchbox) {
-                return this.target.viewContext.get(this.searchbox);
+                var searchbox = this.target.viewContext.get(this.searchbox);
+                if (!searchbox) {
+                    throw new Error('Cannot find related searchbox "#' + this.searchbox + '" in view context');
+                }
+                return searchbox;
             }
-            return null;
+            else {
+                throw new Error('searchbox cannot be null');
+            }
         };
 
         /**
