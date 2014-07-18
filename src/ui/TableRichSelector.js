@@ -253,7 +253,7 @@ define(
             var cursor = 0;
             u.each(fields, function (field, i) {
                 var content = field.content;
-                var innerHTML = ('function' == typeof content
+                var innerHTML = ('function' === typeof content
                     ? content.call(control, item, index, i)
                     : item[content]);
 
@@ -302,7 +302,7 @@ define(
             var rowClasses = helper.getPartClassName('row');
             var actionClasses = helper.getPartClassName('row-action-icon');
 
-            while (tar && tar != document.body) {
+            while (tar && tar !== document.body) {
                 var rowDOM;
                 // 有图标的事件触发在图标上
                 if (this.hasIcon

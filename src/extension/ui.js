@@ -161,8 +161,9 @@ define(
                     function (item) {
                         // 字符串为分隔符
                         if (u.isString(item)) {
-                            return separator = '<span class="table-operation-separator">'
+                            separator = '<span class="table-operation-separator">'
                                 + u.escape(item) + '</span>';
+                            return separator;
                         }
 
                         // 如果没有权限就不显示了
