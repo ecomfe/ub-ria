@@ -36,7 +36,7 @@ define(
          *
          * @class EntityValidator
          * @constructor
-         */        
+         */
         function EntityValidator() {
             this.initCheckers();
         }
@@ -174,7 +174,7 @@ define(
 
             actualValidate.call(this, schema, entity, errors, path);
 
-            return errors;            
+            return errors;
         };
 
         /**
@@ -430,7 +430,7 @@ define(
          * @ignore
          */
         function addRangeChecker(list, range, min, max) {
-            if (u.indexOf(list, min) >= 0 
+            if (u.indexOf(list, min) >= 0
                 && u.indexOf(list, max) >= 0
             ) {
                 list = u.without(list, min, max);

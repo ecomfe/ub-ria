@@ -10,7 +10,6 @@ define(
     function (require) {
         var lib = require('esui/lib');
         var ActionPanel = require('ef/ActionPanel');
-        var u = require('underscore');
 
         /**
          * 局部表单控件。
@@ -110,17 +109,17 @@ define(
                 var input = inputs[i];
                 if (typeof input.notifyErrors === 'function') {
                     fields = input.notifyErrors(errors) || fields;
-                } else {
-                    for(var j = 0; j < fields.length; j++){
-                        var fail = fields[j];
-                        if (input.name === fail.field) {
-                            var state = new ValidityState(false, fail.message);
-                            var validity = new Validity();
-                            validity.addState('server', state);
+                    continue;
+                }
+                for(var j = 0; j < fields.length; j++){
+                    var fail = fields[j];
+                    if (input.name === fail.field) {
+                        var state = new ValidityState(false, fail.message);
+                        var validity = new Validity();
+                        validity.addState('server', state);
 
-                            if (typeof input.showValidity === 'function') {
-                                input.showValidity(validity);
-                            }
+                        if (typeof input.showValidity === 'function') {
+                            input.showValidity(validity);
                         }
                     }
                 }

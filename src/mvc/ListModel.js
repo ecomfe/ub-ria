@@ -457,7 +457,7 @@ define(
                     u.defaults(filter, rawFilter);
                     filter.isDefaultValue = filter.hasOwnProperty('isDefaultValue')
                         ? filter.isDefaultValue
-                        : filter.defaultValue == filter.value;
+                        : filter.defaultValue == filter.value;  // jshint ignore:line
 
                     if (!filter.isDefaultValue) {
                         isAllFiltersDefault = false;
