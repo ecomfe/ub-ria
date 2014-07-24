@@ -161,8 +161,9 @@ define(
                     function (item) {
                         // 字符串为分隔符
                         if (u.isString(item)) {
-                            return separator = '<span class="table-operation-separator">'
+                            separator = '<span class="table-operation-separator">'
                                 + u.escape(item) + '</span>';
+                            return separator;
                         }
 
                         // 如果没有权限就不显示了
@@ -172,12 +173,25 @@ define(
 
                         // 操作分为链接式或命令式2类
                         if (item.url) {
-                            return '<a href="' + u.escape(item.url) + '"'
-                                + ' class="table-operation table-operation-'
-                                    + u.escape(item.type) + '"'
-                                + ' data-redirect="global">'
-                                + u.escape(item.text)
-                                + '</a>';
+                            var link = [];
+                            link.push('<a href="' + u.escape(item.url) + '"');
+                            link.push(' class="table-operation table-operation-');
+                            link.push(u.escape(item.type) + '"');
+                            if (item.target === '_blank') {
+                                link.push(' target="_blank"');
+                            }
+                            if (!item.redirectOptions) {
+                                link.push(' data-redirect="global">');
+                            }
+                            else if (item.redirectOptions.length === 0) {
+                                link.push('>');
+                            }
+                            else if (u.isArray(item.redirectOptions)) {
+                                link.push(' data-redirect="' + item.redirectOptions.join(' ') + '">');
+                            }
+                            link.push(u.escape(item.text));
+                            link.push('</a>');
+                            return link.join('');
                         }
                         else {
                             var className = 'table-operation '

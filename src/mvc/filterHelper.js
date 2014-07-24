@@ -13,7 +13,9 @@ define(
         var helper = {};
         var select = helper.select = {};
         select.getText = function (filter) {
-            var item = u.find(filter.datasource, function (item) { return item.value == filter.value; });
+            var item = u.find(filter.datasource, function (item) {
+                return item.value == filter.value;  // jshint ignore:line
+            });
             return item && item.text || '';
         };
 

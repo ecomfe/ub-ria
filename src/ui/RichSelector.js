@@ -429,11 +429,11 @@ define(
          *
          */
         RichSelector.prototype.batchAction = function () {
-            if (this.mode == 'delete') {
+            if (this.mode === 'delete') {
                 this.deleteAll();
                 this.refreshFoot();
             }
-            else if (this.mode == 'add') {
+            else if (this.mode === 'add') {
                 this.selectAll();
             }
             return false;
