@@ -42,12 +42,14 @@ define(
         /**
          * 找到控件对应的`SearchBox`控件
          *
+         * @param {Boolean} isActivated 是否已经activate过
          * @return {esui.SearchBox}
          */
-        ExternSearch.prototype.resolveSearchBox = function () {
+        ExternSearch.prototype.resolveSearchBox = function (isActivated) {
             if (this.searchbox) {
                 var searchbox = this.target.viewContext.get(this.searchbox);
-                if (!searchbox) {
+                // 可能存在控件其实已经被dispose了的情况，这种情况不需要抛异常
+                if (!searchbox && !isActivated) {
                     throw new Error('Cannot find related searchbox "#' + this.searchbox + '" in view context');
                 }
                 return searchbox;
@@ -90,8 +92,10 @@ define(
          * @override
          */
         ExternSearch.prototype.inactivate = function () {
-            var searchbox = this.resolveSearchBox();
-            searchbox.un('search', search, this);
+            var searchbox = this.resolveSearchBox(true);
+            if (searchbox) {
+                searchbox.un('search', search, this);
+            }
             this.target.un('clearquery', clearQuery, this);
             Extension.prototype.inactivate.apply(this, arguments);
         };
