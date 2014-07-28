@@ -12,7 +12,7 @@ define(
         /**
          * 类型检验器，value值为undefined、null时，不做检查；
          * enum、number类型字段值为number时通过检查；
-         * 
+         *
          * @param {string | boolean | number | object | array | undefined} value 待检验的值
          * @param {array} schema 字段的定义、约束, 长度为3或2的数组
          * @return {boolean} 检验成功返回true，失败返回false
@@ -29,13 +29,24 @@ define(
                 'Boolean': [ 'bool' ],
                 'Object': [ 'object' ]
             };
-            var key = Object.prototype.toString.call(value);
+            var key = '';
 
-            key = key.substring(8, key.length-1);
+            // ie8下Object.prototype.toString.call(null/undefined)返回的是[Object Object]
+            // 所以这里单独处理null和undefined
+            if (value === null) {
+                key = 'Null';
+            }
+            else if (value === undefined) {
+                key = 'Undefined';
+            }
+            else {
+                key = Object.prototype.toString.call(value);
+                key = key.substring(8, key.length-1);
+            }
 
             return typeMapping[key] === true || u.indexOf(typeMapping[key], expectedType) >= 0;
         }
-        
+
         return checker;
     }
 );
