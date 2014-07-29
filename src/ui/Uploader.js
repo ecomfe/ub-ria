@@ -397,7 +397,10 @@ define(
         Uploader.prototype.receiveFile = function () {
             var input = this.helper.getPart('input');
             var filename = input.value;
-            if (this.checkFileFormat(filename)) {
+            // 文件已经上传后，value不为空
+            // 再次选择文件上传时点击取消按钮，会将value置空，从而再次触发'change'事件
+            // 因此需要对传入的filename进行非空判断
+            if (filename && this.checkFileFormat(filename)) {
                 this.fire('receive');
                 if (this.autoUpload) {
                     this.submit();
