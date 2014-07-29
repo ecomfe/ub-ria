@@ -220,10 +220,8 @@ define(
             // 清理注册事件
             var input = this.helper.getPart('input');
             this.helper.removeDOMEvent(input, 'change');
-            // 移除子节点
-            lib.removeNode(input);
-            // 添加子节点
-            this.main.firstChild.appendChild(newInput);
+            // 更新子节点
+            this.main.firstChild.replaceChild(newInput, input);
             // 注册事件
             this.helper.addDOMEvent(newInput, 'change', lib.bind(this.receiveFile, this));
         }
@@ -303,11 +301,14 @@ define(
             {
                 name: 'rawValue',
                 paint: function (uploader, rawValue) {
-                    if (rawValue === '') {
-                        // 允许用户使用 setRawValue('') 方式清空上传图像
+                    if (!rawValue) {
+                        return;
+                    }
+                    else if (u.isEqual(rawValue, {})) {
+                        // 允许用户使用 setRawValue({}) 方式清空上传图像
                         removeFile.call(uploader);
                     }
-                    else if (rawValue) {
+                    else {
                         if (!rawValue.hasOwnProperty('type')) {
                             rawValue.type = uploader.fileType;
                         }
