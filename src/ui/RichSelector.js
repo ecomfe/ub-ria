@@ -291,17 +291,23 @@ define(
 
         RichSelector.prototype.search = function (keyword) {
             keyword = lib.trim(keyword);
-            // 查询
-            this.queryItem(keyword);
-            // 更新概要搜索结果区
-            this.refreshResult();
-            // 更新腿部总结果
-            this.refreshFoot();
+            if (keyword !== '') {
+                // 查询
+                this.queryItem(keyword);
+                // 更新概要搜索结果区
+                this.refreshResult();
+                // 更新腿部总结果
+                this.refreshFoot();
 
-            // 更新状态
-            this.addState('queried');
-            // 调整高度
-            this.adjustHeight();
+                // 更新状态
+                this.addState('queried');
+                // 调整高度
+                this.adjustHeight();
+            }
+            // 相当于执行清空操作
+            else {
+                this.clearQuery();
+            }
         };
 
         RichSelector.prototype.refreshResult = function () {
