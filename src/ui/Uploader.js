@@ -193,6 +193,42 @@ define(
         }
 
         /**
+         * 清空上传图像
+         * 
+         * 清空操作主要做两件事
+         * 1. 清空Uploader的fileInfo
+         * 2. 清空input的value
+         */
+        function removeFile() {
+            // 由于无法控制外部会在什么时候调用清空接口
+            // 因此需要将所有状态移除
+            this.removeState('busy');
+            this.removeState('complete');
+            this.removeState('uploaded');
+            // 重置显示文字
+            this.helper.getPart('button').innerHTML = u.escape(this.text);
+
+            // 清空上传记录
+            this.fileInfo = '';
+
+            // <input type="file"/>的value在IE下无法直接通过操作属性清除，需要替换一个input控件
+            // 复制节点属性
+            var newInput = document.createElement('input');
+            newInput.type = 'file';
+            newInput.id = this.helper.getId('input');
+            this.name && (newInput.name = this.name);
+            // 清理注册事件
+            var input = this.helper.getPart('input');
+            this.helper.removeDOMEvent(input, 'change');
+            // 移除子节点
+            lib.removeNode(input);
+            // 添加子节点
+            this.main.firstChild.appendChild(newInput);
+            // 注册事件
+            this.helper.addDOMEvent(newInput, 'change', lib.bind(this.receiveFile, this));
+        }
+
+        /**
          * 渲染自身
          *
          * @override
@@ -267,19 +303,21 @@ define(
             {
                 name: 'rawValue',
                 paint: function (uploader, rawValue) {
-                    if (!rawValue) {
-                        return;
+                    if (rawValue === '') {
+                        // 允许用户使用 setRawValue('') 方式清空上传图像
+                        removeFile.call(uploader);
                     }
+                    else if (rawValue) {
+                        if (!rawValue.hasOwnProperty('type')) {
+                            rawValue.type = uploader.fileType;
+                        }
 
-                    if (!rawValue.hasOwnProperty('type')) {
-                        rawValue.type = uploader.fileType;
+                        uploader.fileInfo = rawValue;
+
+                        setStateToComplete.call(uploader, rawValue);
+                        // 不需要停留在完成提示
+                        uploader.removeState('complete');
                     }
-
-                    uploader.fileInfo = rawValue;
-
-                    setStateToComplete.call(uploader, rawValue);
-                    // 不需要停留在完成提示
-                    uploader.removeState('complete');
                 }
             }
         );
