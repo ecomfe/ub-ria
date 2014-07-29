@@ -182,7 +182,7 @@ define(
 
             // 下次再上传的提示文字要变掉
             this.addState('uploaded');
-            var button = this.helper.getId(this, 'button');
+            var button = this.helper.getPart('button');
             button.innerHTML = u.escape(this.overrideText);
 
             // 清掉可能存在的错误信息
@@ -417,7 +417,7 @@ define(
             this.removeState('complete');
             this.addState('busy');
 
-            var indicator = this.helper.getId(this, 'indicator');
+            var indicator = this.helper.getPart('indicator');
             indicator.innerHTML = u.escape(this.busyText);
         };
 
@@ -486,7 +486,7 @@ define(
             setStateToComplete.call(this, info);
 
             // 提示已经完成
-            var indicator = this.helper.getId('indicator');
+            var indicator = this.helper.getPart('indicator');
             indicator.innerHTML = u.escape(this.completeText);
             // 一定时间后回到可上传状态
             this.timer = setTimeout(
