@@ -527,7 +527,12 @@ define(
          * @override
          */
         Uploader.prototype.dispose = function () {
-            delete window[this.callbackName];
+            try {
+                delete window[this.callbackName];
+            }
+            catch (ex) {
+                window[this.callbackName] = undefined;
+            }
             var form = this.helper.getPart('form');
             lib.removeNode(form);
 
