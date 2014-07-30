@@ -291,7 +291,7 @@ define(
 
         RichSelector.prototype.search = function (keyword) {
             keyword = lib.trim(keyword);
-            if (keyword !== '') {
+            if (keyword) {
                 // 查询
                 this.queryItem(keyword);
                 // 更新概要搜索结果区
