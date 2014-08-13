@@ -112,7 +112,7 @@ define(
          * 提交实体（新建或更新）
          *
          * @param {Object} entity 实体数据
-         * @param {er.Promise}
+         * @return {er.Promise}
          */
         FormAction.prototype.submitEntity = function (entity) {
             var method = this.context.formType === 'update' ? 'update' : 'save';
