@@ -9,6 +9,7 @@
  */
 define(
     function (require) {
+        var u = require('underscore');
         var util = require('er/util');
         var UIView = require('ef/UIView');
 
@@ -23,6 +24,99 @@ define(
         }
 
         util.inherits(BaseView, UIView);
+
+        /**
+         * 添加控件事件的配置
+         *
+         * @public
+         * @param {Object} uiEvents 控件绑定的事件
+         */
+        BaseView.prototype.addUIEvents = function (uiEvents) {
+            if (!this.extraUIEvents) {
+                this.extraUIEvents = [];
+            }
+
+            this.extraUIEvents.push(uiEvents);
+        };
+
+        /**
+         * 获取控件事件的配置
+         *
+         * @private
+         * @return {Array} 控件事件
+         */
+        BaseView.prototype.getExtraUIEvents = function () {
+            return this.extraUIEvents || [];
+        };
+
+        /**
+         * 绑定控件的事件
+         *
+         * @protected
+         * @override
+         */
+        BaseView.prototype.bindEvents = function () {
+            // 先执行父类方法对直接设置`uiEvents`的控件事件进行绑定
+            UIView.prototype.bindEvents.apply(this, arguments);
+
+            // 再获取通过`addUIEvents`接口传入的控件事件进行绑定
+            u.each(
+                this.getExtraUIEvents(),
+                function (extraUIEvents) {
+                    // 从`extraUIEvents`数组中依次取出事件对象重写`this.uiEvents`
+                    this.uiEvents = extraUIEvents;
+                    // 重新进行控件的事件绑定
+                    UIView.prototype.bindEvents.apply(this, arguments);
+                },
+                this
+            );
+        };
+
+        /**
+         * 添加控件的额外属性
+         *
+         * @public
+         * @param {Object} uiProperties 控件的额外属性
+         */
+        BaseView.prototype.addUIProperties = function (uiProperties) {
+            if (!this.extraUIProperties) {
+                this.extraUIProperties = [];
+            }
+
+            this.extraUIProperties.push(uiProperties);
+        };
+
+        /**
+         * 获取控件的额外属性
+         *
+         * @private
+         * @return {Array} 控件的额外属性
+         */
+        BaseView.prototype.getExtraUIProperties = function () {
+            return this.extraUIProperties || [];
+        };
+
+        /**
+         * 获取控件的额外属性
+         *
+         * @protected
+         * @override
+         * @return {Object} 控件的额外属性
+         */
+        BaseView.prototype.getUIProperties = function () {
+            // 先执行父类方法获取直接设置的`uiProperties`控件属性
+            var uiProperties = UIView.prototype.getUIProperties.apply(this, arguments) || {};
+
+            // 再在控件属性上拓展通过`addUIProperties`接口传入的额外的控件属性
+            u.each(
+                this.getExtraUIProperties(),
+                function (extraUIProperties) {
+                    u.extend(uiProperties, extraUIProperties);
+                }
+            );
+
+            return uiProperties;
+        };
 
         /**
          * 获取对应模板名称
