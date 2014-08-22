@@ -71,7 +71,7 @@ define(
             MaxRule.prototype.getErrorMessage = function (control) {
                 if (control.get('maxErrorMessage')) {
                     var getErrorMessage = Rule.prototype.getErrorMessage;
-                    getErrorMessage.apply(this, arguments);
+                    return getErrorMessage.apply(this, arguments);
                 }
                 var rangeErrorMessage = getRangeErrorMessage(control);
                 if (rangeErrorMessage) {
@@ -81,9 +81,9 @@ define(
             };
 
             MinRule.prototype.getErrorMessage = function (control) {
-                if (control.get('maxErrorMessage')) {
+                if (control.get('minErrorMessage')) {
                     var getErrorMessage = Rule.prototype.getErrorMessage;
-                    getErrorMessage.apply(this, arguments);
+                    return getErrorMessage.apply(this, arguments);
                 }
                 var rangeErrorMessage = getRangeErrorMessage(control);
                 if (rangeErrorMessage) {
@@ -98,7 +98,7 @@ define(
                     || !NUMBER_REGEX.hasOwnProperty(pattern)
                 ) {
                     var getErrorMessage = Rule.prototype.getErrorMessage;
-                    getErrorMessage.apply(this, arguments);
+                    return getErrorMessage.apply(this, arguments);
                 }
                 var rangeErrorMessage = getRangeErrorMessage(control);
                 if (rangeErrorMessage) {
