@@ -33,7 +33,7 @@ define(
          */
         BaseView.prototype.addUIEvents = function (uiEvents) {
             var events = this.uiEvents;
-            // `this.uiEvents`可能会以`undefined`/`Object`/`Array`三种类型出现
+            // `this.uiEvents`可能会以`null`/`Object`/`Array`三种类型出现
             // 这边统一为数组类型
             this.uiEvents = (events && [].concat(events)) || [];
 
@@ -73,6 +73,33 @@ define(
                 },
                 this
             );
+        };
+
+        /**
+         * 添加控件的额外属性
+         *
+         * @public
+         * @param {Object} uiProperties 控件的额外属性
+         */
+        BaseView.prototype.addUIProperties = function (uiProperties) {
+            // `this.uiProperties`可能以`null`/`Object`两种类型出现
+            // 统一为对象类型
+            this.uiProperties = this.uiProperties || {};
+
+            u.extend(this.uiProperties, uiProperties);
+        };
+
+        /**
+         * 获取控件的额外属性
+         *
+         * @override
+         * @protected
+         * @return {Object} 控件的额外属性
+         */
+        BaseView.prototype.getUIProperties = function () {
+            // 重写父类实现
+            // 获取 直接重写`uiProperties` 及 调用`addUIProperties`接口 设置的控件额外属性
+            return this.uiProperties || {};
         };
 
         /**
