@@ -9,6 +9,7 @@
  */
 define(
     function (require) {
+        var u = require('underscore');
         var util = require('er/util');
         var UIView = require('ef/UIView');
 
@@ -23,6 +24,56 @@ define(
         }
 
         util.inherits(BaseView, UIView);
+
+        /**
+         * 添加控件事件的配置
+         *
+         * @public
+         * @param {Object} uiEvents 控件绑定的事件
+         */
+        BaseView.prototype.addUIEvents = function (uiEvents) {
+            var events = this.uiEvents;
+            // `this.uiEvents`可能会以`undefined`/`Object`/`Array`三种类型出现
+            // 这边统一为数组类型
+            this.uiEvents = (events && [].concat(events)) || [];
+
+            this.uiEvents.push(uiEvents);
+        };
+
+        /**
+         * 获取控件事件的配置
+         *
+         * @override
+         * @private
+         * @return {Array} 控件事件
+         */
+        BaseView.prototype.getUIEvents = function () {
+            var events = this.uiEvents;
+
+            // 重写父类实现
+            // 将`this.uiEvents`包装为数组返回
+            return (events && [].concat(events)) || [];
+        };
+
+        /**
+         * 绑定控件的事件
+         *
+         * @override
+         * @protected
+         */
+        BaseView.prototype.bindEvents = function () {
+            // 获取 直接重写`uiEvents` 及 调用`addUIEvents`接口 设置的控件事件
+            u.each(
+                this.getUIEvents(),
+                function (uiEvents) {
+                    // 从`uiEvents`数组中依次取出事件对象重写`this.uiEvents`
+                    this.uiEvents = uiEvents;
+                    // 调用父类`bindEvents`方法完成控件的事件绑定
+                    UIView.prototype.bindEvents.apply(this, arguments);
+                },
+                this
+            );
+        };
 
         /**
          * 获取对应模板名称
