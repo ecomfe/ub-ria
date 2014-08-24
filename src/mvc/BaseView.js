@@ -79,14 +79,29 @@ define(
          * 添加控件的额外属性
          *
          * @public
-         * @param {Object} uiProperties 控件的额外属性
+         * @param {Object} newUIProperties 控件的额外属性
          */
-        BaseView.prototype.addUIProperties = function (uiProperties) {
+        BaseView.prototype.addUIProperties = function (newUIProperties) {
             // `this.uiProperties`可能以`null`/`Object`两种类型出现
             // 统一为对象类型
             this.uiProperties = this.uiProperties || {};
 
-            u.extend(this.uiProperties, uiProperties);
+            var uiProperties = this.uiProperties;
+            u.each(
+                newUIProperties,
+                function (properties, controlId) {
+                    // 子类设置的控件属性在父类设置中已有同名
+                    if (uiProperties.hasOwnProperty(controlId)) {
+                        // 新增属性，则扩展控件设置
+                        // 已有属性，则重写对应属性值
+                        u.extend(uiProperties[controlId], properties);
+                    }
+                    // 子类设置新控件的属性
+                    else {
+                        uiProperties[controlId] = properties;
+                    }
+                }
+            );
         };
 
         /**
