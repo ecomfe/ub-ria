@@ -1,5 +1,5 @@
 /**
- * ADM 2.0
+ * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @ignore
@@ -98,7 +98,10 @@ define(
          * @protected
          */
         WordCount.prototype.getMaxLength = function () {
-            return this.target.get('maxLength') || this.target.get('length');
+            if (+this.target.get('maxLength') === -1) {
+                return this.target.get('length');
+            }
+            return this.target.get('maxLength');
         };
 
         /**
@@ -133,7 +136,7 @@ define(
          */
         WordCount.prototype.activate = function () {
             var target = this.target;
-            var maxLength = target.get('maxLength') || target.get('length');
+            var maxLength = this.getMaxLength();
 
             if (maxLength) {
                 this.target.on('input', checkLength, this);
@@ -151,7 +154,7 @@ define(
         WordCount.prototype.inactivate = function () {
             this.target.un('input', checkLength, this);
             this.target.un('afterrender', checkLength, this);
-
+            
             Extension.prototype.inactivate.apply(this, arguments);
         };
 
