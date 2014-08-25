@@ -36,17 +36,17 @@ define(
             // 批量绑定控件的事件
             this.addUIEvents({
                 pager: {
-                    pagesizechange: this.updatePageSize,
-                    pagechange: this.updatePageIndex
+                    pagesizechange: 'updatePageSize',
+                    pagechange: 'updatePageIndex'
                 },
                 table: {
-                    select: this.updateBatchButtonStatus,
-                    sort: this.sortTable
+                    select: 'updateBatchButtonStatus',
+                    sort: 'sortTable'
                 },
-                'filter:submit': this.submitSearch,
-                'filter-switch:click': this.toggleFilter,
-                'filter-cancel:click': this.cancelFilter,
-                'filter-modify:click': this.toggleFilterPanelContent
+                'filter:submit': 'submitSearch',
+                'filter-switch:click': 'toggleFilter',
+                'filter-cancel:click': 'cancelFilter',
+                'filter-modify:click': 'toggleFilterPanelContent'
             });
 
             // 批量设置控件的属性
@@ -109,7 +109,7 @@ define(
         /**
          * view渲染完成后根据所有筛选条件是否都为默认值来控制展开或闭合
          *
-         * @protected
+         * @private
          */
         ListView.prototype.updateFilterPanelStatus = function () {
             if (!this.model.get('filtersInfo').isAllFiltersDefault) {
@@ -132,6 +132,7 @@ define(
         /**
          * 获取table已经选择的列的数据
          *
+         * @private
          * @return {Object[]} 当前table的已选择列对应的数据
          */
         ListView.prototype.getSelectedItems = function () {
@@ -142,6 +143,7 @@ define(
         /**
          * 获取查询参数，默认是取`filter`表单的所有数据，加上表格的排序字段
          *
+         * @protected
          * @return {Object}
          */
         ListView.prototype.getSearchArgs = function () {

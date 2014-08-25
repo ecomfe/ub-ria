@@ -32,8 +32,8 @@ define(
 
             // 批量绑定控件事件
             this.addUIEvents({
-                'form:submit': this.submit,
-                'cancel:click': this.cancelEdit
+                'form:submit': 'submit',
+                'cancel:click': 'cancelEdit'
             });
         }
 
