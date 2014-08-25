@@ -32,22 +32,49 @@ define(
          * @param {Object} uiEvents 控件绑定的事件
          */
         BaseView.prototype.addUIEvents = function (uiEvents) {
-            var events = this.uiEvents;
+            // 对传入的控件事件参数进行格式变换
+            var extendedUIEvents = [uiEvents];
+            u.each(
+                uiEvents,
+                function (events, key) {
+                    // `uiEvents`对象支持两种方式的事件绑定
+                    //
+                    // { "controlId:eventType": functionName }
+                    // { "controlId:eventType": [functionNameA, functionNameB] }
+                    //
+                    // 绑定的事件函数是数组类型时，组装为多个`uiEvents`对象形式传入
+                    if (u.isArray(events)) {
+                        while (events.length > 1) {
+                            // 从`events`中拆出来的新`uiEvents`
+                            var newUIEvents = {};
+                            newUIEvents[key] = events.splice(-1)[0];
+                            // 插入到`extendedUIEvents`中
+                            extendedUIEvents.push(newUIEvents);
+                        }
+
+                        // 当数组只剩一个元素时，修正为具体的元素类型
+                        if (events.length) {
+                            uiEvents[key] = events.splice(-1)[0];
+                        }
+                    }
+                }
+            );
+
+            var thisEvents = this.uiEvents;
             // `this.uiEvents`可能会以`null`/`Object`/`Array`三种类型出现
             // 这边统一为数组类型
-            this.uiEvents = (events && [].concat(events)) || [];
-
-            this.uiEvents.push(uiEvents);
+            this.uiEvents = (thisEvents && [].concat(thisEvents)) || [];
+            // 将`extendedUIEvents`拼接到`this.uiEvents`后面
+            this.uiEvents = this.uiEvents.concat(extendedUIEvents);
         };
 
         /**
-         * 获取控件事件的配置
+         * 获取控件事件配置的数组形式
          *
-         * @override
          * @private
          * @return {Array} 控件事件
          */
-        BaseView.prototype.getUIEvents = function () {
+        BaseView.prototype.getUIEventsCollection = function () {
             var events = this.uiEvents;
 
             // 重写父类实现
@@ -64,7 +91,7 @@ define(
         BaseView.prototype.bindEvents = function () {
             // 获取 直接重写`uiEvents` 及 调用`addUIEvents`接口 设置的控件事件
             u.each(
-                this.getUIEvents(),
+                this.getUIEventsCollection(),
                 function (uiEvents) {
                     // 从`uiEvents`数组中依次取出事件对象重写`this.uiEvents`
                     this.uiEvents = uiEvents;
