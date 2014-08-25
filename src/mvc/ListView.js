@@ -32,6 +32,29 @@ define(
          */
         function ListView() {
             BaseView.apply(this, arguments);
+
+            // 批量绑定控件的事件
+            this.addUIEvents({
+                pager: {
+                    pagesizechange: this.updatePageSize,
+                    pagechange: this.updatePageIndex
+                },
+                table: {
+                    select: this.updateBatchButtonStatus,
+                    sort: this.sortTable
+                },
+                'filter:submit': this.submitSearch,
+                'filter-switch:click': this.toggleFilter,
+                'filter-cancel:click': this.cancelFilter,
+                'filter-modify:click': this.toggleFilterPanelContent
+            });
+
+            // 批量设置控件的属性
+            this.addUIProperties({
+                table: {
+                    fields: this.getTableFields()
+                }
+            });
         }
 
         util.inherits(ListView, BaseView);
@@ -39,7 +62,7 @@ define(
         /**
          * 收集查询参数并触发查询事件
          *
-         * @param {ListView} this 当前视图实例
+         * @private
          * @param {mini-event.Event} e 控件事件对象
          */
         ListView.prototype.submitSearch = function (e) {
@@ -50,6 +73,7 @@ define(
         /**
          * 排列表格
          *
+         * @private
          * @param {mini-event.Event} e 控件事件对象
          */
         ListView.prototype.sortTable = function (e) {
@@ -60,9 +84,10 @@ define(
             this.fire('tablesort', { tableProperties: tableProperties });
         };
 
-
         /**
          * 根据表格中所选择的行来控制批量更新按钮的启用/禁用状态
+         *
+         * @private
          */
         ListView.prototype.updateBatchButtonStatus = function () {
             var items = this.getSelectedItems();
@@ -84,14 +109,20 @@ define(
         /**
          * view渲染完成后根据所有筛选条件是否都为默认值来控制展开或闭合
          *
+         * @protected
          */
         ListView.prototype.updateFilterPanelStatus = function () {
             if (!this.model.get('filtersInfo').isAllFiltersDefault) {
-                showFilter.call(this);
-                toggleFilterPanelContent.call(this);
+                this.showFilter();
+                this.toggleFilterPanelContent();
             }
         };
 
+        /**
+         * view渲染完成后清空搜索框
+         *
+         * @private
+         */
         ListView.prototype.updateSearchBoxStatus = function () {
             if (this.model.get('keyword')) {
                 this.getSafely('keyword').addState('clear');
@@ -147,44 +178,26 @@ define(
         };
 
         /**
-         * 获取视图属性
-         *
-         * @return {Object}
-         * @protected
-         * @override
-         */
-        ListView.prototype.getUIProperties = function () {
-            var properties = BaseView.prototype.getUIProperties.apply(this, arguments) || {};
-
-            if (!properties.table) {
-                properties.table = {};
-            }
-            properties.table.fields = this.getTableFields();
-
-            return properties;
-        };
-
-        /**
          * 更新每页显示数
          *
+         * @private
          * @param {mini-event.Event} e 事件对象
-         * @ignore
          */
-        function updatePageSize(e) {
+        ListView.prototype.updatePageSize = function (e) {
             var pageSize = e.target.get('pageSize');
             this.fire('pagesizechange', { pageSize: pageSize });
-        }
+        };
 
         /**
          * 更新页码
          *
+         * @private
          * @param {mini-event.Event} e 事件对象
-         * @ignore
          */
-        function updatePageIndex(e) {
+        ListView.prototype.updatePageIndex = function (e) {
             var page = e.target.get('page');
             this.fire('pagechange', { page: page });
-        }
+        };
 
         /**
          * 获取批量操作状态
@@ -204,63 +217,63 @@ define(
         /**
          * 收起筛选面板，当有筛选条件时清除筛选条件
          *
+         * @private
          */
-        function toggleFilter() {
+        ListView.prototype.toggleFilter = function () {
             var filter = this.getSafely('filter');
-            filter.isHidden() ? showFilter.call(this) : cancelFilter.call(this);
-        }
+            filter.isHidden() ? this.showFilter() : this.cancelFilter();
+        };
 
-        function showFilter() {
+        /**
+         * 显示筛选条件区域
+         *
+         * @private
+         */
+        ListView.prototype.showFilter = function () {
             this.getSafely('filter').show();
             this.getSafely('filter-switch').addState('expand');
-        }
+        };
 
-        function hideFilter() {
+        /**
+         * 隐藏筛选条件区域
+         *
+         * @private
+         */
+        ListView.prototype.hideFilter = function () {
             this.getSafely('filter').hide();
             this.getSafely('filter-switch').removeState('expand');
-        }
+        };
 
         /**
          * 有筛选条件时清除筛选条件
          *
-         * @ignore
+         * @private
          */
-
-        function cancelFilter() {
+        ListView.prototype.cancelFilter = function () {
             if (this.model.get('filtersInfo').isAllFiltersDefault) {
-                hideFilter.call(this);
+                this.hideFilter();
             }
             else {
                 this.fire('filterreset');
             }
-        }
+        };
 
         /**
          * 切换筛选面板和筛选条件显示面板
          *
-         * @ignore
+         * @private
          */
-
-        function toggleFilterPanelContent() {
+        ListView.prototype.toggleFilterPanelContent = function () {
             this.getGroup('filter-content').toggle();
-        }
+        };
 
         /**
          * 绑定控件事件
          *
          * @override
+         * @protected
          */
         ListView.prototype.bindEvents = function () {
-            var pager = this.getSafely('pager');
-            pager.on('pagesizechange', updatePageSize, this);
-            pager.on('pagechange', updatePageIndex, this);
-
-            var table = this.getSafely('table');
-            // 选中表格行后控制批量更新按钮的启用/禁用状态
-            table.on('select', this.updateBatchButtonStatus, this);
-            // 表格排序触发查询
-            table.on('sort', this.sortTable, this);
-
             this.getGroup('batch').each(
                 function (button) {
                     // 批量更新
@@ -269,17 +282,6 @@ define(
                 this
             );
 
-            this.getSafely('filter').on('submit', this.submitSearch, this);
-
-            // 展开或收起面板，或者清除筛选条件
-            this.getSafely('filter-switch').on('click', toggleFilter, this);
-
-            // 取消筛选，收起面板或者清除筛选条件
-            this.getSafely('filter-cancel').on('click', cancelFilter, this);
-
-            // 切换到筛选面板
-            this.getSafely('filter-modify').on('click', toggleFilterPanelContent, this);
-
             BaseView.prototype.bindEvents.apply(this, arguments);
         };
 
@@ -287,6 +289,7 @@ define(
          * 控制元素展现
          *
          * @override
+         * @protected
          */
         ListView.prototype.enterDocument = function () {
             BaseView.prototype.enterDocument.apply(this, arguments);
