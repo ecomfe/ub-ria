@@ -39,8 +39,8 @@ define(
                 function (events, key) {
                     // `uiEvents`对象支持两种方式的事件绑定
                     //
-                    // { "controlId:eventType": functionName }
-                    // { "controlId:eventType": [functionNameA, functionNameB] }
+                    // { 'controlId:eventType': functionName }
+                    // { 'controlId:eventType': [functionNameA, functionNameB] }
                     //
                     // 绑定的事件函数是数组类型时，组装为多个`uiEvents`对象形式传入
                     if (u.isArray(events)) {
