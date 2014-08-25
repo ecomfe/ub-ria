@@ -9,3 +9,173 @@ esui-box-group {
 .ui-boxgroup-horizontal label{
     margin-right: 46px;
 }
+
+
+@flat-radio-icon-normal: url(../img/flat-radio-normal.png);
+@flat-radio-icon-hover: url(../img/flat-radio-hovered.png);
+@flat-radio-icon-checked: url(../img/flat-radio-checked.png);
+@flat-radio-icon-disabled: @flat-radio-icon-normal;
+@flat-radio-icon-readonly: @flat-radio-icon-normal;
+
+@flat-radio-height: 18px;
+@flat-radio-icon-width: 18px;
+@flat-radio-icon-height: 18px;
+@flat-radio-margin-right: 30px;
+
+
+@flat-checkbox-icon-normal: url(../img/flat-check-normal.png);
+@flat-checkbox-icon-hover: url(../img/flat-check-hovered.png);
+@flat-checkbox-icon-checked: url(../img/flat-check-checked.png);
+@flat-checkbox-icon-disabled: @flat-checkbox-icon-normal;
+@flat-checkbox-icon-readonly: @flat-checkbox-icon-normal;
+
+@flat-checkbox-height: 18px;
+@flat-checkbox-icon-width: 14px;
+@flat-checkbox-icon-height: 14px;
+@flat-checkbox-margin-right: 30px;
+
+
+@switch-button-background-color: #6ccdc0;
+
+.ui-boxgroup-horizontal {
+    .ui-boxgroup-wrapper {
+        display: inline-block;
+    }
+}
+
+.ui-boxgroup-radio, 
+.ui-boxgroup-checkbox {
+    cursor: pointer;
+}
+
+.ui-boxgroup-disabled {
+    .ui-boxgroup-radio, 
+    .ui-boxgroup-checkbox {
+        cursor: default;
+    }
+}
+
+.ui-boxgroup-validity-label {
+    display: inline-block;
+    line-height: 30px;
+    color: #ff0000;
+}
+
+// 自定义样式radio
+.skin-flat-boxgroup {
+    // 通用图标mixin
+    .skin-flat-radio-icon-mixin (@url) {
+        .pseudo-icon(@url, @flat-radio-icon-width, @flat-radio-icon-height, left, 0px);
+    }
+
+    .ui-boxgroup-wrapper {
+        // 原始的input隐藏掉
+        input {
+            display: none;
+        }
+        span {
+            vertical-align: baseline;
+        }
+    }
+
+    // radio的情况
+    .ui-boxgroup-radio {
+        height: @flat-radio-height;
+        line-height: @flat-radio-height;
+        padding-left: 27px;
+        margin-right: @flat-radio-margin-right;
+        font-size: 14px;
+        
+        .skin-flat-radio-icon-mixin(@flat-radio-icon-normal);
+
+        &:hover {
+            .skin-flat-radio-icon-mixin(@flat-radio-icon-hover);
+        }
+    }
+
+    
+    .ui-boxgroup-wrapper-checked {
+        &.ui-boxgroup-radio,
+        &.ui-boxgroup-radio:hover {
+            .skin-flat-radio-icon-mixin(@flat-radio-icon-checked);
+        }
+    }
+
+    // 只读和禁用状态
+    &.ui-boxgroup-disabled, 
+    &.ui-boxgroup-read-only {
+        .ui-boxgroup-radio,
+        .ui-boxgroup-radio:hover {
+            .skin-flat-radio-icon-mixin(@flat-radio-icon-disabled);
+        }
+
+        .ui-boxgroup-wrapper-checked {
+            &.ui-boxgroup-radio,
+            &.ui-boxgroup-radio:hover {
+                .skin-flat-radio-icon-mixin(@flat-radio-icon-checked);
+            }
+        }
+    }
+
+    // check的情况
+    // 通用图标mixin
+    .skin-flat-checkbox-icon-mixin (@url) {
+        .pseudo-icon(@url, @flat-checkbox-icon-width, @flat-checkbox-icon-height, left, 0px);
+    }
+    .ui-boxgroup-checkbox {
+        height: @flat-checkbox-height;
+        line-height: @flat-checkbox-height;
+        padding-left: 27px;
+        margin-right: @flat-checkbox-margin-right;
+        font-size: 14px;
+        
+        .skin-flat-checkbox-icon-mixin(@flat-checkbox-icon-normal);
+
+        &:hover {
+            .skin-flat-checkbox-icon-mixin(@flat-checkbox-icon-hover);
+        }
+    }
+
+    
+    .ui-boxgroup-wrapper-checked {
+        &.ui-boxgroup-checkbox,
+        &.ui-boxgroup-checkbox:hover {
+            .skin-flat-checkbox-icon-mixin(@flat-checkbox-icon-checked);
+        }
+    }
+
+    // 只读和禁用状态
+    &.ui-boxgroup-disabled, 
+    &.ui-boxgroup-read-only {
+        .ui-boxgroup-checkbox,
+        .ui-boxgroup-checkbox:hover {
+            .skin-flat-checkbox-icon-mixin(@flat-checkbox-icon-disabled);
+        }
+
+        .ui-boxgroup-wrapper-checked {
+            &.ui-boxgroup-checkbox,
+            &.ui-boxgroup-checkbox:hover {
+                .skin-flat-checkbox-icon-mixin(@flat-checkbox-icon-checked);
+            }
+        }
+    }
+}
+
+// 色块样式切换button
+.skin-switch-button-boxgroup {
+    height: 30px;
+    line-height: 30px;
+    .ui-boxgroup-wrapper {
+        width: 118px;
+        border: 1px solid @switch-button-background-color;
+        color: #333;
+        font-size: 14px;
+        text-align: center;
+        margin: 0;
+    }
+    .ui-boxgroup-wrapper-checked  {
+        width: 120px;
+        color: #fff;
+        background: @switch-button-background-color;
+    }
+}
