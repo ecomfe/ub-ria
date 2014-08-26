@@ -138,9 +138,9 @@ define(
                         + match.charAt(match.length - 1);
                 }
             );
-            // 大写字符之间用横线连起来
+            // 大写字符之前用横线连起来
             s = s.replace(
-                /[A-Z]/g,
+                /[A-Z,0-9]/g,
                 function (match) { return '-' + match.toLowerCase(); }
             );
             if (s.charAt(0) === '-') {
