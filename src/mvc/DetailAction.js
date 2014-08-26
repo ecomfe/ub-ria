@@ -39,10 +39,9 @@ define(
         }
 
         /**
-         * 页码更新后重新加载操作
+         * 根据请求重新跳转
          *
          * @param {Object} args 新的请求参数对象
-         * @protected
          */
         exports.reloadWithQueryUpdate = function (args) {
             var url = getURLForQuery.call(this, args);
