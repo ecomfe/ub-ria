@@ -1,5 +1,7 @@
+// 放一些可能需要复用的变量
 @form-field-line-height: 30px;
 @form-field-required-star-width: 12px;
+@form-field-label-width: 104px;
 
 .form-view .content-main {
     background: none repeat scroll 0 0 #fff;
@@ -32,15 +34,15 @@
 
 .form-field,
 .form-field-required {
-    margin: 30px 0;
     .clearfix();
     font-size: 14px;
+    margin: 30px 0;
 }
 
 .form-field-label {
     float: left;
     zoom: 1;
-    width: 104px;
+    width: @form-field-label-width;
     line-height: @form-field-line-height;
     text-align: left;
     vertical-align: top;
@@ -80,7 +82,7 @@
 }
 
 .form-submit-section {
-    border-top: 1px solid #EAEAEA;
+    border-top: 1px solid #eaeaea;
     margin: 0 0 0 30px;
     padding-top: 20px;
 
