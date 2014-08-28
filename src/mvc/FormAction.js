@@ -71,6 +71,23 @@ define(
         };
 
         /**
+         * 获取处理组件
+         *
+         */
+        FormAction.prototype.getSubmitHandler = function () {
+            return this.submitHandler;
+        };
+
+        /**
+         * 设置处理组件
+         *
+         * @param {SubmitHandler} handler 提交成功处理组件
+         */
+        FormAction.prototype.setSubmitHandler = function (handler) {
+            this.submitHandler = handler;
+        };
+
+        /**
          * 处理提交错误
          *
          * @param {er.FakeXHR | meta.FieldError[]}，
