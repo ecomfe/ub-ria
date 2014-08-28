@@ -1,11 +1,7 @@
-/**
-  * ADM2.0
-  * Copyright 2014 Baidu Inc. All rights reserved.
-  * 
-  * @ignore
- * @file 折叠控件样式
-  * @author wangyaqiong
-  */
+@toggle-panel-close-icon: url(../img/toggle-panel-close.png);
+@toggle-panel-open-icon: url(../img/toggle-panel-open.png);
+@toggle-panel-icon-width: 9px;
+@toggle-panel-icon-height: 6px;
 
 esui-toggle-panel {
     display: block;
@@ -16,10 +12,9 @@ esui-toggle-panel {
         font-weight: bold;
         font-size: 14px;
         line-height: 14px;
-        margin-left: 3px;
-        padding-left: 16px;
-        background: transparent url(../img/ria-open-icon.png) no-repeat 0 center;
         cursor: pointer;
+        .pseudo-icon(@toggle-panel-close-icon, @toggle-panel-icon-width, @toggle-panel-icon-width, right, 5px);
+        padding-right: 10px + @toggle-panel-icon-width;
     }
 
     .ui-togglepanel-content {
@@ -29,7 +24,8 @@ esui-toggle-panel {
 
 .ui-togglepanel-expanded {
     .ui-togglepanel-title {
-        background-image: url(../img/ria-close-icon.png);
+        background: none;
+        .pseudo-icon(@toggle-panel-open-icon, @toggle-panel-icon-width, @toggle-panel-icon-width, right, 5px);
     }
 
     .ui-togglepanel-content {
