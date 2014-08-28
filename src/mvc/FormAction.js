@@ -64,34 +64,26 @@ define(
          * @param {Object} entity 提交成功后返回的实体
          */
         FormAction.prototype.handleSubmitResult = function (entity) {
-            this.notifySubmitSuccess(entity);
-
-            // 默认成功后跳转回列表页
-            var entitySaveEvent = this.fire('entitysave', { entity: entity });
-            var handleFinishEvent = this.fire('handlefinish');
-            if (!entitySaveEvent.isDefaultPrevented()
-                && !handleFinishEvent.isDefaultPrevented()
-            ) {
-                this.redirectAfterSubmit(entity);
+            var handler = this.getSubmitHandler();
+            if (handler && typeof handler.handle === 'function') {
+                handlers.handle(entity, this);
             }
         };
 
         /**
-         * 提示用户表单提交成功
-         *
-         * @param {Object} entity 提交成功后返回的实体
+         * 获取提交结果处理组件
          */
-        FormAction.prototype.notifySubmitSuccess = function (entity) {
+        FormAction.prototype.getSubmitHandler = function () {
+            return this.submitHandler;
         };
 
         /**
-         * 执行提交成功后的跳转操作
+         * 设置提交结果处理组件
          *
-         * @param {Mixed} entity 提交后服务器返回的实体数据
+         * @param {Object} handler 提交结果处理组件
          */
-        FormAction.prototype.redirectAfterSubmit = function (entity) {
-            // 默认返回列表页
-            this.back('/' + this.getEntityName() + '/list');
+        FormAction.prototype.setSubmitHandler = function (handler) {
+            this.submitHandler = handler;
         };
 
         /**
