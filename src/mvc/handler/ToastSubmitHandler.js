@@ -2,9 +2,10 @@
  * UB RIA Base
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 表单提交成功后的toast提醒组件
- * @author yanghuabei
+ * @class ToastSubmitHandler
+ * @extends SubmitHandler
+ * @author yanghuabei(yanghuabei@baidu.com)
  * @date $DATE$
  */
 define(
@@ -13,13 +14,6 @@ define(
         var Toast = require('esui/Toast');
         var SubmitHandler = require('./SubmitHandler');
 
-        /**
-         * @class ToastSubmitHandler
-         *
-         * 表单提交成功后的toast提醒组件
-         *
-         * @extends SubmitHandler
-         */
         var exports = {};
 
         /**
@@ -30,8 +24,9 @@ define(
         exports.template = '';
 
         /**
-         * 设置toast消息模版
+         * 设置下一个组件
          *
+         * @method ToastSubmitHandler.prototype.setTemplate
          * @param {string} template toast消息模版
          */
         exports.setTemplate = function (template) {
@@ -41,6 +36,8 @@ define(
         /**
          * 获取模版
          *
+         * @method ToastSubmitHandler.prototype.getTemplate
+         * @return {string}
          */
         exports.getTemplate = function () {
             return this.template;
@@ -49,8 +46,10 @@ define(
         /**
          * 提交成功处理函数
          *
+         * @method ToastSubmitHandler.prototype.handle
          * @param {Object} entity 提交后服务器端返回的实体信息
          * @param {er.Action} action 表单Action实例
+         * @override
          */
         exports.handle = function (entity, action) {
             var message = this.getToastMessage(entity, action);
@@ -67,6 +66,7 @@ define(
          *
          * 默认提示信息为“您[创建|修改]的{实体名称}{name}已经成功保存”
          *
+         * @method ToastSubmitHandler.prototype.getToastMessage
          * @param {Object} entity 提交后服务器端返回的实体信息
          * @param {er.Action} action 表单Action实例
          * @return {string}
