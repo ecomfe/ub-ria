@@ -17,11 +17,12 @@ define(
         /**
          * 获取列表子Action的URL
          *
+         * @method DetailModel#.getListActionURL
          * @return {string}
          */
         exports.getListActionURL = function () {
             var query = this.get('url').getQuery();
-            // 所有给列表用的参数加上`list.`为前缀
+            // 所有列表参数都拥有`list.`前缀
             var args = {};
             u.each(
                 query,
@@ -41,6 +42,12 @@ define(
             return actionURL + '';
         };
 
+        /**
+         * 获取列表子Action的实体名称
+         *
+         * @method DetailModel#.getListActionName
+         * @return {string}
+         */
         exports.getListActionName = function () {
             return this.entityName;
         };
@@ -50,6 +57,7 @@ define(
          *
          * 默认使用`entityName`，但并不一定会相同，通过重写此方法覆盖
          *
+         * @method DetailModel#.getTreeNodeEntityName
          * @return {string}
          */
         exports.getTreeNodeEntityName = function () {
