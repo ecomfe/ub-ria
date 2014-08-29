@@ -41,7 +41,7 @@ define(
         /**
          * 处理提交数据时发生的错误，默认无行为，如验证信息显示等需要实现此方法
          *
-         * @param {er.meta.FakeXHR | meta.FieldError[]}，
+         * @param {er.meta.FakeXHR | meta.FieldError[]}
          * errors `XMLHttpRequest`对象，或者model校验的错误结果集
          * @return {boolean} 返回`true`表示错误已经处理完毕
          */
@@ -73,6 +73,7 @@ define(
         /**
          * 获取处理组件
          *
+         * @return {SubmitHandler}
          */
         FormAction.prototype.getSubmitHandler = function () {
             return this.submitHandler;
@@ -90,7 +91,7 @@ define(
         /**
          * 处理提交错误
          *
-         * @param {er.FakeXHR | meta.FieldError[]}，
+         * @param {er.FakeXHR | meta.FieldError[]}
          * errors `XMLHttpRequest`对象，或者model校验的错误信息集
          * @ignore
          */
