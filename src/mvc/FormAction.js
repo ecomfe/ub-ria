@@ -59,15 +59,23 @@ define(
         };
 
         /**
-         * 处理提交数据成功后的返回
+         * 处理提交数据成功后的返回，流程如下：
+         *
+         * - 触发`entitysave`
+         * - 若`entitysave`未被阻止，调用`submitHanlder`
+         * - 触发`handlefinish`
          *
          * @param {Object} entity 提交成功后返回的实体
          */
         FormAction.prototype.handleSubmitResult = function (entity) {
-            var submitHandler = this.getSubmitHandler();
-            if (submitHandler) {
-                submitHandler.handle(entity, this);
+            var entitySaveEvent = this.fire('entitysave', { entity: entity });
+            if (!entitySaveEvent.isDefaultPrevented()) {
+                var submitHandler = this.getSubmitHandler();
+                if (submitHandler) {
+                    submitHandler.handle(entity, this);
+                }
             }
+            this.fire('handlefinish');
         };
 
         /**

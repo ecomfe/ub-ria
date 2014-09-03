@@ -77,16 +77,9 @@ define(
          * @param {er.Action} action 表单Action实例
          */
         exports.handle = function (entity, action) {
-            var entitySaveEvent = action.fire('entitysave', { entity: entity });
-            var handleFinishEvent = action.fire('handlefinish');
-
-            if (!entitySaveEvent.isDefaultPrevented()
-                && !handleFinishEvent.isDefaultPrevented()
-            ) {
-                var data = this.getData(entity, action);
-                var url = u.template(this.getTemplate(), data);
-                this.redirect(action, url, this.getRedirectOptions());
-            }
+            var data = this.getData(entity, action);
+            var url = u.template(this.getTemplate(), data);
+            this.redirect(action, url, this.getRedirectOptions());
 
             this.next(entity, action);
         };
