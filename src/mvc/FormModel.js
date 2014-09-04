@@ -41,6 +41,7 @@ define(
          * @param {mvc.EntityValidator} 关联的实例
          */
         FormModel.prototype.setValidator = function (validator) {
+            validator.setRule(this.get('rule'));
             this.validator = validator;
         };
 
