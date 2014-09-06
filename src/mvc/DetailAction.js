@@ -24,27 +24,36 @@ define(
 
         /**
          * 获取指定的跳转URL
+         * 分页之类的只带部分参数过来，所以保留url中的参数。查询带所有查询条件，要无视之前的条件。
          *
          * @param {Object} args 新的请求对象
+         * @param {boolean} clearLastArgs 是否删除上个url中的查询参数
          * @return {string}
          */
-        function getURLForQuery(args) {
+        function getURLForQuery(args, clearLastArgs) {
             var url = this.context.url;
             var path = url.getPath();
-            // 扩展原有url
-            args = u.extend(url.getQuery(), args);
-            args = require('../util').purify(args);
+            var URL = require('er/URL');
 
-            return require('er/URL').withQuery(path, args).toString();
+            if (clearLastArgs) {
+                args = u.purify(args);
+                return URL.withQuery(path, args);
+            }
+            else {
+                args = u.extend(url.getQuery(), args);
+                args = u.purify(args);
+                return URL.withQuery(path, args).toString();
+            }
         }
 
         /**
          * 根据请求重新跳转
          *
          * @param {Object} args 新的请求参数对象
+         * @param {boolean} clearLastArgs 是否删除上个url中的查询参数
          */
-        exports.reloadWithQueryUpdate = function (args) {
-            var url = getURLForQuery.call(this, args);
+        exports.reloadWithQueryUpdate = function (args, clearLastArgs) {
+            var url = getURLForQuery.call(this, args, clearLastArgs);
             this.redirect(url, { force: true });
         };
 
@@ -68,7 +77,7 @@ define(
                     args['list.' + key] = value;
                 }
             );
-            this.reloadWithQueryUpdate(args);
+            this.reloadWithQueryUpdate(args, true);
         }
 
         /**
