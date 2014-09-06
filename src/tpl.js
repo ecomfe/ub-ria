@@ -54,7 +54,7 @@ define(
             Wizard: 'esui',
             ActionPanel: 'ef',
             ActionDialog: 'ef',
-            ChildView: 'ef',
+            ViewPanel: 'ef',
             TogglePanel: 'ub-ria/ui',
             ToggleButton: 'ub-ria/ui',
             Uploader: 'ub-ria/ui',
@@ -175,7 +175,12 @@ define(
                     var extensions = getExtensionDependencies(text);
                     var dependencies = controls.concat(extensions);
 
-                    window.require(dependencies, function () { load(text); });
+                    window.require(
+                        dependencies,
+                        function () {
+                            load(text);
+                        }
+                    );
                 }
 
                 var options = {
