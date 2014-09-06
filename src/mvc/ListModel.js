@@ -28,7 +28,7 @@ define(
 
         // 加载没有搜索词时的URL，用于搜索词后的“清空”链接
         var LIST_WITHOUT_KEYWORD_URL_DATASOURCE = {
-            listWithoutKeywordURL: function(model) {
+            listWithoutKeywordURL: function (model) {
                 var url = model.get('url');
                 var path = url.getPath();
                 var query = url.getQuery();
@@ -178,8 +178,16 @@ define(
          * @override
          */
         ListModel.prototype.load = function () {
-            return BaseModel.prototype.load.apply(this, arguments)
-                .then(u.bind(processUIData, this));
+            return BaseModel.prototype.load.apply(this, arguments).then(u.bind(processUIData, this));
+        };
+
+        /**
+         * 处理加载后的数据
+         * @return {er.Promise}
+         * @override
+         */
+        ListModel.prototype.prepare = function () {
+            this.set('filtersInfo', this.getFiltersInfo());
         };
 
         /**
@@ -412,6 +420,59 @@ define(
          * @return {er.meta.FakeXHR}
          */
         ListModel.prototype.getRestoreAdvice = u.partial(ListModel.prototype.getAdvice, 1);
+
+        function getClearURL(model, name) {
+            var url = model.get('url');
+            var query = u.omit(url.getQuery(), name);
+            return '#' + require('er/URL').withQuery(url.getPath(), query);
+        }
+
+        /**
+         * 返回原始筛选配置数组
+         * @override
+         * @returns {Object}
+         *
+         */
+        ListModel.prototype.getFilters = function () {
+            return {};
+        };
+
+        /**
+         * 返回经过处理的筛选数组
+         * @returns {Object}
+         */
+        ListModel.prototype.getFiltersInfo = function () {
+            var isAllFiltersDefault = true;
+            var defaultArgs = this.getDefaultArgs();
+            var filters = {};
+            u.each(
+                this.getFilters(),
+                function (rawFilter, name) {
+                    var filter = {
+                        text: typeof rawFilter.text === 'function' ? rawFilter.text(rawFilter) : rawFilter.text,
+                        clearURL: getClearURL(this, name),
+                        defaultValue: defaultArgs[name]
+                    };
+
+                    u.defaults(filter, rawFilter);
+                    filter.isDefaultValue = filter.hasOwnProperty('isDefaultValue')
+                        ? filter.isDefaultValue
+                        : filter.defaultValue == filter.value;  // jshint ignore:line
+
+                    if (!filter.isDefaultValue) {
+                        isAllFiltersDefault = false;
+                    }
+
+                    filters[name] = filter;
+                },
+                this
+            );
+
+            return {
+                filters: filters,
+                isAllFiltersDefault: isAllFiltersDefault
+            };
+        };
 
         return ListModel;
     }

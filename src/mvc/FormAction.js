@@ -39,44 +39,6 @@ define(
         FormAction.prototype.category = 'form';
 
         /**
-         * 设置表单提交成功后显示的信息，如果值为`null`或`undefined`则表示不显示任何信息
-         *
-         * 如果该字段有内容，则系统使用该字段与提交表单后服务器返回的数据进行模板格式化，
-         * 因此可以使用服务器返回的字段为占位符。模板使用`underscore.template`方法
-         *
-         * @type {string | false | null}
-         */
-        FormAction.prototype.toastMessage = '';
-
-        /**
-         * 获取表单提交成功后显示的信息
-         *
-         * 默认提示信息为“您[创建|修改]的{实体名称}{name}已经成功保存”
-         *
-         * @param {Object} entity 提交后服务器端返回的实体信息
-         * @return {string}
-         */
-        FormAction.prototype.getToastMessage = function (entity) {
-            var message = this.toastMessage;
-            if (message == null) {
-                return '';
-            }
-
-            if (message) {
-                return u.template(message, entity || {});
-            }
-            else {
-                var actionType = this.context.formType === 'update'
-                    ? '修改'
-                    : '创建';
-                return '您' + actionType + '的'
-                    + this.getEntityDescription()
-                    + '[<strong>' + u.escape(entity.name) + '</strong>]'
-                    + '已经成功保存';
-            }
-        };
-
-        /**
          * 处理提交数据时发生的错误，默认无行为，如验证信息显示等需要实现此方法
          *
          * @param {er.meta.FakeXHR | meta.FieldError[]}，
@@ -97,44 +59,41 @@ define(
         };
 
         /**
-         * 处理提交数据成功后的返回
+         * 处理提交数据成功后的返回，流程如下：
+         *
+         * - 触发`entitysave`
+         * - 若`entitysave`未被阻止，调用`submitHanlder`
+         * - 触发`handlefinish`
          *
          * @param {Object} entity 提交成功后返回的实体
          */
         FormAction.prototype.handleSubmitResult = function (entity) {
-            this.notifySubmitSuccess(entity);
-
-            // 默认成功后跳转回列表页
             var entitySaveEvent = this.fire('entitysave', { entity: entity });
-            var handleFinishEvent = this.fire('handlefinish');
-            if (!entitySaveEvent.isDefaultPrevented()
-                && !handleFinishEvent.isDefaultPrevented()
-            ) {
-                this.redirectAfterSubmit(entity);
+            if (!entitySaveEvent.isDefaultPrevented()) {
+                var submitHandler = this.getSubmitHandler();
+                if (submitHandler) {
+                    submitHandler.handle(entity, this);
+                }
             }
+            this.fire('handlefinish');
         };
 
         /**
-         * 提示用户表单提交成功
+         * 获取处理组件
          *
-         * @param {Object} entity 提交成功后返回的实体
+         * @return {SubmitHandler}
          */
-        FormAction.prototype.notifySubmitSuccess = function (entity) {
-
-            var toast = this.getToastMessage(entity);
-            if (toast) {
-                this.view.showToast(toast);
-            }
+        FormAction.prototype.getSubmitHandler = function () {
+            return this.submitHandler;
         };
 
         /**
-         * 执行提交成功后的跳转操作
+         * 设置处理组件
          *
-         * @param {Mixed} entity 提交后服务器返回的实体数据
+         * @param {SubmitHandler} handler 提交成功处理组件
          */
-        FormAction.prototype.redirectAfterSubmit = function (entity) {
-            // 默认返回列表页
-            this.back('/' + this.getEntityName() + '/list');
+        FormAction.prototype.setSubmitHandler = function (handler) {
+            this.submitHandler = handler;
         };
 
         /**
@@ -155,7 +114,7 @@ define(
          * 提交实体（新建或更新）
          *
          * @param {Object} entity 实体数据
-         * @param {er.Promise}
+         * @return {er.Promise}
          */
         FormAction.prototype.submitEntity = function (entity) {
             var method = this.context.formType === 'update' ? 'update' : 'save';

@@ -54,6 +54,7 @@ define(
             Wizard: 'esui',
             ActionPanel: 'ef',
             ActionDialog: 'ef',
+            ChildView: 'ef',
             TogglePanel: 'ub-ria/ui',
             ToggleButton: 'ub-ria/ui',
             Uploader: 'ub-ria/ui',
@@ -73,6 +74,7 @@ define(
             TableEdit: 'esui/extension',
             AutoSubmit: 'ub-ria/ui/extension',
             TableTip: 'ub-ria/ui/extension',
+            ExternSearch: 'ub-ria/ui/extension',
             TableSubrow: 'esui/extension',
             WordCount: 'ub-ria/ui/extension'
         };

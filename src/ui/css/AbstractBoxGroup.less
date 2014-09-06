@@ -1,6 +1,13 @@
 @flat-radio-icon-normal: url(../img/flat-radio-normal.png);
 @flat-radio-icon-hover: url(../img/flat-radio-hovered.png);
 @flat-radio-icon-checked: url(../img/flat-radio-checked.png);
+@flat-radio-icon-disabled: @flat-radio-icon-normal;
+@flat-radio-icon-readonly: @flat-radio-icon-normal;
+
+@flat-radio-height: 18px;
+@flat-radio-icon-width: 18px;
+@flat-radio-icon-height: 18px;
+@flat-radio-margin-right: 30px;
 
 @switch-button-background-color: #6ccdc0;
 
@@ -29,20 +36,46 @@
 }
 
 // 自定义样式radio
-.skin-flat-radio-abstractboxgroup-radio {
-    height: 18px;
-    line-height: 18px;
-    padding-left: 27px;
-    margin-right: 60px;
-    font-size: 14px;
-    .pseudo-icon(@flat-radio-icon-normal, 18px, 18px, left, 0px);
+.skin-flat-radio-abstractboxgroup {
+    .skin-flat-radio-icon-mixin (@url) {
+        .pseudo-icon(@url, @flat-radio-icon-width, @flat-radio-icon-height, left, 0px);
+    }
+    .ui-abstractboxgroup-radio {
+        height: @flat-radio-height;
+        line-height: @flat-radio-height;
+        padding-left: 27px;
+        margin-right: @flat-radio-margin-right;
+        font-size: 14px;
+        
+        .skin-flat-radio-icon-mixin(@flat-radio-icon-normal);
 
-    &:hover {
-        .pseudo-icon(@flat-radio-icon-hover, 18px, 18px, left, 0px);
+        &:hover {
+            .skin-flat-radio-icon-mixin(@flat-radio-icon-hover);
+        }
     }
 
-    .ui-abstractboxgroup-wrapper-checked & {
-        .pseudo-icon(@flat-radio-icon-checked, 18px, 18px, left, 0px);
+    
+    .ui-abstractboxgroup-wrapper-checked {
+        .ui-abstractboxgroup-radio,
+        .ui-abstractboxgroup-radio:hover {
+            .skin-flat-radio-icon-mixin(@flat-radio-icon-checked);
+        }
+    }
+
+    // 只读和禁用状态
+    &.ui-abstractboxgroup-disabled, 
+    &.ui-abstractboxgroup-read-only {
+        .ui-abstractboxgroup-radio,
+        .ui-abstractboxgroup-radio:hover {
+            .skin-flat-radio-icon-mixin(@flat-radio-icon-disabled);
+        }
+
+        .ui-abstractboxgroup-wrapper-checked {
+            .ui-abstractboxgroup-radio,
+            .ui-abstractboxgroup-radio:hover {
+                .skin-flat-radio-icon-mixin(@flat-radio-icon-checked);
+            }
+        }
     }
 }
 

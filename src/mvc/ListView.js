@@ -44,15 +44,22 @@ define(
          */
         ListView.prototype.submitSearch = function (e) {
             var args = this.getSearchArgs();
-
-            // 如果是表格排序引发的，把新的排序放进去
-            if (e.type === 'sort') {
-                args.orderBy = e.field.field;
-                args.order = e.order;
-            }
-
             this.fire('search', { args: args });
         };
+
+        /**
+         * 排列表格
+         *
+         * @param {mini-event.Event} e 控件事件对象
+         */
+        ListView.prototype.sortTable = function (e) {
+            var tableProperties = {
+                orderBy: e.field.field,
+                order: e.order
+            };
+            this.fire('tablesort', { tableProperties: tableProperties });
+        };
+
 
         /**
          * 根据表格中所选择的行来控制批量更新按钮的启用/禁用状态
@@ -72,6 +79,23 @@ define(
                 },
                 this
             );
+        };
+
+        /**
+         * view渲染完成后根据所有筛选条件是否都为默认值来控制展开或闭合
+         *
+         */
+        ListView.prototype.updateFilterPanelStatus = function () {
+            if (!this.model.get('filtersInfo').isAllFiltersDefault) {
+                showFilter.call(this);
+                toggleFilterPanelContent.call(this);
+            }
+        };
+
+        ListView.prototype.updateSearchBoxStatus = function () {
+            if (this.model.get('keyword')) {
+                this.getSafely('keyword').addState('clear');
+            }
         };
 
         /**
@@ -178,28 +202,66 @@ define(
         }
 
         /**
+         * 收起筛选面板，当有筛选条件时清除筛选条件
+         *
+         */
+        function toggleFilter() {
+            var filter = this.getSafely('filter');
+            filter.isHidden() ? showFilter.call(this) : cancelFilter.call(this);
+        }
+
+        function showFilter() {
+            this.getSafely('filter').show();
+            this.getSafely('filter-switch').addState('expand');
+        }
+
+        function hideFilter() {
+            this.getSafely('filter').hide();
+            this.getSafely('filter-switch').removeState('expand');
+        }
+
+        /**
+         * 有筛选条件时清除筛选条件
+         *
+         * @ignore
+         */
+
+        function cancelFilter() {
+            if (this.model.get('filtersInfo').isAllFiltersDefault) {
+                hideFilter.call(this);
+            }
+            else {
+                this.fire('filterreset');
+            }
+        }
+
+        /**
+         * 切换筛选面板和筛选条件显示面板
+         *
+         * @ignore
+         */
+
+        function toggleFilterPanelContent() {
+            this.getGroup('filter-content').toggle();
+        }
+
+        /**
          * 绑定控件事件
          *
          * @override
          */
         ListView.prototype.bindEvents = function () {
-            var pager = this.get('pager');
-            if (pager) {
-                // 切换每页大小
-                pager.on('pagesizechange', updatePageSize, this);
-                pager.on('pagechange', updatePageIndex, this);
-            }
+            var pager = this.getSafely('pager');
+            pager.on('pagesizechange', updatePageSize, this);
+            pager.on('pagechange', updatePageIndex, this);
 
-            var table = this.get('table');
-            if (table) {
-                // 选中表格行后控制批量更新按钮的启用/禁用状态
-                table.on('select', this.updateBatchButtonStatus, this);
-                // 表格排序触发查询
-                table.on('sort', this.submitSearch, this);
-            }
+            var table = this.getSafely('table');
+            // 选中表格行后控制批量更新按钮的启用/禁用状态
+            table.on('select', this.updateBatchButtonStatus, this);
+            // 表格排序触发查询
+            table.on('sort', this.sortTable, this);
 
-            u.each(
-                this.getGroup('batch'),
+            this.getGroup('batch').each(
                 function (button) {
                     // 批量更新
                     button.on('click', batchModify, this);
@@ -207,11 +269,16 @@ define(
                 this
             );
 
-            var filter = this.get('filter');
-            if (filter) {
-                // 多条件查询
-                filter.on('submit', this.submitSearch, this);
-            }
+            this.getSafely('filter').on('submit', this.submitSearch, this);
+
+            // 展开或收起面板，或者清除筛选条件
+            this.getSafely('filter-switch').on('click', toggleFilter, this);
+
+            // 取消筛选，收起面板或者清除筛选条件
+            this.getSafely('filter-cancel').on('click', cancelFilter, this);
+
+            // 切换到筛选面板
+            this.getSafely('filter-modify').on('click', toggleFilterPanelContent, this);
 
             BaseView.prototype.bindEvents.apply(this, arguments);
         };
@@ -224,6 +291,8 @@ define(
         ListView.prototype.enterDocument = function () {
             BaseView.prototype.enterDocument.apply(this, arguments);
             this.updateBatchButtonStatus();
+            this.updateFilterPanelStatus();
+            this.updateSearchBoxStatus();
         };
 
         /**

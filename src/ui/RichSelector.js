@@ -291,22 +291,31 @@ define(
 
         RichSelector.prototype.search = function (keyword) {
             keyword = lib.trim(keyword);
-            // 查询
-            this.queryItem(keyword);
-            // 更新概要搜索结果区
-            this.refreshResult();
-            // 更新腿部总结果
-            this.refreshFoot();
+            if (keyword) {
+                // 查询
+                this.queryItem(keyword);
+                // 更新概要搜索结果区
+                this.refreshResult();
+                // 更新腿部总结果
+                this.refreshFoot();
 
-            // 更新状态
-            this.addState('queried');
-            // 调整高度
-            this.adjustHeight();
+                // 更新状态
+                this.addState('queried');
+                // 调整高度
+                this.adjustHeight();
+            }
+            // 相当于执行清空操作
+            else {
+                this.clearQuery();
+            }
         };
 
         RichSelector.prototype.refreshResult = function () {
             var count = this.getCurrentStateItemsCount();
-            this.helper.getPart('result-count').innerHTML = count;
+            var resultCount = this.helper.getPart('result-count');
+            if (resultCount) {
+                resultCount.innerHTML = count;
+            }
         };
 
         function resetSearchState(control) {
@@ -343,6 +352,8 @@ define(
 
             // 调整高度
             this.adjustHeight();
+
+            this.fire('clearquery');
 
             return false;
         };
@@ -424,11 +435,11 @@ define(
          *
          */
         RichSelector.prototype.batchAction = function () {
-            if (this.mode == 'delete') {
+            if (this.mode === 'delete') {
                 this.deleteAll();
                 this.refreshFoot();
             }
-            else if (this.mode == 'add') {
+            else if (this.mode === 'add') {
                 this.selectAll();
             }
             return false;

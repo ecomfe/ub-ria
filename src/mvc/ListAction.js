@@ -44,13 +44,11 @@ define(
          * @param {Object} args 查询参数
          */
         ListAction.prototype.performSearch = function (args) {
-            // 去除默认参数值
-            var defaultArgs = this.model.getDefaultArgs();
-            args = require('../util').purify(args, defaultArgs);
-
             var event = this.fire('search', { args: args });
             if (!event.isDefaultPrevented()) {
-                this.redirectForSearch(args);
+                // 自动翻页到1
+                args.page = 1;
+                this.reloadWithQueryUpdate(args);
             }
         };
 
@@ -66,7 +64,9 @@ define(
         };
 
         /**
-         * 获取指定页码的跳转URL
+         * 获取指定页码的跳转URL(此接口目前不用了，但是为了防止外部已被调用，所以维持)
+         * 
+         * @deprecated
          *
          * @param {number} page 指定的页码
          * @return {string}
@@ -97,16 +97,6 @@ define(
         }
 
         /**
-         * 带上查询参数重新加载第1页
-         *
-         * @param {this} {ListAction} Action实例
-         */
-        function reloadWithSearchArgs() {
-            var args = this.view.getSearchArgs();
-            this.performSearch(args);
-        }
-
-        /**
          * 更新每页显示条数
          *
          * @param {mini-event.Event} e 事件对象
@@ -116,23 +106,64 @@ define(
         function updatePageSize(e) {
             // 先请求后端更新每页显示条数，然后直接刷新当前页
             this.model.updatePageSize(e.pageSize)
-                .then(u.bind(reloadWithSearchArgs, this));
+                .then(u.bind(afterPageSizeUpdate, this, e.pageSize));
         }
 
         /**
-         * 前往指定页
+         * 每页大小更新后重新加载操作
+         *
+         * @param {number} pageSize 新的页尺寸
+         * @ignore
+         */
+        function afterPageSizeUpdate(pageSize) {
+            var event = this.fire('pagesizechange', { pageSize: pageSize });
+            if (!event.isDefaultPrevented()) {
+                // 更新也尺寸以后，自动翻页到1
+                this.reloadWithQueryUpdate({ page: 1 });
+            }
+        }
+
+        /**
+         * 更新页码
          *
          * @param {mini-event.Event} e 事件对象
          * @param {number} e.page 前往的页码
          * @ignore
          */
-        function forwardToPage(e) {
+        function updatePage(e) {
             var event = this.fire('pagechange', { page: e.page });
             if (!event.isDefaultPrevented()) {
-                var url = this.getURLForPage(e.page);
-                this.redirect(url);
+                this.reloadWithQueryUpdate({ page: e.page });
             }
         }
+
+        /**
+         * 更新表格排序
+         *
+         * @param {mini-event.Event} e 事件对象
+         * @param {number} e.tableProperties 表格排序信息
+         * @ignore
+         */
+        function updateTableSort(e) {
+            var event = this.fire('tablesort', { tableProperties: e.tableProperties });
+            if (!event.isDefaultPrevented()) {
+                // 重新排序要退回到第一页
+                var args = e.tableProperties;
+                args.page = 1;
+                this.reloadWithQueryUpdate(args);
+            }
+        }
+
+        /**
+         * 页码更新后重新加载操作
+         *
+         * @param {Object} args 新的请求参数对象
+         * @protected
+         */
+        ListAction.prototype.reloadWithQueryUpdate = function (args) {
+            var url = getURLForQuery.call(this, args);
+            this.redirect(url, { force: true });
+        };
 
         /**
          * 批量修改事件处理
@@ -207,6 +238,14 @@ define(
         }
 
         /**
+         * 通知修改状态操作成功
+         *
+         * @param {meta.UpdateContext} context 批量操作的上下文对象
+         */
+        ListAction.prototype.notifyModifySuccess = function (context) {
+        };
+
+        /**
          * 通知修改状态操作失败
          *
          * 默认提示用户“无法[操作名]部分或全部[实体名]”，或“无法[操作名]该[实体名]”
@@ -219,13 +258,13 @@ define(
                 this.view.alert(
                     '无法' + context.command + '部分或全部' + entityDescription,
                     context.command + entityDescription
-                );        
+                );
             }
             else {
                 this.view.alert(
                     '无法' + context.command + '该' + entityDescription,
                     context.command + entityDescription
-                );                 
+                );
             }
         };
 
@@ -235,8 +274,7 @@ define(
          * @param {meta.UpdateContext} context 操作的上下文对象
          */
         function updateListStatus(context) {
-            var toastMessage = context.command + '成功';
-            this.view.showToast(toastMessage);
+            this.notifyModifySuccess(context);
 
             var event = this.fire('statusupdate', context);
             if (!event.isDefaultPrevented()) {
@@ -265,14 +303,49 @@ define(
             this.view.on('search', search, this);
             this.view.on('pagesizechange', updatePageSize, this);
             this.view.on('batchmodify', batchModifyStatus, this);
-            this.view.on('pagechange', forwardToPage, this);
+            this.view.on('pagechange', updatePage, this);
+            this.view.on('tablesort', updateTableSort, this);
+            this.view.on('filterreset', this.resetFilters, this);
         };
+
+
+        /**
+         * 获取指定排序的跳转URL
+         *
+         * @param {Object} args 新的请求对象
+         * @return {string}
+         */
+        function getURLForQuery(args) {
+            var url = this.context.url;
+            var path = url.getPath();
+            // 先扩展原有url
+            args = u.extend(url.getQuery(), args);
+
+            // 如果跟默认的参数相同，去掉默认字段
+            var defaultArgs = this.model.getDefaultArgs();
+            args = require('../util').purify(args, defaultArgs);
+
+            return require('er/URL').withQuery(path, args).toString();
+        }
 
         /**
          * 根据布局变化重新调整自身布局
          */
         ListAction.prototype.adjustLayout = function () {
             this.view.adjustLayout();
+        };
+
+        /**
+         * 清除筛选条件
+         * @returns {ListAction}
+         */
+        ListAction.prototype.resetFilters = function () {
+            var model = this.model;
+            var filters = model.get('filtersInfo').filters;
+            var url = model.get('url');
+            var URL = require('er/URL');
+            var query = u.omit(url.getQuery(), u.keys(filters));
+            this.redirect(URL.withQuery(url.getPath(), query));
         };
 
         return ListAction;

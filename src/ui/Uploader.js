@@ -182,7 +182,7 @@ define(
 
             // 下次再上传的提示文字要变掉
             this.addState('uploaded');
-            var button = this.helper.getId(this, 'button');
+            var button = this.helper.getPart('button');
             button.innerHTML = u.escape(this.overrideText);
 
             // 清掉可能存在的错误信息
@@ -190,6 +190,40 @@ define(
             this.showValidity(validity);
 
             this.fire('change');
+        }
+
+        /**
+         * 清空上传图像
+         * 
+         * 清空操作主要做两件事
+         * 1. 清空Uploader的fileInfo
+         * 2. 清空input的value
+         */
+        function removeFile() {
+            // 由于无法控制外部会在什么时候调用清空接口
+            // 因此需要将所有状态移除
+            this.removeState('busy');
+            this.removeState('complete');
+            this.removeState('uploaded');
+            // 重置显示文字
+            this.helper.getPart('button').innerHTML = u.escape(this.text);
+
+            // 清空上传记录
+            this.fileInfo = '';
+
+            // <input type="file"/>的value在IE下无法直接通过操作属性清除，需要替换一个input控件
+            // 复制节点属性
+            var newInput = document.createElement('input');
+            newInput.type = 'file';
+            newInput.id = this.helper.getId('input');
+            this.name && (newInput.name = this.name);
+            // 清理注册事件
+            var input = this.helper.getPart('input');
+            this.helper.removeDOMEvent(input, 'change');
+            // 更新子节点
+            this.main.firstChild.replaceChild(newInput, input);
+            // 注册事件
+            this.helper.addDOMEvent(newInput, 'change', lib.bind(this.receiveFile, this));
         }
 
         /**
@@ -270,16 +304,21 @@ define(
                     if (!rawValue) {
                         return;
                     }
-
-                    if (!rawValue.hasOwnProperty('type')) {
-                        rawValue.type = uploader.fileType;
+                    else if (u.isEqual(rawValue, {})) {
+                        // 允许用户使用 setRawValue({}) 方式清空上传图像
+                        removeFile.call(uploader);
                     }
+                    else {
+                        if (!rawValue.hasOwnProperty('type')) {
+                            rawValue.type = uploader.fileType;
+                        }
 
-                    uploader.fileInfo = rawValue;
+                        uploader.fileInfo = rawValue;
 
-                    setStateToComplete.call(uploader, rawValue);
-                    // 不需要停留在完成提示
-                    uploader.removeState('complete');
+                        setStateToComplete.call(uploader, rawValue);
+                        // 不需要停留在完成提示
+                        uploader.removeState('complete');
+                    }
                 }
             }
         );
@@ -359,7 +398,10 @@ define(
         Uploader.prototype.receiveFile = function () {
             var input = this.helper.getPart('input');
             var filename = input.value;
-            if (this.checkFileFormat(filename)) {
+            // 文件已经上传后，value不为空
+            // 再次选择文件上传时点击取消按钮，会将value置空，从而再次触发'change'事件
+            // 因此需要对传入的filename进行非空判断
+            if (filename && this.checkFileFormat(filename)) {
                 this.fire('receive');
                 if (this.autoUpload) {
                     this.submit();
@@ -376,7 +418,7 @@ define(
             this.removeState('complete');
             this.addState('busy');
 
-            var indicator = this.helper.getId(this, 'indicator');
+            var indicator = this.helper.getPart('indicator');
             indicator.innerHTML = u.escape(this.busyText);
         };
 
@@ -445,7 +487,7 @@ define(
             setStateToComplete.call(this, info);
 
             // 提示已经完成
-            var indicator = this.helper.getId('indicator');
+            var indicator = this.helper.getPart('indicator');
             indicator.innerHTML = u.escape(this.completeText);
             // 一定时间后回到可上传状态
             this.timer = setTimeout(
@@ -485,7 +527,12 @@ define(
          * @override
          */
         Uploader.prototype.dispose = function () {
-            delete window[this.callbackName];
+            try {
+                delete window[this.callbackName];
+            }
+            catch (ex) {
+                window[this.callbackName] = undefined;
+            }
             var form = this.helper.getPart('form');
             lib.removeNode(form);
 
