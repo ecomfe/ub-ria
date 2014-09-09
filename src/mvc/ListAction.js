@@ -344,7 +344,11 @@ define(
             var filters = model.get('filtersInfo').filters;
             var url = model.get('url');
             var query = u.omit(url.getQuery(), u.keys(filters));
-            this.fire('search', { args: query });
+            var event = this.fire('search', { args: query });
+            if (!event.isDefaultPrevented()) {
+                var URL = require('er/URL');
+                this.redirect(URL.withQuery(url.getPath(), query));
+            }
         };
 
         return ListAction;
