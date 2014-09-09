@@ -278,7 +278,6 @@ define(
                 },
                 this
             );
-            var view = this;
 
             this.getGroup('clear-button').each(
                 function (button) {
@@ -286,7 +285,7 @@ define(
                     button.on(
                         'click',
                         function (e) {
-                            view.submitSearchWithoutKey(name);
+                            this.submitSearchWithoutKey(name);
                         },
                         this
                     );
