@@ -60,7 +60,8 @@
     }
 }
 
-.table-operation {
+.table-operation,
+.table-operation-trigger {
     padding: 0 10px;
     cursor: pointer;
 }
@@ -77,9 +78,9 @@
     border-left: 0;
     border-right: 0;
     right: -100%;
-    transition: all 500ms;
+    transition: right 500ms;
 
-    .table-operation-link {
+    .table-operation {
         height: 16px;
         line-height: 16px;
         padding: 0;
@@ -96,4 +97,3 @@
 .ui-table-cell-field-operation {
     color: @table-operation-field-text-color;
 }
-

@@ -244,7 +244,7 @@ define(
             Table.slideOperations = function (config) {
                 var html = Table.operations(config);
                 var operationHTML = ''
-                    + '<span class="table-operation">操作</span>'
+                    + '<span class="table-operation-trigger">操作</span>'
                     + '<div class="table-operation-layer">'
                     + html
                     + '</div>'
