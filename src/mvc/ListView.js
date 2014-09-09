@@ -39,11 +39,21 @@ define(
         /**
          * 收集查询参数并触发查询事件
          *
-         * @param {ListView} this 当前视图实例
          * @param {mini-event.Event} e 控件事件对象
          */
         ListView.prototype.submitSearch = function (e) {
             var args = this.getSearchArgs();
+            this.fire('search', { args: args });
+        };
+
+        /**
+         * 取消某个条件并触发查询事件
+         *
+         * @param {string} key 要清除的查询条件
+         */
+        ListView.prototype.submitSearchWithoutKey = function (key) {
+            var args = this.getSearchArgs();
+            args = u.omit(args, key);
             this.fire('search', { args: args });
         };
 
@@ -265,6 +275,20 @@ define(
                 function (button) {
                     // 批量更新
                     button.on('click', batchModify, this);
+                },
+                this
+            );
+
+            this.getGroup('clear-button').each(
+                function (button) {
+                    var name = button.get('name');
+                    button.on(
+                        'click',
+                        function (e) {
+                            this.submitSearchWithoutKey(name);
+                        },
+                        this
+                    );
                 },
                 this
             );

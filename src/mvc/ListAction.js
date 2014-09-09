@@ -65,7 +65,7 @@ define(
 
         /**
          * 获取指定页码的跳转URL(此接口目前不用了，但是为了防止外部已被调用，所以维持)
-         * 
+         *
          * @deprecated
          *
          * @param {number} page 指定的页码
@@ -168,7 +168,7 @@ define(
         /**
          * 批量修改事件处理
          *
-         * @param {mini-event.Event} 事件对象
+         * @param {mini-event.Event} e 事件对象
          * @ignore
          */
         function batchModifyStatus(e) {
@@ -343,9 +343,12 @@ define(
             var model = this.model;
             var filters = model.get('filtersInfo').filters;
             var url = model.get('url');
-            var URL = require('er/URL');
             var query = u.omit(url.getQuery(), u.keys(filters));
-            this.redirect(URL.withQuery(url.getPath(), query));
+            var event = this.fire('search', { args: query });
+            if (!event.isDefaultPrevented()) {
+                var URL = require('er/URL');
+                this.redirect(URL.withQuery(url.getPath(), query));
+            }
         };
 
         return ListAction;
