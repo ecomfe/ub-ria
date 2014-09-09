@@ -236,6 +236,22 @@ define(
             };
 
             /**
+             * 创建滑动效果的操作列的HTML
+             *
+             * @param {Object[]} config 操作配置
+             * @return {string}
+             */
+            Table.slideOperations = function (config) {
+                var html = Table.operations(config);
+                var operationHTML = ''
+                    + '<span class="table-operation">操作</span>'
+                    + '<div class="table-operation-layer">'
+                    + html
+                    + '</div>'
+                return operationHTML;
+            };
+
+            /**
              * 生成状态列HTML
              *
              * @param {Object} status 状态配置项
