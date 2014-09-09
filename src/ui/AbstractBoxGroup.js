@@ -59,14 +59,14 @@ define(
          */
         function extractDatasourceFromDOM(element, options) {
             // 提取符合以下条件的子`<input>`控件：
-            // 
+            //
             // - `type`属性已知（基本就是`radio`和`checkbox`）
             // - 二选一：
             //     - 当前控件和`<input>`控件都没有`name`属性
             //     - `<input>`和当前控件的`name`属性相同
-            // 
+            //
             // 根据以下优先级获得`title`属性：
-            // 
+            //
             // 1. 有一个`for`属性等于`<input>`的`id`属性的`<label>`元素，则取其文字
             // 2. 取`<input>`的`title`属性
             // 3. 取`<input>`的`value`
@@ -144,7 +144,8 @@ define(
 
             if (u.contains(rawValue, value)) {
                 rawValue = u.without(rawValue, value);
-            } else {
+            }
+            else {
                 rawValue.push(value);
             }
 
@@ -276,9 +277,12 @@ define(
                     // 因为`datasource`更换的时候会把`rawValue`清掉，这里再弄回去
                     group.rawValue = rawValue;
                     var map = {};
-                    u.each(rawValue, function(value){
-                        map[value] = true;
-                    });
+                    u.each(
+                        rawValue,
+                        function(value) {
+                            map[value] = true;
+                        }
+                    );
 
                     u.each(
                         group.getBoxElements(),
@@ -287,7 +291,8 @@ define(
                             var wrapperCheckedClass = group.helper.getPartClasses('wrapper-checked')[0];
                             if (isChecked(box)) {
                                 lib.addClass(box.parentNode, wrapperCheckedClass);
-                            } else {
+                            }
+                            else {
                                 lib.removeClass(box.parentNode, wrapperCheckedClass);
                             }
                         }
@@ -311,7 +316,7 @@ define(
 
         /**
          * 将字符串类型的值转换成原始格式
-         * 
+         *
          * @param {string} value 字符串值
          * @return {string[]}
          * @protected
@@ -339,7 +344,7 @@ define(
             return u.filter(
                 this.main.getElementsByTagName('div'),
                 function(item) {
-                    return getAttr(item,'box-type') === boxType;
+                    return getAttr(item, 'box-type') === boxType;
                 }
             );
         };

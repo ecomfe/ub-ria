@@ -139,7 +139,6 @@ define(
          * @ignore
          */
         TreeRichSelector.prototype.adaptData = function () {
-            var control = this;
             var selectedData = [];
             /**
              * datasource的数据结构：
@@ -174,9 +173,9 @@ define(
                             isSelected: false
                         };
                         if (child.hasOwnProperty('isSelected')) {
-                            indexData[child.id].isSelected = child.isSelected; 
+                            indexData[child.id].isSelected = child.isSelected;
                         }
-                        if (indexData[child.id].isSelected == true) {
+                        if (indexData[child.id].isSelected === true) {
                             selectedData.push(child);
                         }
                     }
@@ -249,7 +248,6 @@ define(
                 tree.appendTo(queryList.main);
 
                 var control = this;
-                var indexData = this.indexData;
                 tree.on(
                     'selectnode',
                     function (e) {
@@ -328,13 +326,12 @@ define(
         /**
          * 添加动作
          *
-         * @param {ui.TreeRichSelector} control 类实例
          * @param {Object} item 保存在indexData中的item
          *
          */
         TreeRichSelector.prototype.actionForAdd = function (item) {
             this.setItemState(item.node.id, 'isSelected', true);
-            //如果是单选，需要将其他的已选项置为未选
+            // 如果是单选，需要将其他的已选项置为未选
             if (!this.multi) {
                 // 如果以前选中了一个，要取消选择
                 // 节点的状态切换Tree控件会完成，因此无需这里手动unselect
@@ -373,7 +370,7 @@ define(
                 return;
             }
 
-            //如果是单选，需要将其他的已选项置为未选
+            // 如果是单选，需要将其他的已选项置为未选
             if (!control.multi && toBeSelected) {
                 unselectCurrent(control);
                 // 赋予新值
@@ -397,7 +394,7 @@ define(
          */
         function unselectCurrent(control) {
             var curId = control.currentSeletedId;
-            //撤销当前选中项
+            // 撤销当前选中项
             if (curId) {
                 var treeList = control.getQueryList().getChild('tree');
                 treeList.unselectNode(curId);
@@ -485,7 +482,7 @@ define(
          * 删除动作
          *
          * @param {Object} item 保存在indexData中的item
-         * 
+         *
          */
         TreeRichSelector.prototype.actionForDelete = function (item) {
             // 外部需要知道什么数据被删除了
@@ -495,7 +492,7 @@ define(
                 deleteItem(this, item.node.id);
                 this.fire('change');
             }
-        }
+        };
 
         /**
          * 删除选择的节点
@@ -554,9 +551,7 @@ define(
         /**
          * 加载动作
          *
-         * @param {ui.TreeRichSelector} control 类实例
          * @param {Object} item 保存在indexData中的item
-         *
          */
         TreeRichSelector.prototype.actionForLoad = function (item) {
             this.setItemState(item.node.id, 'isActive', true);
@@ -586,8 +581,7 @@ define(
         /**
          * 获取指定状态的叶子节点，递归
          *
-         * @param {ui.TreeRichSelector} treeForSelector 类实例
-         * @param {Array=} data 检测的数据源
+         * @param {Array} data 检测的数据源
          * @param {boolean} isSelected 选择状态还是未选状态
          * @ignore
          */
@@ -595,12 +589,10 @@ define(
             data = data || (this.allData && this.allData.children) || [];
             var leafItems = [];
             var me = this;
-            var indexData = this.indexData;
             u.each(
                 data,
                 function (item) {
                     if (isLeaf(item)) {
-                        var indexItem = indexData[item.id];
                         var valid = (isSelected === this.getItemState(item.id, 'isSelected'));
                         // delete型的树没有“选择”和“未选择”的状态区别，所以特殊处理
                         if (me.mode === 'delete' || valid) {
@@ -630,7 +622,6 @@ define(
             if (!this.allData) {
                 return [];
             }
-            var data = this.allData.children;
             var selectedItems = [];
             var control = this;
             this.walkTree(
@@ -780,10 +771,11 @@ define(
         /**
          * 一个遍历树的方法
          *
+         * @param {Object} parent 父节点
          * @param {Array} children 需要遍历的树的孩子节点
          * @param {Function} callback 遍历时执行的函数
          */
-         TreeRichSelector.prototype.walkTree = function (parent, children, callback) {
+        TreeRichSelector.prototype.walkTree = function (parent, children, callback) {
             u.each(
                 children,
                 function (child, key) {
@@ -792,7 +784,7 @@ define(
                 },
                 this
             );
-        }
+        };
 
         function isLeaf(node) {
             return !node.children;
@@ -832,7 +824,7 @@ define(
             if (onlyLeaf) {
                 if (isLeaf(node)) {
                     // FIXME: 这里感觉不应该hardcode，后期想想办法
-                    if (!node.id || node.id === getTopId(control) ) {
+                    if (!node.id || node.id === getTopId(control)) {
                         return 0;
                     }
                     return 1;

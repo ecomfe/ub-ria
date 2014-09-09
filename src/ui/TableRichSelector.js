@@ -200,8 +200,8 @@ define(
             var tableClass = control.helper.getPartClassName('head-table');
             var tpl = ['<table border=0 class="' + tableClass + '"><tr>'];
             var colmNum = control.fields.length;
-            //绘制表头th
-            for(var i = 0; i < colmNum; i ++){
+            // 绘制表头th
+            for (var i = 0; i < colmNum; i++) {
                 var field = control.fields[i];
                 tpl.push(''
                     + '<th class="th' + i + '"'
@@ -210,7 +210,7 @@ define(
                     + '</th>'
                 );
             }
-            //最后一列用来装箭头
+            // 最后一列用来装箭头
             tpl.push('<th style="width:30px;"></th>');
             tpl.push('</tr></table>');
             return tpl.join(' ');
@@ -235,7 +235,7 @@ define(
             var selectedRowClasses = helper.getPartClassName('row-selected');
             var disabledRowClasses = helper.getPartClassName('row-disabled');
 
-            //绘制内容
+            // 绘制内容
             u.each(data, function (item, index) {
                 var rowClasses = [baseRowClasses];
                 if (item.isSelected) {
@@ -269,7 +269,7 @@ define(
          * @param {HTMLElement} tr 容器节点
          * @ignore
          */
-        function createRow(control, item, index, tr){
+        function createRow(control, item, index, tr) {
             var fields = control.fields;
             var html = [];
             var fieldClasses = control.helper.getPartClassName('row-field');
@@ -280,8 +280,8 @@ define(
                     ? content.call(control, item, index, i)
                     : item[content]);
 
-                //IE不支持tr.innerHTML，所以这里要使用insertCell
-                if(tr) {
+                // IE不支持tr.innerHTML，所以这里要使用insertCell
+                if (tr) {
                     var td = tr.insertCell(i);
                     td.style.width = field.width + 'px';
                     td.title = innerHTML;
@@ -296,10 +296,10 @@ define(
                         + '</td>';
                     html.push(contentHtml);
                 }
-                cursor ++;
+                cursor++;
             });
 
-            //最后一列添加箭头
+            // 最后一列添加箭头
             var arrowClasses =
                 control.helper.getPartClassName('row-action-icon');
             var arrowHTML = '<span class="' + arrowClasses + '"></span>';
@@ -316,7 +316,7 @@ define(
 
         /**
          * 点击行为分发器
-         * @param {Event} 事件对象
+         * @param {Event} e 事件对象
          * @ignore
          */
         TableRichSelector.prototype.eventDispatcher = function (e) {
@@ -412,7 +412,7 @@ define(
             var index = indexData[id];
             var item = data[index];
 
-            //如果是单选，需要将其他的已选项置为未选
+            // 如果是单选，需要将其他的已选项置为未选
             if (!control.multi) {
                 // 移除原有选项
                 unselectCurrent(control);
@@ -422,10 +422,10 @@ define(
             updateSingleItemStatus(control, item, toBeSelected);
         }
 
-        //撤销选择当前项
+        // 撤销选择当前项
         function unselectCurrent(control) {
             var curId = control.currentSelectedId;
-            //撤销当前选中项
+            // 撤销当前选中项
             if (curId) {
                 var index = control.indexData[curId];
                 var item = control.allData[index];
@@ -588,9 +588,9 @@ define(
                 return !u.any(
                     filters,
                     function (filter) {
-                        var searchFields = []
+                        var searchFields = [];
                         // keys未定义，则默认选择通过field指定的并集
-                        if (filter.keys === undefined ) {
+                        if (filter.keys === undefined) {
                             searchFields = this.defaultSearchFields;
                         }
                         else {

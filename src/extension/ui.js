@@ -221,7 +221,7 @@ define(
                         html.splice(i, 1);
                     }
                     else {
-                        i ++;
+                        i++;
                     }
                 }
                 // 去除首尾的分隔符
@@ -249,7 +249,7 @@ define(
                     + '    <div class="table-operation-layer">'
                     + html
                     + '    </div>'
-                    + '</div>'
+                    + '</div>';
                 return operationHTML;
             };
 

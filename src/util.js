@@ -141,7 +141,9 @@ define(
             // 大写字符之间用横线连起来
             s = s.replace(
                 /[A-Z]/g,
-                function (match) { return '-' + match.toLowerCase(); }
+                function (match) {
+                    return '-' + match.toLowerCase();
+                }
             );
             if (s.charAt(0) === '-') {
                 s = s.substring(1);
