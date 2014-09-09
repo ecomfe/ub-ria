@@ -16,9 +16,9 @@ define(
 
 
         var u = require('underscore');
-        var util = require('ub-ria/util');
-        var RichSelector = require('ub-ria/ui/RichSelector');
-        var TreeStrategy = require('ub-ria/ui/SelectorTreeStrategy');
+        var util = require('../util');
+        var RichSelector = require('./RichSelector');
+        var TreeStrategy = require('./SelectorTreeStrategy');
 
         /**
          * 控件类

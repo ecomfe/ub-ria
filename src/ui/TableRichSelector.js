@@ -12,8 +12,8 @@ define(
         var painter = require('esui/painters');
         var u = require('underscore');
 
-        var util = require('ub-ria/util');
-        var RichSelector = require('ub-ria/ui/RichSelector');
+        var util = require('../util');
+        var RichSelector = require('./RichSelector');
 
 
         /**
@@ -552,7 +552,9 @@ define(
         }
 
         /**
-         * 搜索含有关键字的结果
+         * 搜索含有关键字的结果，默认以name为目标搜索
+         *
+         * 可重写
          *
          * @param {Array} filters 过滤参数
          * @public
