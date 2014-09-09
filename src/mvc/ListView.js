@@ -34,51 +34,61 @@ define(
             BaseView.apply(this, arguments);
 
             // 批量绑定控件的事件
-            this.addUIEvents({
+            var uiEvents = {
                 pager: {
-                    pagesizechange: updatePageSize,
-                    pagechange: updatePageIndex
+                    pagesizechange: onChangePageSize,
+                    pagechange: onChangePage
                 },
                 table: {
                     select: 'updateBatchButtonStatus',
-                    sort: 'sortTable'
+                    sort: onSortTable
                 },
                 'filter:submit': 'submitSearch',
                 'filter-switch:click': toggleFilter,
                 'filter-cancel:click': cancelFilter,
                 'filter-modify:click': toggleFilterPanelContent
-            });
+            };
+            this.addUIEvents(uiEvents);
 
             // 批量设置控件的属性
-            this.addUIProperties({
+            var uiProperties = {
                 table: {
                     fields: this.getTableFields()
                 }
-            });
+            };
+            this.addUIProperties(uiProperties);
         }
 
         util.inherits(ListView, BaseView);
 
         /**
          * 收集查询参数并触发查询事件
-         *
-         * @param {mini-event.Event} e 控件事件对象
          */
-        ListView.prototype.submitSearch = function (e) {
+        ListView.prototype.submitSearch = function () {
             var args = this.getSearchArgs();
             this.fire('search', { args: args });
         };
 
         /**
+         * 表格排序监听函数
+         *
+         * @event
+         * @param {mini-event.Event} e 事件对象
+         */
+        function onSortTable(e) {
+            var tableProperties = {
+                order: e.order,
+                orderBy: e.field.field
+            };
+            this.sortTable(tableProperties);
+        }
+
+        /**
          * 排列表格
          *
-         * @param {mini-event.Event} e 控件事件对象
+         * @param {Object} tableProperties 表格参数
          */
-        ListView.prototype.sortTable = function (e) {
-            var tableProperties = {
-                orderBy: e.field.field,
-                order: e.order
-            };
+        ListView.prototype.sortTable = function (tableProperties) {
             this.fire('tablesort', { tableProperties: tableProperties });
         };
 
@@ -170,26 +180,46 @@ define(
         };
 
         /**
+         * 每页条数变更监听函数
+         *
+         * @event
+         * @param {mini-event.Event} e 事件对象
+         */
+        function onChangePageSize(e) {
+            var pageSize = e.target.get('pagesize');
+            this.updatePageSize(pageSize);
+        }
+
+        /**
          * 更新每页显示数
          *
-         * @param {mini-event.Event} e 事件对象
+         * @param {number} pageSize 每页条数
          * @ignore
          */
-        function updatePageSize(e) {
-            var pageSize = e.target.get('pageSize');
+        ListView.prototype.updatePageSize = function (pageSize) {
             this.fire('pagesizechange', { pageSize: pageSize });
+        };
+
+        /**
+         * 页码变更监听函数
+         *
+         * @event
+         * @param {mini-event.Event} e 事件对象
+         */
+        function onChangePage(e) {
+            var page = e.target.get('page');
+            this.updatePageIndex(page);
         }
 
         /**
          * 更新页码
          *
-         * @param {mini-event.Event} e 事件对象
+         * @param {number} page 页码
          * @ignore
          */
-        function updatePageIndex(e) {
-            var page = e.target.get('page');
+        ListView.prototype.updatePageIndex = function(page) {
             this.fire('pagechange', { page: page });
-        }
+        };
 
         /**
          * 获取批量操作状态

@@ -31,10 +31,11 @@ define(
             BaseView.apply(this, arguments);
 
             // 批量绑定控件事件
-            this.addUIEvents({
+            var uiEvents = {
                 'form:submit': submit,
                 'cancel:click': cancelEdit
-            });
+            };
+            this.addUIEvents(uiEvents);
         }
 
         util.inherits(FormView, BaseView);
