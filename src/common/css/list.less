@@ -60,9 +60,38 @@
     }
 }
 
-.table-operation {
+.table-operation,
+.table-operation-trigger {
     padding: 0 10px;
     cursor: pointer;
+}
+
+// 操作弹层
+.table-operation-layer {
+    position: absolute;
+    height: 12px;
+    padding: 11px 0px;
+    top: 50%;
+    margin-top: -17px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-left: 0;
+    border-right: 0;
+    right: -100%;
+    transition: right 500ms;
+
+    .table-operation {
+        height: 16px;
+        line-height: 16px;
+        padding: 0;
+        margin: 0 10px;
+    }
+}
+// 鼠标悬浮最后一列的时候，触发弹层展现
+.ui-table-cell-text-last:hover {
+    .table-operation-layer {
+        right: 0;
+    }
 }
 
 .ui-table-cell-field-operation {
