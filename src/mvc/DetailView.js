@@ -26,9 +26,10 @@ define(
                 this, 'listrefresh',
                 { preserveData: true, syncState: true }
             );
+            // 其它操作都需要把页码置为1
             delegate(
                 listActionPanel, 'action@pagechange',
-                this, 'listrefresh',
+                this, 'pagechange',
                 { preserveData: true, syncState: true }
             );
             delegate(
@@ -36,7 +37,16 @@ define(
                 this, 'listrefresh',
                 { preserveData: true, syncState: true }
             );
-
+            delegate(
+                listActionPanel, 'action@pagesizechange',
+                this, 'listrefresh',
+                { preserveData: true, syncState: true }
+            );
+            delegate(
+                listActionPanel, 'action@tablesort',
+                this, 'listrefresh',
+                { preserveData: true, syncState: true }
+            );
             this.$super(arguments);
         };
 
@@ -47,7 +57,7 @@ define(
          * @return {object} 查询条件
          */
         exports.getListQuery = function () {
-            var listAction = this.getSafely('detail-list').action;
+            var listAction = this.getSafely('detail-list').get('action');
             if (listAction) {
                 return listAction.getSearchQuery();
             }

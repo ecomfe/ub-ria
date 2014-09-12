@@ -45,10 +45,8 @@ define(
             var event = this.fire('search');
             if (!event.isDefaultPrevented()) {
                 var query = this.getSearchQuery();
-                // 如果跟默认的参数相同，去掉默认字段
-                var defaultArgs = this.model.getDefaultArgs();
-                query = require('../util').purify(query, defaultArgs);
-                this.redirectForSearch(query);
+                query.page = 1;
+                this.reloadWithQueryUpdate(query);
             }
         };
 
@@ -123,28 +121,27 @@ define(
         /**
          * 每页大小更新后重新加载操作
          *
-         * @param {number} pageSize 新的页尺寸
          * @ignore
          */
-        function afterPageSizeUpdate(pageSize) {
-            var event = this.fire('pagesizechange', { pageSize: pageSize });
+        function afterPageSizeUpdate() {
+            var event = this.fire('pagesizechange');
             if (!event.isDefaultPrevented()) {
-                // 更新也尺寸以后，自动翻页到1
-                this.reloadWithQueryUpdate({ page: 1 });
+                var query = this.getSearchQuery();
+                query.page = 1;
+                this.reloadWithQueryUpdate(query);
             }
         }
 
         /**
          * 更新页码
          *
-         * @param {mini-event.Event} e 事件对象
-         * @param {number} e.page 前往的页码
          * @ignore
          */
-        function updatePage(e) {
-            var event = this.fire('pagechange', { page: e.page });
+        function updatePage() {
+            var event = this.fire('pagechange');
             if (!event.isDefaultPrevented()) {
-                this.reloadWithQueryUpdate({ page: e.page });
+                var query = this.getSearchQuery();
+                this.reloadWithQueryUpdate(query);
             }
         }
 
@@ -156,12 +153,13 @@ define(
          * @ignore
          */
         function updateTableSort(e) {
-            var event = this.fire('tablesort', { tableProperties: e.tableProperties });
+            this.model.set('order', e.tableProperties.order);
+            this.model.set('orderBy', e.tableProperties.orderBy);
+            var event = this.fire('tablesort');
             if (!event.isDefaultPrevented()) {
-                // 重新排序要退回到第一页
-                var args = e.tableProperties;
-                args.page = 1;
-                this.reloadWithQueryUpdate(args);
+                var query = this.getSearchQuery();
+                query.page = 1;
+                this.reloadWithQueryUpdate(query);
             }
         }
 
@@ -179,12 +177,11 @@ define(
         /**
          * 批量修改事件处理
          *
-         * @param {mini-event.Event} 事件对象
+         * @param {mini-event.Event} e 事件对象
          * @ignore
          */
         function batchModifyStatus(e) {
             var items = this.view.getSelectedItems();
-
             this.modifyStatus(items, e.status);
         }
 
@@ -328,8 +325,6 @@ define(
         function getURLForQuery(args) {
             var url = this.context.url;
             var path = url.getPath();
-            // 先扩展原有url
-            args = u.extend(url.getQuery(), args);
 
             // 如果跟默认的参数相同，去掉默认字段
             var defaultArgs = this.model.getDefaultArgs();

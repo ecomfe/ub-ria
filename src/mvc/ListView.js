@@ -194,9 +194,11 @@ define(
          * @param {mini-event.Event} e 事件对象
          */
         function onChangePageSize(e) {
-            var pageSize = e.target.get('pagesize');
+            var pageSize = e.target.get('pageSize');
             this.updatePageSize(pageSize);
         }
+
+
 
         /**
          * 更新每页显示数
@@ -215,18 +217,16 @@ define(
          * @param {mini-event.Event} e 事件对象
          */
         function onChangePage(e) {
-            var page = e.target.get('page');
-            this.updatePageIndex(page);
+            this.updatePageIndex();
         }
 
         /**
          * 更新页码
          *
-         * @param {number} page 页码
          * @ignore
          */
-        ListView.prototype.updatePageIndex = function(page) {
-            this.fire('pagechange', { page: page });
+        ListView.prototype.updatePageIndex = function() {
+            this.fire('pagechange');
         };
 
         /**
@@ -323,25 +323,36 @@ define(
 
         /**
          * 取消某个或全部条件时，触发查询事件
+         * 同时应该把页数置为 1
          *
          * @param {string} name 要清除的查询条件。为空时表示取消全部filter内条件。
          */
         ListView.prototype.submitSearchWithoutKey = function (name) {
-            // 根据name把select控件禁用，这样form.getData()就不会取到删除了的查询条件
             if (name) {
-                this.get(name).disable();
+                clearFilterValue.call(this, name);
             }
             else {
                 var view = this;
                 this.getGroup('clear-button').each(
                     function (button) {
                         var name = button.get('name');
-                        view.get(name).disable();
+                        clearFilterValue.call(view, name);
                     }
                 );
             }
             this.fire('search');
         };
+
+        /**
+         * 取消筛选，将条件设为默认值
+         *
+         * @param {string} name 需要取消的条件
+         * @ignore
+         */
+        function clearFilterValue(name) {
+            var value = this.model.defaultArgs[name] || '';
+            this.get(name).setValue(value);
+        }
 
         /**
          * 控制元素展现

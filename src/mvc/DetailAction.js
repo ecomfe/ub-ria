@@ -51,10 +51,10 @@ define(
          * 列表搜索
          *
          * @param {mini-event.Event} e 事件对象
-         * @param {Object} e.args 查询参数
+         * @param {boolean} withPage 列表是否用自己的page
          * @ignore
          */
-        function listrefresh(e) {
+        function refreshList(e, withPage) {
             // 防止子Action自己跳转
             e.preventDefault();
             var args = {
@@ -62,6 +62,12 @@ define(
             };
 
             var query = this.view.getListQuery();
+
+            // 当为切换页数的操作，query能自己拿到正确的页数。
+            // 否则回到第一页。
+            if (!withPage) {
+                query.page = 1;
+            }
 
             // 所有列表参数加上`list.`前缀
             u.each(
@@ -74,14 +80,24 @@ define(
         }
 
         /**
+         * 切换页数引起的search
+         *
+         * @param {mini-event.Event} e 事件对象
+         * @ignore
+         */
+        function changePage(e) {
+            refreshList.call(this, e, true);
+        }
+
+        /**
          * 初始化交互行为
          *
          * @override
          */
         exports.initBehavior = function () {
             this.$super(arguments);
-
-            this.view.on('listrefresh', listrefresh, this);
+            this.view.on('listrefresh', refreshList, this);
+            this.view.on('pagechange', changePage, this);
         };
 
 
