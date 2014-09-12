@@ -40,15 +40,15 @@ define(
 
         /**
          * 进行查询
-         *
-         * @param {Object} args 查询参数
          */
-        ListAction.prototype.performSearch = function (args) {
-            var event = this.fire('search', { args: args });
+        ListAction.prototype.performSearch = function () {
+            var event = this.fire('search');
             if (!event.isDefaultPrevented()) {
-                // 自动翻页到1
-                args.page = 1;
-                this.reloadWithQueryUpdate(args);
+                var query = this.getSearchQuery();
+                // 如果跟默认的参数相同，去掉默认字段
+                var defaultArgs = this.model.getDefaultArgs();
+                query = require('../util').purify(query, defaultArgs);
+                this.redirectForSearch(query);
             }
         };
 
@@ -65,7 +65,7 @@ define(
 
         /**
          * 获取指定页码的跳转URL(此接口目前不用了，但是为了防止外部已被调用，所以维持)
-         * 
+         *
          * @deprecated
          *
          * @param {number} page 指定的页码
@@ -89,12 +89,23 @@ define(
         /**
          * 查询的事件处理函数
          *
-         * @param {Object} e 事件对象
          * @ignore
          */
-        function search(e) {
-            this.performSearch(e.args);
+        function search() {
+            this.performSearch();
         }
+
+        /**
+         * 获取查询条件
+         *
+         * @return {object} 查询条件
+         */
+        ListAction.prototype.getSearchQuery = function () {
+            var query = this.view.getSearchArgs();
+            query.page = this.view.getPageIndex();
+
+            return query;
+        };
 
         /**
          * 更新每页显示条数
@@ -305,7 +316,6 @@ define(
             this.view.on('batchmodify', batchModifyStatus, this);
             this.view.on('pagechange', updatePage, this);
             this.view.on('tablesort', updateTableSort, this);
-            this.view.on('filterreset', this.resetFilters, this);
         };
 
 
@@ -333,19 +343,6 @@ define(
          */
         ListAction.prototype.adjustLayout = function () {
             this.view.adjustLayout();
-        };
-
-        /**
-         * 清除筛选条件
-         * @returns {ListAction}
-         */
-        ListAction.prototype.resetFilters = function () {
-            var model = this.model;
-            var filters = model.get('filtersInfo').filters;
-            var url = model.get('url');
-            var URL = require('er/URL');
-            var query = u.omit(url.getQuery(), u.keys(filters));
-            this.redirect(URL.withQuery(url.getPath(), query));
         };
 
         return ListAction;

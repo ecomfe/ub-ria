@@ -31,8 +31,7 @@ define(
         function getURLForQuery(args) {
             var url = this.context.url;
             var path = url.getPath();
-            // 扩展原有url
-            args = u.extend(url.getQuery(), args);
+
             args = require('../util').purify(args);
 
             return require('er/URL').withQuery(path, args).toString();
@@ -55,40 +54,23 @@ define(
          * @param {Object} e.args 查询参数
          * @ignore
          */
-        function search(e) {
+        function listrefresh(e) {
             // 防止子Action自己跳转
             e.preventDefault();
             var args = {
                 id: this.model.get('id')
             };
+
+            var query = this.view.getListQuery();
+
             // 所有列表参数加上`list.`前缀
             u.each(
-                e.args,
+                query,
                 function (value, key) {
                     args['list.' + key] = value;
                 }
             );
             this.reloadWithQueryUpdate(args);
-        }
-
-        /**
-         * - 详情页列表中切换页面后，必须让整个`detail`页刷新。
-         * - 否则`f5`后，列表又会回到第一页。
-         */
-        function forwardToPage(e) {
-            // 防止子Action自己跳转
-            e.preventDefault();
-            this.reloadWithQueryUpdate({ 'list.page': e.page });
-        }
-
-        /**
-         * - 详情页列表中的数据，切换状态后，必须让整个`detail`页刷新。
-         * - 否则`detail`上方的统计信息将得不到更新。
-         */
-        function reloadEntityStatus(e) {
-            // 防止子Action自己跳转
-            e.preventDefault();
-            this.reloadWithQueryUpdate({});
         }
 
         /**
@@ -99,9 +81,7 @@ define(
         exports.initBehavior = function () {
             this.$super(arguments);
 
-            this.view.on('search', search, this);
-            this.view.on('listpagechange', forwardToPage, this);
-            this.view.on('liststatusupdate', reloadEntityStatus, this);
+            this.view.on('listrefresh', listrefresh, this);
         };
 
 

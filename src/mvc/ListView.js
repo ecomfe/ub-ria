@@ -65,8 +65,7 @@ define(
          * 收集查询参数并触发查询事件
          */
         ListView.prototype.submitSearch = function () {
-            var args = this.getSearchArgs();
-            this.fire('search', { args: args });
+            this.fire('search');
         };
 
         /**
@@ -180,6 +179,15 @@ define(
         };
 
         /**
+         * 获取分页数据
+         *
+         * @return {number}
+         */
+        ListView.prototype.getPageIndex = function () {
+            return this.get('pager').get('page');
+        };
+
+        /**
          * 每页条数变更监听函数
          *
          * @event
@@ -270,7 +278,7 @@ define(
                 hideFilter.call(this);
             }
             else {
-                this.fire('filterreset');
+                this.submitSearchWithoutKey();
             }
         }
 
@@ -296,8 +304,43 @@ define(
                 },
                 this
             );
+            this.getGroup('clear-button').each(
+                function (button) {
+                    var name = button.get('name');
+                    button.on(
+                        'click',
+                        function (e) {
+                            this.submitSearchWithoutKey(name);
+                        },
+                        this
+                    );
+                },
+                this
+            );
 
             BaseView.prototype.bindEvents.apply(this, arguments);
+        };
+
+        /**
+         * 取消某个或全部条件时，触发查询事件
+         *
+         * @param {string} name 要清除的查询条件。为空时表示取消全部filter内条件。
+         */
+        ListView.prototype.submitSearchWithoutKey = function (name) {
+            // 根据name把select控件禁用，这样form.getData()就不会取到删除了的查询条件
+            if (name) {
+                this.get(name).disable();
+            }
+            else {
+                var view = this;
+                this.getGroup('clear-button').each(
+                    function (button) {
+                        var name = button.get('name');
+                        view.get(name).disable();
+                    }
+                );
+            }
+            this.fire('search');
         };
 
         /**

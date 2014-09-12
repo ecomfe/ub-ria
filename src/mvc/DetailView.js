@@ -9,9 +9,6 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
-        var util = require('er/util');
-
         var exports = {};
 
         /**
@@ -26,21 +23,37 @@ define(
             var listActionPanel = this.getSafely('detail-list');
             delegate(
                 listActionPanel, 'action@search',
-                this, 'search',
+                this, 'listrefresh',
                 { preserveData: true, syncState: true }
             );
             delegate(
                 listActionPanel, 'action@pagechange',
-                this, 'listpagechange',
+                this, 'listrefresh',
                 { preserveData: true, syncState: true }
             );
             delegate(
                 listActionPanel, 'action@statusupdate',
-                this, 'liststatusupdate',
+                this, 'listrefresh',
                 { preserveData: true, syncState: true }
             );
 
             this.$super(arguments);
+        };
+
+        /**
+         * 获取列表子Action的查询条件
+         *
+         * @method DetailView#.getListQuery
+         * @return {object} 查询条件
+         */
+        exports.getListQuery = function () {
+            var listAction = this.getSafely('detail-list').action;
+            if (listAction) {
+                return listAction.getSearchQuery();
+            }
+            else {
+                return {};
+            }
         };
 
         var BaseView = require('./BaseView');
