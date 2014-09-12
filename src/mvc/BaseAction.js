@@ -143,6 +143,16 @@ define(
             return model;
         };
 
+        /**
+         * 设置数据模型对象，会给 `model` 增加 `entityDescription` 字段
+         *
+         * @param {er.Model} model 数据模型
+         */
+        BaseAction.prototype.setModel = function (model) {
+            model.set('entityDescription', this.getEntityDescription());
+            this.model = model;
+        };
+
         return BaseAction;
     }
 );

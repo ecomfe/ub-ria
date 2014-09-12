@@ -32,34 +32,65 @@ define(
          */
         function ListView() {
             BaseView.apply(this, arguments);
+
+            // 批量绑定控件的事件
+            var uiEvents = {
+                pager: {
+                    pagesizechange: onChangePageSize,
+                    pagechange: onChangePage
+                },
+                table: {
+                    select: 'updateBatchButtonStatus',
+                    sort: onSortTable
+                },
+                'filter:submit': 'submitSearch',
+                'filter-switch:click': toggleFilter,
+                'filter-cancel:click': cancelFilter,
+                'filter-modify:click': toggleFilterPanelContent
+            };
+            this.addUIEvents(uiEvents);
+
+            // 批量设置控件的属性
+            var uiProperties = {
+                table: {
+                    fields: this.getTableFields()
+                }
+            };
+            this.addUIProperties(uiProperties);
         }
 
         util.inherits(ListView, BaseView);
 
         /**
          * 收集查询参数并触发查询事件
-         *
-         * @param {ListView} this 当前视图实例
-         * @param {mini-event.Event} e 控件事件对象
          */
-        ListView.prototype.submitSearch = function (e) {
+        ListView.prototype.submitSearch = function () {
             var args = this.getSearchArgs();
             this.fire('search', { args: args });
         };
 
         /**
+         * 表格排序监听函数
+         *
+         * @event
+         * @param {mini-event.Event} e 事件对象
+         */
+        function onSortTable(e) {
+            var tableProperties = {
+                order: e.order,
+                orderBy: e.field.field
+            };
+            this.sortTable(tableProperties);
+        }
+
+        /**
          * 排列表格
          *
-         * @param {mini-event.Event} e 控件事件对象
+         * @param {Object} tableProperties 表格参数
          */
-        ListView.prototype.sortTable = function (e) {
-            var tableProperties = {
-                orderBy: e.field.field,
-                order: e.order
-            };
+        ListView.prototype.sortTable = function (tableProperties) {
             this.fire('tablesort', { tableProperties: tableProperties });
         };
-
 
         /**
          * 根据表格中所选择的行来控制批量更新按钮的启用/禁用状态
@@ -83,7 +114,6 @@ define(
 
         /**
          * view渲染完成后根据所有筛选条件是否都为默认值来控制展开或闭合
-         *
          */
         ListView.prototype.updateFilterPanelStatus = function () {
             if (!this.model.get('filtersInfo').isAllFiltersDefault) {
@@ -92,6 +122,9 @@ define(
             }
         };
 
+        /**
+         * view渲染完成后清空搜索框
+         */
         ListView.prototype.updateSearchBoxStatus = function () {
             if (this.model.get('keyword')) {
                 this.getSafely('keyword').addState('clear');
@@ -147,44 +180,46 @@ define(
         };
 
         /**
-         * 获取视图属性
+         * 每页条数变更监听函数
          *
-         * @return {Object}
-         * @protected
-         * @override
+         * @event
+         * @param {mini-event.Event} e 事件对象
          */
-        ListView.prototype.getUIProperties = function () {
-            var properties = BaseView.prototype.getUIProperties.apply(this, arguments) || {};
-
-            if (!properties.table) {
-                properties.table = {};
-            }
-            properties.table.fields = this.getTableFields();
-
-            return properties;
-        };
+        function onChangePageSize(e) {
+            var pageSize = e.target.get('pagesize');
+            this.updatePageSize(pageSize);
+        }
 
         /**
          * 更新每页显示数
          *
-         * @param {mini-event.Event} e 事件对象
+         * @param {number} pageSize 每页条数
          * @ignore
          */
-        function updatePageSize(e) {
-            var pageSize = e.target.get('pageSize');
+        ListView.prototype.updatePageSize = function (pageSize) {
             this.fire('pagesizechange', { pageSize: pageSize });
+        };
+
+        /**
+         * 页码变更监听函数
+         *
+         * @event
+         * @param {mini-event.Event} e 事件对象
+         */
+        function onChangePage(e) {
+            var page = e.target.get('page');
+            this.updatePageIndex(page);
         }
 
         /**
          * 更新页码
          *
-         * @param {mini-event.Event} e 事件对象
+         * @param {number} page 页码
          * @ignore
          */
-        function updatePageIndex(e) {
-            var page = e.target.get('page');
+        ListView.prototype.updatePageIndex = function(page) {
             this.fire('pagechange', { page: page });
-        }
+        };
 
         /**
          * 获取批量操作状态
@@ -203,18 +238,23 @@ define(
 
         /**
          * 收起筛选面板，当有筛选条件时清除筛选条件
-         *
          */
         function toggleFilter() {
             var filter = this.getSafely('filter');
             filter.isHidden() ? showFilter.call(this) : cancelFilter.call(this);
         }
 
+        /**
+         * 显示筛选条件区域
+         */
         function showFilter() {
             this.getSafely('filter').show();
             this.getSafely('filter-switch').addState('expand');
         }
 
+        /**
+         * 隐藏筛选条件区域
+         */
         function hideFilter() {
             this.getSafely('filter').hide();
             this.getSafely('filter-switch').removeState('expand');
@@ -225,7 +265,6 @@ define(
          *
          * @ignore
          */
-
         function cancelFilter() {
             if (this.model.get('filtersInfo').isAllFiltersDefault) {
                 hideFilter.call(this);
@@ -240,7 +279,6 @@ define(
          *
          * @ignore
          */
-
         function toggleFilterPanelContent() {
             this.getGroup('filter-content').toggle();
         }
@@ -251,16 +289,6 @@ define(
          * @override
          */
         ListView.prototype.bindEvents = function () {
-            var pager = this.getSafely('pager');
-            pager.on('pagesizechange', updatePageSize, this);
-            pager.on('pagechange', updatePageIndex, this);
-
-            var table = this.getSafely('table');
-            // 选中表格行后控制批量更新按钮的启用/禁用状态
-            table.on('select', this.updateBatchButtonStatus, this);
-            // 表格排序触发查询
-            table.on('sort', this.sortTable, this);
-
             this.getGroup('batch').each(
                 function (button) {
                     // 批量更新
@@ -268,17 +296,6 @@ define(
                 },
                 this
             );
-
-            this.getSafely('filter').on('submit', this.submitSearch, this);
-
-            // 展开或收起面板，或者清除筛选条件
-            this.getSafely('filter-switch').on('click', toggleFilter, this);
-
-            // 取消筛选，收起面板或者清除筛选条件
-            this.getSafely('filter-cancel').on('click', cancelFilter, this);
-
-            // 切换到筛选面板
-            this.getSafely('filter-modify').on('click', toggleFilterPanelContent, this);
 
             BaseView.prototype.bindEvents.apply(this, arguments);
         };

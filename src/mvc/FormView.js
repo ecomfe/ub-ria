@@ -29,6 +29,13 @@ define(
          */
         function FormView() {
             BaseView.apply(this, arguments);
+
+            // 批量绑定控件事件
+            var uiEvents = {
+                'form:submit': submit,
+                'cancel:click': cancelEdit
+            };
+            this.addUIEvents(uiEvents);
         }
 
         util.inherits(FormView, BaseView);
@@ -67,10 +74,8 @@ define(
             }
         };
 
-
         /**
          * 等待用户取消确认
-         *
          *
          * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，
          * 用户取消则进入`rejected`状态
@@ -92,25 +97,6 @@ define(
         function submit() {
             this.fire('submit');
         }
-
-        /**
-         * 绑定控件事件
-         *
-         * @override
-         */
-        FormView.prototype.bindEvents = function () {
-            var form = this.get('form');
-            if (form) {
-                form.on('submit', submit, this);
-            }
-
-            var cancelButton = this.get('cancel');
-            if (cancelButton) {
-                cancelButton.on('click', cancelEdit, this);
-            }
-
-            BaseView.prototype.bindEvents.apply(this, arguments);
-        };
 
         /**
          * 禁用提交操作
