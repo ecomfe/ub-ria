@@ -67,28 +67,49 @@
 }
 
 // 操作弹层
+// 外面包一层，为了真正的操作层展开时受限于Table，又影响Table
+.table-operation-layer-wrapper {
+    // 永远靠边儿
+    right: 0;
+    // 默认无需展示
+    width: 0;
+    // 垂直居中
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    // 隐藏到远方的layer
+    overflow: hidden;
+}
+
 .table-operation-layer {
     position: absolute;
-    height: 12px;
-    padding: 11px 0px;
-    top: 50%;
-    margin-top: -17px;
+    top: 0;
+    bottom: 0;
     background: #fff;
-    border: 1px solid #ddd;
-    border-left: 0;
-    border-right: 0;
     right: -100%;
     transition: right 500ms;
+    .box-shadow(1px -2px 4px #dabb72);
 
     .table-operation {
         height: 16px;
         line-height: 16px;
         padding: 0;
         margin: 0 10px;
+        vertical-align: middle;
+    }
+
+    &:before {
+        content: '';
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
     }
 }
 // 鼠标悬浮最后一列的时候，触发弹层展现
 .ui-table-cell-text-last:hover {
+    .table-operation-layer-wrapper {
+        width: 100%;
+    }
     .table-operation-layer {
         right: 0;
     }
