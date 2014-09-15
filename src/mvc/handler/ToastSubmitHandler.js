@@ -86,7 +86,7 @@ define(
                     : '创建';
                 return '您' + actionType + '的'
                     + action.getEntityDescription()
-                    + '[<strong>]' + u.escape(entity.name) + '</strong>]'
+                    + '[<strong>' + u.escape(entity.name) + '</strong>]'
                     + '已经成功保存';
             }
         };
