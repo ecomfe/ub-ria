@@ -245,8 +245,10 @@ define(
                 var html = Table.operations(config);
                 var operationHTML = ''
                     + '<span class="table-operation-trigger">操作</span>'
-                    + '<div class="table-operation-layer">'
+                    + '<div class="table-operation-layer-wrapper">'
+                    + '    <div class="table-operation-layer">'
                     + html
+                    + '    </div>'
                     + '</div>'
                 return operationHTML;
             };
