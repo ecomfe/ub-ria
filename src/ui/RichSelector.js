@@ -82,11 +82,6 @@ define(
                 options.multi = false;
             }
 
-            // load型的选择器只能是单选的
-            if (options.mode === 'load') {
-                options.multi = false;
-            }
-
             lib.extend(properties, options);
             properties.width = Math.max(200, properties.width);
             this.setProperties(properties);
