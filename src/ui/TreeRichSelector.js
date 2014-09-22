@@ -39,13 +39,20 @@ define(
             var properties = {
                 // 数据源
                 datasource: null,
-                // 树的相关属性
+                // 定向展开配置开关，true则可以根据需要默认展开指定的节点
                 orientExpand: false,
+                // 全节点点击触发展开的配置开关
                 wideToggleArea: false,
+                // 是否只允许选择叶子节点
                 onlyLeafSelect: true,
+                // 是否允许反选
                 allowUnselectNode: false,
+                // 是否隐藏根节点
                 hideRoot: true,
-                treeSkin: 'flat'
+                // 状态信息是否挂在原生节点上
+                stateInNode: false,
+                // 节点状态切换时，父子节点是否需要同步状态
+                needSyncParentChild: true
             };
 
             lib.extend(properties, options);
@@ -75,6 +82,14 @@ define(
 
             if (properties.multi === false) {
                 properties.onlyLeafSelect = true;
+            }
+
+            if (properties.stateInNode === 'false') {
+                properties.stateInNode  = false;
+            }
+
+            if (properties.needSyncParentChild === 'false') {
+                properties.needSyncParentChild  = false;
             }
 
             RichSelector.prototype.initOptions.call(this, properties);
@@ -130,21 +145,27 @@ define(
          * @ignore
          */
         TreeRichSelector.prototype.adaptData = function () {
+            var control = this;
             // 这是一个不具备任何状态的东西
             this.allData = this.datasource;
             // 一个扁平化的索引
             // 其中包含父节点信息，以及节点选择状态
             var indexData = {};
             if (this.allData && this.allData.children) {
-                walkTree(
+                this.walkTree(
                     this.allData,
                     this.allData.children,
                     function (parent, child) {
                         indexData[child.id] = {
                             parentId: parent.id,
-                            node: child,
-                            isSelected: false
+                            node: child
                         };
+                        // 检测child里面是否包含状态信息
+                        // 包含状态信息的话，就是用节点的状态信息
+                        // 否则在索引对象里创建状态
+                        if (!control.stateInNode) {
+                            indexData[child.id].isSelected = false;
+                        }
                     }
                 );
             }
@@ -187,11 +208,13 @@ define(
                         ),
                     wideToggleArea: this.wideToggleArea,
                     hideRoot: this.hideRoot,
-                    selectMode: this.multi ? 'multiple' : 'single',
-                    skin: this.treeSkin
+                    selectMode: this.multi ? 'multiple' : 'single'
                 };
                 if (this.getItemHTML) {
                     options.getItemHTML = this.getItemHTML;
+                }
+                if (this.itemTemplate) {
+                    options.itemTemplate = this.itemTemplate;
                 }
                 tree = ui.create('Tree', options);
                 queryList.addChild(tree);
@@ -210,10 +233,7 @@ define(
                 tree.on(
                     'unselectnode',
                     function (e) {
-                        var node = e.node;
-                        if (indexData[node.id]) {
-                            indexData[node.id].isSelected = false;
-                        }
+                        control.setItemState(e.node.id, 'isSelected', false);
                     }
                 );
             }
@@ -224,6 +244,37 @@ define(
                 });
             }
 
+            // 节点中包含状态，则需要渲染状态
+            if (this.stateInNode && (this.mode === 'add' || this.mode === 'load')) {
+                this.walkTree(treeData, treeData.children, function (parent, child) {
+                    if (child.isSelected) {
+                        tree.selectNode(child.id, true);
+                    }
+                });
+            }
+        };
+
+        TreeRichSelector.prototype.getStateNode = function (id) {
+            var stateNode = this.indexData[id];
+            if (this.stateInNode) {
+                stateNode = stateNode.node;
+            }
+            return stateNode;
+        };
+
+        TreeRichSelector.prototype.getItemState = function (id, stateName) {
+            if (this.indexData[id]) {
+                var stateNode = this.getStateNode(id);
+                return stateNode[stateName];
+            }
+            return null;
+        };
+
+        TreeRichSelector.prototype.setItemState = function (id, stateName, stateValue) {
+            if (this.indexData[id]) {
+                var stateNode = this.getStateNode(id);
+                stateNode[stateName] = stateValue;
+            }
         };
 
         /**
@@ -239,17 +290,15 @@ define(
             }
 
             if (this.mode === 'add') {
-                actionForAdd(this, item);
+                this.actionForAdd(item);
             }
             else if (this.mode === 'delete') {
-                actionForDelete(this, item);
+                this.actionForDelete(item);
             }
             else if (this.mode === 'load') {
-                actionForLoad(this, item);
+                this.actionForLoad(item);
             }
         };
-
-
 
         /**
          * 添加动作
@@ -257,27 +306,26 @@ define(
          * @param {ui.TreeRichSelector} control 类实例
          * @param {Object} item 保存在indexData中的item
          *
-         * @ignore
          */
-        function actionForAdd(control, item) {
-            item.isSelected = true;
+        TreeRichSelector.prototype.actionForAdd = function (item) {
+            this.setItemState(item.node.id, 'isSelected', true);
             //如果是单选，需要将其他的已选项置为未选
-            if (!control.multi) {
+            if (!this.multi) {
                 // 如果以前选中了一个，要取消选择
-                if (control.currentSeletedId) {
-                    control.indexData[control.currentSeletedId].isSelected = false;
+                // 节点的状态切换Tree控件会完成，因此无需这里手动unselect
+                if (this.currentSeletedId) {
+                    this.setItemState(this.currentSeletedId, 'isSelected', false);
                 }
                 // 赋予新值
-                control.currentSeletedId = item.node.id;
+                this.currentSeletedId = item.node.id;
             }
+            // 多选同步父子状态
             else {
-                syncParentAndChildrenStates(control, item, true);
+                syncParentAndChildrenStates(this, item, true);
             }
-            control.fire('add');
-            control.fire('change');
-        }
-
-
+            this.fire('add', { item: item.node });
+            this.fire('change');
+        };
 
         /**
          * 选择或取消选择
@@ -307,7 +355,8 @@ define(
                 control.currentSeletedId = id;
             }
 
-            item.isSelected = toBeSelected;
+            control.setItemState(id, 'isSelected', toBeSelected);
+
             if (toBeSelected) {
                 tree.selectNode(id, true);
             }
@@ -318,7 +367,7 @@ define(
 
         /**
          * 撤销选择当前项
-         * @param {ui.TreeRichSelector} control 类实例       
+         * @param {ui.TreeRichSelector} control 类实例
          * @ignore
          */
         function unselectCurrent(control) {
@@ -355,26 +404,25 @@ define(
          * @param {boolean} toBeSelected 目标状态 true是选择，false是取消
          * @override
          */
-        TreeRichSelector.prototype.selectItems =
-            function (nodes, toBeSelected) {
-                var indexData = this.indexData;
-                if (!indexData) {
-                    return;
-                }
-                var control = this;
-                u.each(
-                    nodes,
-                    function (node) {
-                        var id = node.id !== undefined ? node.id : node;
-                        var item = indexData[id];
-                        if (item !== null && item !== undefined) {
-                            // 更新状态，但不触发事件
-                            selectItem(control, id, toBeSelected);
-                            syncParentAndChildrenStates(control, item, toBeSelected);
-                        }
+        TreeRichSelector.prototype.selectItems = function (nodes, toBeSelected) {
+            var indexData = this.indexData;
+            if (!indexData) {
+                return;
+            }
+            var control = this;
+            u.each(
+                nodes,
+                function (node) {
+                    var id = node.id !== undefined ? node.id : node;
+                    var item = indexData[id];
+                    if (item !== null && item !== undefined) {
+                        // 更新状态，但不触发事件
+                        selectItem(control, id, toBeSelected);
+                        syncParentAndChildrenStates(control, item, toBeSelected);
                     }
-                );
-            };
+                }
+            );
+        };
 
         /**
          * 同步一个节点的父节点和子节点选择状态
@@ -384,6 +432,9 @@ define(
          * @param {boolean} toBeSelected 目标状态 true是选择，false是取消
          */
         function syncParentAndChildrenStates(control, item, toBeSelected) {
+            if (!control.needSyncParentChild) {
+                return;
+            }
             var indexData = control.indexData;
             var node = item.node;
             // 如果选的是父节点，子节点也要连带选上
@@ -399,12 +450,7 @@ define(
                 var brothers = parentItem.node.children || [];
                 var allSelected = true;
                 u.each(brothers, function (brother) {
-                    // brother是原生数据, 格式 { text: 'xxx', name: 'xxx', id: xx }
-                    // brotherItem是带状态值数据, 格式 { isSelected: false, node: {}, parentId }
-                    var brotherItem = indexData[brother.id];
-                    if (!brotherItem.isSelected) {
-                        allSelected = false;
-                    }
+                    control.setItemState(brother.id, 'isSelected', false);
                 });
                 selectItem(control, parentId, allSelected);
             }
@@ -413,16 +459,17 @@ define(
         /**
          * 删除动作
          *
-         * @param {ui.TreeRichSelector} control 类实例
          * @param {Object} item 保存在indexData中的item
-         *
-         * @ignore
+         * 
          */
-        function actionForDelete(control, item) {
-            deleteItem(control, item.node.id);
+        TreeRichSelector.prototype.actionForDelete = function (item) {
             // 外部需要知道什么数据被删除了
-            control.fire('delete', { items: [item.node] });
-            control.fire('change');
+            var event = this.fire('delete', { items: [item.node] });
+            // 如果外面阻止了默认行为（比如自己控制了Tree的删除），就不自己删除了
+            if (!event.isDefaultPrevented()) {
+                deleteItem(this, item.node.id);
+                this.fire('change');
+            }
         }
 
         /**
@@ -471,10 +518,12 @@ define(
          * @override
          */
         TreeRichSelector.prototype.deleteAll = function () {
-            var items = util.deepClone(this.getSelectedItems());
-            this.set('datasource', null);
-            this.fire('delete', { items: items });
-            this.fire('change');
+            var event = this.fire('delete', { items: this.allData.children });
+            // 如果外面阻止了默认行为（比如自己控制了Tree的删除），就不自己删除了
+            if (!event.isDefaultPrevented()) {
+                this.set('datasource', null);
+                this.fire('change');
+            }
         };
 
         /**
@@ -483,13 +532,27 @@ define(
          * @param {ui.TreeRichSelector} control 类实例
          * @param {Object} item 保存在indexData中的item
          *
-         * @ignore
          */
-        function actionForLoad(control, item) {
-            selectItem(control, item.id, true);
-            control.fire('load');
-            control.fire('change');
-        }
+        TreeRichSelector.prototype.actionForLoad = function (item) {
+            this.setItemState(item.node.id, 'isActive', true);
+            // 如果以前选中了一个，要取消选择
+            if (this.currentActiveId) {
+                this.setItemState(this.currentActiveId, 'isActive', false);
+
+                // load型树节点状态不是简单的“已选择”和“未选择”，还包含已激活和未激活
+                // -- 选择状态中的节点不可以激活
+                // -- 未选择状态的节点可以激活，激活后变成“已激活”状态，而不是“已选择”
+                // -- 激活某节点时，其余“已激活”节点要变成“未激活”状态
+                // 说了这么多，就是想说，我要自己把“已激活”节点要变成“未激活”状态。。。
+                var tree = this.getQueryList().getChild('tree');
+                tree.unselectNode(this.currentActiveId, true);
+            }
+            // 赋予新值
+            this.currentActiveId = item.node.id;
+
+            this.fire('load', { item: item.node });
+            this.fire('change');
+        };
 
 
         /**
@@ -504,29 +567,34 @@ define(
             var leafItems = [];
             var me = this;
             var indexData = this.indexData;
-            u.each(data, function (item) {
-                if (isLeaf(item)) {
-                    var indexItem = indexData[item.id];
-                    var valid = (isSelected === indexItem.isSelected);
-                    if (me.mode === 'delete' || valid) {
-                        leafItems.push(item);
+            u.each(
+                data,
+                function (item) {
+                    if (isLeaf(item)) {
+                        var indexItem = indexData[item.id];
+                        var valid = (isSelected === this.getItemState(item.id, 'isSelected'));
+                        // delete型的树没有“选择”和“未选择”的状态区别，所以特殊处理
+                        if (me.mode === 'delete' || valid) {
+                            leafItems.push(item);
+                        }
                     }
-                }
-                else {
-                    leafItems = u.union(
-                        leafItems,
-                        me.getLeafItems(item.children, isSelected)
-                    );
-                }
-            });
+                    else {
+                        leafItems = u.union(
+                            leafItems,
+                            me.getLeafItems(item.children, isSelected)
+                        );
+                    }
+                },
+                this
+            );
 
             return leafItems;
         };
 
         /**
-         * 或许当前已选择的数据
+         * 获取当前已选择数据的扁平数组结构
          *
-         * @return {Object}
+         * @return {Array}
          * @public
          */
         TreeRichSelector.prototype.getSelectedItems = function () {
@@ -539,7 +607,7 @@ define(
 
 
         /**
-         * 或许当前已选择的数据
+         * 获取当前已选择的数据的树形结构
          *
          * @return {Object}
          * @public
@@ -566,11 +634,13 @@ define(
 
         function getSelectedNodesUnder(parentNode, control) {
             var children = parentNode.children;
-            var indexData = control.indexData;
-            return u.filter(children, function (node) {
-                var indexItem = indexData[node.id];
-                return indexItem.isSelected;
-            });
+            return u.filter(
+                children,
+                function (node) {
+                    return this.getItemState(node.id, 'isSelected');
+                },
+                this
+            );
 
         }
 
@@ -638,7 +708,7 @@ define(
                     if (data.text.indexOf(keyword) !== -1) {
                         filteredData = u.clone(data);
                     }
-                    
+
                     if (data.children && data.children.length) {
                         var filteredChildren = queryFromNode(keyword, data);
                         // 如果子节点有符合条件的，那么只把符合条件的子结点放进去
@@ -670,15 +740,15 @@ define(
          *
          * @param {Array} children 需要遍历的树的孩子节点
          * @param {Function} callback 遍历时执行的函数
-         * @ignore
          */
-        function walkTree(parent, children, callback) {
+         TreeRichSelector.prototype.walkTree = function (parent, children, callback) {
             u.each(
                 children,
                 function (child, key) {
                     callback(parent, child);
-                    walkTree(child, child.children, callback);
-                }
+                    this.walkTree(child, child.children, callback);
+                },
+                this
             );
         }
 
