@@ -114,21 +114,26 @@ define(
                 name: 'datasource',
                 paint: function (control, datasource) {
                     control.refresh();
+                    // datasource更新后，生成一个由datasource生成的tempSelectedData
+                    // 用这个数据结构更新选择状态
+                    if (control.mode !== 'delete') {
+                        control.selectItems(control.tempSelectedData, true);
+                    }
                 }
             },
             {
                 name: 'selectedData',
-                paint:
-                    function (control, selectedData) {
-                        // 先取消选择
-                        var allData = control.allData;
-                        if (allData && allData.children) {
-                            control.selectItems(allData.children, false);
-                            control.selectItems(selectedData, true);
-                            control.fire('add');
-                            control.fire('change');
-                        }
+                paint: function (control, selectedData) {
+                    // 先取消选择
+                    var allData = control.allData;
+                    if (allData && allData.children) {
+                        var oldSelectedData = control.getSelectedItems();
+                        control.selectItems(oldSelectedData, false);
+                        control.selectItems(selectedData, true);
+                        control.fire('add');
+                        control.fire('change');
                     }
+                }
             }
         );
 
@@ -139,9 +144,8 @@ define(
          * @ignore
          */
         TreeRichSelector.prototype.adaptData = function () {
-            // 初始化一个状态
-            this.hasStateInNode = false;
             var control = this;
+            var selectedData = [];
             // 这是一个不具备任何状态的东西
             this.allData = this.datasource;
             // 一个扁平化的索引
@@ -157,15 +161,17 @@ define(
                             node: child,
                             isSelected: false
                         };
-                        // 如果节点中包含了选择状态信息，那么把这个信息同步到外面
                         if (child.isSelected !== undefined) {
-                            this.hasStateInNode = true;
                             indexData[child.id].isSelected = child.isSelected; 
+                        }
+                        if (indexData[child.id].isSelected == true) {
+                            selectedData.push(child);
                         }
                     }
                 );
             }
             this.indexData = indexData;
+            this.tempSelectedData = selectedData;
         };
 
         /**
@@ -239,15 +245,6 @@ define(
                     'keyword': this.getKeyword()
                 });
             }
-
-            // 节点中包含状态，渲染状态
-            if (this.hasStateInNode && (this.mode === 'add' || this.mode === 'load')) {
-                this.walkTree(treeData, treeData.children, function (parent, child) {
-                    if (child.isSelected) {
-                        tree.selectNode(child.id, true);
-                    }
-                });
-            }
         };
 
         TreeRichSelector.prototype.getStateNode = function (id) {
@@ -269,11 +266,6 @@ define(
             }
         };
 
-        /**
-         * 返回一个更新了状态到节点里的数据源
-         * 
-         * @return {Object}
-         */
         TreeRichSelector.prototype.getDatasourceWithState = function () {
             var datasource = u.deepClone(this.datasource);
             var indexData = this.indexData;
@@ -612,7 +604,19 @@ define(
                 return [];
             }
             var data = this.allData.children;
-            return this.getLeafItems(data, true);
+            var selectedItems = [];
+            var control = this;
+            this.walkTree(
+                this.allData,
+                this.allData.children,
+                function (parent, child) {
+                    if (control.getStateNode(child.id).isSelected) {
+                        selectedItems.push(child);
+                    }
+                }
+            );
+
+            return selectedItems;
         };
 
 
