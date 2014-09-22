@@ -49,8 +49,6 @@ define(
                 allowUnselectNode: false,
                 // 是否隐藏根节点
                 hideRoot: true,
-                // 状态信息是否挂在原生节点上
-                stateInNode: false,
                 // 节点状态切换时，父子节点是否需要同步状态
                 needSyncParentChild: true
             };
@@ -82,10 +80,6 @@ define(
 
             if (properties.multi === false) {
                 properties.onlyLeafSelect = true;
-            }
-
-            if (properties.stateInNode === 'false') {
-                properties.stateInNode  = false;
             }
 
             if (properties.needSyncParentChild === 'false') {
@@ -145,6 +139,8 @@ define(
          * @ignore
          */
         TreeRichSelector.prototype.adaptData = function () {
+            // 初始化一个状态
+            this.hasStateInNode = false;
             var control = this;
             // 这是一个不具备任何状态的东西
             this.allData = this.datasource;
@@ -158,13 +154,13 @@ define(
                     function (parent, child) {
                         indexData[child.id] = {
                             parentId: parent.id,
-                            node: child
+                            node: child,
+                            isSelected: false
                         };
-                        // 检测child里面是否包含状态信息
-                        // 包含状态信息的话，就是用节点的状态信息
-                        // 否则在索引对象里创建状态
-                        if (!control.stateInNode) {
-                            indexData[child.id].isSelected = false;
+                        // 如果节点中包含了选择状态信息，那么把这个信息同步到外面
+                        if (child.isSelected !== undefined) {
+                            this.hasStateInNode = true;
+                            indexData[child.id].isSelected = child.isSelected; 
                         }
                     }
                 );
@@ -244,8 +240,8 @@ define(
                 });
             }
 
-            // 节点中包含状态，则需要渲染状态
-            if (this.stateInNode && (this.mode === 'add' || this.mode === 'load')) {
+            // 节点中包含状态，渲染状态
+            if (this.hasStateInNode && (this.mode === 'add' || this.mode === 'load')) {
                 this.walkTree(treeData, treeData.children, function (parent, child) {
                     if (child.isSelected) {
                         tree.selectNode(child.id, true);
@@ -255,11 +251,7 @@ define(
         };
 
         TreeRichSelector.prototype.getStateNode = function (id) {
-            var stateNode = this.indexData[id];
-            if (this.stateInNode) {
-                stateNode = stateNode.node;
-            }
-            return stateNode;
+            return this.indexData[id];
         };
 
         TreeRichSelector.prototype.getItemState = function (id, stateName) {
@@ -275,6 +267,21 @@ define(
                 var stateNode = this.getStateNode(id);
                 stateNode[stateName] = stateValue;
             }
+        };
+
+        /**
+         * 返回一个更新了状态到节点里的数据源
+         * 
+         * @return {Object}
+         */
+        TreeRichSelector.prototype.getDatasourceWithState = function () {
+            var datasource = u.deepClone(this.datasource);
+            var indexData = this.indexData;
+            this.walkTree(datasource, datasource.children, function (parent, child) {
+                child.isSelected = indexData[child.id].isSelected;
+            });
+
+            return datasource;
         };
 
         /**
@@ -321,7 +328,7 @@ define(
             }
             // 多选同步父子状态
             else {
-                syncParentAndChildrenStates(this, item, true);
+                trySyncParentAndChildrenStates(this, item, true);
             }
             this.fire('add', { item: item.node });
             this.fire('change');
@@ -418,7 +425,7 @@ define(
                     if (item !== null && item !== undefined) {
                         // 更新状态，但不触发事件
                         selectItem(control, id, toBeSelected);
-                        syncParentAndChildrenStates(control, item, toBeSelected);
+                        trySyncParentAndChildrenStates(control, item, toBeSelected);
                     }
                 }
             );
@@ -431,7 +438,7 @@ define(
          * @param {Object} item 保存在indexData中的item
          * @param {boolean} toBeSelected 目标状态 true是选择，false是取消
          */
-        function syncParentAndChildrenStates(control, item, toBeSelected) {
+        function trySyncParentAndChildrenStates(control, item, toBeSelected) {
             if (!control.needSyncParentChild) {
                 return;
             }
@@ -544,8 +551,11 @@ define(
                 // -- 未选择状态的节点可以激活，激活后变成“已激活”状态，而不是“已选择”
                 // -- 激活某节点时，其余“已激活”节点要变成“未激活”状态
                 // 说了这么多，就是想说，我要自己把“已激活”节点要变成“未激活”状态。。。
-                var tree = this.getQueryList().getChild('tree');
-                tree.unselectNode(this.currentActiveId, true);
+                // 然后如果这个节点恰好是isSelected状态的，那则不许执行unselect操作
+                if (!this.getStateNode(this.currentActiveId).isSelected) {
+                    var tree = this.getQueryList().getChild('tree');
+                    tree.unselectNode(this.currentActiveId, true);
+                }
             }
             // 赋予新值
             this.currentActiveId = item.node.id;
