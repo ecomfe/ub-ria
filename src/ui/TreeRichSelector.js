@@ -156,7 +156,7 @@ define(
                             node: child,
                             isSelected: false
                         };
-                        if (child.isSelected !== undefined) {
+                        if (child.hasOwnProperty('isSelected')) {
                             indexData[child.id].isSelected = child.isSelected; 
                         }
                         if (indexData[child.id].isSelected == true) {
@@ -423,7 +423,7 @@ define(
                 function (node) {
                     var id = node.id !== undefined ? node.id : node;
                     var item = indexData[id];
-                    if (item !== null && item !== undefined) {
+                    if (item != null && item !== undefined) {
                         // 更新状态，但不触发事件
                         selectItem(control, id, toBeSelected);
                         trySyncParentAndChildrenStates(control, item, toBeSelected);
