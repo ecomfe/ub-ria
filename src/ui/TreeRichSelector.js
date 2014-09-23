@@ -114,11 +114,6 @@ define(
                 name: 'datasource',
                 paint: function (control, datasource) {
                     control.refresh();
-                    // datasource更新后，生成一个由datasource生成的tempSelectedData
-                    // 用这个数据结构更新选择状态
-                    if (control.mode !== 'delete') {
-                        control.selectItems(control.tempSelectedData, true);
-                    }
                 }
             },
             {
@@ -171,7 +166,21 @@ define(
                 );
             }
             this.indexData = indexData;
-            this.tempSelectedData = selectedData;
+
+            return {
+                indexData: indexData,
+                selectedData: selectedData
+            };
+        };
+
+        /**
+         * @override
+         */
+        TreeRichSelector.prototype.processDataAfterRefresh = function (adaptedData) {
+            // 用这个数据结构更新选择状态
+            if (this.mode !== 'delete') {
+                this.selectItems(adaptedData.selectedData, true);
+            }
         };
 
         /**
