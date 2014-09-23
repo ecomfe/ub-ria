@@ -70,10 +70,12 @@ define(
                     var canSelect = true;
                     var isLeafNode = treeStrategy.isLeafNode(e.node);
                     if (treeStrategy.mode !== 'load') {
+                        // 只有叶子节点可以点的时候，其余节点都别点了
                         if (treeStrategy.onlyLeafSelect && !isLeafNode) {
                             canSelect = false;
                         }
                     }
+                    // 加载型Tree不管你设置的是啥，都只能是也子节点可以点
                     else {
                         if (!isLeafNode) {
                             canSelect = false;

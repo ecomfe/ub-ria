@@ -82,11 +82,6 @@ define(
                 options.multi = false;
             }
 
-            // load型的选择器只能是单选的
-            if (options.mode === 'load') {
-                options.multi = false;
-            }
-
             lib.extend(properties, options);
             properties.width = Math.max(200, properties.width);
             this.setProperties(properties);
@@ -494,7 +489,7 @@ define(
          */
         RichSelector.prototype.refresh = function () {
             // 重建数据，包括索引数据的创建
-            this.adaptData();
+            var adaptedData = this.adaptData();
 
             var needRefreshContent = true;
             // 刷新搜索区
@@ -517,12 +512,21 @@ define(
             if (needRefreshContent) {
                 // 重绘视图
                 this.refreshContent();
+                // 视图重绘后的一些额外数据处理
+                this.processDataAfterRefresh(adaptedData);
                 // 更新底部信息
                 this.refreshFoot();
                 // 更新高度
                 this.adjustHeight();
             }
         };
+
+        /**
+         * 视图刷新后的一些额外处理
+         *
+         * @param {Object} adaptedData 适配后的数据
+         */
+        RichSelector.prototype.processDataAfterRefresh = function (adaptedData) {};
 
         /**
          * 更新腿部信息
