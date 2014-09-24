@@ -85,6 +85,7 @@ define(
                 paint:
                     function (control, datasource, selectedData, disabledData) {
                         control.refresh();
+                        control.fire('change');
                     }
             }
         );
@@ -364,7 +365,8 @@ define(
             }
 
             if (fire) {
-                control.fire('add');
+                // 需要增加上一个参数，因为有的时候需要了解当前操作的对象是什么
+                control.fire('add', { item: item });
                 control.fire('change');
             }
         }
