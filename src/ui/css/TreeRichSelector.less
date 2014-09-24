@@ -1,8 +1,51 @@
+@import "mixin";
+@import "variables";
+
 esui-tree-rich-selector {
     display: block;
 }
 
 .ui-tree-richselector {
+    // 单独存在，没有右侧备选栏的情况
+    &.no-move-richselector {
+        &.ui-richselector-add {
+            // 所有节点的未选择下的hover状态都没有图标
+            .ui-tree-content-wrapper:hover {
+                .ui-tree-item-content {
+                    .pseudo-icon ();
+                }
+            }
+            .ui-tree-content-wrapper-selected,
+            .ui-tree-content-wrapper-selected:hover {
+                .ui-tree-item-content {
+                    // 默认带一个小对勾
+                    .pseudo-icon (
+                    @rich-selector-item-background-icon-selected,
+                    @rich-selector-item-background-icon-width-selected,
+                    @rich-selector-item-background-icon-height-selected,
+                    right
+                    );
+                }
+            }
+        }
+    }
+
+    // 父节点不可选的情况
+    &.ui-richselector-only-leaf-selectable {
+        // 一级节点没有hover状态
+        .ui-tree-node-level-1 {
+            > .ui-tree-content-wrapper {
+                cursor: default;
+                &:hover {
+                    background: none;
+                    .ui-tree-item-content {
+                        .pseudo-icon ();
+                    }
+                }
+            }
+        }
+    }
+
     .ui-richselector-query-list {
         .ui-tree-node-indicator {
             cursor: pointer;
@@ -46,7 +89,6 @@ esui-tree-rich-selector {
             }
         }
 
-
         // 已选状态
         .ui-tree-content-wrapper-selected,
         .ui-tree-content-wrapper-selected:hover {
@@ -56,7 +98,6 @@ esui-tree-rich-selector {
                 color: #333;
             }
         }
-
 
         .ui-tree-item-content {
             color: #666;
@@ -69,34 +110,50 @@ esui-tree-rich-selector {
         .ui-tree-node-empty .ui-tree-item-content {
             color: #999;
         }
-
     }
-}
 
-
-// 单独存在，没有右侧备选栏的情况
-.ui-tree-richselector.no-move-richselector {
+    &.ui-richselector-load,
     &.ui-richselector-add {
-        // 所有节点的未选择下的hover状态都没有图标
         .ui-tree-content-wrapper:hover {
             .ui-tree-item-content {
-                .pseudo-icon ();
+                // 默认带一个向右箭头
+                .pseudo-icon (
+                @rich-selector-add-item-background-icon-hover,
+                @rich-selector-add-item-background-icon-width-hover,
+                @rich-selector-add-item-background-icon-height-hover,
+                right
+                );
             }
         }
     }
-}
 
-// 父节点不可选的情况
-.ui-tree-richselector.ui-richselector-only-leaf-selectable {
-    // 一级节点没有hover状态
-    .ui-tree-node-level-1 {
-        >.ui-tree-content-wrapper {
-            cursor: default;
-            &:hover {
-                background: none;
-                .ui-tree-item-content {
-                    .pseudo-icon ();
-                }
+    &.ui-richselector-add {
+        .ui-tree-content-wrapper-selected,
+        .ui-tree-content-wrapper-selected:hover {
+            .ui-tree-item-content {
+                color: #666;
+                font-weight: bold;
+                // 默认带一个小对勾
+                .pseudo-icon (
+                @rich-selector-item-background-icon-selected,
+                @rich-selector-item-background-icon-width-selected,
+                @rich-selector-item-background-icon-height-selected,
+                right
+                );
+            }
+        }
+    }
+
+    &.ui-richselector-del {
+        .ui-tree-content-wrapper:hover {
+            .ui-tree-item-content {
+                // 默认带一个小对勾
+                .pseudo-icon (
+                @rich-selector-delete-item-background-icon-hover,
+                @rich-selector-delete-item-background-icon-width-hover,
+                @rich-selector-delete-item-background-icon-height-hover,
+                right
+                );
             }
         }
     }

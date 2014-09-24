@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>RichSelector</title>
+    <link rel="stylesheet" href="../../dep/esui/3.1.0-beta.3/src/css/main.css"/>
+    <link rel="stylesheet" href="../../src/ui/css/main.css"/>
+    <script src="assets/esl.js"></script>
+    <script src="assets/js.js"></script>
+    <style>
+        .container {
+            width: 100%;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        .section {
+            width: 80%;
+            border: 1px solid #f2f2f2;
+            margin-bottom: 10px;
+            overflow: hidden;
+            zoom: 1;
+        }
+
+        .section .section-title {
+            width: 80%;
+            margin: 0 auto;
+            background: #F5F5F5;
+            height: 15px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="section">
+    <div style="float: left;" data-ui="type:TreeRichSelector;hideRoot:false;id:table1;itemName:广告位;multi:true;"></div>
+
+    <div style="float: left;" data-ui-type="TreeRichSelector" data-ui-action-type="delete"
+         data-ui-id="table2" data-ui-has-foot="false"
+         data-ui-has-search-box="false"
+         data-ui-need-batch-action="true"
+         data-ui-empty-text="请从左侧选择你要添加的浏览器类型"
+            ></div>
+</div>
+
+
+<div class="section">
+    <div style="float: left;"
+         data-ui="type:TreeRichSelector;id:table3;itemName:广告位;hasFoot:false;hasIcon:false;hasHead:false;"></div>
+</div>
+
+<script>
+    require.config({
+        'baseUrl': '../../src',
+        'paths': {
+            'tpl': '../demo/assets/tpl',
+            'css': '../demo/assets/css',
+            'js': '../demo/assets/js'
+        },
+        'packages': [
+            {
+                'name': 'underscore',
+                'location': '../dep/underscore/1.5.2/src',
+                'main': 'underscore'
+            },
+            {
+                'name': 'ef',
+                'location': '../dep/ef/3.1.0-beta.2/src',
+                'main': 'main'
+            },
+            {
+                'name': 'er',
+                'location': '../dep/er/3.1.0-beta.4/src',
+                'main': 'main'
+            },
+            {
+                'name': 'esui',
+                'location': '../dep/esui/3.1.0-beta.3/src',
+                'main': 'main'
+            },
+            {
+                'name': 'echarts',
+                'location': '../dep/echarts/2.0.2/src',
+                'main': 'echarts'
+            },
+            {
+                'name': 'zrender',
+                'location': '../dep/zrender/2.0.1/src',
+                'main': 'zrender'
+            },
+            {
+                'name': 'jquery',
+                'location': '../dep/jquery/1.9.1/src',
+                'main': 'jquery.min'
+            },
+            {
+                'name': 'moment',
+                'location': '../dep/moment/2.7.0/src',
+                'main': 'moment'
+            },
+            {
+                'name': 'saber-cookie',
+                'location': '../dep/saber-cookie/0.1.4/src',
+                'main': 'cookie'
+            },
+            {
+                'name': 'mini-event',
+                'location': '../dep/mini-event/1.0.2/src',
+                'main': 'main'
+            },
+            {
+                'name': 'er-track',
+                'location': '../dep/er-track/0.9.1/src',
+                'main': 'main'
+            },
+            {
+                'name': 'etpl',
+                'location': '../dep/etpl/2.1.2/src',
+                'main': 'main'
+            },
+            {
+                'name': 'est',
+                'location': '../dep/est/1.2.2/src'
+            },
+            {
+                'name': 'ub-ria',
+                'location': '../dep/ub-ria/1.0.0-alpha.6/src',
+                'main': 'main'
+            },
+            {
+                'name': 'test',
+                'location': '../test'
+            },
+            {
+                'name': 'eoo',
+                'location': '../dep/eoo/0.0.9/src',
+                'main': 'oo'
+            },
+            {
+                'name': 'esui-flat-theme',
+                'location': '../dep/esui-flat-theme/1.0.0-alpha.3/src'
+            },
+            {
+                'name': 'uioc',
+                'location': '../dep/uioc/0.1.1-alpha.5/src',
+                'main': 'main'
+            },
+            {
+                'name': 'esl',
+                'location': '../dep/esl/1.2.0/src'
+            },
+            {
+                'name': 'ub-ria-sidebar',
+                'location': '../dep/ub-ria-sidebar/0.0.3/src',
+                'main': 'Sidebar'
+            }
+        ]
+    });
+    require(
+            [
+                'esui',
+                'ui/TreeRichSelector',
+                'css!esui/css/main.css',
+                'css!ui/css/main.css'
+            ],
+            function (ui) {
+                // {name:xxx, id:xxx, isSelected: true}
+                var tables = ui.init(document.body);
+                var table1 = tables[0];
+                var table2 = tables[1];
+
+                var datasource = {
+                    id: 'root',
+                    text: '所有广告位',
+                    children: []
+                };
+                var children = datasource.children;
+                for (var i = 0; i < 20; i++) {
+                    var isSelected = false;
+                    if (i == 20) {
+                        isSelected = true;
+                    }
+                    children.push({
+                        text: '广告位' + (i + 1),
+                        id: i + 1,
+                        isSelected: isSelected
+                    })
+                }
+
+                for (i = 0; i < children.length; i += 2) {
+                    var node = children[i];
+                    node.children = [
+                        {
+                            text: '子节点' + i,
+                            id: 'child' + i
+                        }
+                    ]
+                }
+
+                table1.setProperties({datasource: datasource});
+                table1.on('change', function () {
+                    var newdata = this.getSelectedItems();
+                    table2.setProperties({
+                        datasource: newdata
+                    })
+                });
+
+                table2.on('change', function (arg) {
+                    var items = arg.items;
+                    table1.unSelectItems(items);
+                });
+
+
+                var table3 = tables[2];
+                table3.setProperties({datasource: datasource});
+
+            }
+    );
+
+</script>
+</body>
+</html>
