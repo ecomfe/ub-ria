@@ -150,8 +150,8 @@ define(
             var form = this.get('filter');
             var args = form ? form.getData() : {};
             // 加上原本的排序方向和排序字段名
-            args.order = this.model.get('order');
-            args.orderBy = this.model.get('orderBy');
+            args.order = this.get('table').order;
+            args.orderBy = this.get('table').orderBy;
 
             var keyword = this.get('keyword');
             if (keyword) {

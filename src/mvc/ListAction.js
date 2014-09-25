@@ -153,8 +153,6 @@ define(
          * @ignore
          */
         function updateTableSort(e) {
-            this.model.set('order', e.tableProperties.order);
-            this.model.set('orderBy', e.tableProperties.orderBy);
             var event = this.fire('tablesort');
             if (!event.isDefaultPrevented()) {
                 var query = this.getSearchQuery();
