@@ -698,6 +698,7 @@ define(
          * @return {Array} 结果集
          */
         TreeRichSelector.prototype.queryItem = function (keyword) {
+            keyword = lib.trim(keyword);
             var filteredTreeData = [];
             filteredTreeData = queryFromNode(keyword, this.allData);
             // 更新状态
