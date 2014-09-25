@@ -531,7 +531,11 @@ define(
 
 
         /**
-         * 搜索含有关键字的结果，默认以name为目标搜索
+         * 搜索含有关键字的结果
+         * 
+         * Table不同于一般的选择器，有多个field，
+         * 所以搜索要支持针对某一个或某几个field
+         * 默认以name为目标搜索
          * 
          * 可重写
          *
@@ -539,12 +543,46 @@ define(
          * @public
          */
         TableRichSelector.prototype.queryItem = function (keyword) {
+            var filters = [];
+            if (u.isString(keyword)) {
+                keyword = lib.trim(keyword);
+                filters.push({ key: 'name', value: keyword });
+            }
+            else if (u.isArray(keyword)) {
+                filters = keyword;
+            }
+            this.filterItems(filters);
+        };
+
+
+        /**
+         * 过滤搜索
+         *
+         * @public
+         */
+        TableRichSelector.prototype.filterItems = function (filters) {
+            // 查找过滤 [{ key: 'xxx', value: 'xxx' }]
+            filters = filters || [];
             var queriedData = [];
             u.each(this.allData, function (data, index) {
-                if (data.name.indexOf(keyword) !== -1) {
+                var hit = true;
+                u.each(filters, function (filterItem) {
+                    // 关键词支持部分搜索。。。
+                    if (filterItem.key === 'name') {
+                        if (data.name.indexOf(lib.trim(filterItem.value)) === -1) {
+                            hit = false;
+                        }
+                    }
+                    else if (data[filterItem.key] !== filterItem.value) {
+                        hit = false;
+                    }
+                });
+
+                if (hit) {
                     queriedData.push(data);
                 }
             });
+
             this.queriedData = queriedData;
             // 更新状态
             this.addState('queried');

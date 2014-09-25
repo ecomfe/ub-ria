@@ -285,7 +285,6 @@ define(
         }
 
         RichSelector.prototype.search = function (keyword) {
-            keyword = lib.trim(keyword);
             if (keyword) {
                 // 查询
                 this.queryItem(keyword);
