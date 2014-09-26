@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <title>RichSelector</title>
-    <link rel="stylesheet" href="../../dep/esui/3.1.0-beta.3/src/css/main.css"/>
-    <link rel="stylesheet" href="../../src/ui/css/main.css"/>
+    <link rel="stylesheet" href="assets/main.css"/>
     <script src="assets/esl.js"></script>
     <script src="assets/js.js"></script>
     <style>
@@ -33,12 +32,13 @@
 </head>
 <body>
 <div class="section">
-    <div style="float: left;" data-ui="type:TreeRichSelector;hideRoot:false;id:table1;itemName:广告位;multi:true;"></div>
+    <div style="float: left;" data-ui="type:TreeRichSelector;hideRoot:false;id:table1;itemName:广告位;multi:true;width:300px"></div>
 
     <div style="float: left;" data-ui-type="TreeRichSelector" data-ui-action-type="delete"
          data-ui-id="table2" data-ui-has-foot="false"
          data-ui-has-search-box="false"
          data-ui-need-batch-action="true"
+         data-ui-width="300px"
          data-ui-empty-text="请从左侧选择你要添加的浏览器类型"
             ></div>
 </div>
@@ -159,9 +159,7 @@
     require(
             [
                 'esui',
-                'ui/TreeRichSelector',
-                'css!esui/css/main.css',
-                'css!ui/css/main.css'
+                'ui/TreeRichSelector'
             ],
             function (ui) {
                 // {name:xxx, id:xxx, isSelected: true}
