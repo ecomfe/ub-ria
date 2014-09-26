@@ -284,10 +284,14 @@ define(
             this.search(keyword);
         }
 
-        RichSelector.prototype.search = function (keyword) {
-            if (keyword) {
+        /**
+         * 按条件搜索
+         * @param {string | Object} args 搜索参数
+         */
+        RichSelector.prototype.search = function (args) {
+            if (args) {
                 // 查询
-                this.queryItem(keyword);
+                this.queryItem(args);
                 // 更新概要搜索结果区
                 this.refreshResult();
                 // 更新腿部总结果

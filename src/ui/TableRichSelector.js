@@ -42,10 +42,12 @@ define(
                 datasource: [],
                 // 选择数据
                 selectedData: [],
-                // 字段
+                // 字段，含义与Table相同，searchScope表示这个字段对搜索关键词是全击中还是部分击中
                 fields: [
-                    { field : 'name', content: 'name' }
-                ]
+                    { field : 'name', content: 'name', searchScope: 'partial' }
+                ],
+                // 关键词搜索覆盖字段，默认只有一个
+                keywordSearchFields: ['name']
             };
 
             if (options.hasRowHead === 'false') {
@@ -141,6 +143,14 @@ define(
                 }
             });
             this.allData = allData;
+
+            // 处理fields，把fields也保存到一个索引中
+            var fieldsIndex = {};
+            u.each(this.fields, function (field) {
+                fieldsIndex[field.field] = field;
+            });
+
+            this.fieldsIndex = fieldsIndex;
         };
 
         /**
@@ -546,7 +556,7 @@ define(
             var filters = [];
             if (u.isString(keyword)) {
                 keyword = lib.trim(keyword);
-                filters.push({ key: 'name', value: keyword });
+                filters.push({ key: this.keywordSearchFields, value: keyword });
             }
             else if (u.isArray(keyword)) {
                 filters = keyword;
@@ -564,24 +574,56 @@ define(
             // 查找过滤 [{ key: 'xxx', value: 'xxx' }]
             filters = filters || [];
             var queriedData = [];
-            u.each(this.allData, function (data, index) {
-                var hit = true;
-                u.each(filters, function (filterItem) {
-                    // 关键词支持部分搜索。。。
-                    if (filterItem.key === 'name') {
-                        if (data.name.indexOf(lib.trim(filterItem.value)) === -1) {
-                            hit = false;
+
+            // 判断数据的某个field是命中
+            function checkHitByFilterItem(field, expectValue, data) {
+                var hit = false;
+                // 部分击中
+                if (this.fieldsIndex[field].searchScope === 'partial') {
+                    if (data[field].indexOf(lib.trim(expectValue)) !== -1) {
+                        hit = true;
+                    }
+                }
+                else if (data[field] === expectValue) {
+                    hit = true;
+                }
+                return hit;
+            }
+
+            // 判断行数据是否符合过滤要求
+            function checkRowHit(data, index) {
+                debugger;
+                var hit;
+                for( var j = 0; j < filters.length; j++ ) {
+                    var filterItem = filters[j];
+                    // 如果key是数组，则是‘或’的关系
+                    if (u.isArray(filterItem.key)) {
+                        for (var i = 0; i < filterItem.key.length; i++) {
+                            var key = filterItem.key[i];
+                            hit = checkHitByFilterItem.call(this, key, filterItem.value, data);
+                            // 命中一个就结束
+                            if (hit) {
+                                break;
+                            }
                         }
                     }
-                    else if (data[filterItem.key] !== filterItem.value) {
-                        hit = false;
+                    else {
+                        hit = checkHitByFilterItem.call(this, filterItem.key, filterItem.value, data);
                     }
-                });
 
-                if (hit) {
-                    queriedData.push(data);
+                    // 如果不命中，结束
+                    if (!hit) {
+                        break;
+                    }
                 }
-            });
+                return hit;
+            }
+
+            queriedData = u.filter(
+                this.allData,
+                checkRowHit,
+                this
+            );
 
             this.queriedData = queriedData;
             // 更新状态
