@@ -44,10 +44,8 @@ define(
                 selectedData: [],
                 // 字段，含义与Table相同，searchScope表示这个字段对搜索关键词是全击中还是部分击中
                 fields: [
-                    { field : 'name', content: 'name', searchScope: 'partial' }
-                ],
-                // 关键词搜索覆盖字段，默认只有一个
-                keywordSearchFields: ['name']
+                    { field : 'name', content: 'name', searchScope: 'partial', isSearchKeyword: true }
+                ]
             };
 
             if (options.hasRowHead === 'false') {
@@ -145,12 +143,18 @@ define(
             this.allData = allData;
 
             // 处理fields，把fields也保存到一个索引中
-            var fieldsIndex = {};
-            u.each(this.fields, function (field) {
-                fieldsIndex[field.field] = field;
-            });
-
-            this.fieldsIndex = fieldsIndex;
+            this.fieldsIndex = {};
+            this.keywordSearchFields = [];
+            u.each(
+                this.fields,
+                function (field) {
+                    this.fieldsIndex[field.field] = field;
+                    if (field.isSearchKeyword) {
+                        this.keywordSearchFields.push(field.field);
+                    }
+                },
+                this
+            );
         };
 
         /**
@@ -556,14 +560,14 @@ define(
             var filters = [];
             if (u.isString(keyword)) {
                 keyword = lib.trim(keyword);
-                filters.push({ key: this.keywordSearchFields, value: keyword });
+                // 来自搜索框的，key置为''
+                filters.push({ key: '', value: keyword });
             }
             else if (u.isArray(keyword)) {
                 filters = keyword;
             }
             this.filterItems(filters);
         };
-
 
         /**
          * 过滤搜索
@@ -573,8 +577,6 @@ define(
         TableRichSelector.prototype.filterItems = function (filters) {
             // 查找过滤 [{ key: 'xxx', value: 'xxx' }]
             filters = filters || [];
-            var queriedData = [];
-
             // 判断数据的某个field是命中
             function checkHitByFilterItem(field, expectValue, data) {
                 var hit = false;
@@ -592,40 +594,36 @@ define(
 
             // 判断行数据是否符合过滤要求
             function checkRowHit(data, index) {
-                debugger;
-                var hit;
-                for( var j = 0; j < filters.length; j++ ) {
-                    var filterItem = filters[j];
-                    // 如果key是数组，则是‘或’的关系
-                    if (u.isArray(filterItem.key)) {
-                        for (var i = 0; i < filterItem.key.length; i++) {
-                            var key = filterItem.key[i];
-                            hit = checkHitByFilterItem.call(this, key, filterItem.value, data);
-                            // 命中一个就结束
-                            if (hit) {
-                                break;
-                            }
+                return !u.any(
+                    filters,
+                    function (filter) {
+                        var searchFields = []
+                        // 说明来自关键词搜索，关键词搜索要考虑‘或’关系
+                        if (filter.key === '') {
+                            searchFields = this.keywordSearchFields;
                         }
-                    }
-                    else {
-                        hit = checkHitByFilterItem.call(this, filterItem.key, filterItem.value, data);
-                    }
-
-                    // 如果不命中，结束
-                    if (!hit) {
-                        break;
-                    }
-                }
-                return hit;
+                        else {
+                            searchFields = [filter.key]
+                        }
+                        return !u.any(
+                            searchFields,
+                            function (searchField) {
+                                // 命中一个就算命中
+                                return checkHitByFilterItem.call(this, searchField, filter.value, data);
+                            },
+                            this
+                        );
+                    },
+                    this
+                );
             }
 
-            queriedData = u.filter(
+            this.queriedData = u.filter(
                 this.allData,
                 checkRowHit,
                 this
             );
 
-            this.queriedData = queriedData;
             // 更新状态
             this.addState('queried');
             this.refreshContent();
