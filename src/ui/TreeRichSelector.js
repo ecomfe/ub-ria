@@ -141,7 +141,24 @@ define(
         TreeRichSelector.prototype.adaptData = function () {
             var control = this;
             var selectedData = [];
-            // 这是一个不具备任何状态的东西
+            /**
+             * datasource的数据结构：
+             * {
+             *     id: -1,
+             *     text: '全部',
+             *     children: [
+             *         {
+             *             id: 1,
+             *             text: '节点1',
+             *             children: [],
+             *             // 以下属性都可以自定义
+             *             isSelected: true,
+             *             ...
+             *         }
+             *         ...
+             *     ]
+             * }
+             */
             this.allData = this.datasource;
             // 一个扁平化的索引
             // 其中包含父节点信息，以及节点选择状态

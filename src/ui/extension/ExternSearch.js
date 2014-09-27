@@ -60,15 +60,12 @@ define(
                     selects,
                     function (select, index) {
                         var select = this.target.viewContext.get(select);
-                        // 控件不存在
-                        if (!select) {
-                            // 只有扩展处于激活状态才抛异常
-                            if (this.active) {
-                                throw new Error('Cannot find related select "#' + select + '" in view context');
-                            }
-                        }
-                        else {
+                        if (select) {
                             searchControls.selects.push(select);
+                        }
+                        // 只有扩展处于激活状态才抛异常
+                        else if (this.active) {
+                            throw new Error('Cannot find related select "#' + select + '" in view context');
                         }
                     },
                     this
@@ -82,15 +79,12 @@ define(
 
             if (this.searchBox) {
                 var searchBox = this.target.viewContext.get(this.searchBox);
-                // 可能存在控件其实已经被dispose了的情况，这种情况不需要抛异常
-                if (!searchBox) {
-                    // 只有扩展处于激活状态才抛异常
-                    if (this.active) {
-                        throw new Error('Cannot find related searchBox "#' + searchBox + '" in view context');
-                    }
-                }
-                else {
+                if (searchBox) {
                     searchControls.searchBox = searchBox;
+                }
+                // 只有扩展处于激活状态才抛异常
+                else if (this.active) {
+                    throw new Error('Cannot find related searchBox "#' + searchBox + '" in view context');
                 }
             }
 
@@ -127,7 +121,7 @@ define(
             this.handleSearchControls(
                 function (searchBox) {
                     var keywords = searchBox.getValue();
-                    filters.push({ key: 'name', value: keywords });
+                    filters.push({ key: '', value: keywords });
                 },
                 function (select, index) {
                     var item = select.getSelectedItem();
@@ -136,6 +130,11 @@ define(
                     }
                 }
             );
+
+            // 如果就只有一个搜索框，就只发一个关键词
+            if (filters.length === 1 && filters[0].key === '') {
+                filters = filters[0].value;
+            }
 
             this.target.search(filters);
         }
@@ -160,7 +159,6 @@ define(
          */
         ExternSearch.prototype.inactivate = function () {
             Extension.prototype.inactivate.apply(this, arguments);
-            debugger;
             this.handleSearchControls(
                 function (searchBox) {
                     searchBox.un('search', search, this);
