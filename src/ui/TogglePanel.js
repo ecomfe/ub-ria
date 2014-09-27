@@ -73,9 +73,16 @@ define(
         };
 
         function onToggle() {
+            this.toggleContent();
+        }
+
+        /**
+         * 切换展开/收起状态
+         */
+        TogglePanel.prototype.toggleContent = function () {
             this.toggleState('expanded');
             this.fire('change');
-        }
+        };
 
         var painters = require('esui/painters');
         /**
