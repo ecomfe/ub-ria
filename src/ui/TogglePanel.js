@@ -73,13 +73,13 @@ define(
         };
 
         function onToggle() {
-            this.toggle();
+            this.toggleContent();
         }
 
         /**
          * 切换展开/收起状态
          */
-        TogglePanel.prototype.toggle = function () {
+        TogglePanel.prototype.toggleContent = function () {
             this.toggleState('expanded');
             this.fire('change');
         };
