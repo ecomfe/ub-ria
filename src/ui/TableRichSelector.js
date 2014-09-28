@@ -6,7 +6,6 @@
  * @file 选择控件中所用到的列表形结构
  * @author lixiang(lixiang05@baidu.com)
  */
-
 define(
     function (require) {
         var lib = require('esui/lib');
@@ -120,10 +119,19 @@ define(
 
             // 把选择状态merge进allData的数据项中
             var selectedData = this.selectedData || [];
-            // 单选模式，保存第一个值为当前选值
-            if (!this.multi && selectedData.length) {
-                this.currentSelectedId = selectedData[0].id;
+            // 单选模式
+            if (!this.multi) {
+                // 如果是数组，保存第一个值为当前选值
+                if (selectedData.length) {
+                    this.currentSelectedId = selectedData[0].id;
+                }
+                // 否则这个值就是id
+                else if (!u.isArray(selectedData)) {
+                    this.currentSelectedId = selectedData;
+                    selectedData = [{ id: selectedData }];
+                }
             }
+
             u.each(selectedData, function (item, index) {
                 var selectedIndex = indexData[item.id];
                 // 有可能出现已选的数据在备选中已经被删除的情况
