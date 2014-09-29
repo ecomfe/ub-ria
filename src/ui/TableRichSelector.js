@@ -6,7 +6,6 @@
  * @file 选择控件中所用到的列表形结构
  * @author lixiang(lixiang05@baidu.com)
  */
-
 define(
     function (require) {
         var lib = require('esui/lib');
@@ -42,9 +41,9 @@ define(
                 datasource: [],
                 // 选择数据
                 selectedData: [],
-                // 字段
+                // 字段，含义与Table相同，searchScope表示这个字段对搜索关键词是全击中还是部分击中
                 fields: [
-                    { field : 'name', content: 'name' }
+                    { field : 'name', content: 'name', searchScope: 'partial', isDefaultSearchField: true }
                 ]
             };
 
@@ -120,10 +119,19 @@ define(
 
             // 把选择状态merge进allData的数据项中
             var selectedData = this.selectedData || [];
-            // 单选模式，保存第一个值为当前选值
-            if (!this.multi && selectedData.length) {
-                this.currentSelectedId = selectedData[0].id;
+            // 单选模式
+            if (!this.multi) {
+                // 如果是数组，保存第一个值为当前选值
+                if (selectedData.length) {
+                    this.currentSelectedId = selectedData[0].id;
+                }
+                // 否则这个值就是id
+                else if (!u.isArray(selectedData)) {
+                    this.currentSelectedId = selectedData;
+                    selectedData = [{ id: selectedData }];
+                }
             }
+
             u.each(selectedData, function (item, index) {
                 var selectedIndex = indexData[item.id];
                 // 有可能出现已选的数据在备选中已经被删除的情况
@@ -141,6 +149,20 @@ define(
                 }
             });
             this.allData = allData;
+
+            // 处理fields，把fields也保存到一个索引中
+            this.fieldsIndex = {};
+            this.defaultSearchFields = [];
+            u.each(
+                this.fields,
+                function (field) {
+                    this.fieldsIndex[field.field] = field;
+                    if (field.isDefaultSearchField) {
+                        this.defaultSearchFields.push(field.field);
+                    }
+                },
+                this
+            );
         };
 
         /**
@@ -531,21 +553,62 @@ define(
 
 
         /**
-         * 搜索含有关键字的结果，默认以name为目标搜索
+         * 搜索含有关键字的结果
          * 
-         * 可重写
-         *
-         * @param {String} keyword 关键字
+         * @param {Array} filters 过滤参数
          * @public
          */
-        TableRichSelector.prototype.queryItem = function (keyword) {
-            var queriedData = [];
-            u.each(this.allData, function (data, index) {
-                if (data.name.indexOf(keyword) !== -1) {
-                    queriedData.push(data);
+        TableRichSelector.prototype.queryItem = function (filters) {
+            // 查找过滤 [{ keys: ['xxx', 'yyy'], value: 'xxx' }]
+            filters = filters || [];
+            // 判断数据的某个field是命中
+            function checkHitByFilterItem(field, expectValue, data) {
+                var hit = false;
+                var expectValue = lib.trim(expectValue);
+                // 部分击中
+                if (this.fieldsIndex[field].searchScope === 'partial') {
+                    if (data[field].indexOf(expectValue) !== -1) {
+                        hit = true;
+                    }
                 }
-            });
-            this.queriedData = queriedData;
+                else if (data[field] === expectValue) {
+                    hit = true;
+                }
+                return hit;
+            }
+
+            // 判断行数据是否符合过滤要求
+            function checkRowHit(data, index) {
+                return !u.any(
+                    filters,
+                    function (filter) {
+                        var searchFields = []
+                        // keys未定义，则默认选择通过field指定的并集
+                        if (filter.keys === undefined ) {
+                            searchFields = this.defaultSearchFields;
+                        }
+                        else {
+                            searchFields = filter.keys;
+                        }
+                        return !u.any(
+                            searchFields,
+                            function (searchField) {
+                                // 命中一个就算命中
+                                return checkHitByFilterItem.call(this, searchField, filter.value, data);
+                            },
+                            this
+                        );
+                    },
+                    this
+                );
+            }
+
+            this.queriedData = u.filter(
+                this.allData,
+                checkRowHit,
+                this
+            );
+
             // 更新状态
             this.addState('queried');
             this.refreshContent();

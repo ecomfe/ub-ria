@@ -280,15 +280,36 @@ define(
          * @ignore
          */
         function search(e) {
-            var keyword = e.target.getValue();
-            this.search(keyword);
+            this.search();
         }
 
-        RichSelector.prototype.search = function (keyword) {
-            keyword = lib.trim(keyword);
-            if (keyword) {
+        /**
+         * 按条件搜索
+         * @param {string | Object} args 搜索参数
+         */
+        RichSelector.prototype.search = function (args) {
+            // filterData中的元素要满足一个标准结构: { keys: [], value: '' }
+            // 其中数组型的keys代表一种“并集”关系，也可以不提供
+            // filterData的各个元素代表“交集”关系。
+            var event = {
+                filterData: []
+            };
+            event = this.fire('search', event);
+            // 如果没有外部提供搜索条件
+            if (!event.isDefaultPrevented()) {
+                // 取自带搜索框的值
+                var searchBox = this.getSearchBox();
+                if (searchBox) {
+                    var defaultFilter = {
+                        value: lib.trim(searchBox.getValue())
+                    }
+                    event.filterData.push(defaultFilter);
+                }
+            }
+
+            if (event.filterData.length) {
                 // 查询
-                this.queryItem(keyword);
+                this.queryItem(event.filterData);
                 // 更新概要搜索结果区
                 this.refreshResult();
                 // 更新腿部总结果

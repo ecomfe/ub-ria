@@ -9,6 +9,7 @@
  */
 define(
     function (require) {
+        var u = require('underscore');
         var lib = require('esui/lib');
         var Extension = require('esui/Extension');
 
@@ -33,30 +34,36 @@ define(
         ExternSearch.prototype.type = 'ExternSearch';
 
         /**
-         * 指定对应的searchbox的id，必须指定
+         * 指定对应的searchBox的id
          *
          * @type {string | null}
          */
-        ExternSearch.prototype.searchbox = null;
+        ExternSearch.prototype.searchBox = null;
 
         /**
-         * 找到控件对应的`SearchBox`控件
+         * 找到控件对应的搜索类控件
          *
-         * @param {Boolean} isActivated 是否已经activate过
-         * @return {esui.SearchBox}
+         * @return {esui.searchBox}
          */
-        ExternSearch.prototype.resolveSearchBox = function (isActivated) {
-            if (this.searchbox) {
-                var searchbox = this.target.viewContext.get(this.searchbox);
-                // 可能存在控件其实已经被dispose了的情况，这种情况不需要抛异常
-                if (!searchbox && !isActivated) {
-                    throw new Error('Cannot find related searchbox "#' + this.searchbox + '" in view context');
+        ExternSearch.prototype.resolveControl = function () {
+            var searchBox;
+            // 这个searchbox为了向前兼容。。。
+            if (!this.searchBox && this.searchbox) {
+                this.searchBox = this.searchbox;
+            }
+
+            if (this.searchBox) {
+                searchBox = this.target.viewContext.get(this.searchBox);
+                // 只有扩展处于激活状态才抛异常
+                if (!searchBox && this.active) {
+                    throw new Error('Cannot find related searchBox "#' + searchBox + '" in view context');
                 }
-                return searchbox;
             }
             else {
-                throw new Error('searchbox cannot be null');
+                throw new Error('searchBox cannot be null');
             }
+
+            return searchBox;
         };
 
         /**
@@ -65,25 +72,35 @@ define(
          * @override
          */
         ExternSearch.prototype.activate = function () {
-            var searchbox = this.resolveSearchBox();
-
-            // 代理搜索
-            searchbox.on('search', search, this);
+            var searchBox = this.resolveControl();
+            searchBox.on('search', search, this);
 
             // 接收控件内清空搜索操作
             this.target.on('clearquery', clearQuery, this);
+            // 接收控件的search事件
+            this.target.on('search', doSearch, this);
 
             Extension.prototype.activate.apply(this, arguments);
         };
 
         function search(e) {
-            var keywords = e.target.getValue();
-            this.target.search(keywords);
+            this.target.search();
+        }
+
+        function doSearch(e) {
+            var searchBox = this.resolveControl();
+            var filter = { value: searchBox.getValue() };
+            // 外部searchbox是不有配搜索包含关键字段
+            if (searchBox.dataKeys) {
+                filter.keys = lib.splitTokenList(searchBox.dataKeys);
+            }
+            e.filterData.push(filter);
+            e.preventDefault();
         }
 
         function clearQuery() {
-            var searchbox = this.resolveSearchBox();
-            searchbox.set('text', '');
+            var searchBox = this.resolveControl();
+            searchBox.set('text', '');
         }
 
         /**
@@ -92,12 +109,13 @@ define(
          * @override
          */
         ExternSearch.prototype.inactivate = function () {
-            var searchbox = this.resolveSearchBox(true);
-            if (searchbox) {
-                searchbox.un('search', search, this);
-            }
-            this.target.un('clearquery', clearQuery, this);
             Extension.prototype.inactivate.apply(this, arguments);
+
+            var searchBox = this.resolveControl();
+
+            searchBox.un('search', search, this);
+            this.target.un('clearquery', clearQuery, this);
+            this.target.un('search', doSearch, this);
         };
 
         lib.inherits(ExternSearch, Extension);
