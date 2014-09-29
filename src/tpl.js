@@ -75,6 +75,7 @@ define(
             AutoSubmit: 'ub-ria/ui/extension',
             TableTip: 'ub-ria/ui/extension',
             ExternSearch: 'ub-ria/ui/extension',
+            ExternSelect: 'ub-ria/ui/extension',
             TableSubrow: 'esui/extension',
             WordCount: 'ub-ria/ui/extension'
         };

@@ -555,35 +555,11 @@ define(
         /**
          * 搜索含有关键字的结果
          * 
-         * Table不同于一般的选择器，有多个field，
-         * 所以搜索要支持针对某一个或某几个field
-         * 默认以name为目标搜索
-         * 
-         * 可重写
-         *
-         * @param {String} keyword 关键字
+         * @param {Array} filters 过滤参数
          * @public
          */
-        TableRichSelector.prototype.queryItem = function (keyword) {
-            var filters = [];
-            if (u.isString(keyword)) {
-                keyword = lib.trim(keyword);
-                // 来自搜索框的，key置为''
-                filters.push({ key: '', value: keyword });
-            }
-            else if (u.isArray(keyword)) {
-                filters = keyword;
-            }
-            this.filterItems(filters);
-        };
-
-        /**
-         * 过滤搜索
-         *
-         * @public
-         */
-        TableRichSelector.prototype.filterItems = function (filters) {
-            // 查找过滤 [{ key: 'xxx', value: 'xxx' }]
+        TableRichSelector.prototype.queryItem = function (filters) {
+            // 查找过滤 [{ keys: ['xxx', 'yyy'], value: 'xxx' }]
             filters = filters || [];
             // 判断数据的某个field是命中
             function checkHitByFilterItem(field, expectValue, data) {
@@ -606,12 +582,12 @@ define(
                     filters,
                     function (filter) {
                         var searchFields = []
-                        // 说明来自关键词搜索，关键词搜索要考虑‘或’关系
-                        if (filter.key === '') {
+                        // keys未定义，则默认选择通过field指定的并集
+                        if (filter.keys === undefined ) {
                             searchFields = this.keywordSearchFields;
                         }
                         else {
-                            searchFields = [filter.key]
+                            searchFields = filter.keys;
                         }
                         return !u.any(
                             searchFields,
