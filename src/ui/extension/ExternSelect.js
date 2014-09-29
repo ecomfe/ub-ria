@@ -48,21 +48,32 @@ define(
         ExternSelect.prototype.resolveControls = function () {
             var controls = [];
             if (this.selects) {
-                var selects = lib.splitTokenList(this.selects);
-                u.each(
-                    selects,
-                    function (select, index) {
-                        var select = this.target.viewContext.get(select);
-                        if (select) {
-                            controls.push(select);
-                        }
-                        // 只有扩展处于激活状态才抛异常
-                        else if (this.active) {
-                            throw new Error('Cannot find related select "#' + select + '" in view context');
-                        }
-                    },
-                    this
-                );
+                var selects;
+                if (u.isString(this.selects)) {
+                    selects = lib.splitTokenList(this.selects);
+                }
+                else {
+                    selects = this.selects;
+                }
+                if (u.isArray(selects)) {
+                    u.each(
+                        selects,
+                        function (select, index) {
+                            var select = this.target.viewContext.get(select);
+                            if (select) {
+                                controls.push(select);
+                            }
+                            // 只有扩展处于激活状态才抛异常
+                            else if (this.active) {
+                                throw new Error('Cannot find related select "#' + select + '" in view context');
+                            }
+                        },
+                        this
+                    );
+                }
+                else {
+                    throw new Error('selects can only be Array or String');
+                }
             }
             else {
                 throw new Error('selects cannot be null');

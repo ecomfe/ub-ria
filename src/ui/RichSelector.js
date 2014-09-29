@@ -288,11 +288,9 @@ define(
          * @param {string | Object} args 搜索参数
          */
         RichSelector.prototype.search = function (args) {
-            /**
-             * filterData中的元素要满足一个标准结构: { keys: [], value: '' }
-             * 其中数组型的keys代表一种“并集”关系，也可以不提供
-             * filterData的各个元素代表“交集”关系。
-             */
+            // filterData中的元素要满足一个标准结构: { keys: [], value: '' }
+            // 其中数组型的keys代表一种“并集”关系，也可以不提供
+            // filterData的各个元素代表“交集”关系。
             var event = {
                 filterData: []
             };
