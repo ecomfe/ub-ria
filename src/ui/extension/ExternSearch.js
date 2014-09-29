@@ -112,8 +112,10 @@ define(
             Extension.prototype.inactivate.apply(this, arguments);
 
             var searchBox = this.resolveControl();
+            if (searchBox) {
+                searchBox.un('search', search, this);
+            }
 
-            searchBox.un('search', search, this);
             this.target.un('clearquery', clearQuery, this);
             this.target.un('search', doSearch, this);
         };
