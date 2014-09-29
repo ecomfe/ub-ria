@@ -43,7 +43,7 @@ define(
                 selectedData: [],
                 // 字段，含义与Table相同，searchScope表示这个字段对搜索关键词是全击中还是部分击中
                 fields: [
-                    { field : 'name', content: 'name', searchScope: 'partial', isSearchKeyword: true }
+                    { field : 'name', content: 'name', searchScope: 'partial', isDefaultSearchField: true }
                 ]
             };
 
@@ -152,13 +152,13 @@ define(
 
             // 处理fields，把fields也保存到一个索引中
             this.fieldsIndex = {};
-            this.keywordSearchFields = [];
+            this.defaultSearchFields = [];
             u.each(
                 this.fields,
                 function (field) {
                     this.fieldsIndex[field.field] = field;
-                    if (field.isSearchKeyword) {
-                        this.keywordSearchFields.push(field.field);
+                    if (field.isDefaultSearchField) {
+                        this.defaultSearchFields.push(field.field);
                     }
                 },
                 this
@@ -585,7 +585,7 @@ define(
                         var searchFields = []
                         // keys未定义，则默认选择通过field指定的并集
                         if (filter.keys === undefined ) {
-                            searchFields = this.keywordSearchFields;
+                            searchFields = this.defaultSearchFields;
                         }
                         else {
                             searchFields = filter.keys;
