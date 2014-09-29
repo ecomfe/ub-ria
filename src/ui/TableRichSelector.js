@@ -564,9 +564,10 @@ define(
             // 判断数据的某个field是命中
             function checkHitByFilterItem(field, expectValue, data) {
                 var hit = false;
+                var expectValue = lib.trim(expectValue);
                 // 部分击中
                 if (this.fieldsIndex[field].searchScope === 'partial') {
-                    if (data[field].indexOf(lib.trim(expectValue)) !== -1) {
+                    if (data[field].indexOf(expectValue) !== -1) {
                         hit = true;
                     }
                 }
