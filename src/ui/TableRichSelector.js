@@ -121,14 +121,14 @@ define(
             var selectedData = this.selectedData || [];
             // 单选模式
             if (!this.multi) {
-                // 如果是数组，保存第一个值为当前选值
-                if (selectedData.length) {
-                    this.currentSelectedId = selectedData[0].id;
-                }
-                // 否则这个值就是id
-                else if (!u.isArray(selectedData)) {
+                // 如果不是数组，这个值就是id
+                if (!u.isArray(selectedData)) {
                     this.currentSelectedId = selectedData;
                     selectedData = [{ id: selectedData }];
+                }
+                // 如果是数组，保存第一个值为当前选值
+                else if (selectedData.length) {
+                    this.currentSelectedId = selectedData[0].id;
                 }
             }
 
@@ -550,7 +550,6 @@ define(
                 control.fire('change');
             }
         }
-
 
         /**
          * 搜索含有关键字的结果

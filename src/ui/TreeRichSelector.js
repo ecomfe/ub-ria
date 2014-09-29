@@ -592,6 +592,7 @@ define(
          * @ignore
          */
         TreeRichSelector.prototype.getLeafItems = function (data, isSelected) {
+            data = data || this.allData.children;
             var leafItems = [];
             var me = this;
             var indexData = this.indexData;
