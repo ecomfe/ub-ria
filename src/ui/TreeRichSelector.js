@@ -710,12 +710,12 @@ define(
         /**
          * 搜索含有关键字的结果
          *
-         * @param {ui.TreeRichSelector} treeForSelector 类实例
-         * @param {String} keyword 关键字
+         * @param {Array} filters 过滤参数
          * @return {Array} 结果集
          */
-        TreeRichSelector.prototype.queryItem = function (keyword) {
-            keyword = lib.trim(keyword);
+        TreeRichSelector.prototype.queryItem = function (filters) {
+            // Tree就只定位一个关键词字段
+            var keyword = filters[0].value;
             var filteredTreeData = [];
             filteredTreeData = queryFromNode(keyword, this.allData);
             // 更新状态

@@ -41,58 +41,29 @@ define(
         ExternSearch.prototype.searchBox = null;
 
         /**
-         * 指定对应的一组select的id, 逗号或空格分隔
-         *
-         * @type {string | null}
-         */
-        ExternSearch.prototype.selects = null;
-
-        /**
          * 找到控件对应的搜索类控件
          *
          * @return {esui.searchBox}
          */
-        ExternSearch.prototype.resolveSearchControls = function () {
-            var searchControls = { searchBox: null, selects: [] };
-            if (this.selects) {
-                var selects = lib.splitTokenList(this.selects);
-                u.each(
-                    selects,
-                    function (select, index) {
-                        var select = this.target.viewContext.get(select);
-                        if (select) {
-                            searchControls.selects.push(select);
-                        }
-                        // 只有扩展处于激活状态才抛异常
-                        else if (this.active) {
-                            throw new Error('Cannot find related select "#' + select + '" in view context');
-                        }
-                    },
-                    this
-                );
-            }
-
+        ExternSearch.prototype.resolveControl = function () {
+            var searchBox;
             // 这个searchbox为了向前兼容。。。
             if (!this.searchBox && this.searchbox) {
                 this.searchBox = this.searchbox;
             }
 
             if (this.searchBox) {
-                var searchBox = this.target.viewContext.get(this.searchBox);
-                if (searchBox) {
-                    searchControls.searchBox = searchBox;
-                }
+                searchBox = this.target.viewContext.get(this.searchBox);
                 // 只有扩展处于激活状态才抛异常
-                else if (this.active) {
+                if (!searchBox && this.active) {
                     throw new Error('Cannot find related searchBox "#' + searchBox + '" in view context');
                 }
             }
-
-            if (!searchControls.searchBox && !searchControls.selects.length && this.active) {
-                throw new Error('searchBox and select cannot both be null');
+            else {
+                throw new Error('searchBox cannot be null');
             }
 
-            return searchControls;
+            return searchBox;
         };
 
         /**
@@ -101,55 +72,35 @@ define(
          * @override
          */
         ExternSearch.prototype.activate = function () {
-            this.handleSearchControls(
-                function (searchBox) {
-                    searchBox.on('search', search, this);
-                },
-                function (select, index) {
-                    select.on('change', search, this);
-                }
-            );
+            var searchBox = this.resolveControl();
+            searchBox.on('search', search, this);
 
             // 接收控件内清空搜索操作
             this.target.on('clearquery', clearQuery, this);
+            // 接收控件的search事件
+            this.target.on('search', doSearch, this);
 
             Extension.prototype.activate.apply(this, arguments);
         };
 
         function search(e) {
-            var filters = [];
-            this.handleSearchControls(
-                function (searchBox) {
-                    var keywords = searchBox.getValue();
-                    filters.push({ key: '', value: keywords });
-                },
-                function (select, index) {
-                    var item = select.getSelectedItem();
-                    if (item.value !== '' && select.dataKey) {
-                        filters.push({ key: select.dataKey, value: item.value });
-                    }
-                }
-            );
+            this.target.search();
+        }
 
-            // 如果就只有一个搜索框，就只发一个关键词
-            if (filters.length === 1 && filters[0].key === '') {
-                filters = filters[0].value;
+        function doSearch(e) {
+            var searchBox = this.resolveControl();
+            var filter = { value: searchBox.getValue() };
+            // 外部searchbox是不有配搜索包含关键字段
+            if (searchBox.dataKeys) {
+                filter.keys = lib.splitTokenList(searchBox.dataKeys);
             }
-
-            this.target.search(filters);
+            e.filterData.push(filter);
+            e.preventDefault();
         }
 
         function clearQuery() {
-            this.handleSearchControls(
-                function (searchBox) {
-                    searchBox.set('text', '');
-                },
-                function (select) {
-                    select.un('change', search, this);
-                    select.setProperties({ selectedIndex: 0 });
-                    select.on('change', search, this);
-                }
-            );
+            var searchBox = this.resolveControl();
+            searchBox.set('text', '');
         }
 
         /**
@@ -159,38 +110,12 @@ define(
          */
         ExternSearch.prototype.inactivate = function () {
             Extension.prototype.inactivate.apply(this, arguments);
-            this.handleSearchControls(
-                function (searchBox) {
-                    searchBox.un('search', search, this);
-                },
-                function (select) {
-                    select.un('change', search, this);
-                },
-                true
-            );
 
+            var searchBox = this.resolveControl();
+
+            searchBox.un('search', search, this);
             this.target.un('clearquery', clearQuery, this);
-        };
-
-        /**
-         * 搜索控件的处理函数
-         * @param {Function} searchBoxHandler searchBox的处理句柄
-         * @param {Function} selectHandler select的处理句柄
-         */
-        ExternSearch.prototype.handleSearchControls = function (searchBoxHandler, selectHandler) {
-            var searchControls = this.resolveSearchControls();
-            var filters = [];
-            if (searchControls.searchBox) {
-                searchBoxHandler.call(this, searchControls.searchBox);
-            }
-
-            if (searchControls.selects.length) {
-                u.each(
-                    searchControls.selects,
-                    selectHandler,
-                    this
-                );
-            }
+            this.target.un('search', doSearch, this);
         };
 
         lib.inherits(ExternSearch, Extension);
