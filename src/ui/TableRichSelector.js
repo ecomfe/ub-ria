@@ -167,7 +167,7 @@ define(
 
         /**
          * 更新备选区
-         * 
+         *
          * @override
          */
         TableRichSelector.prototype.refreshContent = function () {
@@ -553,7 +553,7 @@ define(
 
         /**
          * 搜索含有关键字的结果
-         * 
+         *
          * @param {Array} filters 过滤参数
          * @public
          */
@@ -563,7 +563,12 @@ define(
             // 判断数据的某个field是命中
             function checkHitByFilterItem(field, expectValue, data) {
                 var hit = false;
-                var expectValue = lib.trim(expectValue);
+
+                // 只有字符串类去空格
+                if (typeof expectValue === 'string') {
+                    expectValue = lib.trim(expectValue);
+                }
+
                 // 部分击中
                 if (this.fieldsIndex[field].searchScope === 'partial') {
                     if (data[field].indexOf(expectValue) !== -1) {
