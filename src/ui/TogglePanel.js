@@ -59,16 +59,30 @@ define(
             this.set('title', titleElem && titleElem.innerHTML);
             titlePanel.helper.addDOMEvent(titlePanel.main, 'click', lib.bind(onToggle, this));
 
-            var contentPanel = ui.create('Panel', { main: contentElem });
+            var options = {
+                main: contentElem,
+                childName: 'content',
+                viewContext: this.viewContext,
+                renderOptions: this.renderOptions
+            };
+
+            var contentPanel = ui.create('Panel', options);
             this.helper.addPartClasses('content', contentPanel.main);
             this.addChild(contentPanel, 'content');
-            this.set('content', contentElem && contentElem.innerHTML);
+            contentPanel.render();
         };
 
         function onToggle() {
+            this.toggleContent();
+        }
+
+        /**
+         * 切换展开/收起状态
+         */
+        TogglePanel.prototype.toggleContent = function () {
             this.toggleState('expanded');
             this.fire('change');
-        }
+        };
 
         var painters = require('esui/painters');
         /**
