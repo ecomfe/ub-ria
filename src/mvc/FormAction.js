@@ -117,7 +117,7 @@ define(
          * @return {er.Promise}
          */
         FormAction.prototype.submitEntity = function (entity) {
-            var method = this.context.formType === 'update' ? 'update' : 'save';
+            var method = this.context.formType !== 'update' ? 'save' : 'update';
             try {
                 return this.model[method](entity)
                     .then(
