@@ -111,19 +111,36 @@ define(
         }
 
         /**
+         * FormType和Model提交接口的Map表
+         *
+         * @type <Object>
+         */
+        FormAction.prototype.methodMap = {
+            create: 'save',
+            update: 'update',
+            copy: 'save'
+        };
+
+        /**
          * 提交实体（新建或更新）
          *
          * @param {Object} entity 实体数据
-         * @return {er.Promise}
+         * @param {er.Promise}
          */
         FormAction.prototype.submitEntity = function (entity) {
-            var method = this.context.formType !== 'update' ? 'save' : 'update';
+            var method = this.methodMap[this.context.formType];
             try {
-                return this.model[method](entity)
-                    .then(
-                        u.bind(this.handleSubmitResult, this),
-                        u.bind(handleError, this)
-                    );
+                if (method) {
+                    return this.model[method](entity)
+                        .then(
+                            u.bind(this.handleSubmitResult, this),
+                            u.bind(handleError, this)
+                        );
+                }
+                else {
+                    throw new Error('Cannot find formType in methodMap');
+                }
+
             }
             catch (ex) {
                 return Deferred.rejected(ex);
