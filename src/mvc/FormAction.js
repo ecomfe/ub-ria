@@ -111,14 +111,19 @@ define(
         }
 
         /**
-         * FormType和Model提交接口的Map表
+         * 根据FormType获取Model提交接口的方法名
          *
-         * @type <Object>
+         * @param {String} formType 表单类型
+         * @return {String}
          */
-        FormAction.prototype.methodMap = {
-            create: 'save',
-            update: 'update',
-            copy: 'save'
+        FormAction.prototype.getMethod = function (formType) {
+            var methodMap = {
+                create: 'save',
+                update: 'update',
+                copy: 'save'
+            };
+
+            return methodMap[formType] || null;
         };
 
         /**
@@ -128,7 +133,8 @@ define(
          * @param {er.Promise}
          */
         FormAction.prototype.submitEntity = function (entity) {
-            var method = this.methodMap[this.context.formType];
+            var method = this.getMethod(this.context.formType);
+
             try {
                 if (method) {
                     return this.model[method](entity)
