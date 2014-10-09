@@ -65,8 +65,7 @@ define(
          * 收集查询参数并触发查询事件
          */
         ListView.prototype.submitSearch = function () {
-            var args = this.getSearchArgs();
-            this.fire('search', { args: args });
+            this.fire('search');
         };
 
         /**
@@ -151,8 +150,8 @@ define(
             var form = this.get('filter');
             var args = form ? form.getData() : {};
             // 加上原本的排序方向和排序字段名
-            args.order = this.model.get('order');
-            args.orderBy = this.model.get('orderBy');
+            args.order = this.get('table').order;
+            args.orderBy = this.get('table').orderBy;
 
             var keyword = this.get('keyword');
             if (keyword) {
@@ -180,15 +179,26 @@ define(
         };
 
         /**
+         * 获取分页数据
+         *
+         * @return {number}
+         */
+        ListView.prototype.getPageIndex = function () {
+            return this.get('pager').get('page');
+        };
+
+        /**
          * 每页条数变更监听函数
          *
          * @event
          * @param {mini-event.Event} e 事件对象
          */
         function onChangePageSize(e) {
-            var pageSize = e.target.get('pagesize');
+            var pageSize = e.target.get('pageSize');
             this.updatePageSize(pageSize);
         }
+
+
 
         /**
          * 更新每页显示数
@@ -207,18 +217,16 @@ define(
          * @param {mini-event.Event} e 事件对象
          */
         function onChangePage(e) {
-            var page = e.target.get('page');
-            this.updatePageIndex(page);
+            this.updatePageIndex();
         }
 
         /**
          * 更新页码
          *
-         * @param {number} page 页码
          * @ignore
          */
-        ListView.prototype.updatePageIndex = function(page) {
-            this.fire('pagechange', { page: page });
+        ListView.prototype.updatePageIndex = function() {
+            this.fire('pagechange');
         };
 
         /**
@@ -270,7 +278,7 @@ define(
                 hideFilter.call(this);
             }
             else {
-                this.fire('filterreset');
+                this.submitSearchWithoutKey();
             }
         }
 
@@ -296,9 +304,55 @@ define(
                 },
                 this
             );
+            this.getGroup('clear-button').each(
+                function (button) {
+                    var name = button.get('name');
+                    button.on(
+                        'click',
+                        function (e) {
+                            this.submitSearchWithoutKey(name);
+                        },
+                        this
+                    );
+                },
+                this
+            );
 
             BaseView.prototype.bindEvents.apply(this, arguments);
         };
+
+        /**
+         * 取消某个或全部条件时，触发查询事件
+         * 同时应该把页数置为 1
+         *
+         * @param {string} name 要清除的查询条件。为空时表示取消全部filter内条件。
+         */
+        ListView.prototype.submitSearchWithoutKey = function (name) {
+            if (name) {
+                clearFilterValue.call(this, name);
+            }
+            else {
+                var view = this;
+                this.getGroup('clear-button').each(
+                    function (button) {
+                        var name = button.get('name');
+                        clearFilterValue.call(view, name);
+                    }
+                );
+            }
+            this.fire('search');
+        };
+
+        /**
+         * 取消筛选，将条件设为默认值
+         *
+         * @param {string} name 需要取消的条件
+         * @ignore
+         */
+        function clearFilterValue(name) {
+            var value = this.model.defaultArgs[name] || '';
+            this.get(name).setValue(value);
+        }
 
         /**
          * 控制元素展现
