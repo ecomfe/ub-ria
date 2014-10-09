@@ -63,6 +63,7 @@ define(
 
         /**
          * 收集查询参数并触发查询事件
+         *
          */
         ListView.prototype.submitSearch = function () {
             this.fire('search');

@@ -29,7 +29,7 @@ define(
          *
          * 作为{ub-ria.FormModel}的属性，用于对表单提交的数据在发送至后端前进行
          * 检验，检验规则由模块下相应的schema.js决定。
-         * 
+         *
          * 默认提供required, type, maxLength, minLength, rangeLength,
          * min, max, range, enum, pattern十种校验器，每种检验器具有不同的优先级
          * 用户自定义的检验器可通过{EntityValidator.addCheckers}进行全局配置
@@ -82,7 +82,7 @@ define(
          *     或者多个错误信息模板组成的对象
          * @param {number} checker.priority 校验器优先级
          * @param {function} checker.check 校验函数
-         * @return {object} 添加成功返回checker，失败返回null 
+         * @return {object} 添加成功返回checker，失败返回null
          */
         EntityValidator.prototype.addChecker = function (checker) {
             if (checker
@@ -151,7 +151,7 @@ define(
         /**
          * 获取validator的rule
          *
-         * @return {object | undefined} 
+         * @return {object | undefined}
          */
         EntityValidator.prototype.getRule = function () {
             return this.rule;
@@ -179,7 +179,7 @@ define(
 
         /**
          * 实际校验函数，遍历schema中每个字段的定义
-         * 
+         *
          * @param {object} schema 实体定义
          * @param {object} entity 表单提交的实体
          * @param {object[]} errors 错误字段、错误信息数组
@@ -236,7 +236,7 @@ define(
 
         /**
          * 执行对当前字段的校验，校验通过返回true，不通过返回对象
-         * 
+         *
          * @param {object[]} fieldCheckers 针对某字段的检验器数组，按优先级高低排序
          * @param {object[]} checkerOptions
          * @param {string} checkerOptions.value 待检验的字段值
@@ -281,7 +281,7 @@ define(
 
         /**
          * 根据字段定义和错误信息模板，生成错误信息
-         * 
+         *
          * @param {string} template 错误信息模板
          * @param {fieldSchema} fieldSchema 字段定义
          * @return {string} 错误信息
@@ -361,7 +361,7 @@ define(
 
         /**
          * 生成某一字段的按优先级高低排序的检验器数组
-         * 
+         *
          * @param {object} fieldSchema为字段定义
          * @return {object} 检验器对象组成的有序数组
          */
@@ -370,7 +370,7 @@ define(
             var checkers = this.getCheckers();
             var fieldCheckers = [];
 
-            for (var i = 0; i < checkerNames.length; i++ ) {
+            for (var i = 0; i < checkerNames.length; i++) {
                 if (checkers[checkerNames[i]]) {
                     fieldCheckers.push(checkers[checkerNames[i]]);
                 }
@@ -387,7 +387,7 @@ define(
 
         /**
          * 根据field定义，生成该字段的检验器名组成的数组
-         * 
+         *
          * @param {object} fieldSchema 字段的定义
          * @return {string[]} 检验器名组成的数组
          * @ignore
@@ -421,7 +421,7 @@ define(
         }
 
         /**
-         * 
+         *
          * @param {string[]} list 检查器名数组
          * @param {string} range 上下界检查器名
          * @param {string} min 下界检查器名

@@ -38,7 +38,7 @@ define(
         /**
          * 设置当前对象关联的{@link mvc.EntityValidator}实例
          *
-         * @param {mvc.EntityValidator} 关联的实例
+         * @param {mvc.EntityValidator} validator 关联的实例
          */
         FormModel.prototype.setValidator = function (validator) {
             if (validator) {
@@ -74,7 +74,7 @@ define(
         /**
          * 保存新建的实体
          *
-         * @param {Object} 新建的实体对象
+         * @param {Object} entity 新建的实体对象
          * @return {er.Promise}
          */
         FormModel.prototype.save = function (entity) {
@@ -100,7 +100,7 @@ define(
         /**
          * 更新已有的实体
          *
-         * @param {Object} 待更新的实体对象
+         * @param {Object} entity 待更新的实体对象
          * @return {er.Promise}
          */
         FormModel.prototype.update = function (entity) {

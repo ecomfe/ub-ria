@@ -139,7 +139,7 @@ define(
                 (this.name ? 'name="' + this.name + '" ' : ' '),
                 '/>'
             ];
-            //附加参数
+            // 附加参数
             u.each(this.extraArgs, function (value, name) {
                 html.push(
                     '<input type="hidden" name="' + name + '" ',
@@ -194,7 +194,7 @@ define(
 
         /**
          * 清空上传图像
-         * 
+         *
          * 清空操作主要做两件事
          * 1. 清空Uploader的fileInfo
          * 2. 清空input的value

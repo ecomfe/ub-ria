@@ -15,16 +15,23 @@
             "name": "wangyaqiong"
         }
     ],
-    "dependencies": {
-        "er": ">=3.1.x",
-        "esui": ">=3.1.x",
-        "ef": ">=3.1.x",
-        "underscore": "1.5.x",
-        "mini-event": "1.x",
-        "etpl": "2.x",
-        "moment": "2.x"
-    },
     "main": "main",
     "description": "联盟前端产品RIA基础库",
-    "homepage": "https://github.com/ecomfe/ub-ria"
+    "homepage": "https://github.com/ecomfe/ub-ria",
+    "edp": {
+        "wwwroot": "/",
+        "depDir": "dep",
+        "srcDir": "src",
+        "loaderAutoConfig": "js,htm,html,tpl,vm,phtml",
+        "loaderUrl": "http://s1.bdstatic.com/r/www/cache/ecom/esl/1-8-2/esl.js",
+        "dependencies": {
+            "er": ">=3.1.x",
+            "esui": ">=3.1.x",
+            "ef": ">=3.1.x",
+            "underscore": "1.5.x",
+            "mini-event": "1.x",
+            "etpl": "2.x",
+            "moment": "2.x"
+        }
+    }
 }

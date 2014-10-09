@@ -135,7 +135,6 @@ define(
          * @override
          */
         WordCount.prototype.activate = function () {
-            var target = this.target;
             var maxLength = this.getMaxLength();
 
             if (maxLength) {
@@ -154,7 +153,7 @@ define(
         WordCount.prototype.inactivate = function () {
             this.target.un('input', checkLength, this);
             this.target.un('afterrender', checkLength, this);
-            
+
             Extension.prototype.inactivate.apply(this, arguments);
         };
 

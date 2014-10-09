@@ -41,7 +41,7 @@ define(
             }
             else {
                 key = Object.prototype.toString.call(value);
-                key = key.substring(8, key.length-1);
+                key = key.substring(8, key.length - 1);
             }
 
             return typeMapping[key] === true || u.indexOf(typeMapping[key], expectedType) >= 0;

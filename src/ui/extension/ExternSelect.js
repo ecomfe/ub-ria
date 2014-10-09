@@ -107,7 +107,6 @@ define(
         }
 
         function doSearch(e) {
-            var filters = [];
             this.handleControls(
                 function (select, index) {
                     var item = select.getSelectedItem();
