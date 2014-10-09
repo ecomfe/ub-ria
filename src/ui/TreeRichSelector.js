@@ -16,9 +16,9 @@ define(
 
 
         var u = require('underscore');
-        var util = require('ub-ria/util');
-        var RichSelector = require('ub-ria/ui/RichSelector');
-        var TreeStrategy = require('ub-ria/ui/SelectorTreeStrategy');
+        var util = require('../util');
+        var RichSelector = require('./RichSelector');
+        var TreeStrategy = require('./SelectorTreeStrategy');
 
         /**
          * 控件类
@@ -139,7 +139,6 @@ define(
          * @ignore
          */
         TreeRichSelector.prototype.adaptData = function () {
-            var control = this;
             var selectedData = [];
             /**
              * datasource的数据结构：
@@ -176,7 +175,7 @@ define(
                         if (child.hasOwnProperty('isSelected')) {
                             indexData[child.id].isSelected = child.isSelected; 
                         }
-                        if (indexData[child.id].isSelected == true) {
+                        if (indexData[child.id].isSelected) {
                             selectedData.push(child);
                         }
                     }
@@ -249,7 +248,6 @@ define(
                 tree.appendTo(queryList.main);
 
                 var control = this;
-                var indexData = this.indexData;
                 tree.on(
                     'selectnode',
                     function (e) {
@@ -440,7 +438,7 @@ define(
                 function (node) {
                     var id = node.id !== undefined ? node.id : node;
                     var item = indexData[id];
-                    if (item != null && item !== undefined) {
+                    if (item != null) {
                         // 更新状态，但不触发事件
                         selectItem(control, id, toBeSelected);
                         trySyncParentAndChildrenStates(control, item, toBeSelected);
@@ -495,7 +493,7 @@ define(
                 deleteItem(this, item.node.id);
                 this.fire('change');
             }
-        }
+        };
 
         /**
          * 删除选择的节点
@@ -630,7 +628,6 @@ define(
             if (!this.allData) {
                 return [];
             }
-            var data = this.allData.children;
             var selectedItems = [];
             var control = this;
             this.walkTree(
@@ -792,7 +789,7 @@ define(
                 },
                 this
             );
-        }
+        };
 
         function isLeaf(node) {
             return !node.children;
