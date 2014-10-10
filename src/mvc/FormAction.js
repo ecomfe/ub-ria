@@ -109,19 +109,42 @@ define(
         }
 
         /**
+         * 根据FormType获取Model提交接口的方法名
+         *
+         * @param {String} formType 表单类型
+         * @return {String}
+         */
+        FormAction.prototype.getMethod = function (formType) {
+            var methodMap = {
+                create: 'save',
+                update: 'update',
+                copy: 'save'
+            };
+
+            return methodMap[formType] || null;
+        };
+
+        /**
          * 提交实体（新建或更新）
          *
          * @param {Object} entity 实体数据
-         * @return {er.Promise}
+         * @param {er.Promise}
          */
         FormAction.prototype.submitEntity = function (entity) {
-            var method = this.context.formType === 'update' ? 'update' : 'save';
+            var method = this.getMethod(this.context.formType);
+
             try {
-                return this.model[method](entity)
-                    .then(
-                        u.bind(this.handleSubmitResult, this),
-                        u.bind(handleError, this)
-                    );
+                if (method) {
+                    return this.model[method](entity)
+                        .then(
+                            u.bind(this.handleSubmitResult, this),
+                            u.bind(handleError, this)
+                        );
+                }
+                else {
+                    throw new Error('Cannot find formType in methodMap');
+                }
+
             }
             catch (ex) {
                 return Deferred.rejected(ex);
