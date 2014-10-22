@@ -111,7 +111,7 @@ define(
                     fields = input.notifyErrors(errors) || fields;
                     continue;
                 }
-                for(var j = 0; j < fields.length; j++){
+                for (var j = 0; j < fields.length; j++) {
                     var fail = fields[j];
                     if (input.name === fail.field) {
                         var state = new ValidityState(false, fail.message);

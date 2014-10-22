@@ -9,7 +9,7 @@ define(
 
         /**
          * 正则检验器，value为null、undefined、''时，返回true
-         * 
+         *
          * @param {string | number} value 待检验的值
          * @param {array} schema 字段的定义、约束, 长度为3的数组
          * @return {boolean} 检验成功返回true，失败返回false
@@ -24,7 +24,7 @@ define(
 
             return regex.test(value);
         }
-        
+
         return checker;
     }
 );

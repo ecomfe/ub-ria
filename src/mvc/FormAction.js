@@ -41,8 +41,7 @@ define(
         /**
          * 处理提交数据时发生的错误，默认无行为，如验证信息显示等需要实现此方法
          *
-         * @param {er.meta.FakeXHR | meta.FieldError[]}，
-         * errors `XMLHttpRequest`对象，或者model校验的错误结果集
+         * @param {er.meta.FakeXHR | meta.FieldError[]} errors `XMLHttpRequest`对象，或者model校验的错误结果集
          * @return {boolean} 返回`true`表示错误已经处理完毕
          */
         FormAction.prototype.handleSubmitError = function (errors) {
@@ -99,8 +98,7 @@ define(
         /**
          * 处理提交错误
          *
-         * @param {er.FakeXHR | meta.FieldError[]}，
-         * errors `XMLHttpRequest`对象，或者model校验的错误信息集
+         * @param {er.FakeXHR | meta.FieldError[]} errors `XMLHttpRequest`对象，或者model校验的错误信息集
          * @ignore
          */
         function handleError(errors) {
@@ -111,19 +109,42 @@ define(
         }
 
         /**
+         * 根据FormType获取Model提交接口的方法名
+         *
+         * @param {String} formType 表单类型
+         * @return {String}
+         */
+        FormAction.prototype.getMethod = function (formType) {
+            var methodMap = {
+                create: 'save',
+                update: 'update',
+                copy: 'save'
+            };
+
+            return methodMap[formType] || null;
+        };
+
+        /**
          * 提交实体（新建或更新）
          *
          * @param {Object} entity 实体数据
-         * @return {er.Promise}
+         * @param {er.Promise}
          */
         FormAction.prototype.submitEntity = function (entity) {
-            var method = this.context.formType === 'update' ? 'update' : 'save';
+            var method = this.getMethod(this.context.formType);
+
             try {
-                return this.model[method](entity)
-                    .then(
-                        u.bind(this.handleSubmitResult, this),
-                        u.bind(handleError, this)
-                    );
+                if (method) {
+                    return this.model[method](entity)
+                        .then(
+                            u.bind(this.handleSubmitResult, this),
+                            u.bind(handleError, this)
+                        );
+                }
+                else {
+                    throw new Error('Cannot find formType in methodMap');
+                }
+
             }
             catch (ex) {
                 return Deferred.rejected(ex);

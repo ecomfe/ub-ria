@@ -12,7 +12,7 @@ define(
         var u = require('underscore');
         var exports = {};
 
-        function filterNode (filter, node) {
+        function filterNode(filter, node) {
             // 过滤的条件是自身符合`filter`，或子节点有任意一个能通过过滤（递归）
             if (node.children) {
                 node.children = u.filter(

@@ -421,12 +421,6 @@ define(
          */
         ListModel.prototype.getRestoreAdvice = u.partial(ListModel.prototype.getAdvice, 1);
 
-        function getClearURL(model, name) {
-            var url = model.get('url');
-            var query = u.omit(url.getQuery(), name);
-            return '#' + require('er/URL').withQuery(url.getPath(), query);
-        }
-
         /**
          * 返回原始筛选配置数组
          * @override
@@ -450,8 +444,8 @@ define(
                 function (rawFilter, name) {
                     var filter = {
                         text: typeof rawFilter.text === 'function' ? rawFilter.text(rawFilter) : rawFilter.text,
-                        clearURL: getClearURL(this, name),
-                        defaultValue: defaultArgs[name]
+                        defaultValue: defaultArgs[name],
+                        name: name
                     };
 
                     u.defaults(filter, rawFilter);

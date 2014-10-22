@@ -9,7 +9,6 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
         var lib = require('esui/lib');
         var Extension = require('esui/Extension');
 

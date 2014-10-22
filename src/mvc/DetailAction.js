@@ -31,8 +31,7 @@ define(
         function getURLForQuery(args) {
             var url = this.context.url;
             var path = url.getPath();
-            // 扩展原有url
-            args = u.extend(url.getQuery(), args);
+
             args = require('../util').purify(args);
 
             return require('er/URL').withQuery(path, args).toString();
@@ -52,18 +51,27 @@ define(
          * 列表搜索
          *
          * @param {mini-event.Event} e 事件对象
-         * @param {Object} e.args 查询参数
+         * @param {boolean} withPage 列表是否用自己的page
          * @ignore
          */
-        function search(e) {
+        function refreshList(e, withPage) {
             // 防止子Action自己跳转
             e.preventDefault();
             var args = {
                 id: this.model.get('id')
             };
+
+            var query = this.view.getListQuery();
+
+            // 当为切换页数的操作，query能自己拿到正确的页数。
+            // 否则回到第一页。
+            if (!withPage) {
+                query.page = 1;
+            }
+
             // 所有列表参数加上`list.`前缀
             u.each(
-                e.args,
+                query,
                 function (value, key) {
                     args['list.' + key] = value;
                 }
@@ -72,23 +80,13 @@ define(
         }
 
         /**
-         * - 详情页列表中切换页面后，必须让整个`detail`页刷新。
-         * - 否则`f5`后，列表又会回到第一页。
+         * 切换页数引起的search
+         *
+         * @param {mini-event.Event} e 事件对象
+         * @ignore
          */
-        function forwardToPage(e) {
-            // 防止子Action自己跳转
-            e.preventDefault();
-            this.reloadWithQueryUpdate({ 'list.page': e.page });
-        }
-
-        /**
-         * - 详情页列表中的数据，切换状态后，必须让整个`detail`页刷新。
-         * - 否则`detail`上方的统计信息将得不到更新。
-         */
-        function reloadEntityStatus(e) {
-            // 防止子Action自己跳转
-            e.preventDefault();
-            this.reloadWithQueryUpdate({});
+        function changePage(e) {
+            refreshList.call(this, e, true);
         }
 
         /**
@@ -98,10 +96,8 @@ define(
          */
         exports.initBehavior = function () {
             this.$super(arguments);
-
-            this.view.on('search', search, this);
-            this.view.on('listpagechange', forwardToPage, this);
-            this.view.on('liststatusupdate', reloadEntityStatus, this);
+            this.view.on('listrefresh', refreshList, this);
+            this.view.on('pagechange', changePage, this);
         };
 
 

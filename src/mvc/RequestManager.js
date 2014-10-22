@@ -71,7 +71,7 @@ define(
         /**
          * 查找请求对应的预注册的配置项
          *
-         * @param {Object} data 实例
+         * @param {Object} instance 实例
          * @param {string} name 请求名称
          * @return {Object | null}
          */
@@ -287,7 +287,9 @@ define(
         RequestManager.prototype.dispose = function () {
             u.each(
                 this.runningRequests,
-                function (cache) { cache && cache.xhr.abort(); }
+                function (cache) {
+                    cache && cache.xhr.abort();
+                }
             );
             this.runningRequests = null;
         };

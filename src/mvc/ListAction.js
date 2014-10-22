@@ -40,15 +40,13 @@ define(
 
         /**
          * 进行查询
-         *
-         * @param {Object} args 查询参数
          */
-        ListAction.prototype.performSearch = function (args) {
-            var event = this.fire('search', { args: args });
+        ListAction.prototype.performSearch = function () {
+            var event = this.fire('search');
             if (!event.isDefaultPrevented()) {
-                // 自动翻页到1
-                args.page = 1;
-                this.reloadWithQueryUpdate(args);
+                var query = this.getSearchQuery();
+                query.page = 1;
+                this.reloadWithQueryUpdate(query);
             }
         };
 
@@ -65,7 +63,7 @@ define(
 
         /**
          * 获取指定页码的跳转URL(此接口目前不用了，但是为了防止外部已被调用，所以维持)
-         * 
+         *
          * @deprecated
          *
          * @param {number} page 指定的页码
@@ -89,12 +87,23 @@ define(
         /**
          * 查询的事件处理函数
          *
-         * @param {Object} e 事件对象
          * @ignore
          */
-        function search(e) {
-            this.performSearch(e.args);
+        function search() {
+            this.performSearch();
         }
+
+        /**
+         * 获取查询条件
+         *
+         * @return {object} 查询条件
+         */
+        ListAction.prototype.getSearchQuery = function () {
+            var query = this.view.getSearchArgs();
+            query.page = this.view.getPageIndex();
+
+            return query;
+        };
 
         /**
          * 更新每页显示条数
@@ -112,28 +121,27 @@ define(
         /**
          * 每页大小更新后重新加载操作
          *
-         * @param {number} pageSize 新的页尺寸
          * @ignore
          */
-        function afterPageSizeUpdate(pageSize) {
-            var event = this.fire('pagesizechange', { pageSize: pageSize });
+        function afterPageSizeUpdate() {
+            var event = this.fire('pagesizechange');
             if (!event.isDefaultPrevented()) {
-                // 更新也尺寸以后，自动翻页到1
-                this.reloadWithQueryUpdate({ page: 1 });
+                var query = this.getSearchQuery();
+                query.page = 1;
+                this.reloadWithQueryUpdate(query);
             }
         }
 
         /**
          * 更新页码
          *
-         * @param {mini-event.Event} e 事件对象
-         * @param {number} e.page 前往的页码
          * @ignore
          */
-        function updatePage(e) {
-            var event = this.fire('pagechange', { page: e.page });
+        function updatePage() {
+            var event = this.fire('pagechange');
             if (!event.isDefaultPrevented()) {
-                this.reloadWithQueryUpdate({ page: e.page });
+                var query = this.getSearchQuery();
+                this.reloadWithQueryUpdate(query);
             }
         }
 
@@ -145,12 +153,11 @@ define(
          * @ignore
          */
         function updateTableSort(e) {
-            var event = this.fire('tablesort', { tableProperties: e.tableProperties });
+            var event = this.fire('tablesort');
             if (!event.isDefaultPrevented()) {
-                // 重新排序要退回到第一页
-                var args = e.tableProperties;
-                args.page = 1;
-                this.reloadWithQueryUpdate(args);
+                var query = this.getSearchQuery();
+                query.page = 1;
+                this.reloadWithQueryUpdate(query);
             }
         }
 
@@ -168,12 +175,11 @@ define(
         /**
          * 批量修改事件处理
          *
-         * @param {mini-event.Event} 事件对象
+         * @param {mini-event.Event} e 事件对象
          * @ignore
          */
         function batchModifyStatus(e) {
             var items = this.view.getSelectedItems();
-
             this.modifyStatus(items, e.status);
         }
 
@@ -305,7 +311,6 @@ define(
             this.view.on('batchmodify', batchModifyStatus, this);
             this.view.on('pagechange', updatePage, this);
             this.view.on('tablesort', updateTableSort, this);
-            this.view.on('filterreset', this.resetFilters, this);
         };
 
 
@@ -318,8 +323,6 @@ define(
         function getURLForQuery(args) {
             var url = this.context.url;
             var path = url.getPath();
-            // 先扩展原有url
-            args = u.extend(url.getQuery(), args);
 
             // 如果跟默认的参数相同，去掉默认字段
             var defaultArgs = this.model.getDefaultArgs();
@@ -333,19 +336,6 @@ define(
          */
         ListAction.prototype.adjustLayout = function () {
             this.view.adjustLayout();
-        };
-
-        /**
-         * 清除筛选条件
-         * @returns {ListAction}
-         */
-        ListAction.prototype.resetFilters = function () {
-            var model = this.model;
-            var filters = model.get('filtersInfo').filters;
-            var url = model.get('url');
-            var URL = require('er/URL');
-            var query = u.omit(url.getQuery(), u.keys(filters));
-            this.redirect(URL.withQuery(url.getPath(), query));
         };
 
         return ListAction;

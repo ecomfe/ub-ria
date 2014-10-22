@@ -10,7 +10,6 @@
 define(
     function (require) {
         var u = require('underscore');
-        var util = require('er/util');
 
         var exports = {};
 

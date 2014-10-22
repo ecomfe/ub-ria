@@ -1,6 +1,7 @@
 define(function (require) {
     var Deferred = require('er/Deferred');
     var RequestManager = require('mvc/RequestManager');
+    var RequestStrategy = require('mvc/RequestStrategy');
     var ajax = require('er/ajax');
     var util = require('er/util');
 
@@ -103,6 +104,7 @@ define(function (require) {
                     SubRequestManager = createRequestManagerSubType();
                     RequestManager.register(SubRequestManager, 'test', config);
                     requestManager = new SubRequestManager();
+                    requestManager.setRequestStrategy(new RequestStrategy());
                 });
 
                 it('should successfully lookup an instance request config and use it for ajax', function () {
@@ -196,6 +198,7 @@ define(function (require) {
                     RequestManager.register(SubRequestManager, 'abort', { policy: 'abort' });
 
                     var requestManager = new SubRequestManager();
+                    requestManager.setRequestStrategy(new RequestStrategy());
                     var previous = requestManager.request('abort');
                     requestManager.request('abort');
 
@@ -207,6 +210,7 @@ define(function (require) {
                     RequestManager.register(SubRequestManager, 'reuse', { policy: 'reuse' });
 
                     var requestManager = new SubRequestManager();
+                    requestManager.setRequestStrategy(new RequestStrategy());
                     var previous = requestManager.request('reuse');
                     var current = requestManager.request('reuse');
 
@@ -218,6 +222,7 @@ define(function (require) {
                     RequestManager.register(SubRequestManager, 'parallel', { policy: 'parallel' });
 
                     var requestManager = new SubRequestManager();
+                    requestManager.setRequestStrategy(new RequestStrategy());
                     var previous = requestManager.request('parallel');
                     var current = requestManager.request('parallel');
 
@@ -229,6 +234,7 @@ define(function (require) {
                     RequestManager.register(SubRequestManager, 'auto', { policy: 'auto', options: { method: 'GET' } });
 
                     var requestManager = new SubRequestManager();
+                    requestManager.setRequestStrategy(new RequestStrategy());
                     var previous = requestManager.request('auto');
                     var current = requestManager.request('auto');
 
@@ -240,6 +246,7 @@ define(function (require) {
                     RequestManager.register(SubRequestManager, 'auto', { policy: 'auto', options: { method: 'POST' } });
 
                     var requestManager = new SubRequestManager();
+                    requestManager.setRequestStrategy(new RequestStrategy());
                     var previous = requestManager.request('auto');
                     requestManager.request('auto', { z: 1 });
 
@@ -251,6 +258,7 @@ define(function (require) {
                     RequestManager.register(SubRequestManager, 'auto', { policy: 'auto', options: { method: 'GET' } });
 
                     var requestManager = new SubRequestManager();
+                    requestManager.setRequestStrategy(new RequestStrategy());
                     var previous = requestManager.request('auto');
                     var current = requestManager.request('auto', { z: 1 });
 
@@ -262,6 +270,7 @@ define(function (require) {
                     RequestManager.register(SubRequestManager, 'auto', { policy: 'auto', options: { method: 'PUT' } });
 
                     var requestManager = new SubRequestManager();
+                    requestManager.setRequestStrategy(new RequestStrategy());
                     var previous = requestManager.request('auto');
                     var current = requestManager.request('auto', { z: 1 });
 
@@ -272,6 +281,7 @@ define(function (require) {
                     var SubRequestManager = createRequestManagerSubType();
                     RequestManager.register(SubRequestManager, 'reuse', { policy: 'reuse', options: { method: 'GET' } });
                     var requestManager = new SubRequestManager();
+                    requestManager.setRequestStrategy(new RequestStrategy());
                     var previous = requestManager.request('reuse');
                     previous.ensure(function () {
                         var current = requestManager.request('reuse');
