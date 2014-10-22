@@ -33,10 +33,15 @@ define(
          */
         ReadAction.prototype.category = 'read';
 
-        function returnBack() {
+        /**
+         * 点击返回后的处理。默认返回列表页。
+         *
+         * @method ReadAction#.returnBack
+         */
+        ReadAction.prototype.returnBack = function () {
             // 默认返回列表页
             this.back('/' + this.getEntityName() + '/list');
-        }
+        };
 
         /**
          * 初始化交互行为
@@ -45,7 +50,7 @@ define(
          * @override
          */
         ReadAction.prototype.initBehavior = function () {
-            this.view.on('return', returnBack, this);
+            this.view.on('return', this.returnBack, this);
         };
 
         return ReadAction;
