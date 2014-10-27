@@ -77,7 +77,8 @@ define(
             ExternSearch: 'ub-ria/ui/extension',
             ExternSelect: 'ub-ria/ui/extension',
             TableSubrow: 'esui/extension',
-            WordCount: 'ub-ria/ui/extension'
+            WordCount: 'ub-ria/ui/extension',
+            TrimInput: 'ub-ria/ui/extension'
         };
 
         /**
