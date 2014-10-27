@@ -8,7 +8,7 @@
 define(
     function (require) {
         var lib = require('esui/lib');
-        var TextBox = require('esui/TextBox');
+        var InputControl = require('esui/InputControl');
         var Extension = require('esui/Extension');
         var main = require('esui/main');
 
@@ -23,8 +23,8 @@ define(
          */
         exports.activate = function () {
             var target = this.target;
-            // 暂时只对`TextBox`控件生效
-            if (!(target instanceof TextBox)) {
+            // 暂时只对`InputControl`控件生效
+            if (!(target instanceof InputControl)) {
                 return;
             }
 
@@ -40,8 +40,8 @@ define(
          */
         exports.inactivate = function () {
             var target = this.target;
-            // 只对`TextBox`控件生效
-            if (!(target instanceof TextBox)) {
+            // 只对`InputControl`控件生效
+            if (!(target instanceof InputControl)) {
                 return;
             }
 
