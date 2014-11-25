@@ -70,13 +70,14 @@ define(
          * 将一个符合一定规则的字符串转成`PascalCase`形式
          *
          * 输入字符串必须以空格、横线`-`、斜杠`/`或下划线`_`分割各单词，否则无法分析
+         * 若输入的所有单词都是大写形式，则将每个单词分别转为小写形式后再进行转变
          *
          * @param {string} s 输入的字符串
          * @return {string}
          */
         util.pascalize = function (s) {
             s = s + '';
-            if (/^[A-Z\-_]$/.test(s)) {
+            if (/^[A-Z\s-\/_]+$/.test(s)) {
                 s = s.toLowerCase();
             }
             s = s.replace(
