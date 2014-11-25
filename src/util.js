@@ -77,7 +77,7 @@ define(
          */
         util.pascalize = function (s) {
             s = s + '';
-            if (/^([A-Z]+[\s-\/_])*[A-Z]+$/.test(s)) {
+            if (/^[A-Z\s-\/_]+$/.test(s)) {
                 s = s.toLowerCase();
             }
             s = s.replace(
