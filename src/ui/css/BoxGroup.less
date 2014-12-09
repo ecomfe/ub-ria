@@ -43,13 +43,13 @@ esui-box-group {
     }
 }
 
-.ui-boxgroup-radio, 
+.ui-boxgroup-radio,
 .ui-boxgroup-checkbox {
     cursor: pointer;
 }
 
 .ui-boxgroup-disabled {
-    .ui-boxgroup-radio, 
+    .ui-boxgroup-radio,
     .ui-boxgroup-checkbox {
         cursor: default;
     }
@@ -71,7 +71,13 @@ esui-box-group {
     .ui-boxgroup-wrapper {
         // 原始的input隐藏掉
         input {
-            display: none;
+            // 用display: none 的话，ie8下点击label不能改变隐藏的checkbox
+            // 用width: 0 的话，不够保险，如果有全局 padding，可能又会显示出来。
+            // 用 top 移出的话，会 focus过去。
+            // 所以用 left 移到外面去。
+            width: 0;
+            position: absolute;
+            left: -5000px;
         }
         span {
             vertical-align: baseline;
@@ -85,7 +91,7 @@ esui-box-group {
         padding-left: 27px;
         margin-right: @flat-radio-margin-right;
         font-size: 14px;
-        
+
         .skin-flat-radio-icon-mixin(@flat-radio-icon-normal);
 
         &:hover {
@@ -93,7 +99,7 @@ esui-box-group {
         }
     }
 
-    
+
     .ui-boxgroup-wrapper-checked {
         &.ui-boxgroup-radio,
         &.ui-boxgroup-radio:hover {
@@ -102,7 +108,7 @@ esui-box-group {
     }
 
     // 只读和禁用状态
-    &.ui-boxgroup-disabled, 
+    &.ui-boxgroup-disabled,
     &.ui-boxgroup-read-only {
         .ui-boxgroup-radio,
         .ui-boxgroup-radio:hover {
@@ -128,7 +134,7 @@ esui-box-group {
         padding-left: 27px;
         margin-right: @flat-checkbox-margin-right;
         font-size: 14px;
-        
+
         .skin-flat-checkbox-icon-mixin(@flat-checkbox-icon-normal);
 
         &:hover {
@@ -136,7 +142,7 @@ esui-box-group {
         }
     }
 
-    
+
     .ui-boxgroup-wrapper-checked {
         &.ui-boxgroup-checkbox,
         &.ui-boxgroup-checkbox:hover {
@@ -145,7 +151,7 @@ esui-box-group {
     }
 
     // 只读和禁用状态
-    &.ui-boxgroup-disabled, 
+    &.ui-boxgroup-disabled,
     &.ui-boxgroup-read-only {
         .ui-boxgroup-checkbox,
         .ui-boxgroup-checkbox:hover {
