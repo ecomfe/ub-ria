@@ -49,14 +49,6 @@ define(
                 'filter-modify:click': toggleFilterPanelContent
             };
             this.addUIEvents(uiEvents);
-
-            // 批量设置控件的属性
-            var uiProperties = {
-                table: {
-                    fields: this.getTableFields()
-                }
-            };
-            this.addUIProperties(uiProperties);
         }
 
         util.inherits(ListView, BaseView);
@@ -177,6 +169,24 @@ define(
          */
         ListView.prototype.getTableFields = function () {
             return this.tableFields;
+        };
+
+        /**
+         * 获取视图属性
+         *
+         * @return {Object}
+         * @protected
+         * @override
+         */
+        ListView.prototype.getUIProperties = function () {
+            var properties = BaseView.prototype.getUIProperties.apply(this, arguments) || {};
+
+            if (!properties.table) {
+                properties.table = {};
+            }
+            properties.table.fields = this.getTableFields();
+
+            return properties;
         };
 
         /**
