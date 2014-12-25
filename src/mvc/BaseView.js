@@ -158,7 +158,7 @@ define(
                 UIView.prototype.getTemplateName.apply(this, arguments);
 
             // 作为子Action嵌入页面时，模板使用`xxxMain`这个target
-            if (this.model && this.model.get('isChildAction')) {
+            if (this.model && this.model.get('isChildAction') && !this.model.get('isInDrawerPanel')) {
                 templateName += 'Main';
             }
 
