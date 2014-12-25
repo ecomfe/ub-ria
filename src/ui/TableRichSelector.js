@@ -61,7 +61,7 @@ define(
             }
 
             if (options.allowClickCancel === 'false') {
-                options.allowClickCancel === false;
+                options.allowClickCancel = false;
             }
 
             lib.extend(properties, options);
