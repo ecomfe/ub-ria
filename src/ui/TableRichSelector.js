@@ -45,7 +45,7 @@ define(
                 fields: [
                     { field : 'name', content: 'name', searchScope: 'partial', isDefaultSearchField: true }
                 ],
-                allowClickCancel: false
+                allowUnselectNode: false
             };
 
             if (options.hasRowHead === 'false') {
@@ -60,8 +60,8 @@ define(
                 options.firedOnIcon = false;
             }
 
-            if (options.allowClickCancel === 'false') {
-                options.allowClickCancel = false;
+            if (options.allowUnselectNode === 'false') {
+                options.allowUnselectNode = false;
             }
 
             lib.extend(properties, options);
@@ -382,7 +382,7 @@ define(
             // 点击已选中的，在单选模式下，执行取消选择
             if (lib.hasClass(row, selectedClasses)) {
                 if (!control.multi) {
-                    if (control.allowClickCancel) {
+                    if (control.allowUnselectNode) {
                         selectItem(control, item.id, false);
                         fire = true;
                     }
