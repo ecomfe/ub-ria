@@ -1,5 +1,5 @@
 /**
- * ESUI (Enterprise Simple UI)
+ * UB-RIA
  *
  * @ignore
  * @file 折叠控件
@@ -34,7 +34,7 @@ define(
         TogglePanel.prototype.initOptions = function (options) {
             var defaults = {
                 expanded: false,
-                position: 'fixed'
+                position: 'layer'
             };
 
             var properties = lib.extend(defaults, options);
@@ -120,13 +120,57 @@ define(
                 attachedLayout: 'bottom,left',
                 autoClose: false,
                 viewContext: this.viewContext,
-                renderOptions: this.renderOptions
+                renderOptions: this.renderOptions,
+                togglePanel: this
             };
             var contentLayer = ui.create('Overlay', options);
 
             this.helper.addPartClasses('content', contentLayer.main);
             this.addChild(contentLayer, 'content');
             contentLayer.render();
+
+            contentLayer.on(
+                'show',
+                function () {
+                    this.helper.addDOMEvent(document, 'mousedown', close);
+                }
+            );
+
+            contentLayer.on(
+                'hide',
+                function () {
+                    this.helper.removeDOMEvent(document, 'mousedown', close);
+                }
+            );
+        }
+
+        /**
+         * 关闭layer层的时间处理句柄
+         *
+         * @inner
+         */
+        function close(e) {
+            var target = e.target;
+            var layer = this.main;
+
+            if (!layer) {
+                return;
+            }
+
+            var isChild = lib.dom.contains(layer, target);
+
+            if (!isChild) {
+                this.hide();
+
+                // 如果是点击attachedTarget的话，需要保持expended状态.
+                // 如果是点击其他空白区域的话，直接去掉expended就行。
+                var attachedTarget = this.attachedTarget;
+                var isAttachedTarget = lib.dom.contains(attachedTarget, target) || attachedTarget === target;
+
+                if (!isAttachedTarget) {
+                    this.togglePanel.removeState('expended');
+                }
+            }
         }
 
         /**
@@ -148,18 +192,18 @@ define(
 
             if (position === 'fixed') {
                 // 占位模式
-                this.toggleState('expanded');
+                this.toggleState('expended');
             }
             else {
                 // 浮层模式
                 var contentLayer = this.getChild('content');
 
-                if (this.isExpanded()) {
-                    this.removeState('expanded');
+                if (this.isExpended()) {
+                    this.removeState('expended');
                     contentLayer.hide();
                 }
                 else {
-                    this.toggleState('expanded');
+                    this.toggleState('expended');
                     contentLayer.show();
                 }
             }
@@ -176,7 +220,7 @@ define(
          */
         TogglePanel.prototype.repaint = painters.createRepaint(
             Control.prototype.repaint,
-            painters.state('expanded'),
+            painters.state('expended'),
             {
                 name: 'title',
                 paint: function (panel, title) {
@@ -191,8 +235,8 @@ define(
             }
         );
 
-        TogglePanel.prototype.isExpanded = function () {
-            return this.hasState('expanded');
+        TogglePanel.prototype.isExpended = function () {
+            return this.hasState('expended');
         };
 
         lib.inherits(TogglePanel, Control);
