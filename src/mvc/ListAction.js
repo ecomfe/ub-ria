@@ -283,15 +283,19 @@ define(
         ListAction.prototype.updateItems = function (context) {
             var ids = context.ids;
             var targetStatus = context.status;
+            var items = [];
             u.each(
                 ids,
                 function (id) {
                     var item = this.model.getItemById(id);
-                    item.status = targetStatus;
-                    this.view.updateItem(item);
+                    if (item) {
+                        item.status = targetStatus;
+                        items.push(item);
+                    }
                 },
                 this
             );
+            this.view.updateItems(items);
         };
 
         /**

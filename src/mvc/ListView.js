@@ -388,18 +388,24 @@ define(
         };
 
         /**
-         * 更新列表的一行
+         * 更新列表某几行数据
          *
-         * @param {object} item 行对应的数据
+         * @param {Array} items 行对应的数据
          */
-        ListView.prototype.updateItem = function (item) {
-            var index = this.model.indexOf(item);
+        ListView.prototype.updateItems = function (items) {
+            var table = this.get('table');
+            u.each(
+                items,
+                function (item) {
+                    var index = this.model.indexOf(item);
 
-            if (index < 0) {
-                throw new Error('No row found');
-            }
-
-            this.get('table').updateRowAt(index, item);
+                    if (index < 0) {
+                        throw new Error('No row found');
+                    }
+                    table.updateRowAt(index, item);
+                },
+                this
+            );
         };
 
         return ListView;
