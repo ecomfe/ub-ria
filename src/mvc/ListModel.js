@@ -83,6 +83,7 @@ define(
          * - `accept`表示仅能从其指定的状态进行迁移
          * - `statusName`表示`status`对应的操作名, 是一个camelCase的格式，必须
          * - `command`表示`status`对应操作的中文描述，必须
+         * - `reload`为`true`或`null`时，状态修改成功后跳转，为`false`时状态修改成功后不跳转
          *
          * 如果`accept`和`deny`同时存在，则使用`accept`与`deny`的差集
          * `status`, `statusName`, `command`三项必须有

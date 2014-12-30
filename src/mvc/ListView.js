@@ -236,7 +236,7 @@ define(
          *
          * @ignore
          */
-        ListView.prototype.updatePageIndex = function() {
+        ListView.prototype.updatePageIndex = function () {
             this.fire('pagechange');
         };
 
@@ -385,6 +385,27 @@ define(
             if (table) {
                 table.adjustWidth();
             }
+        };
+
+        /**
+         * 更新列表某几行数据
+         *
+         * @param {Array} items 行对应的数据
+         */
+        ListView.prototype.updateItems = function (items) {
+            var table = this.get('table');
+            u.each(
+                items,
+                function (item) {
+                    var index = this.model.indexOf(item);
+
+                    if (index < 0) {
+                        throw new Error('No row found');
+                    }
+                    table.updateRowAt(index, item);
+                },
+                this
+            );
         };
 
         return ListView;

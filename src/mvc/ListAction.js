@@ -200,7 +200,8 @@ define(
                 items: items,
                 status: status,
                 statusName: transitionItem.statusName,
-                command: transitionItem.command
+                command: transitionItem.command,
+                reload: transitionItem.reload
             };
 
             if (this.requireAdviceFor(context)) {
@@ -275,6 +276,29 @@ define(
         };
 
         /**
+         * 更新列表中的实体的状态
+         *
+         * @param {meta.UpdateContext} context 操作的上下文对象
+         */
+        ListAction.prototype.updateItems = function (context) {
+            var ids = context.ids;
+            var targetStatus = context.status;
+            var items = [];
+            u.each(
+                ids,
+                function (id) {
+                    var item = this.model.getItemById(id);
+                    if (item) {
+                        item.status = targetStatus;
+                        items.push(item);
+                    }
+                },
+                this
+            );
+            this.view.updateItems(items);
+        };
+
+        /**
          * 根据删除、启用的状态更新当前Action，默认行为为直接刷新当前的Action
          *
          * @param {meta.UpdateContext} context 操作的上下文对象
@@ -283,7 +307,10 @@ define(
             this.notifyModifySuccess(context);
 
             var event = this.fire('statusupdate', context);
-            if (!event.isDefaultPrevented()) {
+            if (context.reload === false) {
+                this.updateItems(context);
+            }
+            else if (!event.isDefaultPrevented()) {
                 this.reload();
             }
         }
