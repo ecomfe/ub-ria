@@ -121,7 +121,6 @@ define(
                 autoClose: false,
                 viewContext: this.viewContext,
                 renderOptions: this.renderOptions,
-                togglePanel: this
             };
             var contentLayer = ui.create('Overlay', options);
 
@@ -129,46 +128,48 @@ define(
             this.addChild(contentLayer, 'content');
             contentLayer.render();
 
+            var globalEvent = lib.bind(close, this);
+
             contentLayer.on(
                 'show',
                 function () {
-                    this.helper.addDOMEvent(document, 'mousedown', close);
+                    this.helper.addDOMEvent(document, 'mousedown', globalEvent);
                 }
             );
 
             contentLayer.on(
                 'hide',
                 function () {
-                    this.helper.removeDOMEvent(document, 'mousedown', close);
+                    this.helper.removeDOMEvent(document, 'mousedown', globalEvent);
                 }
             );
         }
 
         /**
-         * 关闭layer层的时间处理句柄
+         * 关闭layer层的事件处理句柄
          *
          * @inner
          */
         function close(e) {
             var target = e.target;
-            var layer = this.main;
+            var layer = this.getChild('content');
 
             if (!layer) {
                 return;
             }
 
-            var isChild = lib.dom.contains(layer, target);
+            var isChild = lib.dom.contains(layer.main, target);
 
             if (!isChild) {
-                this.hide();
+                layer.hide();
 
                 // 如果是点击attachedTarget的话，需要保持expended状态.
                 // 如果是点击其他空白区域的话，直接去掉expended就行。
-                var attachedTarget = this.attachedTarget;
+                var attachedTarget = layer.attachedTarget;
                 var isAttachedTarget = lib.dom.contains(attachedTarget, target) || attachedTarget === target;
 
                 if (!isAttachedTarget) {
-                    this.togglePanel.removeState('expended');
+                    this.removeState('expended');
                 }
             }
         }
