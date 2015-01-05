@@ -3,15 +3,29 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 详情页Model基类
- * @class DetailModel
- * @extends mvc.SingleEntityModel
+ * @exports ub-ria.mvc.DetailModel
  * @author otakustay
  */
 define(
     function (require) {
         var u = require('underscore');
 
+        /**
+         * @class ub-ria.mvc.DetailModel
+         * @extends ub-ria.mvc.SingleEntityModel
+         */
         var exports = {};
+
+        /**
+         * 设置globalData方法
+         *
+         * @public
+         * @method ub-ria.mvc.DetailModel#setGlobalData
+         * @param {Object} data
+         */
+        exports.setGlobalData = function (data) {
+            this.addData('global', data);
+        };
 
         /**
          * 获取列表子Action的URL
@@ -83,6 +97,7 @@ define(
 
         var SingleEntityModel = require('./SingleEntityModel');
         var DetailModel = require('eoo').create(SingleEntityModel, exports);
+
         return DetailModel;
     }
 );

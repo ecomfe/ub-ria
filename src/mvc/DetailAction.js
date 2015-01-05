@@ -3,14 +3,17 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 详情页Action基类
- * @class DetailAction
- * @extends mvc.BaseAction
+ * @exports ub-ria.mvc.DetailAction
  * @author otakustay
  */
 define(
     function (require) {
         var u = require('underscore');
 
+        /**
+         * @class DetailAction
+         * @extends mvc.BaseAction
+         */
         var exports = {};
 
         /**

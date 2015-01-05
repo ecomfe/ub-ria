@@ -2,27 +2,17 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 只读页Action基类
+ * @exports ub-ria.mvc.ReadAction
  * @author lixiang(lixiang05@baidu.com)
- * @date $DATE$
  */
 define(
     function (require) {
-        var util = require('er/util');
-        var BaseAction = require('./BaseAction');
-
         /**
-         * 只读页Action基类
-         *
-         * @extends BaseAction
-         * @constructor
+         * @class ub-ria.mvc.ReadAction
+         * @extends ub-ria.mvc.BaseAction
          */
-        function ReadAction(entityName) {
-            BaseAction.apply(this, arguments);
-        }
-
-        util.inherits(ReadAction, BaseAction);
+        var exports = {};
 
         /**
          * 当前页面的分类，始终为`"read"`
@@ -31,16 +21,17 @@ define(
          * @readonly
          * @override
          */
-        ReadAction.prototype.category = 'read';
+        exports.category = 'read';
 
         /**
-         * 点击返回后的处理。默认返回列表页。
+         * 点击返回后的处理
          *
-         * @method ReadAction#.returnBack
+         * @protected
+         * @method ub-ria.mvc.ReadAction#returnBack
          */
-        ReadAction.prototype.returnBack = function () {
+        exports.returnBack = function () {
             // 默认返回列表页
-            this.back('/' + this.getEntityName() + '/list');
+            this.fire('back');
         };
 
         /**
@@ -49,9 +40,12 @@ define(
          * @protected
          * @override
          */
-        ReadAction.prototype.initBehavior = function () {
+        exports.initBehavior = function () {
             this.view.on('return', this.returnBack, this);
         };
+
+        var BaseAction = require('./BaseAction');
+        var ReadAction = require('eoo').create(BaseAction, exports);
 
         return ReadAction;
     }

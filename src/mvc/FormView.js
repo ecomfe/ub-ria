@@ -2,15 +2,15 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 表单视图基类
+ * @exports ub-ria.mvc.FormView
  * @author otakustay
- * @date $DATE$
  */
 define(
     function (require) {
-        var util = require('er/util');
-        var BaseView = require('./BaseView');
+        require('ui/DrawerActionPanel');
+
+        var u = require('underscore');
 
         // 使用表单视图，有以下要求：
         //
@@ -22,13 +22,13 @@ define(
         // - 可以有一个id为`cancel`的按钮，点击后会触发`cancel`事件
 
         /**
-         * 表单视图基类
-         *
-         * @extends BaseView
-         * @constructor
+         * @class ub-ria.mvc.FormView
+         * @extends ub-ria.mvc.BaseView
          */
-        function FormView() {
-            BaseView.apply(this, arguments);
+        var exports = {};
+
+        exports.constructor = function () {
+            this.$super(arguments);
 
             // 批量绑定控件事件
             var uiEvents = {
@@ -36,26 +36,74 @@ define(
                 'cancel:click': cancelEdit
             };
             this.addUIEvents(uiEvents);
+        };
+
+        /**
+         * 提交数据
+         *
+         * @event
+         * @fires ub-ria.mvc.FormView#submit
+         */
+        function submit() {
+            this.fire('submit');
         }
 
-        util.inherits(FormView, BaseView);
+        /**
+         * 取消编辑
+         *
+         * @event
+         * @fires ub-ria.mvc.FormView#cancel
+         */
+        function cancelEdit() {
+            this.fire('cancel');
+        }
+
+        /**
+         * @override
+         */
+        exports.getUIProperties = function () {
+            var uiProperties = this.$super(arguments) || {};
+
+            uiProperties = u.deepClone(uiProperties);
+            uiProperties.crumb = {
+                linkNodeTemplate: '<a class="${classes}" href="${href}">${text}</a>'
+            };
+
+            return uiProperties;
+        };
 
         /**
          * 从表单中获取实体数据
          *
+         * @public
+         * @method ub-ria.mvc.FormView#getEntity
          * @return {Object}
          */
-        FormView.prototype.getEntity = function () {
+        exports.getEntity = function () {
             return this.getFormData();
+        };
+
+        /**
+         * 获取表单数据
+         *
+         * @protected
+         * @method ub-ria.mvc.FormView#getFormData
+         * @return {Object}
+         */
+        exports.getFormData = function () {
+            var form = this.get('form');
+            return form ? form.getData() : {};
         };
 
         /**
          * 向用户通知提交错误信息，默认根据`field`字段查找对应`name`的控件并显示错误信息
          *
+         * @public
+         * @method ub-ria.mvc.FormView#notifyErrors
          * @param {Object} errors 错误信息
-         * @param {meta.FieldError[]} errors.fields 出现错误的字段集合
+         * @param {Array.<meta.FieldError>} errors.fields 出现错误的字段集合
          */
-        FormView.prototype.notifyErrors = function (errors) {
+        exports.notifyErrors = function (errors) {
             var Validity = require('esui/validator/Validity');
             var ValidityState = require('esui/validator/ValidityState');
             var form = this.get('form');
@@ -77,31 +125,71 @@ define(
         /**
          * 等待用户取消确认
          *
+         * @protected
+         * @method ub-ria.mvc.FormView#waitCancelConfirm
          * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，
          * 用户取消则进入`rejected`状态
          */
-        FormView.prototype.waitCancelConfirm = function (options) {
-            this.waitConfirm(options);
+        exports.waitCancelConfirm = function (options) {
+            // 加viewContext
+            if (!options.viewContext) {
+                options.viewContext = this.viewContext;
+            }
+
+            var okLabel = '取消' + options.title;
+            var cancelLabel = '继续' + options.title;
+
+            var warn = this.get('form-cancel-confirm');
+            if (warn) {
+                warn.hide();
+            }
+
+            var wrapper = this.get('submit-section');
+            var extendedOptions = {
+                wrapper: wrapper,
+                id: 'form-cancel-confirm',
+                okLabel: okLabel,
+                cancelLabel: cancelLabel
+            };
+            u.extend(options, extendedOptions);
+
+            warn = require('ui/Warn').show(options);
+
+            // 容器的状态要变一下
+            var formViewContainer = this.get('form-page');
+            formViewContainer.addState('warned');
+
+            // 点击表单编辑区也会关闭
+            var formContent = this.get('form-content-main');
+            formContent.on(
+                'command',
+                function (e) {
+                    if (e.name === 'form-content-click') {
+                        warn.hide();
+                    }
+                }
+            );
+
+            var Deferred = require('er/Deferred');
+            var deferred = new Deferred();
+
+            warn.on('ok', deferred.resolver.resolve);
+            warn.on('cancel', deferred.resolver.reject);
+            warn.on('hide', function () {
+                // 关闭之后移除状态
+                formViewContainer.removeState('warned');
+            });
+
+            return deferred.promise;
         };
 
         /**
-         * 取消编辑
-         */
-        function cancelEdit() {
-            this.fire('cancel');
-        }
-
-        /**
-         * 提交数据
-         */
-        function submit() {
-            this.fire('submit');
-        }
-
-        /**
          * 禁用提交操作
+         *
+         * @protected
+         * @method ub-ria.mvc.FormView#disableSubmit
          */
-        FormView.prototype.disableSubmit = function () {
+        exports.disableSubmit = function () {
             if (this.viewContext) {
                 this.getGroup('submit').disable();
             }
@@ -109,22 +197,140 @@ define(
 
         /**
          * 启用提交操作
+         *
+         * @protected
+         * @method ub-ria.mvc.FormView#enableSubmit
          */
-        FormView.prototype.enableSubmit = function () {
+        exports.enableSubmit = function () {
             if (this.viewContext) {
                 this.getGroup('submit').enable();
             }
         };
 
         /**
-         * 获取表单数据
+         * 用户处理弹出抽屉的事件Handle
          *
-         * @return {Object}
+         * @protected
+         * @method ub-ria.mvc.FormView#popDrawerActionPanel
+         * @param {mini-event.Event} e 事件参数
          */
-        FormView.prototype.getFormData = function () {
-            var form = this.get('form');
-            return form ? form.getData() : {};
+        exports.popDrawerActionPanel = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var url = e.target.get('href') + '';
+            var targetId = e.target.get('id');
+
+            // 传给 ActionPanel 的 url 是不能带 hash 符号的
+            if (url.charAt(0) === '#') {
+                url = url.slice(1);
+            }
+            this.popDrawerAction({url: url}, targetId).show();
         };
+
+        /**
+         * 加载 action，参数同 ActionPanel
+         *
+         * @protected
+         * @method ub-ria.mvc.FormView#popDrawerAction
+         * @param {Object} options
+         * @returns {ui.DrawerActionPanel}
+         */
+        exports.popDrawerAction = function (options, targetId) {
+            options.id = options.id || 'form-drawer-action';
+            var drawerActionPanel = this.get(options.id);
+            var view = this;
+            if (!drawerActionPanel) {
+                drawerActionPanel = this.create('DrawerActionPanel', options);
+                drawerActionPanel.render();
+                drawerActionPanel.on('close', saveAndClose, this);
+                drawerActionPanel.on(
+                    'action@entitysave',
+                    function (e) {
+                        saveRelatedEntity.call(view, e, targetId);
+                    },
+                    this
+                );
+                drawerActionPanel.on('action@handlefinish', handleAfterRelatedEntitySaved, this);
+                drawerActionPanel.on('action@submitcancel', cancel);
+                drawerActionPanel.on('action@back', back, this);
+            }
+            else {
+                drawerActionPanel.setProperties(options);
+            }
+            return drawerActionPanel;
+        };
+
+        /**
+         * 返回并告诉上层保留数据并退出
+         *
+         * @event
+         * @fires ub-ria.mvc.FormView#saveandclose
+         * @param {mini-event.Event} e 事件参数
+         */
+        function saveAndClose(e) {
+            e.target.hide();
+            this.fire('saveandclose');
+        }
+
+        /**
+         * 抽屉内Action提交成功后的事件处理句柄
+         *
+         * @event
+         * @param {mini-event.Event} e 事件参数
+         * @param {string} targetId 触发事件的链接的id
+         */
+        function saveRelatedEntity(e, targetId) {
+            e.stopPropagation();
+            e.preventDefault();
+            this.handleAfterRelatedEntitySaved(e.entity, targetId);
+        }
+
+        /**
+         * 处理抽屉内提交的Action的接口
+         *
+         * @protected
+         * @method ub-ria.mvc.FormView#handleAfterRelatedEntitySaved
+         * @param {Object} entity 提交后返回实体
+         * @param {string} targetId 触发事件的链接的id
+         */
+        exports.handleAfterRelatedEntitySaved = function (entity, targetId) {};
+
+        /**
+         * 抽屉内Action处理完毕后的事件处理句柄
+         *
+         * @event
+         * @param {mini-event.Event} e 事件参数
+         */
+        function handleAfterRelatedEntitySaved(e) {
+            e.target.hide();
+            e.target.dispose();
+        }
+
+        /**
+         * 取消
+         *
+         * @event
+         * @param {mini-event.Event} e 事件参数
+         */
+        function cancel(e) {
+            e.preventDefault();
+            this.dispose();
+        }
+
+        /**
+         * 返回
+         *
+         * @event
+         * @param {mini-event.Event} e 事件参数
+         */
+        function back(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            e.target.hide();
+        }
+
+        var BaseView = require('./BaseView');
+        var FormView = require('eoo').create(BaseView, exports);
 
         return FormView;
     }

@@ -2,32 +2,25 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 表单Action基类
+ * @exports ub-ria.mvc.FormAction
  * @author otakustay
- * @date $DATE$
  */
 define(
     function (require) {
-        var util = require('er/util');
         var u = require('underscore');
         var Deferred = require('er/Deferred');
-        var BaseAction = require('./BaseAction');
 
         /**
-         * 表单Action基类
-         *
-         * @param {string} [entityName] 负责的实体名称
-         * @extends BaseAction
-         * @constructor
+         * @class ub-ria.mvc.FormAction
+         * @extends ub-ria.mvc.BaseAction
          */
-        function FormAction(entityName) {
-            BaseAction.apply(this, arguments);
-        }
+        var exports = {};
 
-        util.inherits(FormAction, BaseAction);
-
-        FormAction.prototype.modelType = require('./FormModel');
+        /**
+         * @override
+         */
+        exports.modelType = './FormModel';
 
         /**
          * 当前页面的分类，始终为`"form"`
@@ -36,18 +29,20 @@ define(
          * @readonly
          * @override
          */
-        FormAction.prototype.category = 'form';
+        exports.category = 'form';
 
         /**
          * 处理提交数据时发生的错误，默认无行为，如验证信息显示等需要实现此方法
          *
+         * @protected
+         * @method ub-ria.mvc.FormAction#handleSubmitError
          * @param {er.meta.FakeXHR | meta.FieldError[]} errors `XMLHttpRequest`对象，或者model校验的错误结果集
          * @return {boolean} 返回`true`表示错误已经处理完毕
          */
-        FormAction.prototype.handleSubmitError = function (errors) {
+        exports.handleSubmitError = function (errors) {
             // 处理409的验证失败
             if (errors.status === 409) {
-                errors = util.parseJSON(errors.responseText);
+                errors = require('er/util').parseJSON(errors.responseText);
             }
             // 处理model校验产生的错误信息，或者后端校验返回的错误信息
             if (errors.fields) {
@@ -64,10 +59,13 @@ define(
          * - 若`entitysave`未被阻止，调用`submitHanlder`
          * - 触发`handlefinish`
          *
+         * @protected
+         * @method ub-ria.mvc.FormAction#handleSubmitResult
+         * @fires ub-ria.mvc.FormAction#handlefinish
          * @param {Object} entity 提交成功后返回的实体
          */
-        FormAction.prototype.handleSubmitResult = function (entity) {
-            var entitySaveEvent = this.fire('entitysave', { entity: entity });
+        exports.handleSubmitResult = function (entity) {
+            var entitySaveEvent = this.fire('entitysave', {entity: entity});
             if (!entitySaveEvent.isDefaultPrevented()) {
                 var submitHandler = this.getSubmitHandler();
                 if (submitHandler) {
@@ -80,26 +78,29 @@ define(
         /**
          * 获取处理组件
          *
+         * @protected
+         * @method ub-ria.mvc.FormAction#getSubmitHandler
          * @return {SubmitHandler}
          */
-        FormAction.prototype.getSubmitHandler = function () {
+        exports.getSubmitHandler = function () {
             return this.submitHandler;
         };
 
         /**
          * 设置处理组件
          *
+         * @protected
+         * @method ub-ria.mvc.FormAction#setSubmitHandler
          * @param {SubmitHandler} handler 提交成功处理组件
          */
-        FormAction.prototype.setSubmitHandler = function (handler) {
+        exports.setSubmitHandler = function (handler) {
             this.submitHandler = handler;
         };
 
         /**
          * 处理提交错误
          *
-         * @param {er.FakeXHR | meta.FieldError[]} errors `XMLHttpRequest`对象，或者model校验的错误信息集
-         * @ignore
+         * @param {er.meta.FakeXHR | meta.FieldError[]} errors `XMLHttpRequest`对象，或者model校验的错误信息集
          */
         function handleError(errors) {
             var handled = this.handleSubmitError(errors);
@@ -111,10 +112,12 @@ define(
         /**
          * 根据FormType获取Model提交接口的方法名
          *
-         * @param {String} formType 表单类型
-         * @return {String}
+         * @protected
+         * @method ub-ria.mvc.FormAction#getMethod
+         * @param {string} formType 表单类型
+         * @return {string}
          */
-        FormAction.prototype.getMethod = function (formType) {
+        exports.getMethod = function (formType) {
             var methodMap = {
                 create: 'save',
                 update: 'update',
@@ -127,10 +130,12 @@ define(
         /**
          * 提交实体（新建或更新）
          *
+         * @protected
+         * @method ub-ria.mvc.FormAction#submitEntity
          * @param {Object} entity 实体数据
          * @param {er.Promise}
          */
-        FormAction.prototype.submitEntity = function (entity) {
+        exports.submitEntity = function (entity) {
             var method = this.getMethod(this.context.formType);
 
             try {
@@ -154,33 +159,42 @@ define(
         /**
          * 设置取消编辑时的提示信息标题
          *
-         * @type {string}
+         * @member {string} ub-ria.mvc.FormAction#cancelConfirmTitle
          */
-        FormAction.prototype.cancelConfirmTitle = '确认取消编辑';
+        exports.cancelConfirmTitle = '确认取消编辑';
 
         /**
          * 获取取消编辑时的提示信息标题
          *
+         * @protected
+         * @method ub-ria.mvc.FormAction#getCancelConfirmTitle
          * @return {string}
          */
-        FormAction.prototype.getCancelConfirmTitle = function () {
-            return this.cancelConfirmTitle;
+        exports.getCancelConfirmTitle = function () {
+            var formType = this.model.get('formType');
+            if (formType === 'create') {
+                return '新建';
+            }
+            else {
+                return '编辑';
+            }
         };
 
         /**
          * 设置取消编辑时的提示信息内容
          *
-         * @type {string}
+         * @member {string} ub-ria.mvc.FormAction#cancelConfirmMessage
          */
-        FormAction.prototype.cancelConfirmMessage =
-            '取消编辑将不保留已经填写的数据，确定继续吗？';
+        exports.cancelConfirmMessage = '取消编辑将不保留已经填写的数据，确定继续吗？';
 
         /**
          * 获取取消编辑时的提示信息内容
          *
+         * @protected
+         * @method ub-ria.mvc.FormAction#getCancelConfirmMessage
          * @return {string}
          */
-        FormAction.prototype.getCancelConfirmMessage = function () {
+        exports.getCancelConfirmMessage = function () {
             return this.cancelConfirmMessage;
         };
 
@@ -196,8 +210,11 @@ define(
 
         /**
          * 取消编辑
+         *
+         * @protected
+         * @method ub-ria.mvc.FormAction#cancelEdit
          */
-        FormAction.prototype.cancelEdit = function () {
+        exports.cancelEdit = function () {
             // 从model中拿出表单最初数据，判断是否被更改
             var initialFormData = this.model.get('initialFormData');
 
@@ -216,27 +233,32 @@ define(
 
         /**
          * 在取消编辑后重定向
+         *
+         * @protected
+         * @method ub-ria.mvc.FormAction#redirectAfterCancel
          */
-        FormAction.prototype.redirectAfterCancel = function () {
+        exports.redirectAfterCancel = function () {
             // 默认返回列表页
             this.back('/' + this.getEntityName() + '/list');
         };
 
         /**
          * 判断表单信息是否被更改，默认返回false
-
+         *
+         * @protected
+         * @method ub-ria.mvc.FormAction#isFormDataChanged
          * @param {Object} initialFormData model中保存的表单初始数据
-         * @return {Boolean}
+         * @return {boolean}
          */
-        FormAction.prototype.isFormDataChanged = function (initialFormData) {
-            return false;
+        exports.isFormDataChanged = function (initialFormData) {
+            return true;
         };
 
         function submit() {
             var entity = this.view.getEntity();
             this.view.disableSubmit();
 
-            require('er/Deferred').when(this.submitEntity(entity))
+            Deferred.when(this.submitEntity(entity))
                 .ensure(u.bind(this.view.enableSubmit, this.view));
         }
 
@@ -246,15 +268,34 @@ define(
          * @protected
          * @override
          */
-        FormAction.prototype.initBehavior = function () {
-            BaseAction.prototype.initBehavior.apply(this, arguments);
+        exports.initBehavior = function () {
+            this.$super(arguments);
+
             // 保存一份最初的form表单内容到model，用于判断表单内容是否被更改
             var initialFormData = this.view.getFormData();
             this.model.set('initialFormData', initialFormData, { silent: true });
 
             this.view.on('submit', submit, this);
             this.view.on('cancel', this.cancelEdit, this);
+
+            // 将保留数据并退出的事件代理到上层Action
+            require('mini-event').delegate(this.view, this, 'saveandclose');
         };
+
+        /**
+         * 处理表单需要用到的通用数据
+         *
+         * @public
+         * @method ub-ria.mvc.FormAction#isChildForm
+         * @return {boolean}
+         */
+        exports.isChildForm = function () {
+            // 如果表单进入时带来returnUrl参数，则认为该表单为一个ChildForm
+            return !!this.model.get('returnUrl');
+        };
+
+        var BaseAction = require('./BaseAction');
+        var FormAction = require('eoo').create(BaseAction, exports);
 
         return FormAction;
     }
