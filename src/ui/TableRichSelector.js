@@ -283,7 +283,7 @@ define(
                 var content = field.content;
                 var innerHTML = ('function' === typeof content
                     ? content.call(control, item, index, i)
-                    : item[content]);
+                    : u.escape(item[content]));
 
                 // IE不支持tr.innerHTML，所以这里要使用insertCell
                 if (tr) {
