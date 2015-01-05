@@ -116,7 +116,7 @@ define(
             var options = {
                 main: contentElem,
                 childName: 'content',
-                attachedDOM: lib.getChildren(this.main)[0],
+                attachedDOM: this.getChild('title').main,
                 attachedLayout: 'bottom,left',
                 autoClose: false,
                 viewContext: this.viewContext,
