@@ -44,7 +44,8 @@ define(
                 // 字段，含义与Table相同，searchScope表示这个字段对搜索关键词是全击中还是部分击中
                 fields: [
                     { field : 'name', content: 'name', searchScope: 'partial', isDefaultSearchField: true }
-                ]
+                ],
+                allowUnselectNode: false
             };
 
             if (options.hasRowHead === 'false') {
@@ -57,6 +58,10 @@ define(
 
             if (options.firedOnIcon === 'false') {
                 options.firedOnIcon = false;
+            }
+
+            if (options.allowUnselectNode === 'false') {
+                options.allowUnselectNode = false;
             }
 
             lib.extend(properties, options);
@@ -377,8 +382,10 @@ define(
             // 点击已选中的，在单选模式下，执行取消选择
             if (lib.hasClass(row, selectedClasses)) {
                 if (!control.multi) {
-                    selectItem(control, item.id, false);
-                    fire = true;
+                    if (control.allowUnselectNode) {
+                        selectItem(control, item.id, false);
+                        fire = true;
+                    }
                 }
             }
             else {
