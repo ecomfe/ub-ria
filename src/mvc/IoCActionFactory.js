@@ -38,7 +38,7 @@ define(
             var Deferred = require('er/Deferred');
             var deferred = new Deferred();
 
-            require('uioc').getComponent(this.actionComponent, deferred.resolver.resolve);
+            require('./ioc').getComponent(this.actionComponent, deferred.resolver.resolve);
 
             return deferred.promise.then(u.bind(this.buildAction, this, actionContext));
         };
