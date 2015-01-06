@@ -3,7 +3,7 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 详情页Model基类
- * @exports ub-ria.mvc.DetailModel
+ * @exports mvc.DetailModel
  * @author otakustay
  */
 define(
@@ -11,8 +11,8 @@ define(
         var u = require('underscore');
 
         /**
-         * @class ub-ria.mvc.DetailModel
-         * @extends ub-ria.mvc.SingleEntityModel
+         * @class mvc.DetailModel
+         * @extends mvc.SingleEntityModel
          */
         var exports = {};
 
@@ -20,7 +20,7 @@ define(
          * 设置globalData方法
          *
          * @public
-         * @method ub-ria.mvc.DetailModel#setGlobalData
+         * @method mvc.DetailModel#setGlobalData
          * @param {Object} data
          */
         exports.setGlobalData = function (data) {
@@ -30,7 +30,8 @@ define(
         /**
          * 获取列表子Action的URL
          *
-         * @method DetailModel#.getListActionURL
+         * @protected
+         * @method mvc.DetailModel#getListActionURL
          * @return {string}
          */
         exports.getListActionURL = function () {
@@ -58,7 +59,8 @@ define(
         /**
          * 获取列表子Action的实体名称
          *
-         * @method DetailModel#.getListActionName
+         * @protected
+         * @method mvc.DetailModel#getListActionName
          * @return {string}
          */
         exports.getListActionName = function () {
@@ -70,7 +72,8 @@ define(
          *
          * 默认使用`entityName`，但并不一定会相同，通过重写此方法覆盖
          *
-         * @method DetailModel#.getTreeNodeEntityName
+         * @protected
+         * @method mvc.DetailModel#getTreeNodeEntityName
          * @return {string}
          */
         exports.getTreeNodeEntityName = function () {
@@ -86,9 +89,7 @@ define(
         }
 
         /**
-         * 加载数据
-         *
-         * @return {er.meta.Promise}
+         * @override
          */
         exports.load = function () {
             var loading = this.$super(arguments);

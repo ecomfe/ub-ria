@@ -3,7 +3,7 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file IoCAction工厂
- * @exports ub-ria.mvc.IoCActionFactory
+ * @exports mvc.IoCActionFactory
  * @author shenbin(bobshenbin@gmail.com)
  */
 define(
@@ -12,7 +12,7 @@ define(
         var util = require('../util');
 
         /**
-         * @class ub-ria.mvc.IoCActionFactory
+         * @class mvc.IoCActionFactory
          */
         var exports = {};
 
@@ -31,7 +31,7 @@ define(
          * 创建一个Action实例
          *
          * @public
-         * @method ub-ria.mvc.IoCActionFactory#createRuntimeAction
+         * @method mvc.IoCActionFactory#createRuntimeAction
          * @param {er.meta.ActionContext} actionContext Action的执行上下文
          * @return {er.Promise}
          */
@@ -64,8 +64,8 @@ define(
         /**
          * 组装Action
          *
-         * @public
-         * @method ub-ria.mvc.IoCActionFactory#buildAction
+         * @protected
+         * @method mvc.IoCActionFactory#buildAction
          * @param {er.meta.ActionContext} actionContext Action的执行上下文
          * @param {er.Action} action 待组装的`Action`实例
          * @return {er.Action}

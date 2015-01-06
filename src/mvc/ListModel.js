@@ -204,18 +204,6 @@ define(
         }
 
         /**
-         * 加载数据
-         *
-         * @override
-         * @return {er.Promise}
-         */
-        exports.load = function () {
-            var loading = this.$super(arguments);
-
-            return loading.then(u.bind(processUIData, this));
-        };
-
-        /**
          * 处理加载后的数据
          *
          * @override
@@ -223,6 +211,7 @@ define(
          */
         exports.prepare = function () {
             this.set('filtersInfo', this.getFiltersInfo());
+            u.bind(processUIData, this);
         };
 
         /**
@@ -427,18 +416,6 @@ define(
          */
         exports.restore = function (ids) {
             return this.updateStatus('restore', 1, ids);
-        };
-
-        /**
-         * 停用一个或多个实体
-         *
-         * @public
-         * @method mvc.ListModel#stop
-         * @param {Array.<string>} ids id集合
-         * @return {er.meta.FakeXHR}
-         */
-        exports.stop = function (ids) {
-            return this.updateStatus('stop', 2, ids);
         };
 
         /**

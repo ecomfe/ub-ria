@@ -3,24 +3,25 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 详情页视图基类
- * @exports ub-ria.mvc.DetailView
+ * @exports mvc.DetailView
  * @author otakustay
  */
 define(
     function (require) {
         /**
-         * @class ub-ria.mvc.DetailView
-         * @extends ub-ria.mvc.BaseView
+         * @class mvc.DetailView
+         * @extends mvc.BaseView
          */
         var exports = {};
 
-        /**
-         * @override
-         */
-        exports.enterDocument = function () {
+        exports.constructor = function () {
             this.$super(arguments);
-            this.getSafely('create').on('click', popDrawerActionPanel, this);
-            this.getSafely('modify').on('click', popDrawerActionPanel, this);
+
+            var uiEvents = {
+                'create:click': popDrawerActionPanel,
+                'modify:click': popDrawerActionPanel
+            };
+            this.addUIEvents(uiEvents);
         };
 
         /**
@@ -44,7 +45,7 @@ define(
          * 加载 action，参数同 ActionPanel
          *
          * @protected
-         * @method ub-ria.mvc.DetailView#popDrawerAction
+         * @method mvc.DetailView#popDrawerAction
          * @param {Object} options
          * @return {ui.DrawerActionPanel}
          */
@@ -141,7 +142,7 @@ define(
          * 获取列表子Action的查询条件
          *
          * @public
-         * @method ub-ria.mvc.DetailView#getListQuery
+         * @method mvc.DetailView#getListQuery
          * @return {object} 查询条件
          */
         exports.getListQuery = function () {

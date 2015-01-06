@@ -3,7 +3,7 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 表单数据模型基类
- * @exports ub-ria.mvc.FormModel
+ * @exports mvc.FormModel
  * @author otakustay
  */
 define(
@@ -12,14 +12,14 @@ define(
         var Deferred = require('er/Deferred');
 
         /**
-         * @class ub-ria.mvc.FormModel
-         * @extends ub-ria.mvc.SingleEntityModel
+         * @class mvc.FormModel
+         * @extends mvc.SingleEntityModel
          */
         var exports = {};
 
         /**
          * @public
-         * @method ub-ria.mvc.FormModel#setGlobalData
+         * @method mvc.FormModel#setGlobalData
          * @param {Object} data
          */
         exports.setGlobalData = function (data) {
@@ -30,7 +30,7 @@ define(
          * 检查实体数据完整性，可在此补充一些视图无法提供的属性
          *
          * @public
-         * @method ub-ria.mvc.FormModel#fillEntity
+         * @method mvc.FormModel#fillEntity
          * @param {Object} entity 实体数据
          * @return {Object} 补充完整的实体数据
          */
@@ -42,8 +42,8 @@ define(
          * 设置当前对象关联的{@link mvc.EntityValidator}实例
          *
          * @public
-         * @method ub-ria.mvc.FormModel#setValidator
-         * @param {ub-ria.mvc.EntityValidator} validator 关联的实例
+         * @method mvc.FormModel#setValidator
+         * @param {mvc.EntityValidator} validator 关联的实例
          */
         exports.setValidator = function (validator) {
             if (validator) {
@@ -56,8 +56,8 @@ define(
          * 获取当前对象关联的{@link mvc.EntityValidator}实例
          *
          * @public
-         * @method ub-ria.mvc.FormModel#getValidator
-         * @return {ub-ria.mvc.EntityValidator}
+         * @method mvc.FormModel#getValidator
+         * @return {mvc.EntityValidator}
          */
         exports.getValidator = function () {
             return this.validator;
@@ -67,7 +67,7 @@ define(
          * 校验实体
          *
          * @public
-         * @method ub-ria.mvc.FormModel#validateEntity
+         * @method mvc.FormModel#validateEntity
          * @param {Object} entity 需要校验的实体
          * @return {Array.<Object>}
          */
@@ -85,7 +85,7 @@ define(
          *
          * @protected
          * @absctract
-         * @method ub-ria.mvc.FormModel#save
+         * @method mvc.FormModel#save
          * @param {Object} entity 新建的实体对象
          * @return {er.Promise}
          */
@@ -114,7 +114,7 @@ define(
          *
          * @protected
          * @absctract
-         * @method ub-ria.mvc.FormModel#update
+         * @method mvc.FormModel#update
          * @param {Object} entity 待更新的实体对象
          * @return {er.Promise}
          */

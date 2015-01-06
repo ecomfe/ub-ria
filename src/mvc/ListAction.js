@@ -10,6 +10,7 @@
 define(
     function (require) {
         var u = require('underscore');
+        var eoo = require('eoo');
         var URL = require('er/URL');
         var util = require('../util');
 
@@ -18,11 +19,6 @@ define(
          * @extends mvc.BaseAction
          */
         var exports = {};
-
-        /**
-         * @override
-         */
-        exports.modelType = './ListModel';
 
         /**
          * 当前页面的分类，始终为`"list"`
@@ -328,24 +324,6 @@ define(
         }
 
         /**
-         * @protected
-         * @method mvc.ListAction#setLayoutChangeNotifier
-         * @param {Object} notifier 导航栏事件通知组件
-         */
-        exports.setLayoutChangeNotifier = function (notifier) {
-            this.layoutChangeNotifier = notifier;
-        };
-
-        /**
-         * @protected
-         * @method mvc.ListAction#getLayoutChangeNotifier
-         * @return {Object} 导航栏事件通知组件
-         */
-        exports.getLayoutChangeNotifier = function () {
-            return this.layoutChangeNotifier;
-        };
-
-        /**
          * 进行查询引起的重定向操作
          *
          * @protected
@@ -428,8 +406,10 @@ define(
             return this.view.getSelectedItems();
         };
 
+        eoo.defineAccessor(exports, 'layoutChangeNotifier');
+
         var BaseAction = require('./BaseAction');
-        var ListAction = require('eoo').create(BaseAction, exports);
+        var ListAction = eoo.create(BaseAction, exports);
 
         return ListAction;
     }

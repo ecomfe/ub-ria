@@ -8,7 +8,7 @@
  */
 define(
     function (require) {
-        require('ui/DrawerActionPanel');
+        require('../ui/DrawerActionPanel');
 
         var u = require('underscore');
 
@@ -49,7 +49,8 @@ define(
                 'filter-switch:click': toggleFilter,
                 'filter-cancel:click': cancelFilter,
                 'filter-modify:click': toggleFilterPanelContent,
-                'table:command': 'commandHandler'
+                'table:command': 'commandHandler',
+                'create:click': popDrawerActionPanel
             };
             this.addUIEvents(uiEvents);
         };
@@ -261,8 +262,8 @@ define(
          * @param {mini-event.Event} e command事件
          */
         exports.commandHandler = function (e) {
-            var transition = u.findWhere(this.model.getStatusTransitions(), {statusName: e.name});
             if (e.triggerType === 'click') {
+                var transition = u.findWhere(this.model.getStatusTransitions(), {statusName: e.name});
                 // 处理状态修改
                 if (transition) {
                     var args = {
@@ -290,19 +291,20 @@ define(
          * @return 列表操作对应的url
          */
         function getActionURL(actionName, id) {
-            var urlPart = '';
-            if (actionName === 'modify') {
-                urlPart = 'update';
-            }
-            else if (actionName === 'read') {
-                urlPart = 'view';
-            }
-            else if (actionName === 'copy') {
-                urlPart = 'copy';
-            }
+            var urlParts = {
+                modify: 'update',
+                read: 'view',
+                copy: 'copy'
+            };
+            var urlPart = urlParts[actionName] || '';
             var path = this.model.get('url').getPath();
             var index = path.lastIndexOf('/');
-            var url = path.substring(0, index + 1) + urlPart + '~id=' + id;
+            var url = require('er/URL').withQuery(
+                path.substring(0, index + 1) + urlPart,
+                {
+                    id: id
+                }
+            );
 
             return url;
         }
@@ -399,7 +401,6 @@ define(
             this.updateBatchButtonStatus();
             this.updateFilterPanelStatus();
             this.updateSearchBoxStatus();
-            this.getSafely('create').on('click', popDrawerActionPanel, this);
         };
 
         /**

@@ -3,14 +3,14 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 只读页视图基类
- * @exports ub-ria.mvc.ReadView
+ * @exports mvc.ReadView
  * @author otakustay
  */
 define(
     function (require) {
         /**
-         * @class ub-ria.mvc.ReadView
-         * @extends ub-ria.mvc.BaseView
+         * @class mvc.ReadView
+         * @extends mvc.BaseView
          */
         var exports = {};
 

@@ -3,7 +3,7 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 表单Action基类
- * @exports ub-ria.mvc.FormAction
+ * @exports mvc.FormAction
  * @author otakustay
  */
 define(
@@ -12,15 +12,10 @@ define(
         var Deferred = require('er/Deferred');
 
         /**
-         * @class ub-ria.mvc.FormAction
-         * @extends ub-ria.mvc.BaseAction
+         * @class mvc.FormAction
+         * @extends mvc.BaseAction
          */
         var exports = {};
-
-        /**
-         * @override
-         */
-        exports.modelType = './FormModel';
 
         /**
          * 当前页面的分类，始终为`"form"`
@@ -35,7 +30,7 @@ define(
          * 处理提交数据时发生的错误，默认无行为，如验证信息显示等需要实现此方法
          *
          * @protected
-         * @method ub-ria.mvc.FormAction#handleSubmitError
+         * @method mvc.FormAction#handleSubmitError
          * @param {er.meta.FakeXHR | meta.FieldError[]} errors `XMLHttpRequest`对象，或者model校验的错误结果集
          * @return {boolean} 返回`true`表示错误已经处理完毕
          */
@@ -60,8 +55,8 @@ define(
          * - 触发`handlefinish`
          *
          * @protected
-         * @method ub-ria.mvc.FormAction#handleSubmitResult
-         * @fires ub-ria.mvc.FormAction#handlefinish
+         * @method mvc.FormAction#handleSubmitResult
+         * @fires mvc.FormAction#handlefinish
          * @param {Object} entity 提交成功后返回的实体
          */
         exports.handleSubmitResult = function (entity) {
@@ -79,7 +74,7 @@ define(
          * 获取处理组件
          *
          * @protected
-         * @method ub-ria.mvc.FormAction#getSubmitHandler
+         * @method mvc.FormAction#getSubmitHandler
          * @return {SubmitHandler}
          */
         exports.getSubmitHandler = function () {
@@ -90,7 +85,7 @@ define(
          * 设置处理组件
          *
          * @protected
-         * @method ub-ria.mvc.FormAction#setSubmitHandler
+         * @method mvc.FormAction#setSubmitHandler
          * @param {SubmitHandler} handler 提交成功处理组件
          */
         exports.setSubmitHandler = function (handler) {
@@ -113,7 +108,7 @@ define(
          * 根据FormType获取Model提交接口的方法名
          *
          * @protected
-         * @method ub-ria.mvc.FormAction#getMethod
+         * @method mvc.FormAction#getMethod
          * @param {string} formType 表单类型
          * @return {string}
          */
@@ -131,7 +126,7 @@ define(
          * 提交实体（新建或更新）
          *
          * @protected
-         * @method ub-ria.mvc.FormAction#submitEntity
+         * @method mvc.FormAction#submitEntity
          * @param {Object} entity 实体数据
          * @param {er.Promise}
          */
@@ -159,7 +154,7 @@ define(
         /**
          * 设置取消编辑时的提示信息标题
          *
-         * @member {string} ub-ria.mvc.FormAction#cancelConfirmTitle
+         * @member {string} mvc.FormAction#cancelConfirmTitle
          */
         exports.cancelConfirmTitle = '确认取消编辑';
 
@@ -167,7 +162,7 @@ define(
          * 获取取消编辑时的提示信息标题
          *
          * @protected
-         * @method ub-ria.mvc.FormAction#getCancelConfirmTitle
+         * @method mvc.FormAction#getCancelConfirmTitle
          * @return {string}
          */
         exports.getCancelConfirmTitle = function () {
@@ -183,7 +178,7 @@ define(
         /**
          * 设置取消编辑时的提示信息内容
          *
-         * @member {string} ub-ria.mvc.FormAction#cancelConfirmMessage
+         * @member {string} mvc.FormAction#cancelConfirmMessage
          */
         exports.cancelConfirmMessage = '取消编辑将不保留已经填写的数据，确定继续吗？';
 
@@ -191,7 +186,7 @@ define(
          * 获取取消编辑时的提示信息内容
          *
          * @protected
-         * @method ub-ria.mvc.FormAction#getCancelConfirmMessage
+         * @method mvc.FormAction#getCancelConfirmMessage
          * @return {string}
          */
         exports.getCancelConfirmMessage = function () {
@@ -212,7 +207,7 @@ define(
          * 取消编辑
          *
          * @protected
-         * @method ub-ria.mvc.FormAction#cancelEdit
+         * @method mvc.FormAction#cancelEdit
          */
         exports.cancelEdit = function () {
             // 从model中拿出表单最初数据，判断是否被更改
@@ -235,7 +230,7 @@ define(
          * 在取消编辑后重定向
          *
          * @protected
-         * @method ub-ria.mvc.FormAction#redirectAfterCancel
+         * @method mvc.FormAction#redirectAfterCancel
          */
         exports.redirectAfterCancel = function () {
             // 默认返回列表页
@@ -246,7 +241,7 @@ define(
          * 判断表单信息是否被更改，默认返回false
          *
          * @protected
-         * @method ub-ria.mvc.FormAction#isFormDataChanged
+         * @method mvc.FormAction#isFormDataChanged
          * @param {Object} initialFormData model中保存的表单初始数据
          * @return {boolean}
          */
@@ -286,7 +281,7 @@ define(
          * 处理表单需要用到的通用数据
          *
          * @public
-         * @method ub-ria.mvc.FormAction#isChildForm
+         * @method mvc.FormAction#isChildForm
          * @return {boolean}
          */
         exports.isChildForm = function () {

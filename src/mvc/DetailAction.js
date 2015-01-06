@@ -3,7 +3,7 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 详情页Action基类
- * @exports ub-ria.mvc.DetailAction
+ * @exports mvc.DetailAction
  * @author otakustay
  */
 define(
@@ -11,7 +11,7 @@ define(
         var u = require('underscore');
 
         /**
-         * @class DetailAction
+         * @class mvc.DetailAction
          * @extends mvc.BaseAction
          */
         var exports = {};
@@ -43,6 +43,8 @@ define(
         /**
          * 根据请求重新跳转
          *
+         * @protected
+         * @method mvc.DetailAction#reloadWithQueryUpdate
          * @param {Object} args 新的请求参数对象
          */
         exports.reloadWithQueryUpdate = function (args) {
@@ -55,7 +57,6 @@ define(
          *
          * @param {mini-event.Event} e 事件对象
          * @param {boolean} withPage 列表是否用自己的page
-         * @ignore
          */
         function refreshList(e, withPage) {
             // 防止子Action自己跳转
@@ -85,8 +86,8 @@ define(
         /**
          * 切换页数引起的search
          *
+         * @event
          * @param {mini-event.Event} e 事件对象
-         * @ignore
          */
         function changePage(e) {
             refreshList.call(this, e, true);

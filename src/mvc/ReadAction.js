@@ -3,14 +3,14 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 只读页Action基类
- * @exports ub-ria.mvc.ReadAction
+ * @exports mvc.ReadAction
  * @author lixiang(lixiang05@baidu.com)
  */
 define(
     function (require) {
         /**
-         * @class ub-ria.mvc.ReadAction
-         * @extends ub-ria.mvc.BaseAction
+         * @class mvc.ReadAction
+         * @extends mvc.BaseAction
          */
         var exports = {};
 
@@ -27,7 +27,7 @@ define(
          * 点击返回后的处理
          *
          * @protected
-         * @method ub-ria.mvc.ReadAction#returnBack
+         * @method mvc.ReadAction#returnBack
          */
         exports.returnBack = function () {
             // 默认返回列表页

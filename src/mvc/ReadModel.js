@@ -3,21 +3,21 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 只读页数据模型基类
- * @exports ub-ria.mvc.ReadModel
+ * @exports mvc.ReadModel
  * @author otakustay
  */
 define(
     function (require) {
         /**
-         * @class ub-ria.mvc.ReadModel
-         * @extends ub-ria.mvc.SingleEntityModel
+         * @class mvc.ReadModel
+         * @extends mvc.SingleEntityModel
          */
         var exports = {};
 
         /**
          * 字段无值时的默认显示文本，默认为`"--"`
          *
-         * @member {string} ub-ria.mvc.ReadModel#defaultDisplayText
+         * @member {string} mvc.ReadModel#defaultDisplayText
          */
         exports.defaultDisplayText = '--';
 

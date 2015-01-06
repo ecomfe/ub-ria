@@ -3,7 +3,7 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 静态排序数据类
- * @exports ub-ria.mvc.StaticListData
+ * @exports mvc.StaticListData
  * @author lixiang
  *         shenbnin(bobshenbin@gmail.com)
  */
@@ -12,8 +12,8 @@ define(
         var u = require('underscore');
 
         /**
-         * @class ub-ria.mvc.StaticListData
-         * @extends ub-ria.mvc.RequestManager
+         * @class mvc.StaticListData
+         * @extends mvc.RequestManager
          */
         var exports = {};
 
@@ -21,7 +21,7 @@ define(
          * 获取一个实体列表（不分页）
          *
          * @public
-         * @method ub-ria.mvc.StaticListData#list
+         * @method mvc.StaticListData#list
          * @param {Object} query 查询参数
          * @return {er.meta.FakeXHR}
          */
@@ -40,7 +40,7 @@ define(
          * 返回请求参数中非预期的参数列表
          *
          * @protected
-         * @method ub-ria.mvc.StaticListData#getOtherKeys
+         * @method mvc.StaticListData#getOtherKeys
          * @param {Object} query 查询参数
          * @return {Array.<string>} 请求参数中非预期参数列表
          */
@@ -57,10 +57,12 @@ define(
         /**
          * 过滤数据
          *
+         * @protected
+         * @method mvc.StaticListData#filterData
          * @param {Object} query 查询条件
          * @return {number}
          */
-        function filterData(query) {
+        exports.filterData = function (query) {
             var sortData = u.clone(this.cacheList);
             var results = sortData.results;
             // 补上totalCount
@@ -81,40 +83,33 @@ define(
             }
 
             return sortData;
-        }
+        };
 
         /**
          * 检索一个实体列表，返回一个结果集
          *
          * @public
-         * @method ub-ria.mvc.StaticListData#search
+         * @method mvc.StaticListData#search
          * @param {Object} query 查询参数
          * @return {er.meta.FakeXHR}
          */
         exports.search = function (query) {
-            var searching = null;
-
             var otherKeys = this.getOtherKeys(query);
             if (!this.cacheList || otherKeys.length) {
                 var cache = function (data) {
                     this.cacheList = data;
-                    return filterData.call(this, query);
+                    return this.filterData(query);
                 };
-
-                searching = this.list(query).then(u.bind(cache, this));
+                return this.list(query).then(u.bind(cache, this));
             }
-            else {
-                searching = require('er/Deferred').resolved(filterData.call(this, query));
-            }
-
-            return searching;
+            return require('er/Deferred').resolved(this.filterData(query));
         };
 
         /**
          * 返回全集
          *
          * @public
-         * @method ub-ria.mvc.StaticListData#getCacheList
+         * @method mvc.StaticListData#getCacheList
          * @return {Array}
          */
         exports.getCacheList = function () {
@@ -177,7 +172,7 @@ define(
          * 因此自己写一个稳定排序, 冒泡排序
          *
          * @public
-         * @method ub-ria.mvc.StaticListData#sort
+         * @method mvc.StaticListData#sort
          * @param {array} array 待排序数组
          * @param {string} order desc | asc
          * @param {string} orderBy 排序字段

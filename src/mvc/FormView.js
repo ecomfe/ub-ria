@@ -3,12 +3,12 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 表单视图基类
- * @exports ub-ria.mvc.FormView
+ * @exports mvc.FormView
  * @author otakustay
  */
 define(
     function (require) {
-        require('ui/DrawerActionPanel');
+        require('../ui/DrawerActionPanel');
 
         var u = require('underscore');
 
@@ -22,8 +22,8 @@ define(
         // - 可以有一个id为`cancel`的按钮，点击后会触发`cancel`事件
 
         /**
-         * @class ub-ria.mvc.FormView
-         * @extends ub-ria.mvc.BaseView
+         * @class mvc.FormView
+         * @extends mvc.BaseView
          */
         var exports = {};
 
@@ -42,7 +42,7 @@ define(
          * 提交数据
          *
          * @event
-         * @fires ub-ria.mvc.FormView#submit
+         * @fires mvc.FormView#submit
          */
         function submit() {
             this.fire('submit');
@@ -52,7 +52,7 @@ define(
          * 取消编辑
          *
          * @event
-         * @fires ub-ria.mvc.FormView#cancel
+         * @fires mvc.FormView#cancel
          */
         function cancelEdit() {
             this.fire('cancel');
@@ -76,7 +76,7 @@ define(
          * 从表单中获取实体数据
          *
          * @public
-         * @method ub-ria.mvc.FormView#getEntity
+         * @method mvc.FormView#getEntity
          * @return {Object}
          */
         exports.getEntity = function () {
@@ -87,7 +87,7 @@ define(
          * 获取表单数据
          *
          * @protected
-         * @method ub-ria.mvc.FormView#getFormData
+         * @method mvc.FormView#getFormData
          * @return {Object}
          */
         exports.getFormData = function () {
@@ -99,7 +99,7 @@ define(
          * 向用户通知提交错误信息，默认根据`field`字段查找对应`name`的控件并显示错误信息
          *
          * @public
-         * @method ub-ria.mvc.FormView#notifyErrors
+         * @method mvc.FormView#notifyErrors
          * @param {Object} errors 错误信息
          * @param {Array.<meta.FieldError>} errors.fields 出现错误的字段集合
          */
@@ -126,7 +126,7 @@ define(
          * 等待用户取消确认
          *
          * @protected
-         * @method ub-ria.mvc.FormView#waitCancelConfirm
+         * @method mvc.FormView#waitCancelConfirm
          * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，
          * 用户取消则进入`rejected`状态
          */
@@ -153,7 +153,7 @@ define(
             };
             u.extend(options, extendedOptions);
 
-            warn = require('ui/Warn').show(options);
+            warn = require('../ui/Warn').show(options);
 
             // 容器的状态要变一下
             var formViewContainer = this.get('form-page');
@@ -175,10 +175,7 @@ define(
 
             warn.on('ok', deferred.resolver.resolve);
             warn.on('cancel', deferred.resolver.reject);
-            warn.on('hide', function () {
-                // 关闭之后移除状态
-                formViewContainer.removeState('warned');
-            });
+            warn.on('hide', u.bind(formViewContainer.removeState, this, 'warned'));
 
             return deferred.promise;
         };
@@ -187,7 +184,7 @@ define(
          * 禁用提交操作
          *
          * @protected
-         * @method ub-ria.mvc.FormView#disableSubmit
+         * @method mvc.FormView#disableSubmit
          */
         exports.disableSubmit = function () {
             if (this.viewContext) {
@@ -199,7 +196,7 @@ define(
          * 启用提交操作
          *
          * @protected
-         * @method ub-ria.mvc.FormView#enableSubmit
+         * @method mvc.FormView#enableSubmit
          */
         exports.enableSubmit = function () {
             if (this.viewContext) {
@@ -211,7 +208,7 @@ define(
          * 用户处理弹出抽屉的事件Handle
          *
          * @protected
-         * @method ub-ria.mvc.FormView#popDrawerActionPanel
+         * @method mvc.FormView#popDrawerActionPanel
          * @param {mini-event.Event} e 事件参数
          */
         exports.popDrawerActionPanel = function (e) {
@@ -231,7 +228,7 @@ define(
          * 加载 action，参数同 ActionPanel
          *
          * @protected
-         * @method ub-ria.mvc.FormView#popDrawerAction
+         * @method mvc.FormView#popDrawerAction
          * @param {Object} options
          * @returns {ui.DrawerActionPanel}
          */
@@ -264,7 +261,7 @@ define(
          * 返回并告诉上层保留数据并退出
          *
          * @event
-         * @fires ub-ria.mvc.FormView#saveandclose
+         * @fires mvc.FormView#saveandclose
          * @param {mini-event.Event} e 事件参数
          */
         function saveAndClose(e) {
@@ -289,7 +286,7 @@ define(
          * 处理抽屉内提交的Action的接口
          *
          * @protected
-         * @method ub-ria.mvc.FormView#handleAfterRelatedEntitySaved
+         * @method mvc.FormView#handleAfterRelatedEntitySaved
          * @param {Object} entity 提交后返回实体
          * @param {string} targetId 触发事件的链接的id
          */
