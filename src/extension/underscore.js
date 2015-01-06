@@ -8,7 +8,7 @@
  */
 define(
     function (require) {
-        var u = require('../util');
+        var u = require('underscore');
 
         function enable() {
             // 模板配置
