@@ -100,8 +100,8 @@ define(
          */
         BaseAction.prototype.getPageCategories = function () {
             var categories = [];
-            var category = util.dasherize(this.getCategory());
-            var entityName = util.dasherize(this.getEntityName());
+            var category = u.dasherize(this.getCategory());
+            var entityName = u.dasherize(this.getEntityName());
 
             if (category) {
                 categories.push(category + '-page');
