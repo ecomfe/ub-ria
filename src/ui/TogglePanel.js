@@ -75,7 +75,7 @@ define(
          * @param {Object} titleElem Title的DOM对象
          */
         function initTitle(titleElem) {
-            var titlePanel = ui.create('Panel', { main: titleElem });
+            var titlePanel = ui.create('Panel', {main: titleElem});
             this.helper.addPartClasses('title', titlePanel.main);
             this.addChild(titlePanel, 'title');
             titlePanel.render();
@@ -120,7 +120,7 @@ define(
                 attachedLayout: 'bottom,left',
                 autoClose: false,
                 viewContext: this.viewContext,
-                renderOptions: this.renderOptions,
+                renderOptions: this.renderOptions
             };
             var contentLayer = ui.create('Overlay', options);
 
@@ -148,6 +148,7 @@ define(
         /**
          * 关闭layer层的事件处理句柄
          *
+         * @param {mini-event.Event} e 事件对象
          * @inner
          */
         function close(e) {

@@ -64,7 +64,7 @@ define(
         /**
          * @public
          * @method mvc.ListModel#setGlobalData
-         * @param {Object} data
+         * @param {Object} data 全局数据对象
          */
         exports.setGlobalData = function (data) {
             this.addData('global', data);
@@ -207,7 +207,6 @@ define(
          * 处理加载后的数据
          *
          * @override
-         * @return {er.Promise}
          */
         exports.prepare = function () {
             this.set('filtersInfo', this.getFiltersInfo());
@@ -248,12 +247,12 @@ define(
          * @param {number} targetStatus 目标状态
          * @param {Object} entity 单个实体
          * @param {number} entity.status 实体的当前状态
-         * @return boolean
+         * @return {boolean}
          */
         function checkStatusTransition(targetStatus, entity) {
             var config = u.findWhere(
                 this.getStatusTransitions(),
-                { status: targetStatus }
+                {status: targetStatus}
             );
 
             if (config.accept) {
@@ -263,9 +262,8 @@ define(
             else if (config.deny) {
                 return !u.contains(config.deny, entity.status);
             }
-            else {
-                return true;
-            }
+
+            return true;
         }
 
         /**
@@ -275,6 +273,7 @@ define(
          * @method mvc.ListModel#canUpdateToStatus
          * @param {Object[]} items 待更新的实体列表
          * @param {number} status 修改的目标状态
+         * @return {boolean}
          */
         exports.canUpdateToStatus = function (items, status) {
             return u.any(items, u.bind(checkStatusTransition, this, status));
@@ -343,14 +342,13 @@ define(
             if (typeof item === 'object') {
                 return u.indexOf(list, item);
             }
-            else {
-                for (var i = 0; i < list.length; i++) {
-                    if (list[i].id === item) {
-                        return i;
-                    }
+
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].id === item) {
+                    return i;
                 }
-                return -1;
             }
+            return -1;
         };
 
         /**
@@ -445,8 +443,7 @@ define(
          * 返回原始筛选配置数组
          *
          * @override
-         * @returns {Object}
-         *
+         * @return {Object}
          */
         exports.getFilters = function () {
             return {};
@@ -457,7 +454,7 @@ define(
          *
          * @protected
          * @method mvc.ListModel#getFiltersInfo
-         * @returns {Object}
+         * @return {Object}
          */
         exports.getFiltersInfo = function () {
             var isAllFiltersDefault = true;

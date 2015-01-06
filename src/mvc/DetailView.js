@@ -46,7 +46,7 @@ define(
          *
          * @protected
          * @method mvc.DetailView#popDrawerAction
-         * @param {Object} options
+         * @param {Object} options 控件配置项
          * @return {ui.DrawerActionPanel}
          */
         exports.popDrawerAction = function (options) {
@@ -112,28 +112,28 @@ define(
             delegate(
                 listActionPanel, 'action@search',
                 this, 'listrefresh',
-                { preserveData: true, syncState: true }
+                {preserveData: true, syncState: true}
             );
             // 其它操作都需要把页码置为1
             delegate(
                 listActionPanel, 'action@pagechange',
                 this, 'pagechange',
-                { preserveData: true, syncState: true }
+                {preserveData: true, syncState: true}
             );
             delegate(
                 listActionPanel, 'action@statusupdate',
                 this, 'listrefresh',
-                { preserveData: true, syncState: true }
+                {preserveData: true, syncState: true}
             );
             delegate(
                 listActionPanel, 'action@pagesizechange',
                 this, 'listrefresh',
-                { preserveData: true, syncState: true }
+                {preserveData: true, syncState: true}
             );
             delegate(
                 listActionPanel, 'action@tablesort',
                 this, 'listrefresh',
-                { preserveData: true, syncState: true }
+                {preserveData: true, syncState: true}
             );
             this.$super(arguments);
         };
@@ -143,16 +143,15 @@ define(
          *
          * @public
          * @method mvc.DetailView#getListQuery
-         * @return {object} 查询条件
+         * @return {Object} 查询条件
          */
         exports.getListQuery = function () {
             var listAction = this.getSafely('detail-list').get('action');
             if (listAction) {
                 return listAction.getSearchQuery();
             }
-            else {
-                return {};
-            }
+
+            return {};
         };
 
         var BaseView = require('./BaseView');

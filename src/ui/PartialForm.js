@@ -17,8 +17,8 @@ define(
          * 这控件本质上是个`ActionPanel`，但它表现得像是`InputControl`，
          * 因此可以用作表单的一部分，从而细粒度地切割表单的组成
          *
-         * @param {Object=} options 初始化参数
-         * @extends ef/ActionPanel
+         * @param {Object} [options] 初始化参数
+         * @extends ef.ActionPanel
          * @constructor
          */
         function PartialForm(options) {

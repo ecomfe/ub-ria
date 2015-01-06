@@ -66,7 +66,7 @@ define(
             u.each(
                 values,
                 function (value, key) {
-                    var key = u.dasherize(key);
+                    key = u.dasherize(key);
                     this.get(key).set('rawValue', value);
                 },
                 this

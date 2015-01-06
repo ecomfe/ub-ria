@@ -173,7 +173,7 @@ define(
          *
          * @public
          * @method mvc.StaticListData#sort
-         * @param {array} array 待排序数组
+         * @param {Array} array 待排序数组
          * @param {string} order desc | asc
          * @param {string} orderBy 排序字段
          */

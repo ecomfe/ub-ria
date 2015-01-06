@@ -75,7 +75,7 @@ define(
          *
          * @protected
          * @method mvc.ListAction#getSearchQuery
-         * @return {object} 查询条件
+         * @return {Object} 查询条件
          */
         exports.getSearchQuery = function () {
             var query = this.view.getSearchArgs();
@@ -198,6 +198,9 @@ define(
          * 根据删除前确认
          *
          * @param {meta.UpdateContext} context 操作的上下文对象
+         * @param {Object} advice 提示对象
+         * @param {string} advice.message 提示信息
+         * @return {er.Promise}
          */
         function waitConfirmForAdvice(context, advice) {
             var options = {

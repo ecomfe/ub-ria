@@ -1,3 +1,11 @@
+/**
+ * UB RIA Base
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 字段长度范围校验器
+ * @author yanghuabei(yanghuabei@baidu.com)
+ * @date $DATE$
+ */
 define(
     function (require) {
         var checker = {

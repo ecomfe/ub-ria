@@ -105,7 +105,7 @@ define(
          * @return {Object}
          */
         exports.getData = function (entity, action) {
-            return { entityName: action.getEntityName() };
+            return {entityName: action.getEntityName()};
         };
 
         var RedirectSubmitHandler = require('eoo').create(SubmitHandler, exports);

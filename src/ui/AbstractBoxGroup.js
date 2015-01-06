@@ -130,6 +130,7 @@ define(
         /**
          * 同步值
          *
+         * @param {mini-event.Event} e 事件对象
          * @ignore
          */
         function syncValue(e) {
@@ -154,9 +155,9 @@ define(
 
         var itemTemplate = [
             '<div class="${wrapperClass}">',
-                '<div id="${id}" class="${className}" ${checked}',
-                '   data-ui-value="${value}" data-ui-box-type="${boxType}">',
-                '${text}</div>',
+            '    <div id="${id}" class="${className}" ${checked}',
+            '       data-ui-value="${value}" data-ui-box-type="${boxType}">',
+            '    ${text}</div>',
             '</div>'
         ];
         itemTemplate = itemTemplate.join('');

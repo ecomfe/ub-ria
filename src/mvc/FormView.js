@@ -127,6 +127,7 @@ define(
          *
          * @protected
          * @method mvc.FormView#waitCancelConfirm
+         * @param {Object} options 配置项
          * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，
          * 用户取消则进入`rejected`状态
          */
@@ -229,8 +230,9 @@ define(
          *
          * @protected
          * @method mvc.FormView#popDrawerAction
-         * @param {Object} options
-         * @returns {ui.DrawerActionPanel}
+         * @param {Object} options 控件配置项
+         * @param {string} targetId 弹出抽屉的源元素id
+         * @return {ui.DrawerActionPanel}
          */
         exports.popDrawerAction = function (options, targetId) {
             options.id = options.id || 'form-drawer-action';

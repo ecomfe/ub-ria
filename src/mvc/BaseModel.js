@@ -126,7 +126,7 @@ define(
          *
          * @protected
          * @method mvc.BaseModel#isAllow
-         * @param {string} authority
+         * @param {string} authority 权限值
          * @return {boolean}
          */
         exports.isAllow = function (authority) {

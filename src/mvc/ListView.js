@@ -288,7 +288,7 @@ define(
          *
          * @param {string} actionName 操作名称, 包括modify, read
          * @param {string} id 待更新的实体id
-         * @return 列表操作对应的url
+         * @return {er.URL} 列表操作对应的url
          */
         function getActionURL(actionName, id) {
             var urlParts = {
@@ -451,8 +451,8 @@ define(
          *
          * @protected
          * @method mvc.ListView#popDrawerAction
-         * @param {Object} options
-         * @returns {ui.DrawerActionPanel}
+         * @param {Object} options 控件配置项
+         * @return {ui.DrawerActionPanel}
          */
         exports.popDrawerAction = function (options) {
             options.id = options.id || 'drawer-action';

@@ -17,9 +17,8 @@ define(
                 if (!prefix && contentType === 'application/json') {
                     return JSON.stringify(data);
                 }
-                else {
-                    return serializeAsForm.apply(ajax.hooks, arguments);
-                }
+
+                return serializeAsForm.apply(ajax.hooks, arguments);
             };
             // 有个`getKey`要弄回去
             ajax.hooks.serializeData.getKey = serializeAsForm.getKey;

@@ -88,7 +88,7 @@ define(
 
         function doSearch(e) {
             var searchBox = this.resolveControl();
-            var filter = { value: searchBox.getValue() };
+            var filter = {value: searchBox.getValue()};
             // 外部searchbox是不有配搜索包含关键字段
             if (searchBox.dataKeys) {
                 filter.keys = lib.splitTokenList(searchBox.dataKeys);

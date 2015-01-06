@@ -55,15 +55,13 @@ define(
                         return u.escape(control.get('title')) + '请填写'
                             + '≥' + start + '且≤' + end + '的整数';
                     }
-                    else {
-                        return u.escape(control.get('title')) + '请填写'
-                            + '≥' + start + '且≤' + end + '的数字，'
-                            + '最多可保存至小数点后两位';
-                    }
+
+                    return u.escape(control.get('title')) + '请填写'
+                        + '≥' + start + '且≤' + end + '的数字，'
+                        + '最多可保存至小数点后两位';
                 }
-                else {
-                    return null;
-                }
+
+                return null;
             }
 
             var Rule = require('esui/validator/Rule');
@@ -161,8 +159,7 @@ define(
                     function (item) {
                         // 字符串为分隔符
                         if (u.isString(item)) {
-                            separator = '<span class="table-operation-separator">'
-                                + u.escape(item) + '</span>';
+                            separator = '<span class="table-operation-separator">' + u.escape(item) + '</span>';
                             return separator;
                         }
 
@@ -193,22 +190,20 @@ define(
                             link.push('</a>');
                             return link.join('');
                         }
-                        else {
-                            var className = 'table-operation '
-                                + 'table-operation-' + u.escape(item.type);
-                            var options = {
-                                className: className,
-                                text: item.text,
-                                command: item.command,
-                                args: item.args
-                            };
-                            // 单独处理tagName
-                            if (item.tagName) {
-                                options.tagName = item.tagName;
-                            }
 
-                            return Table.command(options);
+                        var className = 'table-operation table-operation-' + u.escape(item.type);
+                        var options = {
+                            className: className,
+                            text: item.text,
+                            command: item.command,
+                            args: item.args
+                        };
+                        // 单独处理tagName
+                        if (item.tagName) {
+                            options.tagName = item.tagName;
                         }
+
+                        return Table.command(options);
                     }
                 );
 

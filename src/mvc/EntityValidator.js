@@ -52,7 +52,7 @@ define(
         /**
          * 用于自定义EntityValidator实例的校验器错误提示信息
          *
-         * @param {object} errorMessages 每一项为校验器名与信息模板内容组成
+         * @param {Object} errorMessages 每一项为校验器名与信息模板内容组成
          * key-value对
          */
         EntityValidator.prototype.setErrorMessages = function (errorMessages) {
@@ -75,13 +75,13 @@ define(
         /**
          * 为某个EntityValidator实例添加自定义校验器
          *
-         * @param {object} checker 要添加的自定义检验器
+         * @param {Object} checker 要添加的自定义检验器
          * @param {string} checker.name 校验器名称
-         * @param {string | object} checker.errorMessage 错误信息模板,
+         * @param {string | Object} checker.errorMessage 错误信息模板,
          *     或者多个错误信息模板组成的对象
          * @param {number} checker.priority 校验器优先级
-         * @param {function} checker.check 校验函数
-         * @return {object} 添加成功返回checker，失败返回null
+         * @param {Function} checker.check 校验函数
+         * @return {Object} 添加成功返回checker，失败返回null
          */
         EntityValidator.prototype.addChecker = function (checker) {
             if (checker
@@ -114,7 +114,7 @@ define(
         /**
          * 获取EntityValidator实例上的校验器checkers
          *
-         * @return {object} 返回localCheckers
+         * @return {Object} 返回localCheckers
          */
         EntityValidator.prototype.getCheckers = function () {
             return this.checkers || {};
@@ -123,7 +123,7 @@ define(
         /**
          * 设置validator的'schema'属性
          *
-         * @param {object} value 实体的schema定义
+         * @param {Object} value 实体的schema定义
          */
         EntityValidator.prototype.setSchema = function (value) {
             this.schema = value;
@@ -141,7 +141,7 @@ define(
         /**
          * 设置validator的'rule'属性
          *
-         * @param {object} value model上绑定的rule
+         * @param {Object} value model上绑定的rule
          */
         EntityValidator.prototype.setRule = function (value) {
             this.rule = value;
@@ -160,7 +160,7 @@ define(
          * 调用该方法对model的实体值进行检验，默认检验规则定义与相应模块内的
          * schema.js中
          *
-         * @param {object} entity 表单提交的实体
+         * @param {Object} entity 表单提交的实体
          * @return {object[]} 错误字段及错误信息数组
          */
         EntityValidator.prototype.validate = function (entity) {
@@ -179,8 +179,8 @@ define(
         /**
          * 实际校验函数，遍历schema中每个字段的定义
          *
-         * @param {object} schema 实体定义
-         * @param {object} entity 表单提交的实体
+         * @param {Object} schema 实体定义
+         * @param {Object} entity 表单提交的实体
          * @param {object[]} errors 错误字段、错误信息数组
          * @param {string[]} path 记录字段层次的数组
          * @ignore
@@ -236,12 +236,12 @@ define(
         /**
          * 执行对当前字段的校验，校验通过返回true，不通过返回对象
          *
-         * @param {object[]} fieldCheckers 针对某字段的检验器数组，按优先级高低排序
-         * @param {object[]} checkerOptions
+         * @param {Object[]} fieldCheckers 针对某字段的检验器数组，按优先级高低排序
+         * @param {Object[]} checkerOptions 配置项
          * @param {string} checkerOptions.value 待检验的字段值
          * @param {string} checkerOptions.fieldPath 待检验字段在实体entity中的访问路径
-         * @param {object[]} checkerOptions.fieldSchema 待检验字段的定义、约束
-         * @return {object | true}
+         * @param {Object[]} checkerOptions.fieldSchema 待检验字段的定义、约束
+         * @return {Object | true}
          */
         EntityValidator.prototype.excuteCheckers = function (fieldCheckers, checkerOptions) {
             var value = checkerOptions.value;
@@ -303,7 +303,7 @@ define(
                 match = regex.exec(template);
             }
 
-            return u.template(template, data, { interpolate: regex });
+            return u.template(template, data, {interpolate: regex});
         }
 
         /**
@@ -361,8 +361,8 @@ define(
         /**
          * 生成某一字段的按优先级高低排序的检验器数组
          *
-         * @param {object} fieldSchema为字段定义
-         * @return {object} 检验器对象组成的有序数组
+         * @param {Object} fieldSchema 字段定义
+         * @return {Object} 检验器对象组成的有序数组
          */
         EntityValidator.prototype.getFieldCheckers = function(fieldSchema) {
             var checkerNames = getFieldCheckerNames(fieldSchema);
@@ -387,7 +387,7 @@ define(
         /**
          * 根据field定义，生成该字段的检验器名组成的数组
          *
-         * @param {object} fieldSchema 字段的定义
+         * @param {Object} fieldSchema 字段的定义
          * @return {string[]} 检验器名组成的数组
          * @ignore
          */

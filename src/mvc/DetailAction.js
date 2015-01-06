@@ -49,7 +49,7 @@ define(
          */
         exports.reloadWithQueryUpdate = function (args) {
             var url = getURLForQuery.call(this, args);
-            this.redirect(url, { force: true });
+            this.redirect(url, {force: true});
         };
 
         /**

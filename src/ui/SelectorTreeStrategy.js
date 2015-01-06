@@ -57,9 +57,8 @@ define(
                 // 后面应该会改用比如 shouldExpand这种
                 return !node.isSelected;
             }
-            else {
-                return this.defaultExpand;
-            }
+
+            return this.defaultExpand;
         };
 
         SelectorTreeStrategy.prototype.enableSelectStrategy = function (tree) {

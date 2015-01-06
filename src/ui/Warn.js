@@ -14,8 +14,8 @@ define(
         /**
          * Warn控件
          *
-         * @param {Object=} options 初始化参数
-         * @extends esui/Control
+         * @param {Object} [options] 初始化参数
+         * @extends esui.Control
          * @constructor
          */
         function Warn(options) {
@@ -146,7 +146,7 @@ define(
          *
          * @parma {string} content 显示的内容
          * @param {Object} options 其它配置项
-         *
+         * @return {ui.Warn}
          */
         Warn.show = function (options) {
             var warn = new Warn(options);

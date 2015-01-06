@@ -128,7 +128,7 @@ define(
          * @protected
          * @method mvc.FormAction#submitEntity
          * @param {Object} entity 实体数据
-         * @param {er.Promise}
+         * @return {er.Promise}
          */
         exports.submitEntity = function (entity) {
             var method = this.getMethod(this.context.formType);
@@ -141,9 +141,8 @@ define(
                             u.bind(handleError, this)
                         );
                 }
-                else {
-                    throw new Error('Cannot find formType in methodMap');
-                }
+
+                throw new Error('Cannot find formType in methodMap');
 
             }
             catch (ex) {
@@ -170,9 +169,8 @@ define(
             if (formType === 'create') {
                 return '新建';
             }
-            else {
-                return '编辑';
-            }
+
+            return '编辑';
         };
 
         /**
@@ -268,7 +266,7 @@ define(
 
             // 保存一份最初的form表单内容到model，用于判断表单内容是否被更改
             var initialFormData = this.view.getFormData();
-            this.model.set('initialFormData', initialFormData, { silent: true });
+            this.model.set('initialFormData', initialFormData, {silent: true});
 
             this.view.on('submit', submit, this);
             this.view.on('cancel', this.cancelEdit, this);

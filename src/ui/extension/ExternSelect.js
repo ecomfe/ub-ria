@@ -59,7 +59,7 @@ define(
                     u.each(
                         selects,
                         function (select, index) {
-                            var select = this.target.viewContext.get(select);
+                            select = this.target.viewContext.get(select);
                             if (select) {
                                 controls.push(select);
                             }
@@ -111,7 +111,7 @@ define(
                 function (select, index) {
                     var item = select.getSelectedItem();
                     if (item.value !== '' && select.dataKey) {
-                        e.filterData.push({ keys: [select.dataKey], value: item.value });
+                        e.filterData.push({keys: [select.dataKey], value: item.value});
                     }
                 }
             );
@@ -123,7 +123,7 @@ define(
             this.handleControls(
                 function (select) {
                     select.un('change', search, this);
-                    select.setProperties({ selectedIndex: 0 });
+                    select.setProperties({selectedIndex: 0});
                     select.on('change', search, this);
                 }
             );

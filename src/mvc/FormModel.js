@@ -8,7 +8,6 @@
  */
 define(
     function (require) {
-        var SingleEntityModel = require('./SingleEntityModel');
         var Deferred = require('er/Deferred');
 
         /**
@@ -20,7 +19,7 @@ define(
         /**
          * @public
          * @method mvc.FormModel#setGlobalData
-         * @param {Object} data
+         * @param {Object} data 全局数据对象
          */
         exports.setGlobalData = function (data) {
             this.addData('global', data);
@@ -135,7 +134,7 @@ define(
             var validationResult = this.validateEntity(entity);
 
             if (validationResult.length > 0) {
-                return Deferred.rejected({ fields: validationResult });
+                return Deferred.rejected({fields: validationResult});
             }
 
             return data.update(entity);

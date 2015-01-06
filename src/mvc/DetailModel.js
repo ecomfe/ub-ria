@@ -21,7 +21,7 @@ define(
          *
          * @public
          * @method mvc.DetailModel#setGlobalData
-         * @param {Object} data
+         * @param {Object} data 全局数据对象
          */
         exports.setGlobalData = function (data) {
             this.addData('global', data);

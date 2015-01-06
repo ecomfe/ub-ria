@@ -1,3 +1,11 @@
+/**
+ * UB RIA Base
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 类型校验对象
+ * @author yanghuabei(yanghuabei@baidu.com)
+ * @date $DATE$
+ */
 define(
     function (require) {
         var u = require('../../util');
@@ -14,7 +22,7 @@ define(
          * enum、number类型字段值为number时通过检查；
          *
          * @param {string | boolean | number | object | array | undefined} value 待检验的值
-         * @param {array} schema 字段的定义、约束, 长度为3或2的数组
+         * @param {Array} schema 字段的定义、约束, 长度为3或2的数组
          * @return {boolean} 检验成功返回true，失败返回false
          */
         function check(value, schema) {
@@ -23,11 +31,11 @@ define(
             var typeMapping = {
                 'Undefined': true,
                 'Null': true,
-                'Array': [ 'array' ],
-                'String': [ 'string' ],
-                'Number': [ 'number', 'enum' ],
-                'Boolean': [ 'bool' ],
-                'Object': [ 'object' ]
+                'Array': ['array'],
+                'String': ['string'],
+                'Number': ['number', 'enum'],
+                'Boolean': ['bool'],
+                'Object': ['object']
             };
             var key = '';
 
