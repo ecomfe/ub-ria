@@ -31,7 +31,8 @@
             "underscore": "1.5.x",
             "mini-event": "1.x",
             "etpl": "2.x",
-            "moment": "2.x"
+            "moment": "2.x",
+            "uioc": "0.2.x"
         }
     }
 }

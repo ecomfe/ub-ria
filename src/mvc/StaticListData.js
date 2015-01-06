@@ -198,7 +198,7 @@ define(
             }
         };
 
-        var RequestManager = require('ub-ria/mvc/RequestManager');
+        var RequestManager = require('./RequestManager');
         var StaticListData = require('eoo').create(RequestManager, exports);
 
         return StaticListData;

@@ -141,7 +141,7 @@ define(
             return data.update(entity);
         };
 
-        var SingleEntityModel = require('ub-ria/mvc/SingleEntityModel');
+        var SingleEntityModel = require('./SingleEntityModel');
         var FormModel = require('eoo').create(SingleEntityModel, exports);
 
         return FormModel;
