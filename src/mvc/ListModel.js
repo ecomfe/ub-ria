@@ -211,7 +211,8 @@ define(
          */
         exports.prepare = function () {
             this.set('filtersInfo', this.getFiltersInfo());
-            u.bind(processUIData, this);
+
+            processUIData.call(this);
         };
 
         /**
