@@ -26,7 +26,7 @@ define(
         }
 
         return {
-            enable: require('underscore').once(enable)
+            enable: require('../util').once(enable)
         };
     }
 );

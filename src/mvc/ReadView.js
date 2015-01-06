@@ -2,35 +2,25 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 只读页视图基类
+ * @exports mvc.ReadView
  * @author otakustay
- * @date $DATE$
  */
 define(
     function (require) {
-        var util = require('er/util');
-        var BaseView = require('./BaseView');
-
         /**
-         * 只读页视图基类
-         *
-         * @extends BaseView
-         * @constructor
+         * @class mvc.ReadView
+         * @extends mvc.BaseView
          */
-        function ReadView() {
-            BaseView.apply(this, arguments);
-        }
-
-        util.inherits(ReadView, BaseView);
+        var exports = {};
 
         /**
          * 绑定控件事件
          *
          * @override
          */
-        ReadView.prototype.bindEvents = function () {
-            BaseView.prototype.bindEvents.apply(this, arguments);
+        exports.bindEvents = function () {
+            this.$super(arguments);
 
             var returnButton = this.get('return');
             if (returnButton) {
@@ -38,7 +28,10 @@ define(
                 delegate(returnButton, 'click', this, 'return');
             }
         };
-        
+
+        var BaseView = require('./BaseView');
+        var ReadView = require('eoo').create(BaseView, exports);
+
         return ReadView;
     }
 );

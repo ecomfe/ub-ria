@@ -13,7 +13,7 @@ define(
         var Validity = require('esui/validator/Validity');
         var ValidityState = require('esui/validator/ValidityState');
         var InputControl = require('esui/InputControl');
-        var u = require('underscore');
+        var u = require('../util');
 
         /**
          * Uploader控件

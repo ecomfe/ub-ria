@@ -3,20 +3,35 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 详情页Model基类
- * @class DetailModel
- * @extends mvc.SingleEntityModel
+ * @exports mvc.DetailModel
  * @author otakustay
  */
 define(
     function (require) {
-        var u = require('underscore');
+        var u = require('../util');
 
+        /**
+         * @class mvc.DetailModel
+         * @extends mvc.SingleEntityModel
+         */
         var exports = {};
+
+        /**
+         * 设置globalData方法
+         *
+         * @public
+         * @method mvc.DetailModel#setGlobalData
+         * @param {Object} data
+         */
+        exports.setGlobalData = function (data) {
+            this.addData('global', data);
+        };
 
         /**
          * 获取列表子Action的URL
          *
-         * @method DetailModel#.getListActionURL
+         * @protected
+         * @method mvc.DetailModel#getListActionURL
          * @return {string}
          */
         exports.getListActionURL = function () {
@@ -44,7 +59,8 @@ define(
         /**
          * 获取列表子Action的实体名称
          *
-         * @method DetailModel#.getListActionName
+         * @protected
+         * @method mvc.DetailModel#getListActionName
          * @return {string}
          */
         exports.getListActionName = function () {
@@ -56,7 +72,8 @@ define(
          *
          * 默认使用`entityName`，但并不一定会相同，通过重写此方法覆盖
          *
-         * @method DetailModel#.getTreeNodeEntityName
+         * @protected
+         * @method mvc.DetailModel#getTreeNodeEntityName
          * @return {string}
          */
         exports.getTreeNodeEntityName = function () {
@@ -72,9 +89,7 @@ define(
         }
 
         /**
-         * 加载数据
-         *
-         * @return {er.meta.Promise}
+         * @override
          */
         exports.load = function () {
             var loading = this.$super(arguments);
@@ -83,6 +98,7 @@ define(
 
         var SingleEntityModel = require('./SingleEntityModel');
         var DetailModel = require('eoo').create(SingleEntityModel, exports);
+
         return DetailModel;
     }
 );

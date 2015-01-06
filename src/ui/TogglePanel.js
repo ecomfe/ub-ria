@@ -33,7 +33,7 @@ define(
          */
         TogglePanel.prototype.initOptions = function (options) {
             var defaults = {
-                expanded: false,
+                expended: false,
                 position: 'layer'
             };
 

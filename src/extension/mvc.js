@@ -8,7 +8,7 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
+        var u = require('../util');
         var util = require('er/util');
         var events = require('er/events');
 

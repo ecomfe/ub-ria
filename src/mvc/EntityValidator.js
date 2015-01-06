@@ -9,8 +9,7 @@
  */
 define(
     function (require) {
-        var util = require('../util');
-        var u = require('underscore');
+        var u = require('../util');
         var checkers = {
             'required': require('./checker/requiredChecker'),
             'type': require('./checker/typeChecker'),
@@ -47,7 +46,7 @@ define(
          *
          */
         EntityValidator.prototype.initCheckers = function () {
-            this.checkers = util.deepClone(checkers);
+            this.checkers = u.deepClone(checkers);
         };
 
         /**
@@ -247,7 +246,7 @@ define(
         EntityValidator.prototype.excuteCheckers = function (fieldCheckers, checkerOptions) {
             var value = checkerOptions.value;
             var fieldPath = checkerOptions.fieldPath;
-            var fieldSchema = util.deepClone(checkerOptions.fieldSchema);
+            var fieldSchema = u.deepClone(checkerOptions.fieldSchema);
 
             fieldSchema = parseFieldSchema.call(this, fieldSchema);
 

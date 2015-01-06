@@ -1,6 +1,6 @@
 define(
     function (require) {
-        var u = require('underscore');
+        var u = require('../../util');
         var checker = {
             name: 'required',
             errorMessage: '${title}不能为空',

@@ -1,6 +1,6 @@
 define(
     function (require) {
-        var u = require('underscore');
+        var u = require('../../util');
         var checker = {
             name: 'type',
             errorMessage: '${title}的类型不符合要求',

@@ -2,27 +2,24 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 只读页数据模型基类
+ * @exports mvc.ReadModel
  * @author otakustay
- * @date $DATE$
  */
 define(
     function (require) {
-        var util = require('er/util');
-        var SingleEntityModel = require('./SingleEntityModel');
+        /**
+         * @class mvc.ReadModel
+         * @extends mvc.SingleEntityModel
+         */
+        var exports = {};
 
         /**
-         * 只读页数据模型基类
+         * 字段无值时的默认显示文本，默认为`"--"`
          *
-         * @extends SingleEntityModel
-         * @constructor
+         * @member {string} mvc.ReadModel#defaultDisplayText
          */
-        function ReadModel(entityName, context) {
-            SingleEntityModel.apply(this, arguments);
-        }
-
-        util.inherits(ReadModel, SingleEntityModel);
+        exports.defaultDisplayText = '--';
 
         // 全局所有Model都可能有的属性名，这些属性不需要被自动转为`'--'`
         var GLOBAL_MODEL_PROPERTIES = {
@@ -34,13 +31,6 @@ define(
         };
 
         /**
-         * 字段无值时的默认显示文本，默认为`"--"`
-         *
-         * @type {string}
-         */
-        ReadModel.prototype.defaultDisplayText = '--';
-
-        /**
          * 获取属性值
          *
          * @param {string} name 属性名称
@@ -48,8 +38,8 @@ define(
          * 如果不存在属性则返回{@link ReadModel#defaultDisplayText}
          * @override
          */
-        ReadModel.prototype.get = function (name) {
-            var value = SingleEntityModel.prototype.get.call(this, name);
+        exports.get = function (name) {
+            var value = this.$super(arguments);
 
             if (GLOBAL_MODEL_PROPERTIES.hasOwnProperty(name)) {
                 return value;
@@ -59,6 +49,9 @@ define(
                 ? value
                 : this.defaultDisplayText;
         };
+
+        var SingleEntityModel = require('./SingleEntityModel');
+        var ReadModel = require('eoo').create(SingleEntityModel, exports);
 
         return ReadModel;
     }
