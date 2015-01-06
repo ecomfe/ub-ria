@@ -55,16 +55,17 @@ define(
             ActionPanel: 'ef',
             ActionDialog: 'ef',
             ViewPanel: 'ef',
-            TogglePanel: 'ub-ria/ui',
-            ToggleButton: 'ub-ria/ui',
-            Uploader: 'ub-ria/ui',
-            RichSelector: 'ub-ria/ui',
-            TableRichSelector: 'ub-ria/ui',
-            SelectorTreeStrategy: 'ub-ria/ui',
-            TreeRichSelector: 'ub-ria/ui',
             AbstractBoxGroup: 'ub-ria/ui',
-            Sidebar: 'ub-ria/ui',
-            PartialForm: 'ub-ria/ui'
+            DrawerActionPanel: 'ub-ria/ui',
+            PartialForm: 'ub-ria/ui',
+            RichSelector: 'ub-ria/ui',
+            SelectorTreeStrategy: 'ub-ria/ui',
+            TableRichSelector: 'ub-ria/ui',
+            ToggleButton: 'ub-ria/ui',
+            TogglePanel: 'ub-ria/ui',
+            TreeRichSelector: 'ub-ria/ui',
+            Uploader: 'ub-ria/ui',
+            Warn: 'ub-ria/ui'
         };
 
         var extensionModulePrefix = {
@@ -72,13 +73,13 @@ define(
             Command: 'esui/extension',
             CustomData: 'esui/extension',
             TableEdit: 'esui/extension',
+            TableSubrow: 'esui/extension',
             AutoSubmit: 'ub-ria/ui/extension',
-            TableTip: 'ub-ria/ui/extension',
             ExternSearch: 'ub-ria/ui/extension',
             ExternSelect: 'ub-ria/ui/extension',
-            TableSubrow: 'esui/extension',
-            WordCount: 'ub-ria/ui/extension',
-            TrimInput: 'ub-ria/ui/extension'
+            TableTip: 'ub-ria/ui/extension',
+            TrimInput: 'ub-ria/ui/extension',
+            WordCount: 'ub-ria/ui/extension'
         };
 
         /**
