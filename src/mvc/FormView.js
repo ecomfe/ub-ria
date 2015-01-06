@@ -175,7 +175,7 @@ define(
 
             warn.on('ok', deferred.resolver.resolve);
             warn.on('cancel', deferred.resolver.reject);
-            warn.on('hide', u.bind(formViewContainer.removeState, this, 'warned'));
+            warn.on('hide', u.bind(formViewContainer.removeState, formViewContainer, 'warned'));
 
             return deferred.promise;
         };
