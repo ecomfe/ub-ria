@@ -8,8 +8,7 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
-        var util = require('../util');
+        var u = require('../util');
 
         /**
          * @class mvc.IoCActionFactory
@@ -58,7 +57,7 @@ define(
                 parts[parts.length - 1] = 'form';
             }
 
-            return u.map(parts, util.dasherize).join('-');
+            return u.map(parts, u.dasherize).join('-');
         }
 
         /**

@@ -9,10 +9,9 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
         var eoo = require('eoo');
         var URL = require('er/URL');
-        var util = require('../util');
+        var u = require('../util');
 
         /**
          * @class mvc.ListAction
@@ -171,7 +170,7 @@ define(
 
             if (this.requireAdviceFor(context)) {
                 // 需要后端提示消息的，再额外加入用户确认的过程
-                var action = util.pascalize(context.statusName);
+                var action = u.pascalize(context.statusName);
                 var adviceMethod = 'get' + action + 'Advice';
 
                 this.model[adviceMethod](context.ids, context.items)
@@ -371,7 +370,7 @@ define(
 
             // 如果跟默认的参数相同，去掉默认字段
             var defaultArgs = this.model.getDefaultArgs();
-            args = util.purify(args, defaultArgs);
+            args = u.purify(args, defaultArgs);
 
             return URL.withQuery(path, args).toString();
         }

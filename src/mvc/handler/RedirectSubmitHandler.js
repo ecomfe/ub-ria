@@ -10,7 +10,7 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
+        var u = require('../../util');
         var SubmitHandler = require('./SubmitHandler');
 
         var exports = {};

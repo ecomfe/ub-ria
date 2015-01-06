@@ -10,7 +10,7 @@ define(
     function (require) {
         require('../ui/DrawerActionPanel');
 
-        var u = require('underscore');
+        var u = require('../util');
 
         /**
          * @class mvc.ListView
@@ -534,7 +534,7 @@ define(
             var keyword = this.get('keyword');
             if (keyword) {
                 // 关键词去空格
-                args.keyword = require('../util').trim(keyword.getValue());
+                args.keyword = u.trim(keyword.getValue());
             }
 
             return args;

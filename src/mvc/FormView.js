@@ -10,7 +10,7 @@ define(
     function (require) {
         require('../ui/DrawerActionPanel');
 
-        var u = require('underscore');
+        var u = require('../util');
 
         // 使用表单视图，有以下要求：
         //

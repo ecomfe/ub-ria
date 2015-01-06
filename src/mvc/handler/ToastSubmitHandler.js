@@ -10,7 +10,7 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
+        var u = require('../../util');
         var Toast = require('esui/Toast');
         var SubmitHandler = require('./SubmitHandler');
 

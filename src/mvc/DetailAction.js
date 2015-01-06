@@ -8,7 +8,7 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
+        var u = require('../util');
 
         /**
          * @class mvc.DetailAction
@@ -35,7 +35,7 @@ define(
             var url = this.context.url;
             var path = url.getPath();
 
-            args = require('../util').purify(args);
+            args = u.purify(args);
 
             return require('er/URL').withQuery(path, args).toString();
         }

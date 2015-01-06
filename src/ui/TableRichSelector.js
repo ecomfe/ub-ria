@@ -10,9 +10,8 @@ define(
     function (require) {
         var lib = require('esui/lib');
         var painter = require('esui/painters');
-        var u = require('underscore');
+        var u = require('../util');
 
-        var util = require('../util');
         var RichSelector = require('./RichSelector');
 
 
@@ -114,7 +113,7 @@ define(
          * @override
          */
         TableRichSelector.prototype.adaptData = function () {
-            var allData = util.deepClone(this.datasource);
+            var allData = u.deepClone(this.datasource);
             // 先构建indexData
             var indexData = {};
             u.each(allData, function (item, index) {

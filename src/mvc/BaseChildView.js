@@ -8,8 +8,7 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
-        var util = require('../util');
+        var u = require('../util');
 
         /**
          * @class mvc.BaseChildView
@@ -67,7 +66,7 @@ define(
             u.each(
                 values,
                 function (value, key) {
-                    var key = util.dasherize(key);
+                    var key = u.dasherize(key);
                     this.get(key).set('rawValue', value);
                 },
                 this
@@ -152,7 +151,7 @@ define(
                 var validity = new Validity();
                 validity.addState('server', state);
 
-                var inputId = util.dasherize(fail.field);
+                var inputId = u.dasherize(fail.field);
                 var input = this.get(inputId);
 
                 if (input) {

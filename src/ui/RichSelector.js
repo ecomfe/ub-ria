@@ -16,7 +16,7 @@ define(
         var lib = require('esui/lib');
         var painter = require('esui/painters');
         var InputControl = require('esui/InputControl');
-        var u = require('underscore');
+        var u = require('../util');
 
         /**
          * 控件类

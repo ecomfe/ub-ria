@@ -8,14 +8,14 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
+        var u = require('../util');
 
         // 加载列表
         var LIST_DATASOURCE = {
             list: {
                 retrieve: function (model) {
                     var query = model.getQuery();
-                    query = require('../util').purify(query, null, true);
+                    query = u.purify(query, null, true);
 
                     return model.search(query);
                 },

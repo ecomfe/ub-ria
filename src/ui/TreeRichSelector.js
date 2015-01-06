@@ -14,9 +14,7 @@ define(
         var ui = require('esui/main');
         var lib = require('esui/lib');
 
-
-        var u = require('underscore');
-        var util = require('../util');
+        var u = require('../util');
         var RichSelector = require('./RichSelector');
         var TreeStrategy = require('./SelectorTreeStrategy');
 
@@ -265,7 +263,7 @@ define(
             }
             else {
                 tree.setProperties({
-                    'datasource': util.deepClone(treeData),
+                    'datasource': u.deepClone(treeData),
                     'keyword': this.getKeyword()
                 });
             }
@@ -648,7 +646,7 @@ define(
          */
         TreeRichSelector.prototype.getSelectedTree = function () {
             var control = this;
-            var copyData = util.deepClone(this.allData);
+            var copyData = u.deepClone(this.allData);
             var nodes = copyData.children;
             u.each(nodes, function (node) {
                 var selectedChildren = getSelectedNodesUnder(node, control);
