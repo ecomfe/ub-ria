@@ -10,8 +10,6 @@
 define(
     function (require) {
         var u = require('../util');
-        var util = require('er/util');
-        var UIView = require('ef/UIView');
 
         /**
          * 视图基类
@@ -19,19 +17,16 @@ define(
          * @extends ef.UIView
          * @constructor
          */
-        function BaseView() {
-            UIView.apply(this, arguments);
-        }
-
-        util.inherits(BaseView, UIView);
+        var exports = {};
 
         /**
          * 添加控件事件的配置
          *
          * @public
+         * @method mvc.BaseView#addUIEvents
          * @param {Object} uiEvents 控件绑定的事件
          */
-        BaseView.prototype.addUIEvents = function (uiEvents) {
+        exports.addUIEvents = function (uiEvents) {
             // 对传入的控件事件参数进行格式变换
             var extendedUIEvents = [uiEvents];
             u.each(
@@ -72,9 +67,10 @@ define(
          * 获取控件事件配置的数组形式
          *
          * @private
+         * @method mvc.BaseView#getUIEventsCollection
          * @return {Array} 控件事件
          */
-        BaseView.prototype.getUIEventsCollection = function () {
+        exports.getUIEventsCollection = function () {
             var events = this.uiEvents;
 
             // 重写父类实现
@@ -85,10 +81,11 @@ define(
         /**
          * 绑定控件的事件
          *
+         * @method mvc.BaseView#bindEvents
          * @override
          * @protected
          */
-        BaseView.prototype.bindEvents = function () {
+        exports.bindEvents = function () {
             // 获取 直接重写`uiEvents` 及 调用`addUIEvents`接口 设置的控件事件
             u.each(
                 this.getUIEventsCollection(),
@@ -96,7 +93,7 @@ define(
                     // 从`uiEvents`数组中依次取出事件对象重写`this.uiEvents`
                     this.uiEvents = uiEvents;
                     // 调用父类`bindEvents`方法完成控件的事件绑定
-                    UIView.prototype.bindEvents.apply(this, arguments);
+                    this.$super(arguments);
                 },
                 this
             );
@@ -106,9 +103,10 @@ define(
          * 添加控件的额外属性
          *
          * @public
+         * @method mvc.BaseView#addUIProperties
          * @param {Object} newUIProperties 控件的额外属性
          */
-        BaseView.prototype.addUIProperties = function (newUIProperties) {
+        exports.addUIProperties = function (newUIProperties) {
             // `this.uiProperties`可能以`null`/`Object`两种类型出现
             // 统一为对象类型
             this.uiProperties = this.uiProperties || {};
@@ -136,9 +134,10 @@ define(
          *
          * @override
          * @protected
+         * @method mvc.BaseView#getUIProperties
          * @return {Object} 控件的额外属性
          */
-        BaseView.prototype.getUIProperties = function () {
+        exports.getUIProperties = function () {
             // 重写父类实现
             // 获取 直接重写`uiProperties` 及 调用`addUIProperties`接口 设置的控件额外属性
             return this.uiProperties || {};
@@ -150,12 +149,12 @@ define(
          * 当一个视图被作为子Action使用时，需要在其视图模板名后加上`"Main"`以进行区分，
          * 根据此设计，可以将视图切分为“完整页面”和“仅用于嵌套”两部分，根据约定命名
          *
+         * @method mvc.BaseView#getTemplateName
          * @return {string}
          * @override
          */
-        BaseView.prototype.getTemplateName = function () {
-            var templateName =
-                UIView.prototype.getTemplateName.apply(this, arguments);
+        exports.getTemplateName = function () {
+            var templateName = this.$super(arguments);
 
             // 作为子Action嵌入页面时，模板使用`xxxMain`这个target
             if (this.model && this.model.get('isChildAction') && !this.model.get('isInDrawerPanel')) {
@@ -170,10 +169,10 @@ define(
          *
          * 参数同`ef.UIView.prototype.confirm`，但返回一个`Promise`对象
          *
-         * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，
-         * 用户取消则进入`rejected`状态
+         * @method mvc.BaseView#waitConfirm
+         * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
          */
-        BaseView.prototype.waitConfirm = function () {
+        exports.waitConfirm = function () {
             var dialog = this.confirm.apply(this, arguments);
             var Deferred = require('er/Deferred');
             var deferred = new Deferred();
@@ -187,11 +186,11 @@ define(
         /**
          * 等待一个`DialogAction`加载完成
          *
+         * @method mvc.BaseView#waitActionDialog
          * @return {er.Promise} 一个`Promise`对象，
-         * 对应的Action加载完成时进入`resolved`状态，
-         * 如Action加载失败则进入`rejected`状态
+         * 对应的Action加载完成时进入`resolved`状态，如Action加载失败则进入`rejected`状态
          */
-        BaseView.prototype.waitActionDialog = function () {
+        exports.waitActionDialog = function () {
             var dialog = this.popActionDialog.apply(this, arguments);
 
             var Deferred = require('er/Deferred');
@@ -204,6 +203,40 @@ define(
             return deferred.promise;
         };
 
+        /**
+         * @override
+         */
+        exports.getTemplateData = function () {
+            var templateData = this.$super(arguments);
+            var getProperty = templateData.get;
+            var model = this.model;
+
+            templateData.get = function (path) {
+                // 以`?`结尾的是权限判断，如`${canModify?}`
+                if (path.charAt(path.length - 1) === '?') {
+                    var permission = model.getPermission();
+
+                    if (!permission) {
+                        return false;
+                    }
+
+                    var method = permission[path.slice(0, -1)];
+
+                    if (!method) {
+                        return false;
+                    }
+
+                    return method.call(permission);
+                }
+
+                return getProperty(path);
+            };
+
+            return templateData;
+        };
+
+        var UIView = require('ef/UIView');
+        var BaseView = require('eoo').create(exports, UIView);
         return BaseView;
     }
 );

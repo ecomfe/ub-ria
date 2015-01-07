@@ -470,9 +470,11 @@ define(
                     };
 
                     u.defaults(filter, rawFilter);
+                    /* eslint-disable eqeqeq */
                     filter.isDefaultValue = filter.hasOwnProperty('isDefaultValue')
                         ? filter.isDefaultValue
                         : filter.defaultValue == filter.value;
+                    /* eslint-enable eqeqeq */
 
                     if (!filter.isDefaultValue) {
                         isAllFiltersDefault = false;
