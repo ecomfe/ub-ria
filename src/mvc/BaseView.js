@@ -86,15 +86,14 @@ define(
          * @protected
          */
         exports.bindEvents = function () {
-            // 扩展后`uiEvents`可以是个数组，每一项和以前的`uiEvents`格式是一样的，一一注册就行
-            var uiEventsCollection = this.getUIEventsCollection();
+            // 扩展后`uiEvents`可以是个数组，每一项和以前的`uiEvents`格式是一样的，一一注册就行。
             // 两层`each`，第一层分解数组，第二层和基类的`bindEvents`一样就是绑事件
             u.each(
                 this.getUIEventsCollection(),
                 function (events) {
                     u.each(
                         events,
-                        function (handler, key)
+                        function (handler, key) {
                             this.bindUIEvent(key, handler);
                         },
                         this
