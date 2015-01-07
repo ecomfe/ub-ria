@@ -8,8 +8,6 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
-
         var EMPTY_OBJECT = {};
 
         /**
@@ -18,7 +16,7 @@ define(
          * @class util
          * @singleton
          */
-        var util = {};
+        var util = require('eoo').static(require('underscore'));
 
         /**
          * 清理对象中无用的键值对
@@ -35,7 +33,7 @@ define(
         util.purify = function purify(object, defaults, deep) {
             defaults = defaults || EMPTY_OBJECT;
             var purifiedObject = {};
-            u.each(
+            util.each(
                 object,
                 function (value, key) {
                     var isDefaultNull =
@@ -89,7 +87,7 @@ define(
             s = s.charAt(0).toUpperCase() + s.slice(1);
             return s;
         };
-        util.pascalize = u.memoize(util.pascalize);
+        util.pascalize = util.memoize(util.pascalize);
 
         /**
          * 将一个符合一定规则的字符串转成`camelCase`形式
@@ -103,7 +101,7 @@ define(
             s = util.pascalize(s);
             return s.charAt(0).toLowerCase() + s.slice(1);
         };
-        util.camelize = u.memoize(util.camelize);
+        util.camelize = util.memoize(util.camelize);
 
         /**
          * 将一个符合规则的字符串转成`split-by-dash`的横线分割形式
@@ -151,7 +149,7 @@ define(
             }
             return s;
         };
-        util.dasherize = u.memoize(util.dasherize);
+        util.dasherize = util.memoize(util.dasherize);
 
         /**
          * 将一个符合规则的字符串转成`THIS_IS_A_CONST`的常量形式
@@ -165,7 +163,7 @@ define(
             s = util.pascalize(s);
             return s.toUpperCase();
         };
-        util.constlize = u.memoize(util.constlize);
+        util.constlize = util.memoize(util.constlize);
 
         /**
          * 将一个单词转为复数
@@ -178,7 +176,7 @@ define(
         util.pluralize = function (s) {
             return s.replace(/y$/, 'ie') + 's';
         };
-        util.pluralize = u.memoize(util.pluralize);
+        util.pluralize = util.memoize(util.pluralize);
 
         /**
          * 格式化数字
@@ -242,9 +240,8 @@ define(
                 var left = new Array(padLength + 1).join(padding);
                 return left + s;
             }
-            else {
-                return s;
-            }
+
+            return s;
         };
 
         /**
@@ -262,9 +259,8 @@ define(
                 var right = new Array(padLength + 1).join(padding);
                 return s + right;
             }
-            else {
-                return s;
-            }
+
+            return s;
         };
 
         /**
@@ -275,16 +271,16 @@ define(
          */
         util.deepClone = function (obj) {
             // 非对象以及函数就直接返回
-            if (!u.isObject(obj) || u.isFunction(obj) || u.isRegExp(obj)) {
+            if (!util.isObject(obj) || util.isFunction(obj) || util.isRegExp(obj)) {
                 return obj;
             }
 
-            if (u.isArray(obj)) {
-                return u.map(obj, util.deepClone);
+            if (util.isArray(obj)) {
+                return util.map(obj, util.deepClone);
             }
 
             var clone = {};
-            u.each(
+            util.each(
                 obj,
                 function (value, key) {
                     clone[key] = util.deepClone(value);

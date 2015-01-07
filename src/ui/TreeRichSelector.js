@@ -14,9 +14,7 @@ define(
         var ui = require('esui/main');
         var lib = require('esui/lib');
 
-
-        var u = require('underscore');
-        var util = require('../util');
+        var u = require('../util');
         var RichSelector = require('./RichSelector');
         var TreeStrategy = require('./SelectorTreeStrategy');
 
@@ -136,6 +134,7 @@ define(
          * 适配数据，创建一个全集扁平索引
          *
          * @param {ui.TreeRichSelector} treeForSelector 类实例
+         * @return {Object} 包含`indexData`和`selectedData`两个属性
          * @ignore
          */
         TreeRichSelector.prototype.adaptData = function () {
@@ -265,7 +264,7 @@ define(
             }
             else {
                 tree.setProperties({
-                    'datasource': util.deepClone(treeData),
+                    'datasource': u.deepClone(treeData),
                     'keyword': this.getKeyword()
                 });
             }
@@ -345,7 +344,7 @@ define(
             else {
                 trySyncParentAndChildrenStates(this, item, true);
             }
-            this.fire('add', { item: item.node });
+            this.fire('add', {item: item.node});
             this.fire('change');
         };
 
@@ -488,7 +487,7 @@ define(
          */
         TreeRichSelector.prototype.actionForDelete = function (item) {
             // 外部需要知道什么数据被删除了
-            var event = this.fire('delete', { items: [item.node] });
+            var event = this.fire('delete', {items: [item.node]});
             // 如果外面阻止了默认行为（比如自己控制了Tree的删除），就不自己删除了
             if (!event.isDefaultPrevented()) {
                 deleteItem(this, item.node.id);
@@ -542,7 +541,7 @@ define(
          * @override
          */
         TreeRichSelector.prototype.deleteAll = function () {
-            var event = this.fire('delete', { items: this.allData.children });
+            var event = this.fire('delete', {items: this.allData.children});
             // 如果外面阻止了默认行为（比如自己控制了Tree的删除），就不自己删除了
             if (!event.isDefaultPrevented()) {
                 this.set('datasource', null);
@@ -575,7 +574,7 @@ define(
             // 赋予新值
             this.currentActiveId = item.node.id;
 
-            this.fire('load', { item: item.node });
+            this.fire('load', {item: item.node});
             this.fire('change');
         };
 
@@ -585,6 +584,7 @@ define(
          *
          * @param {Array} data 检测的数据源
          * @param {boolean} isSelected 选择状态还是未选状态
+         * @return {Array} 叶子节点
          * @ignore
          */
         TreeRichSelector.prototype.getLeafItems = function (data, isSelected) {
@@ -648,7 +648,7 @@ define(
          */
         TreeRichSelector.prototype.getSelectedTree = function () {
             var control = this;
-            var copyData = util.deepClone(this.allData);
+            var copyData = u.deepClone(this.allData);
             var nodes = copyData.children;
             u.each(nodes, function (node) {
                 var selectedChildren = getSelectedNodesUnder(node, control);
@@ -680,7 +680,9 @@ define(
 
         /**
          * 清除搜索结果
+         *
          * @param {ui.RichSelector2} richSelector 类实例
+         * @return {boolean}
          * @ignore
          */
         TreeRichSelector.prototype.clearQuery = function () {
@@ -705,7 +707,6 @@ define(
          * 搜索含有关键字的结果
          *
          * @param {Array} filters 过滤参数
-         * @return {Array} 结果集
          */
         TreeRichSelector.prototype.queryItem = function (filters) {
             // Tree就只定位一个关键词字段
@@ -728,7 +729,7 @@ define(
         /**
          * 供递归调用的搜索方法
          *
-         * @param {String} keyword 关键字
+         * @param {string} keyword 关键字
          * @param {Object} node 节点对象
          * @return {Array} 结果集
          */
@@ -854,6 +855,7 @@ define(
         /**
          * 获取顶级节点id
          *
+         * @param {ui.TreeRichSelector} control 当前的控件实例
          * @return {number}
          */
         function getTopId(control) {

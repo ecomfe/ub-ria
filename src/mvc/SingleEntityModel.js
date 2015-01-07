@@ -9,7 +9,7 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
+        var u = require('../util');
         var util = require('er/util');
         var BaseModel = require('./BaseModel');
 
@@ -38,14 +38,12 @@ define(
                     if (entity) {
                         return fillEntityToModel.call(model, entity);
                     }
-                    else {
-                        return model.findById(id)
-                            .then(u.bind(fillEntityToModel, model));
-                    }
+
+                    return model.findById(id)
+                        .then(u.bind(fillEntityToModel, model));
                 }
-                else {
-                    return {};
-                }
+
+                return {};
             }
         };
 

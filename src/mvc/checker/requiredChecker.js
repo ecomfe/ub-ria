@@ -1,6 +1,14 @@
+/**
+ * UB RIA Base
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 必填字段校验器
+ * @author yanghuabei(yanghuabei@baidu.com)
+ * @date $DATE$
+ */
 define(
     function (require) {
-        var u = require('underscore');
+        var u = require('../../util');
         var checker = {
             name: 'required',
             errorMessage: '${title}不能为空',

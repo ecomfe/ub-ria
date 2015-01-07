@@ -13,7 +13,7 @@ define(
         var Validity = require('esui/validator/Validity');
         var ValidityState = require('esui/validator/ValidityState');
         var InputControl = require('esui/InputControl');
-        var u = require('underscore');
+        var u = require('../util');
 
         /**
          * Uploader控件
@@ -368,9 +368,8 @@ define(
 
                 return isValid;
             }
-            else {
-                return true;
-            }
+
+            return true;
         };
 
         /**
@@ -448,7 +447,7 @@ define(
             // }
 
             if (options.fields) {
-                this.fire('fail', { fields: options.fields });
+                this.fire('fail', {fields: options.fields});
                 this.notifyFail(options.fields[0].message);
             }
             else if (options.info) {

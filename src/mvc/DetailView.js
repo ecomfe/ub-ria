@@ -3,13 +3,101 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 详情页视图基类
- * @class DetailView
- * @extends mvc.BaseView
+ * @exports mvc.DetailView
  * @author otakustay
  */
 define(
     function (require) {
+        /**
+         * @class mvc.DetailView
+         * @extends mvc.BaseView
+         */
         var exports = {};
+
+        exports.constructor = function () {
+            this.$super(arguments);
+
+            var uiEvents = {
+                'create:click': popDrawerActionPanel,
+                'modify:click': popDrawerActionPanel
+            };
+            this.addUIEvents(uiEvents);
+        };
+
+        /**
+         * 弹出drawerActionPanel
+         *
+         * @event
+         * @param {mini-event.Event} e 事件参数
+         */
+        function popDrawerActionPanel(e) {
+            e.preventDefault();
+            var url = e.target.get('href') + '';
+
+            // 传给 ActionPanel 的 url 是不能带 hash 符号的。。
+            if (url.charAt(0) === '#') {
+                url = url.slice(1);
+            }
+            this.popDrawerAction({url: url}).show();
+        }
+
+        /**
+         * 加载 action，参数同 ActionPanel
+         *
+         * @protected
+         * @method mvc.DetailView#popDrawerAction
+         * @param {Object} options 控件配置项
+         * @return {ui.DrawerActionPanel}
+         */
+        exports.popDrawerAction = function (options) {
+            options.id = options.id || 'drawer-action';
+            var drawerActionPanel = this.get(options.id);
+
+            if (!drawerActionPanel) {
+                drawerActionPanel = this.create('DrawerActionPanel', options);
+                drawerActionPanel.render();
+                drawerActionPanel.on('action@submitcancel', cancel);
+                drawerActionPanel.on('action@back', back);
+                drawerActionPanel.on('action@saveandclose', saveAndClose);
+            }
+            else {
+                drawerActionPanel.setProperties(options);
+            }
+            return drawerActionPanel;
+        };
+
+        /**
+         * 取消
+         *
+         * @event
+         * @param {mini-event.Event} e 事件参数
+         */
+        function cancel(e) {
+            e.preventDefault();
+            this.dispose();
+        }
+
+        /**
+         * 返回
+         *
+         * @event
+         * @param {mini-event.Event} e 事件参数
+         */
+        function back(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            this.hide();
+        }
+
+        /**
+         * 保留当前数据并退出
+         *
+         * @event
+         * @param {mini-event.Event} e 事件参数
+         */
+        function saveAndClose(e) {
+            e.target.hide();
+        }
 
         /**
          * 绑定控件事件
@@ -24,28 +112,28 @@ define(
             delegate(
                 listActionPanel, 'action@search',
                 this, 'listrefresh',
-                { preserveData: true, syncState: true }
+                {preserveData: true, syncState: true}
             );
             // 其它操作都需要把页码置为1
             delegate(
                 listActionPanel, 'action@pagechange',
                 this, 'pagechange',
-                { preserveData: true, syncState: true }
+                {preserveData: true, syncState: true}
             );
             delegate(
                 listActionPanel, 'action@statusupdate',
                 this, 'listrefresh',
-                { preserveData: true, syncState: true }
+                {preserveData: true, syncState: true}
             );
             delegate(
                 listActionPanel, 'action@pagesizechange',
                 this, 'listrefresh',
-                { preserveData: true, syncState: true }
+                {preserveData: true, syncState: true}
             );
             delegate(
                 listActionPanel, 'action@tablesort',
                 this, 'listrefresh',
-                { preserveData: true, syncState: true }
+                {preserveData: true, syncState: true}
             );
             this.$super(arguments);
         };
@@ -53,21 +141,22 @@ define(
         /**
          * 获取列表子Action的查询条件
          *
-         * @method DetailView#.getListQuery
-         * @return {object} 查询条件
+         * @public
+         * @method mvc.DetailView#getListQuery
+         * @return {Object} 查询条件
          */
         exports.getListQuery = function () {
             var listAction = this.getSafely('detail-list').get('action');
             if (listAction) {
                 return listAction.getSearchQuery();
             }
-            else {
-                return {};
-            }
+
+            return {};
         };
 
         var BaseView = require('./BaseView');
         var DetailView = require('eoo').create(BaseView, exports);
+
         return DetailView;
     }
 );

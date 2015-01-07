@@ -2,16 +2,21 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 列表视图基类
+ * @exports mvc.ListView
  * @author otakustay, wangyaqiong(catkin2009@gmail.com)
- * @date $DATE$
  */
 define(
     function (require) {
-        var BaseView = require('./BaseView');
-        var util = require('er/util');
-        var u = require('underscore');
+        require('../ui/DrawerActionPanel');
+
+        var u = require('../util');
+
+        /**
+         * @class mvc.ListView
+         * @extends mvc.BaseView
+         */
+        var exports = {};
 
         /**
          * 列表视图基类
@@ -26,39 +31,107 @@ define(
          * - 所有批量操作按钮的`group`属性值均为`"batch"`
          * - 批量操作按钮需使用`CustomData`扩展，并设置`data-ui-data-status`属性，
          * 属性值即点击该按钮后实体将更新的目标状态数字，如`data-ui-data-status="0"`
-         *
-         * @extends mvc/BaseView
-         * @constructor
          */
-        function ListView() {
-            BaseView.apply(this, arguments);
+        exports.constructor = function () {
+            this.$super(arguments);
 
             // 批量绑定控件的事件
             var uiEvents = {
-                pager: {
+                'pager': {
                     pagesizechange: onChangePageSize,
                     pagechange: onChangePage
                 },
-                table: {
+                'table': {
                     select: 'updateBatchButtonStatus',
                     sort: onSortTable
                 },
                 'filter:submit': 'submitSearch',
                 'filter-switch:click': toggleFilter,
                 'filter-cancel:click': cancelFilter,
-                'filter-modify:click': toggleFilterPanelContent
+                'filter-modify:click': toggleFilterPanelContent,
+                'table:command': 'commandHandler',
+                'create:click': popDrawerActionPanel
             };
             this.addUIEvents(uiEvents);
-        }
-
-        util.inherits(ListView, BaseView);
+        };
 
         /**
-         * 收集查询参数并触发查询事件
+         * 每页条数变更监听函数
          *
+         * @event
+         * @param {mini-event.Event} e 事件对象
          */
-        ListView.prototype.submitSearch = function () {
-            this.fire('search');
+        function onChangePageSize(e) {
+            var pageSize = e.target.get('pageSize');
+            this.updatePageSize(pageSize);
+        }
+
+        /**
+         * 更新每页显示数
+         *
+         * @protected
+         * @method mvc.ListView#updatePageSize
+         * @fires mvc.ListView#pagesizechange
+         * @param {number} pageSize 每页条数
+         */
+        exports.updatePageSize = function (pageSize) {
+            this.fire('pagesizechange', {pageSize: pageSize});
+        };
+
+        /**
+         * 页码变更监听函数
+         *
+         * @event
+         * @param {mini-event.Event} e 事件对象
+         */
+        function onChangePage(e) {
+            this.updatePageIndex();
+        }
+
+        /**
+         * 更新页码
+         *
+         * @protected
+         * @method mvc.ListView#updatePageIndex
+         * @fires mvc.ListView#pagechange
+         */
+        exports.updatePageIndex = function() {
+            this.fire('pagechange');
+        };
+
+        /**
+         * 根据表格中所选择的行来控制批量更新按钮的启用/禁用状态
+         *
+         * @public
+         * @method mvc.ListView#updateBatchButtonStatus
+         */
+        exports.updateBatchButtonStatus = function () {
+            var items = this.getSelectedItems();
+
+            u.each(
+                this.getGroup('batch'),
+                function (button) {
+                    var status = +button.getData('status');
+                    // 1. 没有任何选中项时，所有按钮肯定禁用
+                    // 2. 使用`model.canUpdateToStatus`判断按钮是否能用
+                    var disabled = u.isEmpty(items)
+                        || !this.model.canUpdateToStatus(items, status);
+                    button.set('disabled', disabled);
+                },
+                this
+            );
+        };
+
+        /**
+         * 获取table已经选择的列的数据
+         *
+         * @protected
+         * @method mvc.ListView#getSelectedItems
+         * @return {Array.<Object>} 当前table的已选择列对应的数据
+         */
+        exports.getSelectedItems = function () {
+            var table = this.get('table');
+            return table ? table.getSelectedItems() : [];
         };
 
         /**
@@ -78,185 +151,30 @@ define(
         /**
          * 排列表格
          *
+         * @protected
+         * @method mvc.ListView#sortTable
+         * @fires mvc.ListView#tablesort
          * @param {Object} tableProperties 表格参数
          */
-        ListView.prototype.sortTable = function (tableProperties) {
-            this.fire('tablesort', { tableProperties: tableProperties });
+        exports.sortTable = function (tableProperties) {
+            this.fire('tablesort', {tableProperties: tableProperties});
         };
 
         /**
-         * 根据表格中所选择的行来控制批量更新按钮的启用/禁用状态
-         */
-        ListView.prototype.updateBatchButtonStatus = function () {
-            var items = this.getSelectedItems();
-
-            u.each(
-                this.getGroup('batch'),
-                function (button) {
-                    var status = +button.getData('status');
-                    // 1. 没有任何选中项时，所有按钮肯定禁用
-                    // 2. 使用`model.canUpdateToStatus`判断按钮是否能用
-                    var disabled = u.isEmpty(items)
-                        || !this.model.canUpdateToStatus(items, status);
-                    button.set('disabled', disabled);
-                },
-                this
-            );
-        };
-
-        /**
-         * view渲染完成后根据所有筛选条件是否都为默认值来控制展开或闭合
-         */
-        ListView.prototype.updateFilterPanelStatus = function () {
-            if (!this.model.get('filtersInfo').isAllFiltersDefault) {
-                showFilter.call(this);
-                toggleFilterPanelContent.call(this);
-            }
-        };
-
-        /**
-         * view渲染完成后清空搜索框
-         */
-        ListView.prototype.updateSearchBoxStatus = function () {
-            if (this.model.get('keyword')) {
-                this.getSafely('keyword').addState('clear');
-            }
-        };
-
-        /**
-         * 获取table已经选择的列的数据
+         * 收集查询参数并触发查询事件
          *
-         * @return {Object[]} 当前table的已选择列对应的数据
-         */
-        ListView.prototype.getSelectedItems = function () {
-            var table = this.get('table');
-            return table ? table.getSelectedItems() : [];
-        };
-
-        /**
-         * 获取查询参数，默认是取`filter`表单的所有数据，加上表格的排序字段
-         *
-         * @return {Object}
-         */
-        ListView.prototype.getSearchArgs = function () {
-            // 获取表单的字段
-            var form = this.get('filter');
-            var args = form ? form.getData() : {};
-            // 加上原本的排序方向和排序字段名
-            args.order = this.get('table').order;
-            args.orderBy = this.get('table').orderBy;
-
-            var keyword = this.get('keyword');
-            if (keyword) {
-                // 关键词去空格
-                args.keyword = require('../util').trim(keyword.getValue());
-            }
-
-            return args;
-        };
-
-        /**
-         * 表格的列配置，供重写
-         *
-         * @type {Object[]}
-         */
-        ListView.prototype.tableFields = [];
-
-        /**
-         * 获取表格的列配置
-         *
-         * @return {Object[]}
-         */
-        ListView.prototype.getTableFields = function () {
-            return this.tableFields;
-        };
-
-        /**
-         * 获取视图属性
-         *
-         * @return {Object}
          * @protected
-         * @override
+         * @method mvc.ListView#submitSearch
+         * @fires mvc.ListView#search
          */
-        ListView.prototype.getUIProperties = function () {
-            var properties = BaseView.prototype.getUIProperties.apply(this, arguments) || {};
-
-            if (!properties.table) {
-                properties.table = {};
-            }
-            properties.table.fields = this.getTableFields();
-
-            return properties;
+        exports.submitSearch = function () {
+            this.fire('search');
         };
-
-        /**
-         * 获取分页数据
-         *
-         * @return {number}
-         */
-        ListView.prototype.getPageIndex = function () {
-            return this.get('pager').get('page');
-        };
-
-        /**
-         * 每页条数变更监听函数
-         *
-         * @event
-         * @param {mini-event.Event} e 事件对象
-         */
-        function onChangePageSize(e) {
-            var pageSize = e.target.get('pageSize');
-            this.updatePageSize(pageSize);
-        }
-
-
-
-        /**
-         * 更新每页显示数
-         *
-         * @param {number} pageSize 每页条数
-         * @ignore
-         */
-        ListView.prototype.updatePageSize = function (pageSize) {
-            this.fire('pagesizechange', { pageSize: pageSize });
-        };
-
-        /**
-         * 页码变更监听函数
-         *
-         * @event
-         * @param {mini-event.Event} e 事件对象
-         */
-        function onChangePage(e) {
-            this.updatePageIndex();
-        }
-
-        /**
-         * 更新页码
-         *
-         * @ignore
-         */
-        ListView.prototype.updatePageIndex = function () {
-            this.fire('pagechange');
-        };
-
-        /**
-         * 获取批量操作状态
-         *
-         * @param {Object} e 控件事件对象
-         * @ignore
-         */
-        function batchModify(e) {
-            var args = {
-                // `status`是`number`类型
-                status: +e.target.getData('status')
-            };
-
-            this.fire('batchmodify', args);
-        }
 
         /**
          * 收起筛选面板，当有筛选条件时清除筛选条件
+         *
+         * @event
          */
         function toggleFilter() {
             var filter = this.getSafely('filter');
@@ -282,7 +200,7 @@ define(
         /**
          * 有筛选条件时清除筛选条件
          *
-         * @ignore
+         * @event
          */
         function cancelFilter() {
             if (this.model.get('filtersInfo').isAllFiltersDefault) {
@@ -294,12 +212,101 @@ define(
         }
 
         /**
+         * 取消某个或全部条件时，触发查询事件
+         * 同时应该把页数置为 1
+         *
+         * @protected
+         * @method mvc.ListView#submitSearchWithoutKey
+         * @param {string} name 要清除的查询条件。为空时表示取消全部filter内条件。
+         */
+        exports.submitSearchWithoutKey = function (name) {
+            if (name) {
+                clearFilterValue.call(this, name);
+            }
+            else {
+                var view = this;
+                this.getGroup('clear-button').each(
+                    function (button) {
+                        var name = button.get('name');
+                        clearFilterValue.call(view, name);
+                    }
+                );
+            }
+            this.fire('search');
+        };
+
+        /**
+         * 取消筛选，将条件设为默认值
+         *
+         * @param {string} name 需要取消的条件
+         */
+        function clearFilterValue(name) {
+            var value = this.model.defaultArgs[name] || '';
+            this.get(name).setValue(value);
+        }
+
+        /**
          * 切换筛选面板和筛选条件显示面板
          *
-         * @ignore
+         * @event
          */
         function toggleFilterPanelContent() {
             this.getGroup('filter-content').toggle();
+        }
+
+        /**
+         * 处理table的command事件，默认处理状态修改、实体修改
+         *
+         * @protected
+         * @method mvc.ListView#commandHandler
+         * @param {mini-event.Event} e command事件
+         */
+        exports.commandHandler = function (e) {
+            if (e.triggerType === 'click') {
+                var transition = u.findWhere(this.model.getStatusTransitions(), {statusName: e.name});
+                // 处理状态修改
+                if (transition) {
+                    var args = {
+                        id: e.args,
+                        status: transition.status
+                    };
+                    this.fire('modifystatus', args);
+                }
+                // 处理实体修改和查看
+                else if (e.name === 'modify' || e.name === 'read' || e.name === 'copy') {
+                    var id = e.args;
+                    var url = getActionURL.call(this, e.name, id);
+                    var options = {url: url};
+
+                    this.popDrawerAction(options).show();
+                }
+            }
+        };
+
+        /**
+         * 根据id和当前url获取列表操作对应的url
+         *
+         * @param {string} actionName 操作名称, 包括modify, read
+         * @param {string} id 待更新的实体id
+         * @return {er.URL} 列表操作对应的url
+         */
+        function getActionURL(actionName, id) {
+            var urlParts = {
+                modify: 'update',
+                read: 'view',
+                copy: 'copy'
+            };
+            var urlPart = urlParts[actionName] || '';
+            var path = this.model.get('url').getPath();
+            var index = path.lastIndexOf('/');
+            var url = require('er/URL').withQuery(
+                path.substring(0, index + 1) + urlPart,
+                {
+                    id: id
+                }
+            );
+
+            return url;
         }
 
         /**
@@ -307,7 +314,7 @@ define(
          *
          * @override
          */
-        ListView.prototype.bindEvents = function () {
+        exports.bindEvents = function () {
             this.getGroup('batch').each(
                 function (button) {
                     // 批量更新
@@ -329,58 +336,228 @@ define(
                 this
             );
 
-            BaseView.prototype.bindEvents.apply(this, arguments);
+            this.$super(arguments);
         };
 
         /**
-         * 取消某个或全部条件时，触发查询事件
-         * 同时应该把页数置为 1
+         * 获取批量操作状态
          *
-         * @param {string} name 要清除的查询条件。为空时表示取消全部filter内条件。
+         * @fires mvc.ListView#batchmodify
+         * @param {Object} e 控件事件对象
          */
-        ListView.prototype.submitSearchWithoutKey = function (name) {
-            if (name) {
-                clearFilterValue.call(this, name);
-            }
-            else {
-                var view = this;
-                this.getGroup('clear-button').each(
-                    function (button) {
-                        var name = button.get('name');
-                        clearFilterValue.call(view, name);
-                    }
-                );
-            }
-            this.fire('search');
-        };
+        function batchModify(e) {
+            var args = {
+                // `status`是`number`类型
+                status: +e.target.getData('status')
+            };
 
-        /**
-         * 取消筛选，将条件设为默认值
-         *
-         * @param {string} name 需要取消的条件
-         * @ignore
-         */
-        function clearFilterValue(name) {
-            var value = this.model.defaultArgs[name] || '';
-            this.get(name).setValue(value);
+            this.fire('batchmodify', args);
         }
+
+        /**
+         * 表格的列配置，供重写
+         *
+         * @member {Array.<Object>} mvc.ListView#tableFields
+         */
+        exports.tableFields = [];
+
+        /**
+         * 获取表格的列配置
+         *
+         * @protected
+         * @method mvc.ListView#getTableFields
+         * @return {Array.<Object>}
+         */
+        exports.getTableFields = function () {
+            return this.tableFields;
+        };
+
+        /**
+         * 获取视图属性
+         *
+         * @protected
+         * @override
+         * @return {Object}
+         */
+        exports.getUIProperties = function () {
+            var properties = this.$super(arguments) || {};
+
+            if (!properties.table) {
+                properties.table = {};
+            }
+            properties.table.fields = this.getTableFields();
+
+            return properties;
+        };
 
         /**
          * 控制元素展现
          *
          * @override
          */
-        ListView.prototype.enterDocument = function () {
-            BaseView.prototype.enterDocument.apply(this, arguments);
+        exports.enterDocument = function () {
+            this.$super(arguments);
+
             this.updateBatchButtonStatus();
             this.updateFilterPanelStatus();
             this.updateSearchBoxStatus();
         };
 
         /**
-         * 根据布局变化重新调整自身布局
+         * view渲染完成后根据所有筛选条件是否都为默认值来控制展开或闭合
+         *
+         * @protected
+         * @method mvc.ListView#updateFilterPanelStatus
          */
-        ListView.prototype.adjustLayout = function () {
+        exports.updateFilterPanelStatus = function () {
+            if (!this.model.get('filtersInfo').isAllFiltersDefault) {
+                showFilter.call(this);
+                toggleFilterPanelContent.call(this);
+            }
+        };
+
+        /**
+         * view渲染完成后清空搜索框
+         *
+         * @protected
+         * @method mvc.ListView#updateSearchBoxStatus
+         */
+        exports.updateSearchBoxStatus = function () {
+            if (this.model.get('keyword')) {
+                this.getSafely('keyword').addState('clear');
+            }
+        };
+
+        /**
+         * 弹出drawerActionPanel
+         *
+         * @event
+         * @param {mini-event.Event} e 事件参数
+         */
+        function popDrawerActionPanel(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            var url = String(e.target.get('href'));
+
+            // 传给 ActionPanel 的 url 是不能带 hash 符号的。。
+            if (url.charAt(0) === '#') {
+                url = url.slice(1);
+            }
+            this.popDrawerAction({url: url}).show();
+        }
+
+        /**
+         * 加载 action，参数同 ActionPanel
+         *
+         * @protected
+         * @method mvc.ListView#popDrawerAction
+         * @param {Object} options 控件配置项
+         * @return {ui.DrawerActionPanel}
+         */
+        exports.popDrawerAction = function (options) {
+            options.id = options.id || 'drawer-action';
+            var drawerActionPanel = this.get(options.id);
+
+            if (!drawerActionPanel) {
+                drawerActionPanel = this.create('DrawerActionPanel', options);
+                drawerActionPanel.render();
+                drawerActionPanel.on('action@submitcancel', cancel);
+                drawerActionPanel.on('action@back', back);
+                drawerActionPanel.on('action@saveandclose', saveAndClose);
+                drawerActionPanel.on('close', closeDrawerActionPanel, this);
+            }
+            else {
+                drawerActionPanel.setProperties(options);
+            }
+            return drawerActionPanel;
+        };
+
+        /**
+         * 取消
+         *
+         * @event
+         * @param {mini-event.Event} e 事件参数
+         */
+        function cancel(e) {
+            e.preventDefault();
+            this.dispose();
+        }
+
+        /**
+         * 返回
+         *
+         * @event
+         * @param {mini-event.Event} e 事件参数
+         */
+        function back(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            this.hide();
+        }
+
+        /**
+         * 保留当前数据并退出
+         *
+         * @event
+         * @param {mini-event.Event} e 事件参数
+         */
+        function saveAndClose(e) {
+            e.target.hide();
+        }
+
+        /**
+         * 关闭
+         *
+         * @event
+         * @fires mvc.ListView#close
+         * @param {mini-event.Event} e 事件参数
+         */
+        function closeDrawerActionPanel(e) {
+            this.fire('close');
+        }
+
+        /**
+         * 获取查询参数，默认是取`filter`表单的所有数据，加上表格的排序字段
+         *
+         * @public
+         * @method mvc.ListView#getSearchArgs
+         * @return {Object}
+         */
+        exports.getSearchArgs = function () {
+            // 获取表单的字段
+            var form = this.get('filter');
+            var args = form ? form.getData() : {};
+            // 加上原本的排序方向和排序字段名
+            args.order = this.get('table').order;
+            args.orderBy = this.get('table').orderBy;
+
+            var keyword = this.get('keyword');
+            if (keyword) {
+                // 关键词去空格
+                args.keyword = u.trim(keyword.getValue());
+            }
+
+            return args;
+        };
+
+        /**
+         * 获取分页数据
+         *
+         * @protected
+         * @method mvc.ListView#getPageIndex
+         * @return {number}
+         */
+        exports.getPageIndex = function () {
+            return this.get('pager').get('page');
+        };
+
+        /**
+         * 根据布局变化重新调整自身布局
+         *
+         * @protected
+         * @method mvc.ListView#adjustLayout
+         */
+        exports.adjustLayout = function () {
             var table = this.get('table');
             if (table) {
                 table.adjustWidth();
@@ -390,9 +567,11 @@ define(
         /**
          * 更新列表某几行数据
          *
+         * @protected
+         * @method mvc.ListView#updateItem
          * @param {Array} items 行对应的数据
          */
-        ListView.prototype.updateItems = function (items) {
+        exports.updateItems = function (items) {
             var table = this.get('table');
             u.each(
                 items,
@@ -407,6 +586,9 @@ define(
                 this
             );
         };
+
+        var BaseView = require('./BaseView');
+        var ListView = require('eoo').create(BaseView, exports);
 
         return ListView;
     }

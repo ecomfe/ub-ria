@@ -14,8 +14,8 @@ define(
         /**
          * ToggleButton控件
          *
-         * @param {Object=} options 初始化参数
-         * @extends esui/InputControl
+         * @param {Object} [options] 初始化参数
+         * @extends esui.InputControl
          * @constructor
          * @public
          */

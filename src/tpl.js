@@ -55,16 +55,17 @@ define(
             ActionPanel: 'ef',
             ActionDialog: 'ef',
             ViewPanel: 'ef',
-            TogglePanel: 'ub-ria/ui',
-            ToggleButton: 'ub-ria/ui',
-            Uploader: 'ub-ria/ui',
-            RichSelector: 'ub-ria/ui',
-            TableRichSelector: 'ub-ria/ui',
-            SelectorTreeStrategy: 'ub-ria/ui',
-            TreeRichSelector: 'ub-ria/ui',
             AbstractBoxGroup: 'ub-ria/ui',
-            Sidebar: 'ub-ria/ui',
-            PartialForm: 'ub-ria/ui'
+            DrawerActionPanel: 'ub-ria/ui',
+            PartialForm: 'ub-ria/ui',
+            RichSelector: 'ub-ria/ui',
+            SelectorTreeStrategy: 'ub-ria/ui',
+            TableRichSelector: 'ub-ria/ui',
+            ToggleButton: 'ub-ria/ui',
+            TogglePanel: 'ub-ria/ui',
+            TreeRichSelector: 'ub-ria/ui',
+            Uploader: 'ub-ria/ui',
+            Warn: 'ub-ria/ui'
         };
 
         var extensionModulePrefix = {
@@ -72,13 +73,13 @@ define(
             Command: 'esui/extension',
             CustomData: 'esui/extension',
             TableEdit: 'esui/extension',
+            TableSubrow: 'esui/extension',
             AutoSubmit: 'ub-ria/ui/extension',
-            TableTip: 'ub-ria/ui/extension',
             ExternSearch: 'ub-ria/ui/extension',
             ExternSelect: 'ub-ria/ui/extension',
-            TableSubrow: 'esui/extension',
-            WordCount: 'ub-ria/ui/extension',
-            TrimInput: 'ub-ria/ui/extension'
+            TableTip: 'ub-ria/ui/extension',
+            TrimInput: 'ub-ria/ui/extension',
+            WordCount: 'ub-ria/ui/extension'
         };
 
         /**
@@ -166,8 +167,8 @@ define(
              * 加载模板，AMD插件对象暴露的方法
              *
              * @param {string} resourceId 模板资源id
-             * @param {function} parentRequire 父级`require`函数
-             * @param {function} load 加载完成后调用
+             * @param {Function} parentRequire 父级`require`函数
+             * @param {Function} load 加载完成后调用
              */
             load: function (resourceId, parentRequire, load) {
                 function addTemplate(text) {

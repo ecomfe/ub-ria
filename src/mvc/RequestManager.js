@@ -9,13 +9,16 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
+        var u = require('../util');
         var util = require('er/util');
 
         /**
          * 请求管理类
          *
          * 本类用户管理一系列的AJAX请求，控制多个同类（通过名称区分）请求发起时的处理
+         *
+         * @param {string} entityName 实体名称
+         * @param {string} [backendEntityName] 后端对应的实体名称，默认与`entityName`相同
          *
          * @constructor
          */
@@ -47,9 +50,9 @@ define(
             config = util.mix(defaults, config);
 
             if (config.scope === 'instance') {
-                var typeConfig = u.findWhere(typeRequestConfigs, { type: Type });
+                var typeConfig = u.findWhere(typeRequestConfigs, {type: Type});
                 if (!typeConfig) {
-                    typeConfig = { type: Type, config: {} };
+                    typeConfig = {type: Type, config: {}};
                     typeRequestConfigs.push(typeConfig);
                 }
 
@@ -80,7 +83,8 @@ define(
                 return null;
             }
 
-            var typeConfig = u.findWhere(typeRequestConfigs, { type: instance.constructor });
+            // FIXME: 用了`eoo`的情况下`constructor`不准的
+            var typeConfig = u.findWhere(typeRequestConfigs, {type: instance.constructor});
             return (typeConfig && typeConfig.config[name]) || globalRequestConfig[name] || null;
         }
 
@@ -188,6 +192,9 @@ define(
         /**
          * 获取请求对象
          *
+         * @param {string} name 请求配置名称
+         * @param {Object} [data] 请求的数据
+         * @param {Object} [options] 请求的配置
          * @return {meta.Request}
          * @protected
          */

@@ -10,7 +10,7 @@
 define(
     function (require) {
         var util = require('er/util');
-        var u = require('underscore');
+        var u = require('../util');
         var Action = require('er/Action');
 
         /**
@@ -100,8 +100,8 @@ define(
          */
         BaseAction.prototype.getPageCategories = function () {
             var categories = [];
-            var category = require('../util').dasherize(this.getCategory());
-            var entityName = require('../util').dasherize(this.getEntityName());
+            var category = u.dasherize(this.getCategory());
+            var entityName = u.dasherize(this.getEntityName());
 
             if (category) {
                 categories.push(category + '-page');

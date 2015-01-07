@@ -9,7 +9,7 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
+        var u = require('./util');
         var exports = {};
 
         function filterNode(filter, node) {

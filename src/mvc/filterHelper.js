@@ -8,13 +8,13 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
+        var u = require('../util');
 
         var helper = {};
         var select = helper.select = {};
         select.getText = function (filter) {
             var item = u.find(filter.datasource, function (item) {
-                return item.value == filter.value;  // jshint ignore:line
+                return item.value == filter.value;
             });
             return item && item.text || '';
         };

@@ -16,7 +16,7 @@ define(
         var lib = require('esui/lib');
         var painter = require('esui/painters');
         var InputControl = require('esui/InputControl');
-        var u = require('underscore');
+        var u = require('../util');
 
         /**
          * 控件类
@@ -139,18 +139,18 @@ define(
                 // 内容
                 '<div data-ui="type:Panel;childName:body;"',
                 ' class="${bodyClass}">',
-                    '${searchInput}',
-                    // 搜索结果列表区
-                    '<div data-ui="type:Panel;childName:content"',
-                    ' class="${contentClass}">',
-                        // 结果为空提示
-                        '<div data-ui="type:Label;childName:emptyText"',
-                        ' class="${emptyTextClass}">${emptyText}</div>',
-                        // 结果列表
-                        '<div data-ui="type:Panel;childName:queryList"',
-                        ' class="${queryListClass}">',
-                        '</div>',
-                    '</div>',
+                '    ${searchInput}',
+                // 搜索结果列表区
+                '    <div data-ui="type:Panel;childName:content"',
+                '     class="${contentClass}">',
+                // 结果为空提示
+                '        <div data-ui="type:Label;childName:emptyText"',
+                '         class="${emptyTextClass}">${emptyText}</div>',
+                // 结果列表
+                '        <div data-ui="type:Panel;childName:queryList"',
+                '         class="${queryListClass}">',
+                '        </div>',
+                '    </div>',
                 '</div>',
                 // 腿部概要信息
                 '${footInfo}'
@@ -267,6 +267,7 @@ define(
         /**
          * 点击行为分发器
          * @param {Event} e 事件对象
+         * @return {boolean}
          * @ignore
          */
         RichSelector.prototype.eventDispatcher = function (e) {
@@ -347,7 +348,9 @@ define(
 
         /**
          * 清除搜索结果
+         *
          * @param {ui.RichSelector} richSelector 类实例
+         * @return {boolean}
          * @ignore
          */
         RichSelector.prototype.clearQuery = function () {
@@ -449,6 +452,7 @@ define(
          * 批量操作事件处理
          * 可重写
          *
+         * @return {boolean}
          */
         RichSelector.prototype.batchAction = function () {
             if (this.mode === 'delete') {

@@ -10,7 +10,7 @@
  */
 define(
     function (require) {
-        var u = require('underscore');
+        var u = require('../../util');
         var Toast = require('esui/Toast');
         var SubmitHandler = require('./SubmitHandler');
 
@@ -80,15 +80,14 @@ define(
             if (template) {
                 return u.template(template, entity || {});
             }
-            else {
-                var actionType = action.context.formType === 'update'
-                    ? '修改'
-                    : '创建';
-                return '您' + actionType + '的'
-                    + action.getEntityDescription()
-                    + '[<strong>' + u.escape(entity.name) + '</strong>]'
-                    + '已经成功保存';
-            }
+
+            var actionType = action.context.formType === 'update'
+                ? '修改'
+                : '创建';
+            return '您' + actionType + '的'
+                + action.getEntityDescription()
+                + '[<strong>' + u.escape(entity.name) + '</strong>]'
+                + '已经成功保存';
         };
 
         var ToastSubmitHandler = require('eoo').create(SubmitHandler, exports);

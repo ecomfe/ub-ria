@@ -10,9 +10,8 @@ define(
     function (require) {
         var lib = require('esui/lib');
         var painter = require('esui/painters');
-        var u = require('underscore');
+        var u = require('../util');
 
-        var util = require('../util');
         var RichSelector = require('./RichSelector');
 
 
@@ -43,7 +42,7 @@ define(
                 selectedData: [],
                 // 字段，含义与Table相同，searchScope表示这个字段对搜索关键词是全击中还是部分击中
                 fields: [
-                    { field : 'name', content: 'name', searchScope: 'partial', isDefaultSearchField: true }
+                    {field: 'name', content: 'name', searchScope: 'partial', isDefaultSearchField: true}
                 ],
                 allowUnselectNode: false
             };
@@ -114,7 +113,7 @@ define(
          * @override
          */
         TableRichSelector.prototype.adaptData = function () {
-            var allData = util.deepClone(this.datasource);
+            var allData = u.deepClone(this.datasource);
             // 先构建indexData
             var indexData = {};
             u.each(allData, function (item, index) {
@@ -129,7 +128,7 @@ define(
                 // 如果不是数组，这个值就是id
                 if (!u.isArray(selectedData)) {
                     this.currentSelectedId = selectedData;
-                    selectedData = [{ id: selectedData }];
+                    selectedData = [{id: selectedData}];
                 }
                 // 如果是数组，保存第一个值为当前选值
                 else if (selectedData.length) {
@@ -198,7 +197,8 @@ define(
         /**
          * 创建表头
          *
-         * public
+         * @public
+         * @param {ui.TableRichSelector} control 当前控件实例
          * @return {string} 表头html
          */
         function createTableHead(control) {
@@ -227,7 +227,10 @@ define(
 
         /**
          * 创建表格体
+         *
          * @param {ui.TableForSelector} control 类实例
+         * @param {Object} data 绘制的内容
+         * @return {string}
          * @ignore
          */
         function createTableContent(control, data) {
@@ -272,6 +275,7 @@ define(
          * @param {Object} item 每行的数据
          * @param {number} index 行索引
          * @param {HTMLElement} tr 容器节点
+         * @return {string}
          * @ignore
          */
         function createRow(control, item, index, tr) {
@@ -283,7 +287,7 @@ define(
                 var content = field.content;
                 var innerHTML = ('function' === typeof content
                     ? content.call(control, item, index, i)
-                    : item[content]);
+                    : u.escape(item[content]));
 
                 // IE不支持tr.innerHTML，所以这里要使用insertCell
                 if (tr) {
@@ -395,7 +399,7 @@ define(
 
             if (fire) {
                 // 需要增加上一个参数，因为有的时候需要了解当前操作的对象是什么
-                control.fire('add', { item: item });
+                control.fire('add', {item: item});
                 control.fire('change');
             }
         }
@@ -510,7 +514,7 @@ define(
         function actionForDelete(control, row, item) {
             deleteItem(control, item.id);
             // 外部需要知道什么数据被删除了
-            control.fire('delete', { items: [item] });
+            control.fire('delete', {items: [item]});
             control.fire('change');
         }
 
@@ -542,7 +546,7 @@ define(
         TableRichSelector.prototype.deleteAll = function () {
             var items = u.clone(this.datasource);
             this.set('datasource', []);
-            this.fire('delete', { items: items });
+            this.fire('delete', {items: items});
             this.fire('change');
         };
 

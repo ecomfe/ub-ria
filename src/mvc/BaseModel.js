@@ -2,37 +2,30 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 数据模型基类
+ * @exports mvc.BaseModel
  * @author otakustay
- * @date $DATE$
  */
 define(
     function (require) {
-        var u = require('underscore');
-        var util = require('er/util');
-        var UIModel = require('ef/UIModel');
+        var u = require('../util');
+        var eoo = require('eoo');
 
         /**
-         * 业务数据模型基类
-         *
+         * @class mvc.BaseModel
          * @extends ef.UIModel
-         * @constructor
          */
-        function BaseModel() {
-            UIModel.apply(this, arguments);
-        }
-
-        util.inherits(BaseModel, UIModel);
+        var exports = {};
 
         /**
          * 添加一个数据对象，以便当前数据模型对象可以进行管理
          *
+         * @protected
+         * @method mvc.BaseModel#addData
          * @param {string} [name="default"] 数据对象的名称，没有则使用
          * @param {mvc.RequestManager} instance 一个数据对象
-         * @protected
          */
-        BaseModel.prototype.addData = function (name, instance) {
+        exports.addData = function (name, instance) {
             if (!this.dataPool) {
                 this.dataPool = {};
             }
@@ -53,19 +46,23 @@ define(
         /**
          * 设置当前所属模块的默认`Data`实现
          *
+         * @public
+         * @method mvc.BaseModel#setData
          * @param {mvc.RequestManager} instance 一个数据对象
          */
-        BaseModel.prototype.setData = function (instance) {
+        exports.setData = function (instance) {
             this.addData(instance);
         };
 
         /**
          * 获取关联在当前Model上的数据对象
          *
+         * @protected
+         * @method mvc.BaseModel#data
          * @param {string} [name] 需要的数据对象的名称，不提供则返回默认的数据对象
          * @return {mvc.RequestManager}
          */
-        BaseModel.prototype.data = function (name) {
+        exports.data = function (name) {
             if (!name) {
                 name = 'default';
             }
@@ -75,10 +72,12 @@ define(
         /**
          * 添加一个数据源
          *
+         * @protected
+         * @method mvc.BaseModel#putDatasource
          * @param {Object} item 数据源配置，参考ER框架的说明
          * @param {number} [index] 数据源放置的位置，如果不提供则放在最后，提供则和那个位置的并行
          */
-        BaseModel.prototype.putDatasource = function (item, index) {
+        exports.putDatasource = function (item, index) {
             // 先复制一份，避免合并时相互污染
             item = u.clone(item);
 
@@ -110,8 +109,9 @@ define(
          *
          * @override
          */
-        BaseModel.prototype.dispose = function () {
-            UIModel.prototype.dispose.apply(this, arguments);
+        exports.dispose = function () {
+            this.$super(arguments);
+
             u.each(
                 this.dataPool,
                 function (data) {
@@ -120,6 +120,23 @@ define(
             );
             this.dataPool = null;
         };
+
+        /**
+         * 判断是否拥有指定的权限
+         *
+         * @protected
+         * @method mvc.BaseModel#isAllow
+         * @param {string} authority 权限值
+         * @return {boolean}
+         */
+        exports.isAllow = function (authority) {
+            return this.getPermissionProvider().isAllow(authority);
+        };
+
+        eoo.defineAccessor(exports, 'permissionProvider');
+
+        var UIModel = require('ef/UIModel');
+        var BaseModel = eoo.create(UIModel, exports);
 
         return BaseModel;
     }
