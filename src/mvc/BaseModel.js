@@ -122,18 +122,19 @@ define(
         };
 
         /**
-         * 判断是否拥有指定的权限
+         * 获取权限对象
          *
-         * @protected
-         * @method mvc.BaseModel#isAllow
-         * @param {string} authority 权限值
-         * @return {boolean}
+         * @method mvc.BaseModel#getPermission
+         * @return {Object} 权限对象，其中不同权限对应不同方法，由实际需要的模块定义接口
          */
-        exports.isAllow = function (authority) {
-            return this.getPermissionProvider().isAllow(authority);
-        };
 
-        eoo.defineAccessor(exports, 'permissionProvider');
+        /**
+         * 设置权限对象
+         *
+         * @method mvc.BaseModel#setPermission
+         * @param {Object} permission 权限对象，其中不同权限对应不同方法，由实际需要的模块定义接口
+         */
+        eoo.defineAccessor(exports, 'permission');
 
         var UIModel = require('ef/UIModel');
         var BaseModel = eoo.create(UIModel, exports);
