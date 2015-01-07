@@ -9,6 +9,7 @@
 define(
     function (require) {
         var u = require('../util');
+        var eoo = require('eoo');
 
         /**
          * @class mvc.IoCActionFactory
@@ -38,7 +39,7 @@ define(
             var Deferred = require('er/Deferred');
             var deferred = new Deferred();
 
-            require('uioc').getComponent(this.actionComponent, deferred.resolver.resolve);
+            this.getIocContainer().getComponent(this.actionComponent, deferred.resolver.resolve);
 
             return deferred.promise.then(u.bind(this.buildAction, this, actionContext));
         };
@@ -75,7 +76,9 @@ define(
             return action;
         };
 
-        var IoCActionFactory = require('eoo').create(exports);
+        eoo.defineAccessor(exports, 'iocContainer');
+
+        var IoCActionFactory = eoo.create(exports);
 
         return IoCActionFactory;
     }
