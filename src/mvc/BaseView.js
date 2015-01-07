@@ -102,12 +102,6 @@ define(
                 },
                 this
             );
-            // TODO: 这里是个hack，相当于我知道父类的`bindEvents`会使用`uiEvents`属性才能这么写代码，
-            // 正确的做法是将`ef.UIView#bindEvents`进行拆分，取出一部分逻辑作为一个方法让这里来调用，将可变的东西作为参数
-            for (var i = 0; i < uiEventsCollection.length; i++) {
-                this.uiEvents = uiEventsCollection[i];
-                this.$super(arguments);
-            }
         };
 
         /**
