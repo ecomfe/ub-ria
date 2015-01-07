@@ -95,7 +95,7 @@ define(
          * @method mvc.ListView#updatePageIndex
          * @fires mvc.ListView#pagechange
          */
-        exports.updatePageIndex = function() {
+        exports.updatePageIndex = function () {
             this.fire('pagechange');
         };
 

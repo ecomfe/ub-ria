@@ -698,7 +698,7 @@ define(
          * 清空搜索的结果
          *
          */
-        TreeRichSelector.prototype.clearData = function() {
+        TreeRichSelector.prototype.clearData = function () {
             // 清空数据
             this.queriedData = {};
         };

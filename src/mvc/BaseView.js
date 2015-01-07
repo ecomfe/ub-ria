@@ -86,14 +86,18 @@ define(
          * @protected
          */
         exports.bindEvents = function () {
-            // 获取 直接重写`uiEvents` 及 调用`addUIEvents`接口 设置的控件事件
+            // 扩展后`uiEvents`可以是个数组，每一项和以前的`uiEvents`格式是一样的，一一注册就行。
+            // 两层`each`，第一层分解数组，第二层和基类的`bindEvents`一样就是绑事件
             u.each(
                 this.getUIEventsCollection(),
-                function (uiEvents) {
-                    // 从`uiEvents`数组中依次取出事件对象重写`this.uiEvents`
-                    this.uiEvents = uiEvents;
-                    // 调用父类`bindEvents`方法完成控件的事件绑定
-                    this.$super(arguments);
+                function (events) {
+                    u.each(
+                        events,
+                        function (handler, key) {
+                            this.bindUIEvent(key, handler);
+                        },
+                        this
+                    );
                 },
                 this
             );
@@ -214,19 +218,8 @@ define(
             templateData.get = function (path) {
                 // 以`?`结尾的是权限判断，如`${canModify?}`
                 if (path.charAt(path.length - 1) === '?') {
-                    var permission = model.getPermission();
-
-                    if (!permission) {
-                        return false;
-                    }
-
-                    var method = permission[path.slice(0, -1)];
-
-                    if (!method) {
-                        return false;
-                    }
-
-                    return method.call(permission);
+                    var permissionName = path.slice(0, -1);
+                    return model.checkPermission(permissionName);
                 }
 
                 return getProperty(path);
@@ -236,7 +229,7 @@ define(
         };
 
         var UIView = require('ef/UIView');
-        var BaseView = require('eoo').create(exports, UIView);
+        var BaseView = require('eoo').create(UIView, exports);
         return BaseView;
     }
 );
