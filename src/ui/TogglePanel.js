@@ -33,7 +33,7 @@ define(
          */
         TogglePanel.prototype.initOptions = function (options) {
             var defaults = {
-                expended: false,
+                expanded: false,
                 position: 'layer'
             };
 
@@ -164,13 +164,13 @@ define(
             if (!isChild) {
                 layer.hide();
 
-                // 如果是点击attachedTarget的话，需要保持expended状态.
-                // 如果是点击其他空白区域的话，直接去掉expended就行。
+                // 如果是点击attachedTarget的话，需要保持expanded状态.
+                // 如果是点击其他空白区域的话，直接去掉expanded就行。
                 var attachedTarget = layer.attachedTarget;
                 var isAttachedTarget = lib.dom.contains(attachedTarget, target) || attachedTarget === target;
 
                 if (!isAttachedTarget) {
-                    this.removeState('expended');
+                    this.removeState('expanded');
                 }
             }
         }
@@ -194,18 +194,18 @@ define(
 
             if (position === 'fixed') {
                 // 占位模式
-                this.toggleState('expended');
+                this.toggleState('expanded');
             }
             else {
                 // 浮层模式
                 var contentLayer = this.getChild('content');
 
-                if (this.isExpended()) {
-                    this.removeState('expended');
+                if (this.isExpanded()) {
+                    this.removeState('expanded');
                     contentLayer.hide();
                 }
                 else {
-                    this.toggleState('expended');
+                    this.toggleState('expanded');
                     contentLayer.show();
                 }
             }
@@ -222,7 +222,7 @@ define(
          */
         TogglePanel.prototype.repaint = painters.createRepaint(
             Control.prototype.repaint,
-            painters.state('expended'),
+            painters.state('expanded'),
             {
                 name: 'title',
                 paint: function (panel, title) {
@@ -237,8 +237,8 @@ define(
             }
         );
 
-        TogglePanel.prototype.isExpended = function () {
-            return this.hasState('expended');
+        TogglePanel.prototype.isExpanded = function () {
+            return this.hasState('expanded');
         };
 
         lib.inherits(TogglePanel, Control);
