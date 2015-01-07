@@ -105,6 +105,32 @@ define(
         };
 
         /**
+         * 判断是否有给定的权限
+         *
+         * @public
+         * @method mvc.BaseModel#checkPermission
+         * @param {string} permissionName 需要判断的权限名称
+         * @return {boolean}
+         * @throws {Error} 没有关联的`permission`对象
+         * @throws {Error} 关联的`permission`对象不提供`permissionName`对应的权限的判断
+         */
+        exports.checkPermission = function (permissionName) {
+            var permission = this.getPermission();
+
+            if (!permission) {
+                throw new Error('No attached permission object');
+            }
+
+            var method = permission[permissionName];
+
+            if (!method) {
+                throw new Error('No "' + method + '" method on permission object');
+            }
+
+            return method.call(permission);
+        };
+
+        /**
          * 销毁
          *
          * @override

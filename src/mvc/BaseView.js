@@ -214,19 +214,8 @@ define(
             templateData.get = function (path) {
                 // 以`?`结尾的是权限判断，如`${canModify?}`
                 if (path.charAt(path.length - 1) === '?') {
-                    var permission = model.getPermission();
-
-                    if (!permission) {
-                        return false;
-                    }
-
-                    var method = permission[path.slice(0, -1)];
-
-                    if (!method) {
-                        return false;
-                    }
-
-                    return method.call(permission);
+                    var permissionName = path.slice(0, -1);
+                    return model.checkPermission(permissionName);
                 }
 
                 return getProperty(path);
@@ -236,7 +225,7 @@ define(
         };
 
         var UIView = require('ef/UIView');
-        var BaseView = require('eoo').create(exports, UIView);
+        var BaseView = require('eoo').create(UIView, exports);
         return BaseView;
     }
 );
