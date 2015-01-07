@@ -86,17 +86,14 @@ define(
          * @protected
          */
         exports.bindEvents = function () {
-            // 获取 直接重写`uiEvents` 及 调用`addUIEvents`接口 设置的控件事件
-            u.each(
-                this.getUIEventsCollection(),
-                function (uiEvents) {
-                    // 从`uiEvents`数组中依次取出事件对象重写`this.uiEvents`
-                    this.uiEvents = uiEvents;
-                    // 调用父类`bindEvents`方法完成控件的事件绑定
-                    this.$super(arguments);
-                },
-                this
-            );
+            // 不能在内层函数里用`$super`，因为这货用了`caller`，这里乖乖用普通的`for`循环好了
+            var uiEventsCollection = this.getUIEventsCollection();
+            // TODO: 这里是个hack，相当于我知道父类的`bindEvents`会使用`uiEvents`属性才能这么写代码，
+            // 正确的做法是将`ef.UIView#bindEvents`进行拆分，取出一部分逻辑作为一个方法让这里来调用，将可变的东西作为参数
+            for (var i = 0; i < uiEventsCollection.length; i++) {
+                this.uiEvents = uiEventsCollection[i];
+                this.$super(arguments);
+            }
         };
 
         /**
