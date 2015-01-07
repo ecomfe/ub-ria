@@ -86,8 +86,22 @@ define(
          * @protected
          */
         exports.bindEvents = function () {
-            // 不能在内层函数里用`$super`，因为这货用了`caller`，这里乖乖用普通的`for`循环好了
+            // 扩展后`uiEvents`可以是个数组，每一项和以前的`uiEvents`格式是一样的，一一注册就行
             var uiEventsCollection = this.getUIEventsCollection();
+            // 两层`each`，第一层分解数组，第二层和基类的`bindEvents`一样就是绑事件
+            u.each(
+                this.getUIEventsCollection(),
+                function (events) {
+                    u.each(
+                        events,
+                        function (handler, key)
+                            this.bindUIEvent(key, handler);
+                        },
+                        this
+                    );
+                },
+                this
+            );
             // TODO: 这里是个hack，相当于我知道父类的`bindEvents`会使用`uiEvents`属性才能这么写代码，
             // 正确的做法是将`ef.UIView#bindEvents`进行拆分，取出一部分逻辑作为一个方法让这里来调用，将可变的东西作为参数
             for (var i = 0; i < uiEventsCollection.length; i++) {
