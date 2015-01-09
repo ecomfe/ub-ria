@@ -208,14 +208,55 @@ define(
         };
 
         /**
+         * 获取规则值
+         *
+         * @protected
+         * @method mvc.BaseView#getRuleValue
+         * @param {string} path 相对规则`rule`对象的路径
+         * @return {*} 规则对应的值
+         */
+        exports.getRuleValue = function (path) {
+            path = path.split('.');
+
+            var value = this.model.get('rule') || this.getRule();
+            for (var i = 0; i < path.length; i++) {
+                value = value[path[i]];
+            }
+
+            return value;
+
+        };
+
+        /**
+         * @override
+         */
+        exports.replaceValue = function (value) {
+            if (typeof value !== 'string') {
+                return value;
+            }
+
+            if (value.indexOf('@rule.') === 0) {
+                return this.getRuleValue(value.substring(6));
+            }
+
+            return this.$super(arguments);
+        };
+
+        /**
          * @override
          */
         exports.getTemplateData = function () {
             var templateData = this.$super(arguments);
             var getProperty = templateData.get;
             var model = this.model;
+            var view = this;
 
             templateData.get = function (path) {
+                // 访问`rule`的会做一次拦截，但如果`model`中正好也有`rule`，以`model`的优先
+                if (path.indexOf('rule.') === 0) {
+                    return view.getRuleValue(path.substring(5));
+                }
+
                 // 以`?`结尾的是权限判断，如`${canModify?}`
                 if (path.charAt(path.length - 1) === '?') {
                     var permissionName = path.slice(0, -1);
@@ -228,8 +269,25 @@ define(
             return templateData;
         };
 
+        var oo = require('eoo');
+
+        /**
+         * 获取对应的规则对象
+         *
+         * @method mvc.BaseView#getRule
+         * @return {Object}
+         */
+
+        /**
+         * 设置对应的规则对象
+         *
+         * @method mvc.BaseView#setRule
+         * @param {Object} rule 对应的规则对象
+         */
+        oo.defineAccessor(exports, 'rule');
+
         var UIView = require('ef/UIView');
-        var BaseView = require('eoo').create(UIView, exports);
+        var BaseView = oo.create(UIView, exports);
         return BaseView;
     }
 );
