@@ -50,8 +50,9 @@ define(
         // 加载是否有列表数据的值
         var HAS_RESULT_DATASOURCE = {
             hasResult: function (model) {
+                var results = model.get('results');
                 // 有返回内容，或者有查询参数的情况下，认为是有内容的
-                return model.get('results').length || !u.isEmpty(model.get('url').getQuery());
+                return (results && results.length) || !u.isEmpty(model.get('url').getQuery());
             }
         };
 
