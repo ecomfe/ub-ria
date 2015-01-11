@@ -200,7 +200,8 @@ define(
          * 处理后续和UI有关的数据
          */
         function processUIData() {
-            var canBatchModify = this.checkPermission('canBatchModify');
+            // FIXME: 这里为了向后兼容性保留了`.get('canBatchModify')`的判断，以后要去掉，只留`checkPermission`
+            var canBatchModify = this.get('canBatchModify') && this.checkPermission('canBatchModify');
             this.set('selectMode', canBatchModify ? 'multi' : '');
         }
 
