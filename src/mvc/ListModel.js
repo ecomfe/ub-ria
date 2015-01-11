@@ -200,7 +200,7 @@ define(
          * 处理后续和UI有关的数据
          */
         function processUIData() {
-            var canBatchModify = this.get('canBatchModify');
+            var canBatchModify = this.checkPermission('canBatchModify');
             this.set('selectMode', canBatchModify ? 'multi' : '');
         }
 
