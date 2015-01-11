@@ -429,6 +429,18 @@ define(
          * @return {er.meta.FakeXHR}
          */
         exports.getAdvice = function (status, ids) {
+            var config = u.findWhere(
+                this.getStatusTransitions(),
+                {status: status}
+            );
+
+            if (config && config.statusName) {
+                var adviceMethod = this['get' + u.pascalize(config.statusName) + 'Advice'];
+                if (adviceMethod) {
+                    return adviceMethod.call(this, ids);
+                }
+            }
+
             var data = this.data();
             if (!data) {
                 throw new Error('No default data object attached to this Model');
@@ -438,6 +450,31 @@ define(
             }
 
             return data.getAdvice(status, ids);
+        };
+
+        /**
+         * 删除前确认
+         *
+         * 此方法默认用于前端确认，如需后端检验则需要重写为调用`data().getRemoveAdvice`
+         *
+         * @param {string[]} ids id集合
+         * @return {er.meta.FakeXHR}
+         */
+        exports.getRemoveAdvice = function (ids) {
+            // 默认仅本地提示，有需要的子类重写为从远程获取信息
+            var Deferred = require('er/Deferred');
+            var count = ids.length;
+            var description = this.get('entityDescription');
+
+            var message = '您确定要删除已选择的' + count + '个' + description + '吗？';
+            if (count <= 1) {
+                message = '您确定要删除该' + description + '吗？';
+            }
+            var advice = {
+                message: message
+            };
+
+            return Deferred.resolved(advice);
         };
 
         /**

@@ -170,10 +170,7 @@ define(
 
             if (this.requireAdviceFor(context)) {
                 // 需要后端提示消息的，再额外加入用户确认的过程
-                var action = u.pascalize(context.statusName);
-                var adviceMethod = 'get' + action + 'Advice';
-
-                this.model[adviceMethod](context.ids, context.items)
+                this.model.getAdvice(status, ids)
                     .then(u.bind(waitConfirmForAdvice, this, context))
                     .then(u.bind(updateEntities, this, context));
             }
