@@ -51,7 +51,7 @@ define(
          * @return {string}
          */
         function getViewName(actionContext) {
-            var parts = u.compact(actionContext.url.toString().split('/'));
+            var parts = u.compact(actionContext.url.getPath().split('/'));
 
             var pageType = parts[parts.length - 1];
             if (pageType === 'create' || pageType === 'update') {

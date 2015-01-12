@@ -14,7 +14,9 @@ define(
         var select = helper.select = {};
         select.getText = function (filter) {
             var item = u.find(filter.datasource, function (item) {
+                /* eslint-disable eqeqeq */
                 return item.value == filter.value;
+                /* eslint-enable eqeqeq */
             });
             return item && item.text || '';
         };

@@ -364,7 +364,7 @@ define(
          * @param {Object} fieldSchema 字段定义
          * @return {Object} 检验器对象组成的有序数组
          */
-        EntityValidator.prototype.getFieldCheckers = function(fieldSchema) {
+        EntityValidator.prototype.getFieldCheckers = function (fieldSchema) {
             var checkerNames = getFieldCheckerNames(fieldSchema);
             var checkers = this.getCheckers();
             var fieldCheckers = [];

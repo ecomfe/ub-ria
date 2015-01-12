@@ -478,7 +478,7 @@ define(
          * 出现搜索信息时，结果区域的高度要变小，才能使整个控件高度不变
          *
          */
-        RichSelector.prototype.adjustHeight = function() {
+        RichSelector.prototype.adjustHeight = function () {
             // 用户设置总高度
             var settingHeight = this.height;
 

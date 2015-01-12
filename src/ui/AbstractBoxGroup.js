@@ -280,7 +280,7 @@ define(
                     var map = {};
                     u.each(
                         rawValue,
-                        function(value) {
+                        function (value) {
                             map[value] = true;
                         }
                     );
@@ -344,7 +344,7 @@ define(
             var boxType = this.boxType;
             return u.filter(
                 this.main.getElementsByTagName('div'),
-                function(item) {
+                function (item) {
                     return getAttr(item, 'box-type') === boxType;
                 }
             );

@@ -50,8 +50,9 @@ define(
         // 加载是否有列表数据的值
         var HAS_RESULT_DATASOURCE = {
             hasResult: function (model) {
+                var results = model.get('results');
                 // 有返回内容，或者有查询参数的情况下，认为是有内容的
-                return model.get('results').length || !u.isEmpty(model.get('url').getQuery());
+                return (results && results.length) || !u.isEmpty(model.get('url').getQuery());
             }
         };
 
@@ -199,7 +200,8 @@ define(
          * 处理后续和UI有关的数据
          */
         function processUIData() {
-            var canBatchModify = this.get('canBatchModify');
+            // FIXME: 这里为了向后兼容性保留了`.get('canBatchModify')`的判断，以后要去掉，只留`checkPermission`
+            var canBatchModify = this.get('canBatchModify') && this.checkPermission('canBatchModify');
             this.set('selectMode', canBatchModify ? 'multi' : '');
         }
 
@@ -428,6 +430,18 @@ define(
          * @return {er.meta.FakeXHR}
          */
         exports.getAdvice = function (status, ids) {
+            var config = u.findWhere(
+                this.getStatusTransitions(),
+                {status: status}
+            );
+
+            if (config && config.statusName) {
+                var adviceMethod = this['get' + u.pascalize(config.statusName) + 'Advice'];
+                if (adviceMethod) {
+                    return adviceMethod.call(this, ids);
+                }
+            }
+
             var data = this.data();
             if (!data) {
                 throw new Error('No default data object attached to this Model');
@@ -437,6 +451,31 @@ define(
             }
 
             return data.getAdvice(status, ids);
+        };
+
+        /**
+         * 删除前确认
+         *
+         * 此方法默认用于前端确认，如需后端检验则需要重写为调用`data().getRemoveAdvice`
+         *
+         * @param {string[]} ids id集合
+         * @return {er.meta.FakeXHR}
+         */
+        exports.getRemoveAdvice = function (ids) {
+            // 默认仅本地提示，有需要的子类重写为从远程获取信息
+            var Deferred = require('er/Deferred');
+            var count = ids.length;
+            var description = this.get('entityDescription');
+
+            var message = '您确定要删除已选择的' + count + '个' + description + '吗？';
+            if (count <= 1) {
+                message = '您确定要删除该' + description + '吗？';
+            }
+            var advice = {
+                message: message
+            };
+
+            return Deferred.resolved(advice);
         };
 
         /**
@@ -470,9 +509,11 @@ define(
                     };
 
                     u.defaults(filter, rawFilter);
+                    /* eslint-disable eqeqeq */
                     filter.isDefaultValue = filter.hasOwnProperty('isDefaultValue')
                         ? filter.isDefaultValue
                         : filter.defaultValue == filter.value;
+                    /* eslint-enable eqeqeq */
 
                     if (!filter.isDefaultValue) {
                         isAllFiltersDefault = false;

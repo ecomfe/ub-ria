@@ -34,7 +34,7 @@ define(
         TogglePanel.prototype.initOptions = function (options) {
             var defaults = {
                 expanded: false,
-                position: 'layer'
+                position: 'fixed'
             };
 
             var properties = lib.extend(defaults, options);

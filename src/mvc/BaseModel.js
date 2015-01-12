@@ -105,6 +105,32 @@ define(
         };
 
         /**
+         * 判断是否有给定的权限
+         *
+         * @public
+         * @method mvc.BaseModel#checkPermission
+         * @param {string} permissionName 需要判断的权限名称
+         * @return {boolean}
+         * @throws {Error} 没有关联的`permission`对象
+         * @throws {Error} 关联的`permission`对象不提供`permissionName`对应的权限的判断
+         */
+        exports.checkPermission = function (permissionName) {
+            var permission = this.getPermission();
+
+            if (!permission) {
+                throw new Error('No attached permission object');
+            }
+
+            var method = permission[permissionName];
+
+            if (!method) {
+                throw new Error('No "' + method + '" method on permission object');
+            }
+
+            return method.call(permission);
+        };
+
+        /**
          * 销毁
          *
          * @override
@@ -122,18 +148,19 @@ define(
         };
 
         /**
-         * 判断是否拥有指定的权限
+         * 获取权限对象
          *
-         * @protected
-         * @method mvc.BaseModel#isAllow
-         * @param {string} authority 权限值
-         * @return {boolean}
+         * @method mvc.BaseModel#getPermission
+         * @return {Object} 权限对象，其中不同权限对应不同方法，由实际需要的模块定义接口
          */
-        exports.isAllow = function (authority) {
-            return this.getPermissionProvider().isAllow(authority);
-        };
 
-        eoo.defineAccessor(exports, 'permissionProvider');
+        /**
+         * 设置权限对象
+         *
+         * @method mvc.BaseModel#setPermission
+         * @param {Object} permission 权限对象，其中不同权限对应不同方法，由实际需要的模块定义接口
+         */
+        eoo.defineAccessor(exports, 'permission');
 
         var UIModel = require('ef/UIModel');
         var BaseModel = eoo.create(UIModel, exports);
