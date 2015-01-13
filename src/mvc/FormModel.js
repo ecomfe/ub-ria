@@ -45,7 +45,7 @@ define(
          * @param {mvc.EntityValidator} validator 关联的实例
          */
         exports.setValidator = function (validator) {
-            if (validator) {
+            if (validator && !validator.getRule()) {
                 validator.setRule(this.get('rule'));
             }
             this.validator = validator;
