@@ -92,6 +92,24 @@ define(
         };
 
         /**
+         * 获取当前页面所属包
+         *
+         * @return {string}
+         */
+        BaseAction.prototype.getPackage = function () {
+            return this.package;
+        };
+
+        /**
+         * 设置当前页面所属包
+         *
+         * @param {string} package 所属包名
+         */
+        BaseAction.prototype.setPackage = function (package) {
+            this.package = package;
+        };
+
+        /**
          * 获取当前页面的分类
          *
          * 默认分类为`[{category}-page, {entityName}-{category}-page]`
@@ -102,6 +120,7 @@ define(
             var categories = [];
             var category = u.dasherize(this.getCategory());
             var entityName = u.dasherize(this.getEntityName());
+            var package = u.dasherize(this.getPackage());
 
             if (category) {
                 categories.push(category + '-page');
@@ -111,6 +130,12 @@ define(
             }
             if (category && entityName) {
                 categories.push(entityName + '-' + this.category + '-page');
+            }
+            if (package) {
+                categories.push(package + '-package');
+            }
+            if (package && category) {
+                categories.push(package + '-package-' + category);
             }
 
             return categories;
