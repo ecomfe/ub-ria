@@ -26,6 +26,7 @@ define(
          * @return {er.meta.FakeXHR}
          */
         exports.list = function (query) {
+            query.whosyourdaddy = true;
             return this.request(
                 '$entity/list',
                 query,
@@ -34,24 +35,6 @@ define(
                     url: '/$entity'
                 }
             );
-        };
-
-        /**
-         * 返回请求参数中非预期的参数列表
-         *
-         * @protected
-         * @method mvc.StaticListData#getOtherKeys
-         * @param {Object} query 查询参数
-         * @return {Array.<string>} 请求参数中非预期参数列表
-         */
-        exports.getOtherKeys = function (query) {
-            // 两种情况下要从后端取：
-            // 1. 没有缓存数据
-            // 2. 参数里不止 pageNo，pageSize, orderBy，order 这几个参数
-            var keys = u.keys(query);
-            var targetKeys = ['pageNo', 'pageSize', 'orderBy', 'order'];
-
-            return u.difference(keys, targetKeys);
         };
 
         /**
@@ -94,8 +77,8 @@ define(
          * @return {er.meta.FakeXHR}
          */
         exports.search = function (query) {
-            var otherKeys = this.getOtherKeys(query);
-            if (!this.cacheList || otherKeys.length) {
+            var isStaticKeyChanged = this.checkStaticKeyChanged(query);
+            if (!this.cacheList || !isStaticKeyChanged) {
                 var cache = function (data) {
                     this.cacheList = data;
                     return this.filterData(query);
@@ -103,6 +86,28 @@ define(
                 return this.list(query).then(u.bind(cache, this));
             }
             return require('er/Deferred').resolved(this.filterData(query));
+        };
+
+        /**
+         * 判断静态搜索相关的字段是否变化
+         * 
+         * @public
+         * @method mvc.StaticListData#checkStaticKeyChanged
+         * @param  {Object} query 搜索参数
+         * @return {boolean}
+         */
+        exports.checkStaticKeyChanged = function (query) {
+            return u.some(
+                ['order', 'orderBy', 'pageNo', 'pageSize'],
+                function (key) {
+                    if (this[key] !== query[key]) {
+                        this[key] = query[key];
+                        return true;
+                    }
+                    return false;
+                },
+                this
+            );
         };
 
         /**
