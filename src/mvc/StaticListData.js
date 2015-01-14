@@ -12,6 +12,12 @@ define(
         var u = require('../util');
 
         /**
+         * 静态搜索相关搜索参数
+         * @type {Array}
+         */
+        var STATIC_KEYS =  ['order', 'orderBy', 'pageNo', 'pageSize'];
+
+        /**
          * @class mvc.StaticListData
          * @extends mvc.RequestManager
          */
@@ -78,7 +84,7 @@ define(
         exports.search = function (query) {
             var isStaticKeyChanged = this.checkStaticKeyChanged(query);
             if (isStaticKeyChanged) {
-                this.updateStaticKeys(query);
+                u.extend(this, u.pick(query, STATIC_KEYS));
             }
             if (!this.cacheList || !isStaticKeyChanged) {
                 var cache = function (data) {
@@ -100,27 +106,9 @@ define(
          */
         exports.checkStaticKeyChanged = function (query) {
             return u.some(
-                ['order', 'orderBy', 'pageNo', 'pageSize'],
+                STATIC_KEYS,
                 function (key) {
                     return this[key] !== query[key];
-                },
-                this
-            );
-        };
-
-
-        /**
-         * 更新静态搜索相关的字段
-         * 
-         * @public
-         * @method mvc.StaticListData#updateStaticKeys
-         * @param  {Object} query 搜索参数
-         */
-        exports.updateStaticKeys = function (query) {
-            u.each(
-                ['order', 'orderBy', 'pageNo', 'pageSize'],
-                function (key) {
-                    this[key] = query[key];
                 },
                 this
             );
