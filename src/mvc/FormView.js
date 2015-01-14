@@ -132,19 +132,19 @@ define(
          * 用户取消则进入`rejected`状态
          */
         exports.waitCancelConfirm = function (options) {
-            return waitConfirm.call(this, options, 'cancel');
+            return this.waitConfirm(options, 'cancel');
         };
 
         /**
-         * 修改的时候，弹出提示，确认后才能提交成功。
+         * 提交时处理函数
          *
-         * @method mvc.FormView#waitUpdateConfirm
+         * @method mvc.FormView#waitSubmitConfirm
          * @param {Object} options 配置项
-         * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，
-         * 用户取消则进入`rejected`状态
+         * @return {er.Promise} 一个`Promise`对象，默认进入`resolved`状态。
          */
-        exports.waitUpdateConfirm = function (options) {
-            return waitConfirm.call(this, options, 'update');
+        exports.waitSubmitConfirm = function (options) {
+            var Deferred = require('er/Deferred');
+            return Deferred.resolved();
         };
 
         /**
@@ -156,7 +156,7 @@ define(
          * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，
          * 用户取消则进入`rejected`状态
          */
-        function waitConfirm (options, type) {
+        exports.waitConfirm = function (options, type) {
             // 加viewContext
             if (!options.viewContext) {
                 options.viewContext = this.viewContext;
@@ -227,7 +227,7 @@ define(
             );
 
             return deferred.promise;
-        }
+        };
 
         /**
          * 禁用提交操作

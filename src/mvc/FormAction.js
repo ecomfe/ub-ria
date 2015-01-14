@@ -248,18 +248,11 @@ define(
         };
 
         /**
-         * 修改提交时是否需要确认
-         *
-         * @member {boolean} mvc.FormAction#needUpdateConfirm
-         */
-        exports.needUpdateConfirm = false;
-
-        /**
          * 设置修改提交时的提示信息内容
          *
-         * @member {string} mvc.FormAction#updateConfirmMessage
+         * @member {string} mvc.FormAction#submitConfirmMessage
          */
-        exports.updateConfirmMessage = '确认提交修改？';
+        exports.submitConfirmMessage = '确认提交修改？';
 
         /**
          * 获取修改提交时的提示信息内容
@@ -268,35 +261,25 @@ define(
          * @method mvc.FormAction#getUpdateConfirmMessage
          * @return {string}
          */
-        exports.getUpdateConfirmMessage = function () {
-            return this.updateConfirmMessage;
+        exports.getSubmitConfirmMessage = function () {
+            return this.submitConfirmMessage;
         };
 
         function submit() {
             var action = this;
             var entity = this.view.getEntity();
 
-            function doSubmit () {
-                this.view.disableSubmit();
-                Deferred.when(this.submitEntity(entity))
-                    .ensure(u.bind(this.view.enableSubmit, this.view));
-            }
+            var options = {
+                content: this.getSubmitConfirmMessage()
+            };
 
-            var formType = this.model.get('formType');
-
-            if (formType === 'update' && this.needUpdateConfirm) {
-                var options = {
-                    content: this.getUpdateConfirmMessage()
-                };
-                this.view.waitUpdateConfirm(options).then(
-                    function () {
-                        doSubmit.call(action);
-                    }
-                );
-                return;
-            }
-
-            doSubmit.call(this);
+            this.view.waitSubmitConfirm(options).then(
+                function () {
+                    action.view.disableSubmit();
+                    Deferred.when(action.submitEntity(entity))
+                        .ensure(u.bind(action.view.enableSubmit, action.view));
+                }
+            );
         }
 
         /**
