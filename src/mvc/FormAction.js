@@ -247,12 +247,56 @@ define(
             return true;
         };
 
-        function submit() {
-            var entity = this.view.getEntity();
-            this.view.disableSubmit();
+        /**
+         * 修改提交时是否需要确认
+         *
+         * @member {boolean} mvc.FormAction#needUpdateConfirm
+         */
+        exports.needUpdateConfirm = false;
 
-            Deferred.when(this.submitEntity(entity))
-                .ensure(u.bind(this.view.enableSubmit, this.view));
+        /**
+         * 设置修改提交时的提示信息内容
+         *
+         * @member {string} mvc.FormAction#updateConfirmMessage
+         */
+        exports.updateConfirmMessage = '确认提交修改？';
+
+        /**
+         * 获取修改提交时的提示信息内容
+         *
+         * @protected
+         * @method mvc.FormAction#getUpdateConfirmMessage
+         * @return {string}
+         */
+        exports.getUpdateConfirmMessage = function () {
+            return this.updateConfirmMessage;
+        };
+
+        function submit() {
+            var action = this;
+            var entity = this.view.getEntity();
+
+            function doSubmit () {
+                this.view.disableSubmit();
+                Deferred.when(this.submitEntity(entity))
+                    .ensure(u.bind(this.view.enableSubmit, this.view));
+            }
+
+            var formType = this.model.get('formType');
+
+            if (formType === 'update' && this.needUpdateConfirm) {
+                var options = {
+                    content: this.getUpdateConfirmMessage()
+                };
+                this.view.waitUpdateConfirm(options).then(
+                    function () {
+                        doSubmit.call(action);
+                    }
+                );
+                return;
+            }
+
+            doSubmit.call(this);
         }
 
         /**
