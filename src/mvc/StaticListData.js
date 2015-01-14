@@ -26,7 +26,6 @@ define(
          * @return {er.meta.FakeXHR}
          */
         exports.list = function (query) {
-            query.whosyourdaddy = true;
             return this.request(
                 '$entity/list',
                 query,
@@ -78,6 +77,9 @@ define(
          */
         exports.search = function (query) {
             var isStaticKeyChanged = this.checkStaticKeyChanged(query);
+            if (isStaticKeyChanged) {
+                this.updateStaticKeys(query);
+            }
             if (!this.cacheList || !isStaticKeyChanged) {
                 var cache = function (data) {
                     this.cacheList = data;
@@ -100,11 +102,25 @@ define(
             return u.some(
                 ['order', 'orderBy', 'pageNo', 'pageSize'],
                 function (key) {
-                    if (this[key] !== query[key]) {
-                        this[key] = query[key];
-                        return true;
-                    }
-                    return false;
+                    return this[key] !== query[key];
+                },
+                this
+            );
+        };
+
+
+        /**
+         * 更新静态搜索相关的字段
+         * 
+         * @public
+         * @method mvc.StaticListData#updateStaticKeys
+         * @param  {Object} query 搜索参数
+         */
+        exports.updateStaticKeys = function (query) {
+            u.each(
+                ['order', 'orderBy', 'pageNo', 'pageSize'],
+                function (key) {
+                    this[key] = query[key];
                 },
                 this
             );
