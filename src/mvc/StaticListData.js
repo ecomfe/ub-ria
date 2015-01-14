@@ -15,7 +15,7 @@ define(
          * 静态搜索相关搜索参数
          * @type {Array}
          */
-        var STATIC_KEYS =  ['order', 'orderBy', 'pageNo', 'pageSize'];
+        var STATIC_KEYS = ['order', 'orderBy', 'pageNo', 'pageSize'];
 
         /**
          * @class mvc.StaticListData
@@ -48,7 +48,7 @@ define(
          * @protected
          * @method mvc.StaticListData#filterData
          * @param {Object} query 查询条件
-         * @return {number}
+         * @return {Object}
          */
         exports.filterData = function (query) {
             var sortData = u.clone(this.cacheList);
@@ -88,12 +88,24 @@ define(
             }
             if (!this.cacheList || !isStaticKeyChanged) {
                 var cache = function (data) {
-                    this.cacheList = data;
-                    return this.filterData(query);
+                    return this.doCache(data, query);
                 };
                 return this.list(query).then(u.bind(cache, this));
             }
             return require('er/Deferred').resolved(this.filterData(query));
+        };
+
+        /**
+         * 数据缓存方法
+         *
+         * @protected
+         * @param {Object} data 要做cache的数据
+         * @param {Object} query 过滤参数
+         * @return {Object} 过滤后数据
+         */
+        exports.doCache = function (data, query) {
+            this.cacheList = data;
+            return this.filterData(query);
         };
 
         /**
