@@ -323,7 +323,14 @@ define(
         exports.getItemById = function (id) {
             var list = this.getAllItems();
 
-            return list ? u.findWhere(list, {id: id}) : null;
+            return u.find(
+                list,
+                function (item) {
+                    /* eslint-disable eqeqeq */
+                    return item.id == id;
+                    /* eslint-enable eqeqeq */
+                }
+            );
         };
 
         /**

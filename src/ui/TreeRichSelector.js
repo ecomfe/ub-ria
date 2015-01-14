@@ -117,6 +117,10 @@ define(
             {
                 name: 'selectedData',
                 paint: function (control, selectedData) {
+                    // 如果没有传selectedData，就别取消了。
+                    if (selectedData == null) {
+                        return;
+                    }
                     // 先取消选择
                     var allData = control.allData;
                     if (allData && allData.children) {
