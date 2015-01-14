@@ -165,7 +165,7 @@ define(
             var okLabel = '取消' + options.title;
             var cancelLabel = '继续' + options.title;
             if (type === 'update') {
-                okLabel = '继续修改';
+                okLabel = '确认修改';
                 cancelLabel = '取消修改';
             }
 
@@ -211,7 +211,13 @@ define(
                     formViewContainer.removeState('warned');
                 }
             );
-            warn.on('cancel', deferred.resolver.reject);
+            warn.on(
+                'cancel',
+                function () {
+                    deferred.resolver.reject();
+                    formViewContainer.removeState('warned');
+                }
+            );
             warn.on(
                 'hide',
                 function () {
