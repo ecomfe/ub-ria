@@ -1,0 +1,44 @@
+@draweractionpanel-offset: 220px;
+
+.ui-draweractionpanel {
+    background: #fff;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin-left: @draweractionpanel-offset;
+    overflow: auto;
+    z-index: 1000;
+    .transition(all .5s);
+
+    &-hidden {
+        display: block !important;
+        visibility: hidden;
+        .translate(100% 0);
+        .translate(100% 0 0);
+    }
+}
+
+.ui-draweractionpanel-mask {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #333;
+    opacity: .2;
+    filter: alpha(opacity=20);
+    z-index: 999;
+}
+
+.ui-draweractionpanel-close-btn {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 13px;
+    height: 13px;
+    background: url(../img/esui-dialog-head-close.png) no-repeat;
+    cursor: pointer;
+}
