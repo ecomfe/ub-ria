@@ -266,20 +266,16 @@ define(
         };
 
         function submit() {
-            var action = this;
             var entity = this.view.getEntity();
 
             var options = {
                 content: this.getSubmitConfirmMessage()
             };
 
-            this.view.waitSubmitConfirm(options).then(
-                function () {
-                    action.view.disableSubmit();
-                    Deferred.when(action.submitEntity(entity))
-                        .ensure(u.bind(action.view.enableSubmit, action.view));
-                }
-            );
+            this.view.disableSubmit();
+
+            this.view.waitSubmitConfirm(options).then(u.bind(this.submitEntity, this, entity))
+                .ensure(u.bind(this.view.enableSubmit, this.view));
         }
 
         /**
