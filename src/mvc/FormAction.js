@@ -247,11 +247,34 @@ define(
             return true;
         };
 
+        /**
+         * 设置修改提交时的提示信息内容
+         *
+         * @member {string} mvc.FormAction#submitConfirmMessage
+         */
+        exports.submitConfirmMessage = '确认提交修改？';
+
+        /**
+         * 获取修改提交时的提示信息内容
+         *
+         * @protected
+         * @method mvc.FormAction#getUpdateConfirmMessage
+         * @return {string}
+         */
+        exports.getSubmitConfirmMessage = function () {
+            return this.submitConfirmMessage;
+        };
+
         function submit() {
             var entity = this.view.getEntity();
+
+            var options = {
+                content: this.getSubmitConfirmMessage()
+            };
+
             this.view.disableSubmit();
 
-            Deferred.when(this.submitEntity(entity))
+            this.view.waitSubmitConfirm(options).then(u.bind(this.submitEntity, this, entity))
                 .ensure(u.bind(this.view.enableSubmit, this.view));
         }
 
