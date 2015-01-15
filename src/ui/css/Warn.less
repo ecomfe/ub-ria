@@ -1,0 +1,56 @@
+@warn-height: 95px;
+@warn-button-height: 35px;
+
+.ui-warn {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: @warn-height;
+
+    z-index: 3000;
+    background: #fff5d9;
+    .opacity(90);
+    border-top: 1px solid #ececec;
+    font-size: 14px;
+
+    padding: 0 29px;
+
+    .clearfix();
+
+    .ui-warn-icon,
+    .ui-warn-content,
+    .ui-warn-operation-field {
+        float: left;
+    }
+
+    .ui-warn-icon {
+        .normal-icon(url(../img/confirm-icon.png), 23px, 23px);
+        margin-right: 8px;
+        margin-top: (@warn-height - 23px)/2;
+    }
+
+    .ui-warn-content {
+        line-height: @warn-height;
+        margin-right: 60px;
+        color: #333;
+    }
+
+    .ui-warn-operation-field {
+        margin-top: (@warn-height - @warn-button-height)/2;
+
+        .ui-button {
+            height: @warn-button-height;
+            line-height: @warn-button-height;
+            padding: 0 19px;
+        }
+
+        .ui-warn-ok-btn {
+            margin-right: 30px;
+        }
+    }
+}
+
+.ui-warn {
+    bottom: 0;
+}

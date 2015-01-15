@@ -132,6 +132,31 @@ define(
          * 用户取消则进入`rejected`状态
          */
         exports.waitCancelConfirm = function (options) {
+            return this.waitConfirm(options, 'cancel');
+        };
+
+        /**
+         * 提交时处理函数
+         *
+         * @method mvc.FormView#waitSubmitConfirm
+         * @param {Object} options 配置项
+         * @return {er.Promise} 一个`Promise`对象，默认进入`resolved`状态。
+         */
+        exports.waitSubmitConfirm = function (options) {
+            var Deferred = require('er/Deferred');
+            return Deferred.resolved();
+        };
+
+        /**
+         * 等待用户确认操作
+         *
+         * @param {Object} options 配置项
+         * @param {string} type 操作类型
+         *
+         * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，
+         * 用户取消则进入`rejected`状态
+         */
+        exports.waitConfirm = function (options, type) {
             // 加viewContext
             if (!options.viewContext) {
                 options.viewContext = this.viewContext;
@@ -139,8 +164,12 @@ define(
 
             var okLabel = '取消' + options.title;
             var cancelLabel = '继续' + options.title;
+            if (type === 'update') {
+                okLabel = '确认修改';
+                cancelLabel = '取消修改';
+            }
 
-            var warn = this.get('form-cancel-confirm');
+            var warn = this.get('form-' + type + '-confirm');
             if (warn) {
                 warn.hide();
             }
@@ -148,7 +177,7 @@ define(
             var wrapper = this.get('submit-section');
             var extendedOptions = {
                 wrapper: wrapper,
-                id: 'form-cancel-confirm',
+                id: 'form-' + type + '-confirm',
                 okLabel: okLabel,
                 cancelLabel: cancelLabel
             };
@@ -168,15 +197,34 @@ define(
                     if (e.name === 'form-content-click') {
                         warn.hide();
                     }
-                }
+                },
+                this
             );
 
             var Deferred = require('er/Deferred');
             var deferred = new Deferred();
 
-            warn.on('ok', deferred.resolver.resolve);
-            warn.on('cancel', deferred.resolver.reject);
-            warn.on('hide', u.bind(formViewContainer.removeState, formViewContainer, 'warned'));
+            warn.on(
+                'ok',
+                function () {
+                    deferred.resolver.resolve();
+                    formViewContainer.removeState('warned');
+                }
+            );
+            warn.on(
+                'cancel',
+                function () {
+                    deferred.resolver.reject();
+                    formViewContainer.removeState('warned');
+                }
+            );
+            warn.on(
+                'hide',
+                function () {
+                    deferred.resolver.reject();
+                    formViewContainer.removeState('warned');
+                }
+            );
 
             return deferred.promise;
         };

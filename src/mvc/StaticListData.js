@@ -12,6 +12,12 @@ define(
         var u = require('../util');
 
         /**
+         * 静态搜索相关搜索参数
+         * @type {Array}
+         */
+        var STATIC_KEYS = ['order', 'orderBy', 'pageNo', 'pageSize'];
+
+        /**
          * @class mvc.StaticListData
          * @extends mvc.RequestManager
          */
@@ -37,30 +43,12 @@ define(
         };
 
         /**
-         * 返回请求参数中非预期的参数列表
-         *
-         * @protected
-         * @method mvc.StaticListData#getOtherKeys
-         * @param {Object} query 查询参数
-         * @return {Array.<string>} 请求参数中非预期参数列表
-         */
-        exports.getOtherKeys = function (query) {
-            // 两种情况下要从后端取：
-            // 1. 没有缓存数据
-            // 2. 参数里不止 pageNo，pageSize, orderBy，order 这几个参数
-            var keys = u.keys(query);
-            var targetKeys = ['pageNo', 'pageSize', 'orderBy', 'order'];
-
-            return u.difference(keys, targetKeys);
-        };
-
-        /**
          * 过滤数据
          *
          * @protected
          * @method mvc.StaticListData#filterData
          * @param {Object} query 查询条件
-         * @return {number}
+         * @return {Object}
          */
         exports.filterData = function (query) {
             var sortData = u.clone(this.cacheList);
@@ -94,15 +82,48 @@ define(
          * @return {er.meta.FakeXHR}
          */
         exports.search = function (query) {
-            var otherKeys = this.getOtherKeys(query);
-            if (!this.cacheList || otherKeys.length) {
+            var isStaticKeyChanged = this.checkStaticKeyChanged(query);
+            if (isStaticKeyChanged) {
+                u.extend(this, u.pick(query, STATIC_KEYS));
+            }
+            if (!this.cacheList || !isStaticKeyChanged) {
                 var cache = function (data) {
-                    this.cacheList = data;
-                    return this.filterData(query);
+                    return this.doCache(data, query);
                 };
                 return this.list(query).then(u.bind(cache, this));
             }
             return require('er/Deferred').resolved(this.filterData(query));
+        };
+
+        /**
+         * 数据缓存方法
+         *
+         * @protected
+         * @param {Object} data 要做cache的数据
+         * @param {Object} query 过滤参数
+         * @return {Object} 过滤后数据
+         */
+        exports.doCache = function (data, query) {
+            this.cacheList = data;
+            return this.filterData(query);
+        };
+
+        /**
+         * 判断静态搜索相关的字段是否变化
+         * 
+         * @public
+         * @method mvc.StaticListData#checkStaticKeyChanged
+         * @param  {Object} query 搜索参数
+         * @return {boolean}
+         */
+        exports.checkStaticKeyChanged = function (query) {
+            return u.some(
+                STATIC_KEYS,
+                function (key) {
+                    return this[key] !== query[key];
+                },
+                this
+            );
         };
 
         /**
