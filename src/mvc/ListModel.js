@@ -412,8 +412,9 @@ define(
          * @return {er.meta.FakeXHR}
          */
         exports.remove = function (ids) {
-            return this.updateStatus('remove', 0, ids);
+            return this.updateStatus(0, ids);
         };
+
         /**
          * 恢复一个或多个实体
          *
@@ -423,7 +424,7 @@ define(
          * @return {er.meta.FakeXHR}
          */
         exports.restore = function (ids) {
-            return this.updateStatus('restore', 1, ids);
+            return this.updateStatus(1, ids);
         };
 
         /**
