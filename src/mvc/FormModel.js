@@ -83,20 +83,11 @@ define(
          * 保存新建的实体
          *
          * @protected
-         * @absctract
          * @method mvc.FormModel#save
          * @param {Object} entity 新建的实体对象
-         * @return {er.Promise}
+         * @return {er.meta.Promise}
          */
         exports.save = function (entity) {
-            var data = this.data();
-            if (!data) {
-                throw new Error('No default data object attached to this Model');
-            }
-            if (typeof data.save !== 'function') {
-                throw new Error('No save method implemented on default data object');
-            }
-
             entity = this.fillEntity(entity);
 
             var validationResult = this.validateEntity(entity);
@@ -105,27 +96,38 @@ define(
                 return Deferred.rejected({fields: validationResult});
             }
 
-            return data.save(entity);
+            return this.saveEntity(entity);
         };
+
+        /**
+         * 完成实体的保存操作
+         *
+         * @protected
+         * @method mvc.FormModel#saveEntity
+         * @param {Object} entity 已经补充完整并且验证通过的实体
+         * @return {er.meta.Promise}
+         */
+        exports.saveEntity = function (entity) {
+            var data = this.data();
+            if (!data) {
+                throw new Error('No default data object attached to this Model');
+            }
+            if (typeof data.save !== 'function') {
+                throw new Error('No save method implemented on default data object');
+            }
+
+            return data.save(entity);
+        }
 
         /**
          * 更新已有的实体
          *
          * @protected
-         * @absctract
          * @method mvc.FormModel#update
          * @param {Object} entity 待更新的实体对象
-         * @return {er.Promise}
+         * @return {er.meta.Promise}
          */
         exports.update = function (entity) {
-            var data = this.data();
-            if (!data) {
-                throw new Error('No default data object attached to this Model');
-            }
-            if (typeof data.update !== 'function') {
-                throw new Error('No update method implemented on default data object');
-            }
-
             entity = this.fillEntity(entity);
 
             // 更新默认加上id
@@ -137,8 +139,28 @@ define(
                 return Deferred.rejected({fields: validationResult});
             }
 
-            return data.update(entity);
+            return this.updateEntity(entity);
         };
+
+        /**
+         * 完成实体的更新操作
+         *
+         * @protected
+         * @method mvc.FormModel#updateEntity
+         * @param {Object} entity 已经补充完整并且验证通过的实体
+         * @return {er.meta.Promise}
+         */
+        exports.updateEntity = function (entity) {
+            var data = this.data();
+            if (!data) {
+                throw new Error('No default data object attached to this Model');
+            }
+            if (typeof data.update !== 'function') {
+                throw new Error('No update method implemented on default data object');
+            }
+
+            return data.update(entity);
+        }
 
         var SingleEntityModel = require('./SingleEntityModel');
         var FormModel = require('eoo').create(SingleEntityModel, exports);
