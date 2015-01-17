@@ -10,66 +10,33 @@
 define(
     function (require) {
         var u = require('../util');
-        var util = require('er/util');
 
         /**
          * 请求管理类
          *
          * 本类用户管理一系列的AJAX请求，控制多个同类（通过名称区分）请求发起时的处理
          *
+         * @class mvc.RequestManager
+         */
+        var exports = {};
+
+        /**
+         * @constructs mvc.RequestManager
+         *
          * @param {string} entityName 实体名称
          * @param {string} [backendEntityName] 后端对应的实体名称，默认与`entityName`相同
-         *
-         * @constructor
          */
-        function RequestManager(entityName, backendEntityName) {
+        exports.constructor = function (entityName, backendEntityName) {
             this.entityName = entityName;
             this.backendEntityName = backendEntityName;
 
             this.runningRequests = {};
-        }
+        };
 
         var typeRequestConfigs = [];
 
         var globalRequestConfig = {};
         var globalRunningRequests = {};
-
-        /**
-         * 注册一个请求配置
-         *
-         * @param {Function} Type 提供配置的类型对象
-         * @param {string} name 配置名称
-         * @param {meta.RequestConfig} config 配置项
-         */
-        RequestManager.register = function (Type, name, config) {
-            var defaults = {
-                name: name,
-                scope: 'instance',
-                policy: 'auto'
-            };
-            config = util.mix(defaults, config);
-
-            if (config.scope === 'instance') {
-                var typeConfig = u.findWhere(typeRequestConfigs, {type: Type});
-                if (!typeConfig) {
-                    typeConfig = {type: Type, config: {}};
-                    typeRequestConfigs.push(typeConfig);
-                }
-
-                var configContainer = typeConfig.config;
-                if (configContainer.hasOwnProperty(name)) {
-                    throw new Error('An instance request config "' + name + '" has already been registered');
-                }
-                configContainer[name] = config;
-            }
-            else {
-                if (globalRequestConfig.hasOwnProperty(name)) {
-                    throw new Error('A global request config "' + name + '" has already been registered');
-                }
-
-                globalRequestConfig[name] = config;
-            }
-        };
 
         /**
          * 查找请求对应的预注册的配置项
@@ -158,7 +125,7 @@ define(
          *
          * @return {string}
          */
-        RequestManager.prototype.getEntityName = function () {
+        exports.getEntityName = function () {
             return this.entityName || '';
         };
 
@@ -167,7 +134,7 @@ define(
          *
          * @return {string}
          */
-        RequestManager.prototype.getBackendEntityName = function () {
+        exports.getBackendEntityName = function () {
             return this.backendEntityName || this.getEntityName();
         };
 
@@ -176,7 +143,7 @@ define(
          *
          * @param {mvc.RequestStrategy} requestStrategy 设置的实例
          */
-        RequestManager.prototype.setRequestStrategy = function (requestStrategy) {
+        exports.setRequestStrategy = function (requestStrategy) {
             this.requestStrategy = requestStrategy;
         };
 
@@ -185,7 +152,7 @@ define(
          *
          * @return {mvc.RequestStrategy}
          */
-        RequestManager.prototype.getRequestStrategy = function () {
+        exports.getRequestStrategy = function () {
             return this.requestStrategy;
         };
 
@@ -198,7 +165,7 @@ define(
          * @return {meta.Request}
          * @protected
          */
-        RequestManager.prototype.getRequest = function (name, data, options) {
+        exports.getRequest = function (name, data, options) {
             var strategy = this.getRequestStrategy();
 
             if (typeof name !== 'string') {
@@ -210,7 +177,7 @@ define(
 
             // 查找已经有的请求配置，如果存在的话需要把`options`进行合并
             var config = lookupRequestConfig(this, name);
-            options = util.mix({}, config && config.options, options);
+            options = u.extend({}, config && config.options, options);
             // 如果`data`是个函数，那么执行一下得到完整的数据对象
             if (typeof data === 'function') {
                 data = data(this, options);
@@ -220,7 +187,7 @@ define(
             }
             // 合并请求配置里的`data`和发起请求实时给的`data`
             if (data) {
-                options.data = util.mix({}, options.data, data);
+                options.data = u.extend({}, options.data, data);
             }
 
             options = strategy.formatOptions(options);
@@ -256,7 +223,7 @@ define(
          * @param {Object} [options] 请求配置项
          * @return {er.FakeXHR}
          */
-        RequestManager.prototype.request = function (name, data, options) {
+        exports.request = function (name, data, options) {
             var context = this.getRequest(name, data, options);
 
             if (!context.config) {
@@ -291,7 +258,7 @@ define(
          * @override
          * @protected
          */
-        RequestManager.prototype.dispose = function () {
+        exports.dispose = function () {
             u.each(
                 this.runningRequests,
                 function (cache) {
@@ -310,7 +277,7 @@ define(
          * @return {er.meta.FakeXHR}
          * @abstract
          */
-        RequestManager.prototype.search = function (query) {
+        exports.search = function (query) {
             throw new Error('search method is not implemented');
         };
 
@@ -321,7 +288,7 @@ define(
          * @return {er.meta.FakeXHR}
          * @abstract
          */
-        RequestManager.prototype.list = function (query) {
+        exports.list = function (query) {
             throw new Error('list method is not implemented');
         };
 
@@ -332,7 +299,7 @@ define(
          * @return {er.meta.FakeXHR}
          * @abstract
          */
-        RequestManager.prototype.save = function (entity) {
+        exports.save = function (entity) {
             throw new Error('save method is not implemented');
         };
 
@@ -343,7 +310,7 @@ define(
          * @return {er.meta.FakeXHR}
          * @abstract
          */
-        RequestManager.prototype.update = function (entity) {
+        exports.update = function (entity) {
             throw new Error('update method is not implemented');
         };
 
@@ -363,7 +330,7 @@ define(
          * @return {FakeXHR}
          * @abstract
          */
-        RequestManager.prototype.updateStatus = function (status, ids) {
+        exports.updateStatus = function (status, ids) {
             // 让`status`在前是为了方便通过`bind`或`partial`生成其它的方法
             throw new Error('updateStatus method is not implemented');
         };
@@ -374,7 +341,7 @@ define(
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        RequestManager.prototype.remove = u.partial(RequestManager.prototype.updateStatus, 0);
+        exports.remove = u.partial(exports.updateStatus, 0);
 
         /**
          * 恢复一个或多个实体
@@ -382,7 +349,7 @@ define(
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        RequestManager.prototype.restore = u.partial(RequestManager.prototype.updateStatus, 1);
+        exports.restore = u.partial(exports.updateStatus, 1);
 
         /**
          * 获取批量操作前的确认
@@ -402,7 +369,7 @@ define(
          * @return {er.meta.FakeXHR}
          * @abstract
          */
-        RequestManager.prototype.getAdvice = function (status, ids) {
+        exports.getAdvice = function (status, ids) {
             throw new Error('getAdvice method is not implemented');
         };
 
@@ -412,7 +379,7 @@ define(
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        RequestManager.prototype.getRemoveAdvice = u.partial(RequestManager.prototype.getAdvice, 0);
+        exports.getRemoveAdvice = u.partial(exports.getAdvice, 0);
 
         /**
          * 批量恢复前确认
@@ -420,7 +387,7 @@ define(
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        RequestManager.prototype.getRestoreAdvice = u.partial(RequestManager.prototype.getAdvice, 1);
+        exports.getRestoreAdvice = u.partial(exports.getAdvice, 1);
 
         /**
          * 根据id获取单个实体
@@ -429,8 +396,47 @@ define(
          * @return {er.meta.FakeXHR}
          * @abstract
          */
-        RequestManager.prototype.findById = function (id) {
+        exports.findById = function (id) {
             throw new Error('findById method is not implemented');
+        };
+
+        var RequestManager = require('eoo').create(exports);
+
+        /**
+         * 注册一个请求配置
+         *
+         * @param {Function} Type 提供配置的类型对象
+         * @param {string} name 配置名称
+         * @param {meta.RequestConfig} config 配置项
+         */
+        RequestManager.register = function (Type, name, config) {
+            var defaults = {
+                name: name,
+                scope: 'instance',
+                policy: 'auto'
+            };
+            config = u.extend(defaults, config);
+
+            if (config.scope === 'instance') {
+                var typeConfig = u.findWhere(typeRequestConfigs, {type: Type});
+                if (!typeConfig) {
+                    typeConfig = {type: Type, config: {}};
+                    typeRequestConfigs.push(typeConfig);
+                }
+
+                var configContainer = typeConfig.config;
+                if (configContainer.hasOwnProperty(name)) {
+                    throw new Error('An instance request config "' + name + '" has already been registered');
+                }
+                configContainer[name] = config;
+            }
+            else {
+                if (globalRequestConfig.hasOwnProperty(name)) {
+                    throw new Error('A global request config "' + name + '" has already been registered');
+                }
+
+                globalRequestConfig[name] = config;
+            }
         };
 
         return RequestManager;

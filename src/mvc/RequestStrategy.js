@@ -15,10 +15,9 @@ define(
          *
          * 默认实现是不对输入进行任何处理，添加`"json"`作为默认响应格式
          *
-         * @constructor
+         * @class mvc.RequestStrategy
          */
-        function RequestStrategy() {
-        }
+        var exports = {};
 
         /**
          * 处理请求名称，具体业务可以使用此方法对请求名称进行一些替换操作，
@@ -29,7 +28,7 @@ define(
          * @return {string}
          * @protected
          */
-        RequestStrategy.prototype.formatName = function (name, options) {
+        exports.formatName = function (name, options) {
             return name;
         };
 
@@ -42,7 +41,7 @@ define(
          * @return {string}
          * @protected
          */
-        RequestStrategy.prototype.formatURL = function (url, options) {
+        exports.formatURL = function (url, options) {
             return url;
         };
 
@@ -53,7 +52,7 @@ define(
          * @return {Object}
          * @protected
          */
-        RequestStrategy.prototype.formatOptions = function (options) {
+        exports.formatOptions = function (options) {
             // 默认使用JSON作为响应格式
             if (!options.dataType) {
                 options.dataType = 'json';
@@ -61,6 +60,8 @@ define(
 
             return options;
         };
+
+        var RequestStrategy = require('eoo').create(exports);
 
         return RequestStrategy;
     }

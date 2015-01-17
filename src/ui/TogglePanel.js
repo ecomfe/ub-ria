@@ -17,12 +17,19 @@ define(
 
         /**
          * 折叠控件
+         *
+         * @class ui.TogglePanel
+         * @extends.esui.Control
          */
-        function TogglePanel() {
-            Control.apply(this, arguments);
-        }
+        var exports = {};
 
-        TogglePanel.prototype.type = 'TogglePanel';
+        /**
+         * 控件类型，始终为`"TogglePanel"`
+         *
+         * @type {string}
+         * @override
+         */
+        exports.type = 'TogglePanel';
 
         /**
          * 初始化参数
@@ -31,7 +38,7 @@ define(
          * @override
          * @protected
          */
-        TogglePanel.prototype.initOptions = function (options) {
+        exports.initOptions = function (options) {
             var defaults = {
                 expanded: false,
                 position: 'fixed'
@@ -48,7 +55,7 @@ define(
          * @override
          * @protected
          */
-        TogglePanel.prototype.initStructure = function () {
+        exports.initStructure = function () {
             var children = lib.getChildren(this.main);
             var titleElem = children[0];
             var contentElem = children[1];
@@ -189,7 +196,7 @@ define(
          *
          * @inner
          */
-        TogglePanel.prototype.toggleContent = function () {
+        exports.toggleContent = function () {
             var position = this.position;
 
             if (position === 'fixed') {
@@ -220,7 +227,7 @@ define(
          * @override
          * @protected
          */
-        TogglePanel.prototype.repaint = painters.createRepaint(
+        exports.repaint = painters.createRepaint(
             Control.prototype.repaint,
             painters.state('expanded'),
             {
@@ -237,12 +244,14 @@ define(
             }
         );
 
-        TogglePanel.prototype.isExpanded = function () {
+        exports.isExpanded = function () {
             return this.hasState('expanded');
         };
 
-        lib.inherits(TogglePanel, Control);
+        var TogglePanel = require('eoo').create(Control, exports);
+
         ui.register(TogglePanel);
+
         return TogglePanel;
     }
 );

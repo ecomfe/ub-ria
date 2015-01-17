@@ -9,11 +9,16 @@ define(
     function (require) {
         var lib = require('esui/lib');
         var InputControl = require('esui/InputControl');
-        var Extension = require('esui/Extension');
         var main = require('esui/main');
 
         var exports = {};
 
+        /**
+         * 扩展的类型，始终为`"TrimInput"`
+         *
+         * @type {string}
+         * @override
+         */
         exports.type = 'TrimInput';
 
         /**
@@ -30,6 +35,7 @@ define(
 
             target.on('afterrender', trim, this);
             target.on('change', trim, this);
+
             this.$super(arguments);
         };
 
@@ -47,6 +53,7 @@ define(
 
             target.un('afterrender', trim, this);
             target.un('change', trim, this);
+
             this.$super(arguments);
         };
 
@@ -55,7 +62,9 @@ define(
             this.target.setValue(trimedValue);
         }
 
+        var Extension = require('esui/Extension');
         var TrimInput = require('eoo').create(Extension, exports);
+
         main.registerExtension(TrimInput);
 
         return TrimInput;

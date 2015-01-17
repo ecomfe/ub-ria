@@ -26,26 +26,30 @@ define(
         /**
          * 表单实体验证基类
          *
-         * 作为{ub-ria.FormModel}的属性，用于对表单提交的数据在发送至后端前进行
+         * 作为{@link mvc.FormModel}的属性，用于对表单提交的数据在发送至后端前进行
          * 检验，检验规则由模块下相应的schema.js决定。
          *
          * 默认提供required, type, maxLength, minLength, rangeLength,
          * min, max, range, enum, pattern十种校验器，每种检验器具有不同的优先级
          * 用户自定义的检验器可通过{EntityValidator.addCheckers}进行全局配置
          *
-         * @class EntityValidator
-         * @constructor
+         * @class mvc.EntityValidator
          */
-        function EntityValidator() {
+        var exports = {};
+
+        /**
+         * @constructs mvc.EntityValidator
+         */
+        exports.constructor = function () {
             this.initCheckers();
-        }
+        };
 
         /**
          * 用于初始化EntityValidator实例的checkers属性，有需要可以通过override
          * 实现对EntityValidator检查器的全局配置
          *
          */
-        EntityValidator.prototype.initCheckers = function () {
+        exports.initCheckers = function () {
             this.checkers = u.deepClone(checkers);
         };
 
@@ -55,7 +59,7 @@ define(
          * @param {Object} errorMessages 每一项为校验器名与信息模板内容组成
          * key-value对
          */
-        EntityValidator.prototype.setErrorMessages = function (errorMessages) {
+        exports.setErrorMessages = function (errorMessages) {
             if (!errorMessages) {
                 return;
             }
@@ -83,7 +87,7 @@ define(
          * @param {Function} checker.check 校验函数
          * @return {Object} 添加成功返回checker，失败返回null
          */
-        EntityValidator.prototype.addChecker = function (checker) {
+        exports.addChecker = function (checker) {
             if (checker
                 && checker.name
                 && checker.errorMessage
@@ -105,7 +109,7 @@ define(
          * @param {string} checkerName 校验器名称
          * @return {boolean} 删除成功返回true，失败返回false
          */
-        EntityValidator.prototype.removeChecker = function (checkerName) {
+        exports.removeChecker = function (checkerName) {
             var checkers = this.getCheckers();
 
             return delete checkers[checkerName];
@@ -116,7 +120,7 @@ define(
          *
          * @return {Object} 返回localCheckers
          */
-        EntityValidator.prototype.getCheckers = function () {
+        exports.getCheckers = function () {
             return this.checkers || {};
         };
 
@@ -125,7 +129,7 @@ define(
          *
          * @param {Object} value 实体的schema定义
          */
-        EntityValidator.prototype.setSchema = function (value) {
+        exports.setSchema = function (value) {
             this.schema = value;
         };
 
@@ -134,7 +138,7 @@ define(
          *
          * @return {object | undefined}
          */
-        EntityValidator.prototype.getSchema = function () {
+        exports.getSchema = function () {
             return this.schema;
         };
 
@@ -143,7 +147,7 @@ define(
          *
          * @param {Object} value model上绑定的rule
          */
-        EntityValidator.prototype.setRule = function (value) {
+        exports.setRule = function (value) {
             this.rule = value;
         };
 
@@ -152,7 +156,7 @@ define(
          *
          * @return {object | undefined}
          */
-        EntityValidator.prototype.getRule = function () {
+        exports.getRule = function () {
             return this.rule;
         };
 
@@ -163,7 +167,7 @@ define(
          * @param {Object} entity 表单提交的实体
          * @return {object[]} 错误字段及错误信息数组
          */
-        EntityValidator.prototype.validate = function (entity) {
+        exports.validate = function (entity) {
             var schema = this.getSchema();
 
             // 错误信息集合
@@ -243,7 +247,7 @@ define(
          * @param {Object[]} checkerOptions.fieldSchema 待检验字段的定义、约束
          * @return {Object | true}
          */
-        EntityValidator.prototype.excuteCheckers = function (fieldCheckers, checkerOptions) {
+        exports.excuteCheckers = function (fieldCheckers, checkerOptions) {
             var value = checkerOptions.value;
             var fieldPath = checkerOptions.fieldPath;
             var fieldSchema = u.deepClone(checkerOptions.fieldSchema);
@@ -364,7 +368,7 @@ define(
          * @param {Object} fieldSchema 字段定义
          * @return {Object} 检验器对象组成的有序数组
          */
-        EntityValidator.prototype.getFieldCheckers = function (fieldSchema) {
+        exports.getFieldCheckers = function (fieldSchema) {
             var checkerNames = getFieldCheckerNames(fieldSchema);
             var checkers = this.getCheckers();
             var fieldCheckers = [];
@@ -439,6 +443,7 @@ define(
             return list;
         }
 
+        var EntityValidator = require('eoo').create(exports);
         return EntityValidator;
     }
 );

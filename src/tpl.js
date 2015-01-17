@@ -55,13 +55,11 @@ define(
             ActionPanel: 'ef',
             ActionDialog: 'ef',
             ViewPanel: 'ef',
-            AbstractBoxGroup: 'ub-ria/ui',
             DrawerActionPanel: 'ub-ria/ui',
             PartialForm: 'ub-ria/ui',
             RichSelector: 'ub-ria/ui',
             SelectorTreeStrategy: 'ub-ria/ui',
             TableRichSelector: 'ub-ria/ui',
-            ToggleButton: 'ub-ria/ui',
             TogglePanel: 'ub-ria/ui',
             TreeRichSelector: 'ub-ria/ui',
             Uploader: 'ub-ria/ui',
@@ -77,7 +75,6 @@ define(
             AutoSubmit: 'ub-ria/ui/extension',
             ExternSearch: 'ub-ria/ui/extension',
             ExternSelect: 'ub-ria/ui/extension',
-            TableTip: 'ub-ria/ui/extension',
             TrimInput: 'ub-ria/ui/extension',
             WordCount: 'ub-ria/ui/extension'
         };
