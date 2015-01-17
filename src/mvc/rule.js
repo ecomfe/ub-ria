@@ -11,8 +11,7 @@ define(
         /**
          * 规则常量
          *
-         * @class mvc.rule
-         * @singleton
+         * @namespace mvc.rule
          * @deprecated 使用具体系统中的`rule`对象
          */
         return {
