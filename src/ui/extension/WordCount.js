@@ -11,18 +11,14 @@ define(
     function (require) {
         var lib = require('esui/lib');
         var Validity = require('esui/validator/Validity');
-        var Extension = require('esui/Extension');
 
         /**
          * 计算文本框可输入字符的扩展
          *
-         * @param {Object} [options] 配置项
+         * @class ui.extension.WordCount
          * @extends esui.Extension
-         * @constructor
          */
-        function WordCount(options) {
-            Extension.apply(this, arguments);
-        }
+        var exports = {};
 
         /**
          * 扩展的类型，始终为`"WordCount"`
@@ -30,7 +26,7 @@ define(
          * @type {string}
          * @override
          */
-        WordCount.prototype.type = 'WordCount';
+        exports.type = 'WordCount';
 
         /**
          * 设置未输入字符时的提示信息模板，可用以下占位符：
@@ -41,7 +37,7 @@ define(
          *
          * @type {string}
          */
-        WordCount.prototype.initialTemplate = '最多可输入${available}个字符';
+        exports.initialTemplate = '最多可输入${available}个字符';
 
         /**
          * 设置还可以输入字符时的提示信息模板，可用以下占位符：
@@ -52,7 +48,7 @@ define(
          *
          * @type {string}
          */
-        WordCount.prototype.remainingTemplate = '还可输入${available}个字符';
+        exports.remainingTemplate = '还可输入${available}个字符';
 
         /**
          * 设置已超出可输入字符限制时的提示信息模板，可用以下占位符：
@@ -63,7 +59,7 @@ define(
          *
          * @type {string}
          */
-        WordCount.prototype.exceededTemplate = '已超出${available}个字符';
+        exports.exceededTemplate = '已超出${available}个字符';
 
         /**
          * 获取提示信息
@@ -75,7 +71,7 @@ define(
          * @return {string}
          * @protected
          */
-        WordCount.prototype.getHintMessage = function (data) {
+        exports.getHintMessage = function (data) {
             var template;
             if (!data.current) {
                 template = this.initialTemplate;
@@ -97,7 +93,7 @@ define(
          * @return {number}
          * @protected
          */
-        WordCount.prototype.getMaxLength = function () {
+        exports.getMaxLength = function () {
             if (+this.target.get('maxLength') === -1) {
                 return this.target.get('length');
             }
@@ -134,7 +130,7 @@ define(
          *
          * @override
          */
-        WordCount.prototype.activate = function () {
+        exports.activate = function () {
             var maxLength = this.getMaxLength();
 
             if (maxLength) {
@@ -142,7 +138,7 @@ define(
                 this.target.on('afterrender', checkLength, this);
             }
 
-            Extension.prototype.activate.apply(this, arguments);
+            this.$super(arguments);
         };
 
         /**
@@ -150,15 +146,18 @@ define(
          *
          * @override
          */
-        WordCount.prototype.inactivate = function () {
+        exports.inactivate = function () {
             this.target.un('input', checkLength, this);
             this.target.un('afterrender', checkLength, this);
 
-            Extension.prototype.inactivate.apply(this, arguments);
+            this.$super(arguments);
         };
 
-        lib.inherits(WordCount, Extension);
+        var Extension = require('esui/Extension');
+        var WordCount = require('eoo').create(Extension, exports);
+
         require('esui').registerExtension(WordCount);
+
         return WordCount;
     }
 );

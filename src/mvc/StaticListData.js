@@ -110,7 +110,7 @@ define(
 
         /**
          * 判断静态搜索相关的字段是否变化
-         * 
+         *
          * @public
          * @method mvc.StaticListData#checkStaticKeyChanged
          * @param  {Object} query 搜索参数

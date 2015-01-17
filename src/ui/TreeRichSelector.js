@@ -10,11 +10,11 @@
 define(
     function (require) {
         require('esui/Tree');
-        var painter = require('esui/painters');
+
+        var u = require('../util');
         var ui = require('esui/main');
         var lib = require('esui/lib');
 
-        var u = require('../util');
         var RichSelector = require('./RichSelector');
         var TreeStrategy = require('./SelectorTreeStrategy');
 
@@ -24,16 +24,25 @@ define(
          * @constructor
          * @param {Object} options 初始化参数
          */
-        function TreeRichSelector(options) {
-            RichSelector.apply(this, arguments);
-        }
+        var exports = {};
 
-        lib.inherits(TreeRichSelector, RichSelector);
+        /**
+         * 控件类型，始终为`"TreeRichSelector"`
+         *
+         * @type {string}
+         * @override
+         */
+        exports.type = 'TreeRichSelector';
 
-        TreeRichSelector.prototype.type = 'TreeRichSelector';
-        TreeRichSelector.prototype.styleType = 'RichSelector';
+        /**
+         * @override
+         */
+        exports.styleType = 'RichSelector';
 
-        TreeRichSelector.prototype.initOptions = function (options) {
+        /**
+         * @override
+         */
+        exports.initOptions = function (options) {
             var properties = {
                 // 数据源
                 datasource: null,
@@ -84,11 +93,15 @@ define(
                 properties.needSyncParentChild  = false;
             }
 
-            RichSelector.prototype.initOptions.call(this, properties);
+            this.$super([properties]);
         };
 
-        TreeRichSelector.prototype.initStructure = function () {
-            RichSelector.prototype.initStructure.apply(this, arguments);
+        /**
+         * @override
+         */
+        exports.initStructure = function () {
+            this.$super(arguments);
+
             lib.addClass(
                 this.main,
                 'ui-tree-richselector'
@@ -106,7 +119,7 @@ define(
          * @param {Array=} 变更过的属性的集合
          * @override
          */
-        TreeRichSelector.prototype.repaint = painter.createRepaint(
+        exports.repaint = require('esui/painters').createRepaint(
             RichSelector.prototype.repaint,
             {
                 name: 'datasource',
@@ -141,7 +154,7 @@ define(
          * @return {Object} 包含`indexData`和`selectedData`两个属性
          * @ignore
          */
-        TreeRichSelector.prototype.adaptData = function () {
+        exports.adaptData = function () {
             var selectedData = [];
             /**
              * datasource的数据结构：
@@ -195,7 +208,7 @@ define(
         /**
          * @override
          */
-        TreeRichSelector.prototype.processDataAfterRefresh = function (adaptedData) {
+        exports.processDataAfterRefresh = function (adaptedData) {
             // 用这个数据结构更新选择状态
             if (this.mode !== 'delete') {
                 this.selectItems(adaptedData.selectedData, true);
@@ -206,7 +219,7 @@ define(
          * 刷新备选区
          * @override
          */
-        TreeRichSelector.prototype.refreshContent = function () {
+        exports.refreshContent = function () {
             var treeData = this.isQuery() ? this.queriedData : this.allData;
             if (!treeData
                 || !treeData.children
@@ -274,11 +287,11 @@ define(
             }
         };
 
-        TreeRichSelector.prototype.getStateNode = function (id) {
+        exports.getStateNode = function (id) {
             return this.indexData[id];
         };
 
-        TreeRichSelector.prototype.getItemState = function (id, stateName) {
+        exports.getItemState = function (id, stateName) {
             if (this.indexData[id]) {
                 var stateNode = this.getStateNode(id);
                 return stateNode[stateName];
@@ -286,14 +299,14 @@ define(
             return null;
         };
 
-        TreeRichSelector.prototype.setItemState = function (id, stateName, stateValue) {
+        exports.setItemState = function (id, stateName, stateValue) {
             if (this.indexData[id]) {
                 var stateNode = this.getStateNode(id);
                 stateNode[stateName] = stateValue;
             }
         };
 
-        TreeRichSelector.prototype.getDatasourceWithState = function () {
+        exports.getDatasourceWithState = function () {
             var datasource = u.deepClone(this.datasource);
             var indexData = this.indexData;
             this.walkTree(datasource, datasource.children, function (parent, child) {
@@ -308,7 +321,7 @@ define(
          * @param {Object} node 节点对象
          * @ignore
          */
-        TreeRichSelector.prototype.handlerAfterClickNode = function (node) {
+        exports.handlerAfterClickNode = function (node) {
             // 这个item不一定是源数据元，为了连锁同步，再取一遍
             var item = this.indexData[node.id];
             if (!item) {
@@ -332,7 +345,7 @@ define(
          * @param {Object} item 保存在indexData中的item
          *
          */
-        TreeRichSelector.prototype.actionForAdd = function (item) {
+        exports.actionForAdd = function (item) {
             this.setItemState(item.node.id, 'isSelected', true);
             // 如果是单选，需要将其他的已选项置为未选
             if (!this.multi) {
@@ -410,7 +423,7 @@ define(
          *
          * @override
          */
-        TreeRichSelector.prototype.selectAll = function () {
+        exports.selectAll = function () {
             var data = this.isQuery() ? this.queriedData : this.allData;
             var children = data.children;
             var items = this.getLeafItems(children, false);
@@ -429,7 +442,7 @@ define(
          * @param {boolean} toBeSelected 目标状态 true是选择，false是取消
          * @override
          */
-        TreeRichSelector.prototype.selectItems = function (nodes, toBeSelected) {
+        exports.selectItems = function (nodes, toBeSelected) {
             var indexData = this.indexData;
             if (!indexData) {
                 return;
@@ -489,7 +502,7 @@ define(
          * @param {Object} item 保存在indexData中的item
          *
          */
-        TreeRichSelector.prototype.actionForDelete = function (item) {
+        exports.actionForDelete = function (item) {
             // 外部需要知道什么数据被删除了
             var event = this.fire('delete', {items: [item.node]});
             // 如果外面阻止了默认行为（比如自己控制了Tree的删除），就不自己删除了
@@ -544,7 +557,7 @@ define(
          * @FIXME 删除全部要区分搜索和非搜索状态么
          * @override
          */
-        TreeRichSelector.prototype.deleteAll = function () {
+        exports.deleteAll = function () {
             var event = this.fire('delete', {items: this.allData.children});
             // 如果外面阻止了默认行为（比如自己控制了Tree的删除），就不自己删除了
             if (!event.isDefaultPrevented()) {
@@ -558,7 +571,7 @@ define(
          *
          * @param {Object} item 保存在indexData中的item
          */
-        TreeRichSelector.prototype.actionForLoad = function (item) {
+        exports.actionForLoad = function (item) {
             this.setItemState(item.node.id, 'isActive', true);
             // 如果以前选中了一个，要取消选择
             if (this.currentActiveId) {
@@ -591,7 +604,7 @@ define(
          * @return {Array} 叶子节点
          * @ignore
          */
-        TreeRichSelector.prototype.getLeafItems = function (data, isSelected) {
+        exports.getLeafItems = function (data, isSelected) {
             data = data || (this.allData && this.allData.children) || [];
             var leafItems = [];
             var me = this;
@@ -624,7 +637,7 @@ define(
          * @return {Array}
          * @public
          */
-        TreeRichSelector.prototype.getSelectedItems = function () {
+        exports.getSelectedItems = function () {
             if (!this.allData) {
                 return [];
             }
@@ -650,7 +663,7 @@ define(
          * @return {Object}
          * @public
          */
-        TreeRichSelector.prototype.getSelectedTree = function () {
+        exports.getSelectedTree = function () {
             var control = this;
             var copyData = u.deepClone(this.allData);
             var nodes = copyData.children;
@@ -685,12 +698,12 @@ define(
         /**
          * 清除搜索结果
          *
-         * @param {ui.RichSelector2} richSelector 类实例
          * @return {boolean}
          * @ignore
          */
-        TreeRichSelector.prototype.clearQuery = function () {
-            RichSelector.prototype.clearQuery.apply(this, arguments);
+        exports.clearQuery = function () {
+            this.$super(arguments);
+
             if (this.mode !== 'delete') {
                 var selectedData = this.getSelectedItems();
                 this.selectItems(selectedData, true);
@@ -702,7 +715,7 @@ define(
          * 清空搜索的结果
          *
          */
-        TreeRichSelector.prototype.clearData = function () {
+        exports.clearData = function () {
             // 清空数据
             this.queriedData = {};
         };
@@ -712,7 +725,7 @@ define(
          *
          * @param {Array} filters 过滤参数
          */
-        TreeRichSelector.prototype.queryItem = function (filters) {
+        exports.queryItem = function (filters) {
             // Tree就只定位一个关键词字段
             var keyword = filters[0].value;
             var filteredTreeData = [];
@@ -782,7 +795,7 @@ define(
          * @param {Array} children 需要遍历的树的孩子节点
          * @param {Function} callback 遍历时执行的函数
          */
-        TreeRichSelector.prototype.walkTree = function (parent, children, callback) {
+        exports.walkTree = function (parent, children, callback) {
             u.each(
                 children,
                 function (child, key) {
@@ -803,7 +816,7 @@ define(
          * @return {number}
          * @public
          */
-        TreeRichSelector.prototype.getFilteredItemsCount = function () {
+        exports.getFilteredItemsCount = function () {
             var node = this.isQuery() ? this.queriedData : this.allData;
             var count = getChildrenCount(this, node, true);
             return count;
@@ -816,7 +829,7 @@ define(
          * @return {number}
          * @override
          */
-        TreeRichSelector.prototype.getCurrentStateItemsCount = function () {
+        exports.getCurrentStateItemsCount = function () {
             var node = this.isQuery() ? this.queriedData : this.allData;
             if (!node) {
                 return 0;
@@ -866,7 +879,10 @@ define(
             return control.datasource.id;
         }
 
+        var TreeRichSelector = require('eoo').create(RichSelector, exports);
+
         require('esui').register(TreeRichSelector);
+
         return TreeRichSelector;
     }
 );
