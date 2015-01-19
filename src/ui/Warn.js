@@ -121,7 +121,7 @@ define(
          * @override
          */
         exports.dispose = function () {
-            if (this.helper.isInStage(this, 'DISPOSED')) {
+            if (this.helper.isInStage('DISPOSED')) {
                 return;
             }
 
