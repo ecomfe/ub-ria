@@ -74,6 +74,10 @@ define(
          * @return {string}
          */
         util.pascalize = function (s) {
+            if (s == null) {
+                return '';
+            }
+
             s = s + '';
             if (/^[A-Z\s-\/_]+$/.test(s)) {
                 s = s.toLowerCase();
@@ -98,6 +102,10 @@ define(
          * @return {string}
          */
         util.camelize = function (s) {
+            if (s == null) {
+                return '';
+            }
+
             s = util.pascalize(s);
             return s.charAt(0).toLowerCase() + s.slice(1);
         };
@@ -117,6 +125,10 @@ define(
          * @return {string}
          */
         util.dasherize = function (s) {
+            if (s == null) {
+                return '';
+            }
+
             s = util.pascalize(s);
             // 这里把ABCD这种连续的大写，转成AbcD这种形式。
             // 如果`encodeURIComponent`，会变成`encodeUriComponent`，
@@ -160,6 +172,10 @@ define(
          * @return {string}
          */
         util.constlize = function (s) {
+            if (s == null) {
+                return '';
+            }
+
             s = util.pascalize(s);
             return s.toUpperCase();
         };
@@ -174,6 +190,10 @@ define(
          * @return {string}
          */
         util.pluralize = function (s) {
+            if (s == null) {
+                return '';
+            }
+
             return s.replace(/y$/, 'ie') + 's';
         };
         util.pluralize = util.memoize(util.pluralize);
@@ -234,7 +254,7 @@ define(
          * @return {string}
          */
         util.pad = function (s, padding, length) {
-            s = s + '';
+            s = (s == null ? '' : s) + '';
             var padLength = length - s.length;
             if (padLength > 0) {
                 var left = new Array(padLength + 1).join(padding);
@@ -253,7 +273,7 @@ define(
          * @return {string}
          */
         util.padRight = function (s, padding, length) {
-            s = s + '';
+            s = (s == null ? '' : s) + '';
             var padLength = length - s.length;
             if (padLength > 0) {
                 var right = new Array(padLength + 1).join(padding);
