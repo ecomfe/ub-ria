@@ -218,8 +218,8 @@ define(
             return category === 'input' || category === 'check';
         }
 
-        var UIView = require('ef/UIView');
-        var BaseChildView = require('eoo').create(UIView, exports);
+        var BaseView = require('./BaseView');
+        var BaseChildView = require('eoo').create(BaseView, exports);
 
         return BaseChildView;
     }
