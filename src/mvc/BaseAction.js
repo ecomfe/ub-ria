@@ -95,24 +95,6 @@ define(
         };
 
         /**
-         * 获取当前页面所属包
-         *
-         * @return {string}
-         */
-        exports.getPackage = function () {
-            return this.package;
-        };
-
-        /**
-         * 设置当前页面所属包
-         *
-         * @param {string} package 所属包名
-         */
-        exports.setPackage = function (package) {
-            this.package = package;
-        };
-
-        /**
          * 获取当前页面的分类
          *
          * 默认返回以下内容：
@@ -120,8 +102,8 @@ define(
          * - `{category}-page`
          * - `{entityName}-page`
          * - `{entityName}-{category}-page`
-         * - `{package}-package`
-         * - `{package}-pacakge-{category}`
+         * - `{packageName}-package`
+         * - `{packageName}-pacakge-{category}`
          *
          * @return {string[]}
          */
@@ -129,7 +111,7 @@ define(
             var categories = [];
             var category = u.dasherize(this.getCategory());
             var entityName = u.dasherize(this.getEntityName());
-            var package = u.dasherize(this.getPackage());
+            var packageName = u.dasherize(this.getPackageName());
 
             if (category) {
                 categories.push(category + '-page');
@@ -140,11 +122,11 @@ define(
             if (category && entityName) {
                 categories.push(entityName + '-' + this.category + '-page');
             }
-            if (package) {
-                categories.push(package + '-package');
+            if (packageName) {
+                categories.push(packageName + '-package');
             }
-            if (package && category) {
-                categories.push(package + '-package-' + category);
+            if (packageName && category) {
+                categories.push(packageName + '-package-' + category);
             }
 
             return categories;
@@ -187,8 +169,12 @@ define(
             this.model = model;
         };
 
+        var oo = require('eoo');
+
+        oo.defineAccessor(exports, 'packageName');
+
         var Action = require('er/Action');
-        var BaseAction = require('eoo').create(Action, exports);
+        var BaseAction = oo.create(Action, exports);
 
         return BaseAction;
     }
