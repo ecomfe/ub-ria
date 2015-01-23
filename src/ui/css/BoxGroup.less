@@ -10,6 +10,7 @@ esui-box-group {
     margin-right: 46px;
 }
 
+@box-group-item-margin-right: 30px;
 
 @flat-radio-icon-normal: url(../img/flat-radio-normal.png);
 @flat-radio-icon-hover: url(../img/flat-radio-hovered.png);
@@ -20,22 +21,14 @@ esui-box-group {
 @flat-radio-height: 18px;
 @flat-radio-icon-width: 18px;
 @flat-radio-icon-height: 18px;
-@flat-radio-margin-right: 30px;
-
-
-@flat-checkbox-icon-normal: url(../img/flat-check-normal.png);
-@flat-checkbox-icon-hover: url(../img/flat-check-hovered.png);
-@flat-checkbox-icon-checked: url(../img/flat-check-checked.png);
-@flat-checkbox-icon-disabled: @flat-checkbox-icon-normal;
-@flat-checkbox-icon-readonly: @flat-checkbox-icon-normal;
-
-@flat-checkbox-height: 18px;
-@flat-checkbox-icon-width: 14px;
-@flat-checkbox-icon-height: 14px;
-@flat-checkbox-margin-right: 30px;
 
 
 @switch-button-background-color: #6ccdc0;
+
+// 通用radio图标mixin
+.skin-flat-radio-icon-mixin (@url) {
+    .pseudo-icon(@url, @flat-radio-icon-width, @flat-radio-icon-height, left, 0px);
+}
 
 .ui-boxgroup-horizontal {
     .ui-boxgroup-wrapper {
@@ -63,11 +56,6 @@ esui-box-group {
 
 // 自定义样式radio
 .skin-flat-boxgroup {
-    // 通用图标mixin
-    .skin-flat-radio-icon-mixin (@url) {
-        .pseudo-icon(@url, @flat-radio-icon-width, @flat-radio-icon-height, left, 0px);
-    }
-
     .ui-boxgroup-wrapper {
         // 原始的input隐藏掉
         input {
@@ -89,7 +77,7 @@ esui-box-group {
         height: @flat-radio-height;
         line-height: @flat-radio-height;
         padding-left: 27px;
-        margin-right: @flat-radio-margin-right;
+        margin-right: @box-group-item-margin-right;
         font-size: 14px;
 
         .skin-flat-radio-icon-mixin(@flat-radio-icon-normal);
@@ -123,16 +111,12 @@ esui-box-group {
         }
     }
 
-    // check的情况
-    // 通用图标mixin
-    .skin-flat-checkbox-icon-mixin (@url) {
-        .pseudo-icon(@url, @flat-checkbox-icon-width, @flat-checkbox-icon-height, left, 0px);
-    }
+    // check的情况(复用checkbox的样式变量)
     .ui-boxgroup-checkbox {
         height: @flat-checkbox-height;
         line-height: @flat-checkbox-height;
         padding-left: 27px;
-        margin-right: @flat-checkbox-margin-right;
+        margin-right: @box-group-item-margin-right;
         font-size: 14px;
 
         .skin-flat-checkbox-icon-mixin(@flat-checkbox-icon-normal);
