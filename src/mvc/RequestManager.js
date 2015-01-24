@@ -342,7 +342,9 @@ define(
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        exports.remove = u.partial(exports.updateStatus, 0);
+        exports.remove = function (ids) {
+            return this.updateStatus(0, ids);
+        };
 
         /**
          * 恢复一个或多个实体
@@ -350,7 +352,9 @@ define(
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        exports.restore = u.partial(exports.updateStatus, 1);
+        exports.restore = function (ids) {
+            return this.updateStatus(1, ids);
+        };
 
         /**
          * 获取批量操作前的确认
@@ -380,7 +384,9 @@ define(
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        exports.getRemoveAdvice = u.partial(exports.getAdvice, 0);
+        exports.getRemoveAdvice = function (ids) {
+            return this.getAdvice(0, ids);
+        };
 
         /**
          * 批量恢复前确认
@@ -388,7 +394,9 @@ define(
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
-        exports.getRestoreAdvice = u.partial(exports.getAdvice, 1);
+        exports.getRestoreAdvice = function (ids) {
+            return this.getAdvice(1, ids);
+        };
 
         /**
          * 根据id获取单个实体
