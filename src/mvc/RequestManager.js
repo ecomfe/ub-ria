@@ -205,7 +205,6 @@ define(
             return request;
         };
 
-        var ajax = require('er/ajax');
 
         /**
          * 发起一个AJAX请求
@@ -225,6 +224,8 @@ define(
          */
         exports.request = function (name, data, options) {
             var context = this.getRequest(name, data, options);
+            // 这里会导致同步依赖把`er/ajax`强制加载进来，不过总之实际场景使用的也是继承`er/ajax`的所以无所谓
+            var ajax = this.getAjax() || require('er/ajax');
 
             if (!context.config) {
                 return ajax.request(context.options);
@@ -400,7 +401,11 @@ define(
             throw new Error('findById method is not implemented');
         };
 
-        var RequestManager = require('eoo').create(exports);
+        var oo = require('eoo');
+
+        oo.defineAccessor(exports, 'ajax');
+
+        var RequestManager = oo.create(exports);
 
         /**
          * 注册一个请求配置
