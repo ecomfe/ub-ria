@@ -1,0 +1,70 @@
+@flat-checkbox-icon-normal: url(../img/flat-check-normal.png);
+@flat-checkbox-icon-hover: url(../img/flat-check-hovered.png);
+@flat-checkbox-icon-checked: url(../img/flat-check-checked.png);
+@flat-checkbox-icon-disabled: @flat-checkbox-icon-normal;
+@flat-checkbox-icon-readonly: @flat-checkbox-icon-normal;
+
+@flat-checkbox-height: 18px;
+@flat-checkbox-icon-width: 14px;
+@flat-checkbox-icon-height: 14px;
+
+// 通用checkbox图标mixin
+.skin-flat-checkbox-icon-mixin (@url) {
+    .pseudo-icon(@url, @flat-checkbox-icon-width, @flat-checkbox-icon-height, left, 0px);
+}
+
+.ui-checkbox {
+    cursor: pointer;
+}
+
+.ui-checkbox-disabled {
+    cursor: default;
+}
+
+.ui-checkbox-validity-label {
+    display: inline-block;
+    line-height: 30px;
+    color: #ff0000;
+}
+
+.skin-flat-checkbox {
+    position: relative;
+    // 原始的input隐藏掉
+    input {
+        // 用display: none 的话，ie8下点击label不能改变隐藏的checkbox
+        // 用width: 0 的话，不够保险，如果有全局 padding，可能又会显示出来。
+        // 用 top 移出的话，会 focus过去。
+        // 所以用 left 移到外面去。
+        width: 0;
+        position: absolute;
+        left: -5000px;
+    }
+    span {
+        vertical-align: baseline;
+        height: @flat-checkbox-height;
+        line-height: @flat-checkbox-height;
+        padding-left: 27px;
+        font-size: 14px;
+        .skin-flat-checkbox-icon-mixin(@flat-checkbox-icon-normal);
+        &:hover {
+            .skin-flat-checkbox-icon-mixin(@flat-checkbox-icon-hover);
+        }
+    }
+
+    input:checked~span,
+     {
+        .skin-flat-checkbox-icon-mixin(@flat-checkbox-icon-checked);
+        &:hover {
+            .skin-flat-checkbox-icon-mixin(@flat-checkbox-icon-checked);
+        }
+    }
+}
+
+.ui-checkbox-disabled {
+    span {
+        .skin-flat-checkbox-icon-mixin(@flat-checkbox-icon-disabled);
+        &:hover {
+            .skin-flat-checkbox-icon-mixin(@flat-checkbox-icon-disabled);
+        }
+    }
+}
