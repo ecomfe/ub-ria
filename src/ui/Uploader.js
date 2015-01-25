@@ -92,6 +92,8 @@ define(
             var buttonClasses = this.helper.getPartClassName('button');
             var iframeId = this.helper.getId('iframe');
 
+            this.fire('createiframe');
+
             var html = [
                 '<div id="' + this.helper.getId('input-container') + '">',
                 // 按钮
@@ -101,10 +103,6 @@ define(
                 // 回调函数名
                 '<input type="hidden" name="callback" ',
                 'value="' + this.callbackName + '" ',
-                '/>',
-                // sessionToken
-                '<input type="hidden" name="sessionToken" ',
-                'value="' + this.getSessionToken() + '" ',
                 '/>',
                 // 文件上传框
                 '<input type="file" ',
@@ -481,16 +479,6 @@ define(
          */
         exports.getFileName = function () {
             return this.helper.getPart('input').value || '';
-        };
-
-        /**
-         * 获取反SCRF的Token
-         *
-         * @return {string}
-         * @protected
-         */
-        exports.getSessionToken = function () {
-            return '';
         };
 
         /**
