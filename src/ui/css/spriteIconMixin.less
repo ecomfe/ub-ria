@@ -44,26 +44,9 @@
     .relative(@relativePos);
     &:after {
         position: absolute;
-        .position-vertical(@vertical) when (@vertical = center) {
-            top: 50%;
-            margin-top: -(@height/2);
-        }
-        .position-vertical(@vertical) when not (@vertical = center) {
-            @{vertical}: @vDuration;
-        }
-
-        .position-horizontal(@horizontal) when (@horizontal = center) {
-            left: 50%;
-            margin-left: -(@width/2);
-        }
-        .position-horizontal(@horizontal) when not (@horizontal = center) {
-            @{horizontal}: @hDuration;
-        }
-
-        .position-vertical(@vertical);
-        .position-horizontal(@horizontal);
-
+        // 判断是否是字体图标，第二个参数是多态参数
         @is-font-icon: ~`/^#[A-Za-z0-9]+$/i.test("@{width}") ? 'true' : 'false'`;
+
         .icon(@img) when (@is-font-icon) {
             @size: @height;
             @color: @width;
@@ -80,5 +63,30 @@
         }
 
         .icon(@img);
+
+        .position-vertical(@vertical) when (@vertical = center) {
+            top: 50%;
+            margin-top: -(@height/2);
+        }
+        .position-vertical(@vertical) when not (@vertical = center) {
+            @{vertical}: @vDuration;
+        }
+
+        .position-horizontal(@horizontal) when (@horizontal = center), (@is-font-icon = 'true') {
+            left: 50%;
+            margin-left: -(@height/2);
+        }
+
+        .position-horizontal(@horizontal) when (@horizontal = center), (@is-font-icon = 'false') {
+            left: 50%;
+            margin-left: -(@width/2);
+        }
+
+        .position-horizontal(@horizontal) when not (@horizontal = center) {
+            @{horizontal}: @hDuration;
+        }
+
+        .position-vertical(@vertical);
+        .position-horizontal(@horizontal);
     }
 }
