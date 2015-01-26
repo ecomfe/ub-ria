@@ -1,3 +1,4 @@
+// 图片图标
 .sprite-icon(none) {
     background: none;
 }
@@ -5,6 +6,17 @@
 .sprite-icon(@img) {
     @url: ~"@{img}";
     background: @url scroll 0 0 no-repeat transparent;
+}
+
+// 字体图标
+@font-icon-family: FontAwesome;
+.font-icon(@font-content, @size, @color) {
+    font-family: @font-icon-family;
+    font-size: @size;
+    color: @color;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "@{img}";
 }
 
 // repeat背景
@@ -31,10 +43,6 @@
     }
     .relative(@relativePos);
     &:after {
-        content: '~"@{img}"';
-        white-space: nowrap;
-        text-indent: -9999px;
-        overflow: hidden;
         position: absolute;
         .position-vertical(@vertical) when (@vertical = center) {
             top: 50%;
@@ -55,9 +63,22 @@
         .position-vertical(@vertical);
         .position-horizontal(@horizontal);
 
-        .sprite-icon(@img);
-        width: @width;
-        height: @height;
+        @is-font-icon: ~`/^#[A-Za-z0-9]+$/i.test("@{width}") ? 'true' : 'false'`;
+        .icon(@img) when (@is-font-icon) {
+            @size: @height;
+            @color: @width;
+            .font-icon(@img, @size, @color);
+        }
+        .icon(@img) when not (@is-font-icon) {
+            width: @width;
+            height: @height;
+            content: '~"@{img}"';
+            white-space: nowrap;
+            text-indent: -9999px;
+            overflow: hidden;
+            .sprite-icon(@img);
+        }
 
+        .icon(@img);
     }
 }
