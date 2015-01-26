@@ -102,10 +102,6 @@ define(
                 '<input type="hidden" name="callback" ',
                 'value="' + this.callbackName + '" ',
                 '/>',
-                // sessionToken
-                '<input type="hidden" name="sessionToken" ',
-                'value="' + this.getSessionToken() + '" ',
-                '/>',
                 // 文件上传框
                 '<input type="file" ',
                 'id="' + this.helper.getId('input') + '" ',
@@ -142,6 +138,8 @@ define(
 
             var input = this.helper.getPart('input');
             this.helper.addDOMEvent(input, 'change', lib.bind(this.receiveFile, this));
+
+            this.fire('formcreate');
         };
 
         /**
@@ -296,6 +294,19 @@ define(
             }
         );
 
+        /**
+         * 添加一个表单项，提交文件时一起提交
+         *
+         * @param {string} name 名称
+         * @param {string} value 值
+         */
+        exports.addFormField = function (name, value) {
+            var div = document.createElement('div');
+            div.innerHTML = '<input type="hidden" name="' + u.escape(name) + '" value="' + u.escape(value) + '" />';
+            var input = div.children[0];
+            var form = this.helper.getPart('form');
+            form.appendChild(input);
+        };
 
         /**
          * 检查文件格式是否正确，不正确时直接提示
@@ -481,16 +492,6 @@ define(
          */
         exports.getFileName = function () {
             return this.helper.getPart('input').value || '';
-        };
-
-        /**
-         * 获取反SCRF的Token
-         *
-         * @return {string}
-         * @protected
-         */
-        exports.getSessionToken = function () {
-            return '';
         };
 
         /**
