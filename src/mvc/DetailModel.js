@@ -36,6 +36,7 @@ define(
          */
         exports.getListActionURL = function () {
             var query = this.get('url').getQuery();
+
             // 所有列表参数都拥有`list.`前缀
             var args = {};
             u.each(
@@ -46,13 +47,15 @@ define(
                     }
                 }
             );
+
             if (query.id) {
-                // 原`id`字段用于详情页，传递给列表页要变为`xxxIds`的查询条件
                 args[this.entityName + 'Id'] = query.id;
             }
-            var URL = require('er/URL');
-            var actionURL =
-                URL.withQuery('/' + this.getListActionName() + '/list', args);
+
+            // 扩展加载列表时的额外参数
+            u.extend(args, this.getListExtraArgs());
+
+            var actionURL = require('er/URL').withQuery('/' + this.getListActionName() + '/list', args);
             return actionURL + '';
         };
 
@@ -66,6 +69,17 @@ define(
         exports.getListActionName = function () {
             return this.entityName;
         };
+
+        /**
+         * 获取列表子Action的额外参数
+         *
+         * @protected
+         * @method mvc.DetailModel#getListExtraArgs
+         * @return {Object}
+         */
+         exports.getListExtraArgs = function () {
+            return {};
+         };
 
         /**
          * 获取当前详情页对应树节点的的实体名称
