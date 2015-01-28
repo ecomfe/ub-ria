@@ -28,9 +28,9 @@ define(
             var item = u.find(
                 innerDatasource,
                 function (item) {
-                /* eslint-disable eqeqeq */
-                return item.value == filter.value;
-                /* eslint-enable eqeqeq */
+                    /* eslint-disable eqeqeq */
+                    return item.value == filter.value;
+                    /* eslint-enable eqeqeq */
                 }
             );
 
