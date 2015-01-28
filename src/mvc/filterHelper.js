@@ -13,28 +13,22 @@ define(
         var helper = {};
         var select = helper.select = {};
         select.getText = function (filter) {
-            // 针对有些控件key-value的结构是id-name的，要先做一个兼容处理
-            var innerDatasource = u.map(
-                filter.datasource,
-                function (item) {
-                    var newItem = {};
-                    newItem.value = item.value || item.id;
-                    newItem.text = item.text || item.name;
-
-                    return newItem;
-                }
-            );
-
-            var item = u.find(
-                innerDatasource,
-                function (item) {
-                    /* eslint-disable eqeqeq */
-                    return item.value == filter.value;
-                    /* eslint-enable eqeqeq */
-                }
-            );
-
+            var item = u.find(filter.datasource, function (item) {
+                /* eslint-disable eqeqeq */
+                return item.value == filter.value;
+                /* eslint-enable eqeqeq */
+            });
             return item && item.text || '';
+        };
+
+        var toggleSelector = helper.toggleSelector = {};
+        toggleSelector.getText = function (filter) {
+            var item = u.find(filter.datasource, function (item) {
+                /* eslint-disable eqeqeq */
+                return item.id == filter.value;
+                /* eslint-enable eqeqeq */
+            });
+            return item && item.name || '';
         };
 
         return helper;
