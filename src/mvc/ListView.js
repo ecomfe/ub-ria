@@ -550,7 +550,7 @@ define(
          * @return {number}
          */
         exports.getPageIndex = function () {
-            return this.get('pager').get('page');
+            return this.getSafely('pager').get('page');
         };
 
         /**
