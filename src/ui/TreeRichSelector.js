@@ -426,11 +426,14 @@ define(
         exports.selectAll = function () {
             var data = this.isQuery() ? this.queriedData : this.allData;
             var children = data.children;
-            var items = this.getLeafItems(children, false);
             var control = this;
-            u.each(items, function (item) {
-                selectItem(control, item.id, true);
-            });
+            this.walkTree(
+                data,
+                children,
+                function (parent, child) {
+                    selectItem(control, child.id, true);
+                }
+            );
             this.fire('add');
             this.fire('change');
         };
@@ -473,13 +476,35 @@ define(
             if (!control.needSyncParentChild) {
                 return;
             }
+            trySyncParentStates(control, item, toBeSelected);
+            trySyncChildrenStates(control, item, toBeSelected);
+        }
+
+        /**
+         * 同步一个节点的父节点选择状态
+         * @param {ui.TreeRichSelector} control 类实例
+         * @param {Object} item 保存在indexData中的item
+         * @param {boolean} toBeSelected 目标状态 true是选择，false是取消
+         */
+        function trySyncChildrenStates(control, item, toBeSelected) {
             var indexData = control.indexData;
             var node = item.node;
             // 如果选的是父节点，子节点也要连带选上
             var children = node.children || [];
             u.each(children, function (child) {
                 selectItem(control, child.id, toBeSelected);
+                trySyncChildrenStates(control, indexData[child.id], toBeSelected);
             });
+        }
+
+        /**
+         * 同步一个节点的子节点选择状态
+         * @param {ui.TreeRichSelector} control 类实例
+         * @param {Object} item 保存在indexData中的item
+         * @param {boolean} toBeSelected 目标状态 true是选择，false是取消
+         */
+        function trySyncParentStates(control, item, toBeSelected) {
+            var indexData = control.indexData;
             // 选的是子节点，判断一下是不是全部选择了，全部选择了，也要勾上父节点
             var parentId = item.parentId;
             var parentItem = indexData[parentId];
@@ -493,6 +518,7 @@ define(
                     }
                 );
                 selectItem(control, parentId, allSelected);
+                trySyncParentStates(control, parentItem, allSelected);
             }
         }
 
@@ -558,7 +584,7 @@ define(
          * @override
          */
         exports.deleteAll = function () {
-            var event = this.fire('delete', {items: this.allData.children});
+            var event = this.fire('delete', {items: this.getSelectedItems()});
             // 如果外面阻止了默认行为（比如自己控制了Tree的删除），就不自己删除了
             if (!event.isDefaultPrevented()) {
                 this.set('datasource', null);
@@ -647,7 +673,7 @@ define(
                 this.allData,
                 this.allData.children,
                 function (parent, child) {
-                    if (control.getStateNode(child.id).isSelected) {
+                    if (control.mode === 'delete' || control.getStateNode(child.id).isSelected) {
                         selectedItems.push(child);
                     }
                 }
@@ -665,21 +691,27 @@ define(
          */
         exports.getSelectedTree = function () {
             var control = this;
+            // clone完整数据，这个数据是原始的，不带最新选择状态的
             var copyData = u.deepClone(this.allData);
-            var nodes = copyData.children;
-            u.each(nodes, function (node) {
-                var selectedChildren = getSelectedNodesUnder(node, control);
-                if (selectedChildren.length) {
-                    node.children = selectedChildren;
+            // 遍历树，把各个节点的children更新成只包含已选状态节点的
+            this.walkTree(
+                copyData,
+                copyData.children,
+                function (parent, child) {
+                    var selectedChildren = getSelectedNodesUnder(child, control);
+                    if (selectedChildren.length) {
+                        child.children = selectedChildren;
+                    }
+                    else {
+                        child.children = null;
+                    }
                 }
-                else {
-                    node.children = null;
-                }
+            );
+            // 最外层再处理一下
+            copyData.children = u.filter(copyData.children, function (node) {
+                // 可能是叶子节点
+                return node.children || control.indexData[node.id].isSelected;
             });
-            var filteredNodes = u.filter(nodes, function (node) {
-                return node.children;
-            });
-            copyData.children = filteredNodes;
             return copyData;
         };
 
