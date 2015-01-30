@@ -46,7 +46,7 @@ define(
          * 重写默认属性
          *
          * @protected
-         * @method ui.exports.OverrideDefaults#overrideDefaults
+         * @method ui.extension.OverrideDefaults#overrideDefaults
          */
         exports.overrideDefaults = function () {
             var overrides = this.overrides[this.target.type];
