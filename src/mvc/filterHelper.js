@@ -21,6 +21,16 @@ define(
             return item && item.text || '';
         };
 
+        var toggleSelector = helper.toggleSelector = {};
+        toggleSelector.getText = function (filter) {
+            var item = u.find(filter.datasource, function (item) {
+                /* eslint-disable eqeqeq */
+                return item.id == filter.value;
+                /* eslint-enable eqeqeq */
+            });
+            return item && item.name || '';
+        };
+
         return helper;
     }
 );
