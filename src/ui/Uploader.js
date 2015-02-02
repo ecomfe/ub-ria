@@ -8,27 +8,28 @@
  */
 define(
     function (require) {
-        var lib = require('esui/lib');
-        var helper = require('esui/controlHelper');
         var Validity = require('esui/validator/Validity');
         var ValidityState = require('esui/validator/ValidityState');
         var InputControl = require('esui/InputControl');
+
         var u = require('../util');
+        var lib = require('esui/lib');
 
         /**
          * Uploader控件
          *
-         * @param {Object=} options 初始化参数
-         * @extends InputControl
-         * @constructor
-         * @public
+         * @class ui.Uploader
+         * @extends esui.InputControl
          */
-        function Uploader(options) {
-            InputControl.apply(this, arguments);
-        }
+        var exports = {};
 
-        Uploader.prototype.type = 'Uploader';
-
+        /**
+         * 控件类型，始终为`"Uploader"`
+         *
+         * @type {string}
+         * @override
+         */
+        exports.type = 'Uploader';
 
         var mimeTypes = {
             image: {
@@ -42,36 +43,11 @@ define(
         };
 
         /**
-         * 默认属性
-         *
-         * @type {Object}
-         * @public
-         */
-        Uploader.defaultProperties = {
-            width: 80,
-            height: 25,
-            fileType: '*',
-            method: 'POST',
-            text: '点击上传',
-            overrideText: '重新上传',
-            busyText: '正在上传...',
-            completeText: '上传完成',
-            autoUpload: true,
-            extraArgs: {},
-            action: '',
-            mimeTypes: mimeTypes
-        };
-
-        /**
-         * 初始化参数
-         *
-         * @param {Object=} options 构造函数传入的参数
          * @override
-         * @protected
          */
-        Uploader.prototype.initOptions = function (options) {
+        exports.initOptions = function (options) {
             var properties = { };
-            lib.extend(properties, Uploader.defaultProperties, options);
+            lib.extend(properties, this.$self.defaultProperties, options);
 
             if (lib.isInput(this.main)) {
                 properties.accept = properties.accept || lib.getAttribute(this.main, 'accept');
@@ -100,12 +76,9 @@ define(
         };
 
         /**
-         * 初始化DOM结构
-         *
          * @override
-         * @protected
          */
-        Uploader.prototype.initStructure = function () {
+        exports.initStructure = function () {
             if (this.main.nodeName !== 'FORM') {
                 this.helper.replaceMain();
             }
@@ -128,10 +101,6 @@ define(
                 // 回调函数名
                 '<input type="hidden" name="callback" ',
                 'value="' + this.callbackName + '" ',
-                '/>',
-                // sessionToken
-                '<input type="hidden" name="sessionToken" ',
-                'value="' + this.getSessionToken() + '" ',
                 '/>',
                 // 文件上传框
                 '<input type="file" ',
@@ -169,6 +138,8 @@ define(
 
             var input = this.helper.getPart('input');
             this.helper.addDOMEvent(input, 'change', lib.bind(this.receiveFile, this));
+
+            this.fire('formcreate');
         };
 
         /**
@@ -232,7 +203,7 @@ define(
          * @override
          * @protected
          */
-        Uploader.prototype.repaint = helper.createRepaint(
+        exports.repaint = require('esui/painters').createRepaint(
             InputControl.prototype.repaint,
             {
                 name: ['method', 'action'],
@@ -323,6 +294,19 @@ define(
             }
         );
 
+        /**
+         * 添加一个表单项，提交文件时一起提交
+         *
+         * @param {string} name 名称
+         * @param {string} value 值
+         */
+        exports.addFormField = function (name, value) {
+            var div = document.createElement('div');
+            div.innerHTML = '<input type="hidden" name="' + u.escape(name) + '" value="' + u.escape(value) + '" />';
+            var input = div.children[0];
+            var form = this.helper.getPart('form');
+            form.appendChild(input);
+        };
 
         /**
          * 检查文件格式是否正确，不正确时直接提示
@@ -331,7 +315,7 @@ define(
          * @return {boolean}
          * @protected
          */
-        Uploader.prototype.checkFileFormat = function (filename) {
+        exports.checkFileFormat = function (filename) {
             if (this.accept) {
                 // 这里就是个内置的`Rule`，走的完全是标准的验证流程，
                 // 主要问题是上传控件不能通过`getValue()`获得验证用的内容，
@@ -375,7 +359,7 @@ define(
         /**
          * 提交文件上传
          */
-        Uploader.prototype.submit = function () {
+        exports.submit = function () {
             this.showUploading();
             // IE有个BUG，如果在一个`<form>`中有另一个`<form>`，
             // 那么就不能修改内存`<form>`的`innerHTML`值，
@@ -394,7 +378,7 @@ define(
          *
          * @protected
          */
-        Uploader.prototype.receiveFile = function () {
+        exports.receiveFile = function () {
             var input = this.helper.getPart('input');
             var filename = input.value;
             // 文件已经上传后，value不为空
@@ -413,7 +397,7 @@ define(
          *
          * @protected
          */
-        Uploader.prototype.showUploading = function () {
+        exports.showUploading = function () {
             this.removeState('complete');
             this.addState('busy');
 
@@ -427,7 +411,7 @@ define(
          * @param {Object} options 上传结果
          * @protected
          */
-        Uploader.prototype.showUploadResult = function (options) {
+        exports.showUploadResult = function (options) {
             // 如果成功，`options`格式为：
             // {
             //     info: {
@@ -467,7 +451,7 @@ define(
          * @param {string} message 失败消息
          * @protected
          */
-        Uploader.prototype.notifyFail = function (message) {
+        exports.notifyFail = function (message) {
             message = message || '上传失败';
             var validity = new Validity();
             var state = new ValidityState(false, message);
@@ -482,7 +466,7 @@ define(
          * @param {Object} info 成功结果
          * @protected
          */
-        Uploader.prototype.notifyComplete = function (info) {
+        exports.notifyComplete = function (info) {
             setStateToComplete.call(this, info);
 
             // 提示已经完成
@@ -495,29 +479,19 @@ define(
             );
         };
 
-        Uploader.prototype.getRawValue = function () {
+        exports.getRawValue = function () {
             return this.fileInfo || null;
         };
 
-        Uploader.prototype.getRawValueProperty = Uploader.prototype.getRawValue;
+        exports.getRawValueProperty = exports.getRawValue;
 
         /**
          * 获取用户选择的文件名
          *
          * @return {string}
          */
-        Uploader.prototype.getFileName = function () {
+        exports.getFileName = function () {
             return this.helper.getPart('input').value || '';
-        };
-
-        /**
-         * 获取反SCRF的Token
-         *
-         * @return {string}
-         * @protected
-         */
-        Uploader.prototype.getSessionToken = function () {
-            return '';
         };
 
         /**
@@ -525,7 +499,7 @@ define(
          *
          * @override
          */
-        Uploader.prototype.dispose = function () {
+        exports.dispose = function () {
             try {
                 delete window[this.callbackName];
             }
@@ -535,11 +509,34 @@ define(
             var form = this.helper.getPart('form');
             lib.removeNode(form);
 
-            InputControl.prototype.dispose.apply(this, arguments);
+            this.$super(arguments);
         };
 
-        lib.inherits(Uploader, InputControl);
+        var Uploader = require('eoo').create(InputControl, exports);
+
+        /**
+         * 默认属性
+         *
+         * @type {Object}
+         * @public
+         */
+        Uploader.defaultProperties = {
+            width: 80,
+            height: 25,
+            fileType: '*',
+            method: 'POST',
+            text: '点击上传',
+            overrideText: '重新上传',
+            busyText: '正在上传...',
+            completeText: '上传完成',
+            autoUpload: true,
+            extraArgs: {},
+            action: '',
+            mimeTypes: mimeTypes
+        };
+
         require('esui').register(Uploader);
+
         return Uploader;
     }
 );

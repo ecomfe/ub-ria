@@ -9,7 +9,6 @@
 define(
     function (require) {
         var lib = require('esui/lib');
-        var ActionPanel = require('ef/ActionPanel');
 
         /**
          * 局部表单控件。
@@ -17,16 +16,18 @@ define(
          * 这控件本质上是个`ActionPanel`，但它表现得像是`InputControl`，
          * 因此可以用作表单的一部分，从而细粒度地切割表单的组成
          *
-         * @param {Object} [options] 初始化参数
+         * @class ui.PartialForm
          * @extends ef.ActionPanel
-         * @constructor
          */
-        function PartialForm(options) {
-            ActionPanel.apply(this, arguments);
-        }
+        var exports = {};
 
-        PartialForm.prototype.type = 'PartialForm';
-
+        /**
+         * 控件类型，始终为`"PartialForm"`
+         *
+         * @type {string}
+         * @override
+         */
+        exports.type = 'PartialForm';
 
         function getHelperForm(action) {
             var Form = require('esui/Form');
@@ -36,12 +37,13 @@ define(
             };
             return new Form(properties);
         }
+
         /**
          * 进行验证
          *
          * @return {boolean}
          */
-        PartialForm.prototype.validate = function () {
+        exports.validate = function () {
             var action = this.get('action');
 
             if (!action) {
@@ -97,7 +99,7 @@ define(
          * @param {Object} errors 错误信息
          * @param {meta.FieldError[]} errors.fields 出现错误的字段集合
          */
-        PartialForm.prototype.notifyErrors = function (errors) {
+        exports.notifyErrors = function (errors) {
             var Validity = require('esui/validator/Validity');
             var ValidityState = require('esui/validator/ValidityState');
             var action = this.get('action');
@@ -131,7 +133,7 @@ define(
          *
          * @return {Mixed}
          */
-        PartialForm.prototype.getRawValue = function () {
+        exports.getRawValue = function () {
             var action = this.get('action');
             if (!action) {
                 return null;
@@ -151,13 +153,15 @@ define(
          *
          * @return {string}
          */
-        PartialForm.prototype.getCategory = function () {
+        exports.getCategory = function () {
             return 'input';
         };
 
+        var ActionPanel = require('ef/ActionPanel');
+        var PartialForm = require('eoo').create(ActionPanel, exports);
 
-        lib.inherits(PartialForm, ActionPanel);
         require('esui').register(PartialForm);
+
         return PartialForm;
     }
 );

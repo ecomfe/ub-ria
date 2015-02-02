@@ -10,19 +10,25 @@
 define(
     function (require) {
         var lib = require('esui/lib');
-        var Extension = require('esui/Extension');
 
         /**
          * 使用外部搜索控件代理控件的搜索
          *
-         * @param {Object} [options] 配置项
+         * @class ui.extension.ExternSearch
          * @extends esui.Extension
-         * @constructor
          */
-        function ExternSearch(options) {
+        var exports = {};
+
+        /**
+         * @constructs ui.extends.ExternSearch
+         * @override
+         * @param {Object} [options] 配置项
+         */
+        exports.constructor = function (options) {
             options = options || {};
-            Extension.apply(this, arguments);
-        }
+
+            this.$super(arguments);
+        };
 
         /**
          * 扩展的类型，始终为`"ExternSearch"`
@@ -30,21 +36,21 @@ define(
          * @type {string}
          * @override
          */
-        ExternSearch.prototype.type = 'ExternSearch';
+        exports.type = 'ExternSearch';
 
         /**
          * 指定对应的searchBox的id
          *
          * @type {string | null}
          */
-        ExternSearch.prototype.searchBox = null;
+        exports.searchBox = null;
 
         /**
          * 找到控件对应的搜索类控件
          *
          * @return {esui.searchBox}
          */
-        ExternSearch.prototype.resolveControl = function () {
+        exports.resolveControl = function () {
             var searchBox;
             // 这个searchbox为了向前兼容。。。
             if (!this.searchBox && this.searchbox) {
@@ -70,7 +76,7 @@ define(
          *
          * @override
          */
-        ExternSearch.prototype.activate = function () {
+        exports.activate = function () {
             var searchBox = this.resolveControl();
             searchBox.on('search', search, this);
 
@@ -79,7 +85,7 @@ define(
             // 接收控件的search事件
             this.target.on('search', doSearch, this);
 
-            Extension.prototype.activate.apply(this, arguments);
+            this.$super(arguments);
         };
 
         function search(e) {
@@ -107,8 +113,8 @@ define(
          *
          * @override
          */
-        ExternSearch.prototype.inactivate = function () {
-            Extension.prototype.inactivate.apply(this, arguments);
+        exports.inactivate = function () {
+            this.$super(arguments);
 
             var searchBox = this.resolveControl();
             if (searchBox) {
@@ -119,8 +125,11 @@ define(
             this.target.un('search', doSearch, this);
         };
 
-        lib.inherits(ExternSearch, Extension);
+        var Extension = require('esui/Extension');
+        var ExternSearch = require('eoo').create(Extension, exports);
+
         require('esui').registerExtension(ExternSearch);
+
         return ExternSearch;
     }
 );

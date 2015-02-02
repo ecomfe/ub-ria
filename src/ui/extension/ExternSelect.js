@@ -11,19 +11,25 @@ define(
     function (require) {
         var u = require('../../util');
         var lib = require('esui/lib');
-        var Extension = require('esui/Extension');
 
         /**
          * 使用外部下拉选择控件代理控件的搜索
          *
-         * @param {Object} [options] 配置项
+         * @class ui.extension.ExternSelect
          * @extends esui.Extension
-         * @constructor
          */
-        function ExternSelect(options) {
+        var exports = {};
+
+        /**
+         * @constructs ui.extends.ExternSelect
+         * @override
+         * @param {Object} [options] 配置项
+         */
+        exports.constructor = function (options) {
             options = options || {};
-            Extension.apply(this, arguments);
-        }
+
+            this.$super(arguments);
+        };
 
         /**
          * 扩展的类型，始终为`"ExternSelect"`
@@ -31,21 +37,21 @@ define(
          * @type {string}
          * @override
          */
-        ExternSelect.prototype.type = 'ExternSelect';
+        exports.type = 'ExternSelect';
 
         /**
          * 指定对应的一组select的id, 逗号或空格分隔，必须指定
          *
          * @type {string | null}
          */
-        ExternSelect.prototype.selects = null;
+        exports.selects = null;
 
         /**
          * 找到代理控件
          *
          * @return {esui.searchBox}
          */
-        ExternSelect.prototype.resolveControls = function () {
+        exports.resolveControls = function () {
             var controls = [];
             if (this.selects) {
                 var selects;
@@ -87,7 +93,7 @@ define(
          *
          * @override
          */
-        ExternSelect.prototype.activate = function () {
+        exports.activate = function () {
             this.handleControls(
                 function (select, index) {
                     select.on('change', search, this);
@@ -99,7 +105,7 @@ define(
             // 接收控件的search事件
             this.target.on('search', doSearch, this);
 
-            Extension.prototype.activate.apply(this, arguments);
+            this.$super(arguments);
         };
 
         function search(e) {
@@ -134,8 +140,9 @@ define(
          *
          * @override
          */
-        ExternSelect.prototype.inactivate = function () {
-            Extension.prototype.inactivate.apply(this, arguments);
+        exports.inactivate = function () {
+            this.$super(arguments);
+
             this.handleControls(
                 function (select) {
                     select.un('change', search, this);
@@ -151,15 +158,18 @@ define(
          * 搜索控件的处理函数
          * @param {Function} handler 处理句柄
          */
-        ExternSelect.prototype.handleControls = function (handler) {
+        exports.handleControls = function (handler) {
             var controls = this.resolveControls();
             if (controls.length) {
                 u.each(controls, handler, this);
             }
         };
 
-        lib.inherits(ExternSelect, Extension);
+        var Extension = require('esui/Extension');
+        var ExternSelect = require('eoo').create(Extension, exports);
+
         require('esui').registerExtension(ExternSelect);
+
         return ExternSelect;
     }
 );

@@ -8,6 +8,12 @@
  */
 define(
     function (require) {
+        /**
+         * 规则常量
+         *
+         * @namespace mvc.rule
+         * @deprecated 使用具体系统中的`rule`对象
+         */
         return {
             maxLength: 100,
 

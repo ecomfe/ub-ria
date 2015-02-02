@@ -10,17 +10,21 @@
 define(
     function (require) {
         var lib = require('esui/lib');
-        var TreeStrategy = require('esui/TreeStrategy');
 
         /**
          * 树的数据交互策略
          *
+         * @class ui.SelectorTreeStrategy
+         */
+        var exports = {};
+
+        /**
+         * @constructs ui.SelectorTreeStrategy
+         * @override
          * @param {Object=} options 初始化参数
          * @param {boolean=} options.defaultExpand 节点是否展开，默认为`false`
-         * @constructor
-         * @public
          */
-        function SelectorTreeStrategy(options) {
+        exports.constructor = function (options) {
             var defaults = {
                 defaultExpand: true,
                 // 需要一种定向展开的策略，
@@ -28,18 +32,15 @@ define(
                 orientExpand: false
             };
             lib.extend(this, defaults, options);
-        }
-
-        lib.inherits(SelectorTreeStrategy, TreeStrategy);
+        };
 
         /**
          * 判断一个节点是否叶子节点
          *
          * @param {Object} node 节点数据项
          * @return {boolean}
-         * @public
          */
-        SelectorTreeStrategy.prototype.isLeafNode = function (node) {
+        exports.isLeafNode = function (node) {
             return !node.children;
         };
 
@@ -48,9 +49,8 @@ define(
          *
          * @param {Object} node 节点数据项
          * @return {boolean}
-         * @public
          */
-        SelectorTreeStrategy.prototype.shouldExpand = function (node) {
+        exports.shouldExpand = function (node) {
             // 定向展开
             if (this.orientExpand) {
                 // @FIXME 忘记了为什么用这么个属性判断要不要展开
@@ -61,7 +61,12 @@ define(
             return this.defaultExpand;
         };
 
-        SelectorTreeStrategy.prototype.enableSelectStrategy = function (tree) {
+        /**
+         * 启用策略
+         *
+         * @param {esui.Tree} tree 控件实例
+         */
+        exports.enableSelectStrategy = function (tree) {
             var treeStrategy = this;
             tree.on(
                 'select',
@@ -95,6 +100,9 @@ define(
                 }
             );
         };
+
+        var TreeStrategy = require('esui/TreeStrategy');
+        var SelectorTreeStrategy = require('eoo').create(TreeStrategy, exports);
 
         return SelectorTreeStrategy;
     }

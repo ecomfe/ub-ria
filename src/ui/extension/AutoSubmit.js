@@ -13,16 +13,21 @@ define(
         var lib = require('esui/lib');
         var ui = require('esui');
         var Form = require('esui/Form');
-        var Extension = require('esui/Extension');
 
         /**
          * 让输入控件在特定事件下自动提交表单的扩展
          *
-         * @param {Object} [options] 配置项
+         * @class ui.extension.AutoSubmit
          * @extends esui.Extension
-         * @constructor
          */
-        function AutoSubmit(options) {
+        var exports = {};
+
+        /**
+         * @constructs ui.extension.AutoSubmit
+         * @override
+         * @param {Object} [options] 配置项
+         */
+        exports.constructor = function (options) {
             options = options || {};
             if (typeof options.events === 'string') {
                 options.events = u.map(
@@ -31,8 +36,8 @@ define(
                 );
             }
 
-            Extension.apply(this, arguments);
-        }
+            this.$super(arguments);
+        };
 
         /**
          * 扩展的类型，始终为`"AutoSubmit"`
@@ -40,7 +45,7 @@ define(
          * @type {string}
          * @override
          */
-        AutoSubmit.prototype.type = 'AutoSubmit';
+        exports.type = 'AutoSubmit';
 
         /**
          * 指定对应的表单的id，不指定的话会进行自动查找，
@@ -48,21 +53,21 @@ define(
          *
          * @type {string | null}
          */
-        AutoSubmit.prototype.form = null;
+        exports.form = null;
 
         /**
          * 指定用于提交表单的事件名称，默认为`click`、`change`和`search`事件
          *
          * @type {string[]}
          */
-        AutoSubmit.prototype.events = ['click', 'change', 'search'];
+        exports.events = ['click', 'change', 'search'];
 
         /**
          * 找到控件对应的`Form`控件
          *
          * @return {esui.Form}
          */
-        AutoSubmit.prototype.resolveForm = function () {
+        exports.resolveForm = function () {
             if (this.form) {
                 return this.target.viewContext.get(this.form);
             }
@@ -100,7 +105,7 @@ define(
          *
          * @override
          */
-        AutoSubmit.prototype.activate = function () {
+        exports.activate = function () {
             u.each(
                 this.events,
                 function (eventName) {
@@ -108,7 +113,8 @@ define(
                 },
                 this
             );
-            Extension.prototype.activate.apply(this, arguments);
+
+            this.$super(arguments);
         };
 
         /**
@@ -116,7 +122,7 @@ define(
          *
          * @override
          */
-        AutoSubmit.prototype.inactivate = function () {
+        exports.inactivate = function () {
             u.each(
                 this.events,
                 function (eventName) {
@@ -125,11 +131,14 @@ define(
                 this
             );
 
-            Extension.prototype.inactivate.apply(this, arguments);
+            this.$super(arguments);
         };
 
-        lib.inherits(AutoSubmit, Extension);
+        var Extension = require('esui/Extension');
+        var AutoSubmit = require('eoo').create(Extension, exports);
+
         require('esui').registerExtension(AutoSubmit);
+
         return AutoSubmit;
     }
 );

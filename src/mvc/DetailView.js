@@ -8,6 +8,8 @@
  */
 define(
     function (require) {
+        require('../ui/DrawerActionPanel');
+
         /**
          * @class mvc.DetailView
          * @extends mvc.BaseView

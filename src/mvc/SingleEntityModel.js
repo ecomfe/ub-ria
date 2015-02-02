@@ -10,8 +10,6 @@
 define(
     function (require) {
         var u = require('../util');
-        var util = require('er/util');
-        var BaseModel = require('./BaseModel');
 
         /**
          * 把实体信息展开到`Model`自身上，以便直接访问到某些属性
@@ -50,16 +48,20 @@ define(
         /**
          * 以单个实体为主要数据源的页面的数据模型基类
          *
-         * @extends BaseModel
-         * @constructor
+         * @class mvc.SingleEntityModel
+         * @extends mvc.BaseModel
          */
-        function SingleEntityModel() {
-            BaseModel.apply(this, arguments);
+        var exports = {};
+
+        /**
+         * @constructs mvc.SingleEntityModel
+         * @override
+         */
+        exports.constructor = function () {
+            this.$super(arguments);
 
             this.putDatasource(ENTITY_DATASOURCE);
-        }
-
-        util.inherits(SingleEntityModel, BaseModel);
+        };
 
         /**
          * 根据id获取实体
@@ -67,7 +69,7 @@ define(
          * @param {string | number} id 实体的id
          * @return {er.Promise}
          */
-        SingleEntityModel.prototype.findById = function (id) {
+        exports.findById = function (id) {
             var data = this.data();
             if (!data) {
                 throw new Error('No default data object attached to this Model');
@@ -78,6 +80,9 @@ define(
 
             return data.findById(id);
         };
+
+        var BaseModel = require('./BaseModel');
+        var SingleEntityModel = require('eoo').create(BaseModel, exports);
 
         return SingleEntityModel;
     }

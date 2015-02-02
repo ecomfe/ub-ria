@@ -36,6 +36,7 @@ define(
             this.$super(arguments);
 
             // 批量绑定控件的事件
+            /* eslint-disable fecs-camelcase */
             var uiEvents = {
                 'pager': {
                     pagesizechange: onChangePageSize,
@@ -52,6 +53,7 @@ define(
                 'table:command': 'commandHandler',
                 'create:click': popDrawerActionPanel
             };
+            /* eslint-enable fecs-camelcase */
             this.addUIEvents(uiEvents);
         };
 
@@ -548,7 +550,7 @@ define(
          * @return {number}
          */
         exports.getPageIndex = function () {
-            return this.get('pager').get('page');
+            return this.getSafely('pager').get('page');
         };
 
         /**

@@ -8,28 +8,23 @@
 define(
     function (require) {
         var lib = require('esui/lib');
-        var helper = require('esui/controlHelper');
         var Control = require('esui/Control');
 
         /**
          * Warn控件
          *
-         * @param {Object} [options] 初始化参数
+         * @class ui.Warn
          * @extends esui.Control
-         * @constructor
          */
-        function Warn(options) {
-            Control.apply(this, arguments);
-        }
+        var exports = {};
 
-        lib.inherits(Warn, Control);
-
-        Warn.defaultProperties = {
-            okLabel: '取消新建',
-            cancelLabel: '继续新建'
-        };
-
-        Warn.prototype.type = 'Warn';
+        /**
+         * 控件类型，始终为`"Warn"`
+         *
+         * @type {string}
+         * @override
+         */
+        exports.type = 'Warn';
 
         /**
          * 初始化参数
@@ -37,9 +32,9 @@ define(
          * @param {Object=} options 构造函数传入的参数
          * @override
          */
-        Warn.prototype.initOptions = function (options) {
+        exports.initOptions = function (options) {
             var properties = {};
-            lib.extend(properties, Warn.defaultProperties, options);
+            lib.extend(properties, this.$self.defaultProperties, options);
             if (properties.content == null) {
                 properties.content = this.main.innerHTML;
             }
@@ -68,11 +63,9 @@ define(
         }
 
         /**
-         * 初始化结构
-         *
          * @override
          */
-        Warn.prototype.initStructure = function () {
+        exports.initStructure = function () {
             this.main.innerHTML = lib.format(
                 tempalte,
                 {
@@ -105,7 +98,7 @@ define(
          *
          * @override
          */
-        Warn.prototype.repaint = helper.createRepaint(
+        exports.repaint = require('esui/painters').createRepaint(
             Control.prototype.repaint,
             {
                 name: 'content',
@@ -117,29 +110,27 @@ define(
         );
 
         /**
-         * 隐藏提示信息
-         *
          * @override
          */
-        Warn.prototype.hide = function () {
+        exports.hide = function () {
             this.fire('hide');
             this.dispose();
         };
 
         /**
-         * 销毁控件
-         *
          * @override
          */
-        Warn.prototype.dispose = function () {
-            if (helper.isInStage(this, 'DISPOSED')) {
+        exports.dispose = function () {
+            if (this.helper.isInStage('DISPOSED')) {
                 return;
             }
 
-            Control.prototype.dispose.apply(this, arguments);
+            this.$super(arguments);
 
             lib.removeNode(this.main);
         };
+
+        var Warn = require('eoo').create(Control, exports);
 
         /**
          * 快捷显示信息的方法
@@ -152,6 +143,11 @@ define(
             var warn = new Warn(options);
             warn.appendTo(options.wrapper || document.body);
             return warn;
+        };
+
+        Warn.defaultProperties = {
+            okLabel: '取消新建',
+            cancelLabel: '继续新建'
         };
 
         require('esui').register(Warn);

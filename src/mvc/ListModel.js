@@ -200,10 +200,19 @@ define(
          * 处理后续和UI有关的数据
          */
         function processUIData() {
-            // FIXME: 这里为了向后兼容性保留了`.get('canBatchModify')`的判断，以后要去掉，只留`checkPermission`
-            var canBatchModify = this.get('canBatchModify') && this.checkPermission('canBatchModify');
-            this.set('selectMode', canBatchModify ? 'multi' : '');
+            this.prepareSelectMode();
         }
+
+        /**
+         * 处理列表多选|单选类型
+         *
+         * @protected
+         */
+        exports.prepareSelectMode = function () {
+            // FIXME: 这里为了向后兼容性保留了`.get('canBatchModify')`的判断，以后要去掉，只留`checkPermission`
+            var canBatchModify = this.get('canBatchModify') || this.checkPermission('canBatchModify');
+            this.set('selectMode', canBatchModify ? 'multi' : '');
+        };
 
         /**
          * 处理加载后的数据
@@ -412,8 +421,9 @@ define(
          * @return {er.meta.FakeXHR}
          */
         exports.remove = function (ids) {
-            return this.updateStatus('remove', 0, ids);
+            return this.updateStatus(0, ids);
         };
+
         /**
          * 恢复一个或多个实体
          *
@@ -423,7 +433,7 @@ define(
          * @return {er.meta.FakeXHR}
          */
         exports.restore = function (ids) {
-            return this.updateStatus('restore', 1, ids);
+            return this.updateStatus(1, ids);
         };
 
         /**
