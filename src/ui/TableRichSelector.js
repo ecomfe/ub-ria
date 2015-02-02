@@ -54,23 +54,24 @@ define(
                 allowUnselectNode: false
             };
 
-            if (options.hasRowHead === 'false') {
-                options.hasRowHead = false;
-            }
-
-            if (options.hasIcon === 'false') {
-                options.hasIcon = false;
-            }
-
-            if (options.firedOnIcon === 'false') {
-                options.firedOnIcon = false;
-            }
-
-            if (options.allowUnselectNode === 'false') {
-                options.allowUnselectNode = false;
-            }
-
             lib.extend(properties, options);
+
+            if (properties.hasRowHead === 'false') {
+                properties.hasRowHead = false;
+            }
+
+            if (properties.hasIcon === 'false') {
+                properties.hasIcon = false;
+            }
+
+            if (properties.firedOnIcon === 'false') {
+                properties.firedOnIcon = false;
+            }
+
+            if (properties.allowUnselectNode === 'false') {
+                properties.allowUnselectNode = false;
+            }
+
             this.$super([properties]);
         };
 

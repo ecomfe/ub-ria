@@ -66,27 +66,28 @@ define(
                 multi: true
             };
 
-            if (options.hasHead === 'false') {
-                options.hasHead = false;
-            }
-
-            if (options.hasSearchBox === 'false') {
-                options.hasSearchBox = false;
-            }
-
-            if (options.hasFoot === 'false') {
-                options.hasFoot = false;
-            }
-
-            if (options.holdState === 'false') {
-                options.holdState = false;
-            }
-
-            if (options.multi === 'false') {
-                options.multi = false;
-            }
-
             lib.extend(properties, options);
+
+            if (properties.hasHead === 'false') {
+                properties.hasHead = false;
+            }
+
+            if (properties.hasSearchBox === 'false') {
+                properties.hasSearchBox = false;
+            }
+
+            if (properties.hasFoot === 'false') {
+                properties.hasFoot = false;
+            }
+
+            if (properties.holdState === 'false') {
+                properties.holdState = false;
+            }
+
+            if (properties.multi === 'false') {
+                properties.multi = false;
+            }
+
             properties.width = Math.max(200, properties.width);
             this.setProperties(properties);
         };
