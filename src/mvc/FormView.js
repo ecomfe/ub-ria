@@ -150,6 +150,7 @@ define(
         /**
          * 等待用户确认操作
          *
+         * @method mvc.FormView#waitConfirmForType
          * @param {Object} options 配置项
          * @param {string} type 操作类型
          *
