@@ -132,7 +132,7 @@ define(
          * 用户取消则进入`rejected`状态
          */
         exports.waitCancelConfirm = function (options) {
-            return this.waitConfirm(options, 'cancel');
+            return this.waitConfirmForType(options, 'cancel');
         };
 
         /**
@@ -156,7 +156,7 @@ define(
          * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，
          * 用户取消则进入`rejected`状态
          */
-        exports.waitConfirm = function (options, type) {
+        exports.waitConfirmForType = function (options, type) {
             // 加viewContext
             if (!options.viewContext) {
                 options.viewContext = this.viewContext;
