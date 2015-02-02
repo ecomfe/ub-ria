@@ -77,9 +77,9 @@ define(
          * @method mvc.DetailModel#getListExtraArgs
          * @return {Object}
          */
-         exports.getListExtraArgs = function () {
+        exports.getListExtraArgs = function () {
             return {};
-         };
+        };
 
         /**
          * 获取当前详情页对应树节点的的实体名称
