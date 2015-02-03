@@ -12,6 +12,9 @@ define(
 
         var u = require('../util');
 
+        var Validity = require('esui/validator/Validity');
+        var ValidityState = require('esui/validator/ValidityState');
+
         // 使用表单视图，有以下要求：
         //
         // - 有id为`form`的`Form`控件
@@ -104,8 +107,6 @@ define(
          * @param {Array.<meta.FieldError>} errors.fields 出现错误的字段集合
          */
         exports.notifyErrors = function (errors) {
-            var Validity = require('esui/validator/Validity');
-            var ValidityState = require('esui/validator/ValidityState');
             var form = this.get('form');
 
             for (var i = 0; i < errors.fields.length; i++) {
@@ -120,6 +121,34 @@ define(
                     input.showValidity(validity);
                 }
             }
+        };
+
+        /**
+         * 显示全局错误
+         *
+         * @public
+         * @method mvc.FormView#notifyGlobalError
+         * @param {string} error 错误信息
+         */
+        exports.notifyGlobalError = function (error) {
+            var state = new ValidityState(false, error);
+            var validity = new Validity();
+            validity.addState('server', state);
+
+            var validateLabel = this.getSafely('global-error');
+            validateLabel.set('validity', validity);
+        };
+
+        /**
+         * 清除全局错误
+         *
+         * @public
+         * @method mvc.FormView#notifyGlobalError
+         */
+        exports.clearGlobalError = function () {
+            var validity = new Validity();
+            var validateLabel = this.getSafely('global-error');
+            validateLabel.set('validity', validity);
         };
 
         /**

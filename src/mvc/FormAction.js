@@ -39,12 +39,16 @@ define(
             if (errors.status === 409) {
                 errors = require('er/util').parseJSON(errors.responseText);
             }
+            // 处理全局错误
+            if (errors.message) {
+                this.view.notifyGlobalError(errors.message);
+            }
             // 处理model校验产生的错误信息，或者后端校验返回的错误信息
             if (errors.fields) {
                 this.view.notifyErrors(errors);
-                return true;
             }
-            return false;
+
+            return errors.message || errors.fields;
         };
 
         /**
@@ -266,6 +270,7 @@ define(
         };
 
         function submit() {
+            this.view.clearGlobalError();
             var entity = this.view.getEntity();
 
             var options = {
