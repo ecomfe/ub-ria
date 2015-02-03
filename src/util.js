@@ -176,7 +176,7 @@ define(
                 return '';
             }
 
-            s = util.pascalize(s);
+            s = util.dasherize(s).replace(/-/g, '_');
             return s.toUpperCase();
         };
         util.constlize = util.memoize(util.constlize);
