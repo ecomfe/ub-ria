@@ -67,7 +67,8 @@ define(
                 var start =  (query.pageNo - 1) * query.pageSize;
                 var end = Math.min(start + query.pageSize, results.length);
                 results = results.slice(start, end);
-                sortData.results = results;
+                //深克隆一下，免得外部对数据的修改影响到cache
+                sortData.results = u.deepClone(results);
             }
 
             return sortData;
