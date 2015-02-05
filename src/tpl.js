@@ -193,13 +193,18 @@ define(
                     );
                 }
 
-                var options = {
-                    method: 'GET',
-                    url: parentRequire.toUrl(resourceId),
-                    cache: true,
-                    dataType: 'text'
-                };
-                ajax.request(options).then(addTemplate);
+                if (resourceId.indexOf('.tpl.html') >= 0) {
+                    var options = {
+                        method: 'GET',
+                        url: parentRequire.toUrl(resourceId),
+                        cache: true,
+                        dataType: 'text'
+                    };
+                    ajax.request(options).then(addTemplate);
+                }
+                else {
+                    parentRequire([resourceId], addTemplate);
+                }
             },
 
             /**
