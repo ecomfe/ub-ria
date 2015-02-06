@@ -17,6 +17,7 @@ esui-box-group {
 @flat-radio-icon-checked: url(../img/flat-radio-checked.png);
 @flat-radio-icon-disabled: @flat-radio-icon-normal;
 @flat-radio-icon-readonly: @flat-radio-icon-normal;
+@flat-radio-icon-disabled-checked: url(../img/flat-radio-disabled-checked.png);
 
 @flat-radio-height: 18px;
 @flat-radio-icon-width: 18px;
@@ -145,7 +146,7 @@ esui-box-group {
         .ui-boxgroup-wrapper-checked {
             &.ui-boxgroup-checkbox,
             &.ui-boxgroup-checkbox:hover {
-                .skin-flat-checkbox-icon-mixin(@flat-checkbox-icon-checked);
+                .skin-flat-checkbox-icon-mixin(@flat-radio-icon-disabled-checked);
             }
         }
     }
