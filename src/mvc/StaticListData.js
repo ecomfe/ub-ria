@@ -67,7 +67,7 @@ define(
                 var start =  (query.pageNo - 1) * query.pageSize;
                 var end = Math.min(start + query.pageSize, results.length);
                 results = results.slice(start, end);
-                //深克隆一下，免得外部对数据的修改影响到cache
+                // 深克隆一下，免得外部对数据的修改影响到cache
                 sortData.results = u.deepClone(results);
             }
 
@@ -93,7 +93,7 @@ define(
                 };
                 return this.list(query).then(u.bind(cache, this));
             }
-            return require('er/Deferred').resolved(this.filterData(query));
+            return require('promise').resolve(this.filterData(query));
         };
 
         /**

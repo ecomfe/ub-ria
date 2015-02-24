@@ -36,12 +36,10 @@ define(
          * @return {er.Promise}
          */
         exports.createRuntimeAction = function (actionContext) {
-            var Deferred = require('er/Deferred');
-            var deferred = new Deferred();
-
-            this.getIocContainer().getComponent(this.actionComponent, deferred.resolver.resolve);
-
-            return deferred.promise.then(u.bind(this.buildAction, this, actionContext));
+            var Promise = require('promise');
+            var ioc = this.getIocContainer();
+            return new Promise(u.bind(ioc.getComponent, ioc, this.actionComponent))
+                .thenBind(this.buildAction, this, actionContext);
         };
 
         /**

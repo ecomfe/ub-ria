@@ -172,8 +172,7 @@ define(
          * @return {er.Promise} 一个`Promise`对象，默认进入`resolved`状态。
          */
         exports.waitSubmitConfirm = function (options) {
-            var Deferred = require('er/Deferred');
-            return Deferred.resolved();
+            return require('promise').resolve();
         };
 
         /**
@@ -231,32 +230,32 @@ define(
                 this
             );
 
-            var Deferred = require('er/Deferred');
-            var deferred = new Deferred();
+            var Promise = require('promise');
+            var executor = function (resolve, reject) {
+                warn.on(
+                    'ok',
+                    function () {
+                        resolve();
+                        formViewContainer.removeState('warned');
+                    }
+                );
+                warn.on(
+                    'cancel',
+                    function () {
+                        reject();
+                        formViewContainer.removeState('warned');
+                    }
+                );
+                warn.on(
+                    'hide',
+                    function () {
+                        reject();
+                        formViewContainer.removeState('warned');
+                    }
+                );
+            };
 
-            warn.on(
-                'ok',
-                function () {
-                    deferred.resolver.resolve();
-                    formViewContainer.removeState('warned');
-                }
-            );
-            warn.on(
-                'cancel',
-                function () {
-                    deferred.resolver.reject();
-                    formViewContainer.removeState('warned');
-                }
-            );
-            warn.on(
-                'hide',
-                function () {
-                    deferred.resolver.reject();
-                    formViewContainer.removeState('warned');
-                }
-            );
-
-            return deferred.promise;
+            return new Promise(executor);
         };
 
         /**

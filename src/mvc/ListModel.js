@@ -480,7 +480,6 @@ define(
          */
         exports.getRemoveAdvice = function (ids) {
             // 默认仅本地提示，有需要的子类重写为从远程获取信息
-            var Deferred = require('er/Deferred');
             var count = ids.length;
             var description = this.get('entityDescription');
 
@@ -492,7 +491,7 @@ define(
                 message: message
             };
 
-            return Deferred.resolved(advice);
+            return require('promise').resolve(advice);
         };
 
         /**

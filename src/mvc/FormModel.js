@@ -8,7 +8,7 @@
  */
 define(
     function (require) {
-        var Deferred = require('er/Deferred');
+        var Promise = require('promise');
 
         /**
          * @class mvc.FormModel
@@ -93,7 +93,7 @@ define(
             var validationResult = this.validateEntity(entity);
 
             if (validationResult.length > 0) {
-                return Deferred.rejected({fields: validationResult});
+                return Promise.reject({fields: validationResult});
             }
 
             return this.saveEntity(entity);
@@ -116,7 +116,7 @@ define(
             var validationResult = this.validateEntity(entity);
 
             if (validationResult.length > 0) {
-                return Deferred.rejected({fields: validationResult});
+                return Promise.reject({fields: validationResult});
             }
 
             return this.updateEntity(entity);

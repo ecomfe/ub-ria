@@ -9,7 +9,7 @@
 define(
     function (require) {
         var u = require('../util');
-        var Deferred = require('er/Deferred');
+        var Promise = require('promise');
 
         /**
          * @class mvc.FormAction
@@ -140,17 +140,15 @@ define(
             try {
                 if (method) {
                     return this.model[method](entity)
-                        .then(
-                            u.bind(this.handleSubmitResult, this),
-                            u.bind(handleError, this)
-                        );
+                        .thenBind(this.handleSubmitResult, this)
+                        .fail(u.bind(handleError, this));
                 }
 
                 throw new Error('Cannot find formType in methodMap');
 
             }
             catch (ex) {
-                return Deferred.rejected(ex);
+                return Promise.reject(ex);
             }
         };
 
