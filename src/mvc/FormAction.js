@@ -219,7 +219,7 @@ define(
                     content: this.getCancelConfirmMessage()
                 };
                 this.view.waitCancelConfirm(options)
-                    .then(u.bind(cancel, this));
+                    .thenBind(cancel, this);
             }
             else {
                 cancel.call(this);
@@ -277,7 +277,8 @@ define(
 
             this.view.disableSubmit();
 
-            this.view.waitSubmitConfirm(options).then(u.bind(this.submitEntity, this, entity))
+            this.view.waitSubmitConfirm(options)
+                .thenBind(this.submitEntity, this, entity)
                 .ensure(u.bind(this.view.enableSubmit, this.view));
         }
 

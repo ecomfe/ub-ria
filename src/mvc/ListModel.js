@@ -39,11 +39,7 @@ define(
         var PAGE_SIZE_DATASOURCE = {
             pageSize: function (model) {
                 var globalData = model.data('global');
-                return globalData.getUser().then(
-                    function (user) {
-                        return user.pageSize;
-                    }
-                );
+                return globalData.getUser().thenGetProperty('pageSize');
             }
         };
 
