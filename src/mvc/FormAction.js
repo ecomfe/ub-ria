@@ -275,9 +275,8 @@ define(
                 content: this.getSubmitConfirmMessage()
             };
 
-            this.view.disableSubmit();
-
             this.view.waitSubmitConfirm(options)
+                .thenBind(this.view.disableSubmit, this.view)
                 .thenBind(this.submitEntity, this, entity)
                 .ensure(u.bind(this.view.enableSubmit, this.view));
         }

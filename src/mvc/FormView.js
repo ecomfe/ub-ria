@@ -242,14 +242,12 @@ define(
                 warn.on(
                     'cancel',
                     function () {
-                        reject();
                         formViewContainer.removeState('warned');
                     }
                 );
                 warn.on(
                     'hide',
                     function () {
-                        reject();
                         formViewContainer.removeState('warned');
                     }
                 );
