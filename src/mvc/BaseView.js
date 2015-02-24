@@ -170,19 +170,44 @@ define(
         };
 
         /**
+         * 等待用户的选择
+         *
+         * 参数同`ef.UIView.prototype.confirm`，但返回一个`Promise`对象
+         *
+         * @method mvc.BaseView#waitDecision
+         * @return {er.Promise} 一个`Promise`对象，进入`resolved`状态时提供用户选择的按钮名称，默认有`"ok"`和`"cancel"`可选
+         */
+        exports.waitDecision = function () {
+            var dialog = this.confirm.apply(this, arguments);
+
+            var executor = function (resolve, reject) {
+                dialog.on('ok', u.partial(resolve, 'ok'));
+                dialog.on('cancel', u.partial(resolve, 'cancel'));
+            };
+            return new Promise(executor);
+        };
+
+        /**
          * 等待用户确认
          *
          * 参数同`ef.UIView.prototype.confirm`，但返回一个`Promise`对象
+         *
+         * 当用户选择“确认”后，`Promise`对象进行`resolved`状态，用户选择取消则没有任何效果
+         *
+         * 如果需要知道用户选择“取消”，则应当使用{@link mvc.BaseView#waitDecision|waitDecision方法}
          *
          * @method mvc.BaseView#waitConfirm
          * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
          */
         exports.waitConfirm = function () {
-            var dialog = this.confirm.apply(this, arguments);
-
-            var executor = function (resolve, reject) {
-                dialog.on('ok', resolve);
-                dialog.on('cancel', reject);
+            var waiting = this.waitDecision.apply(this, arguments);
+            var executor = function (resolve) {
+                var receiveOK = function (result) {
+                    if (result === 'ok') {
+                        resolve();
+                    }
+                };
+                waiting.then(receiveOK);
             };
             return new Promise(executor);
         };
