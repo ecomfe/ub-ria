@@ -32,8 +32,9 @@
             "mini-event": "1.x",
             "etpl": "2.x",
             "moment": "2.x",
-            "uioc": "0.2.x",
-            "eoo": "~0.1.1"
+            "uioc": "0.x",
+            "eoo": "0.x",
+            "promise": "1.x"
         }
     }
 }

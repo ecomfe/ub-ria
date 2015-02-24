@@ -10,6 +10,7 @@
 define(
     function (require) {
         var u = require('../util');
+        var Promise = require('promise');
 
         /**
          * 视图基类
@@ -178,13 +179,12 @@ define(
          */
         exports.waitConfirm = function () {
             var dialog = this.confirm.apply(this, arguments);
-            var Deferred = require('er/Deferred');
-            var deferred = new Deferred();
 
-            dialog.on('ok', deferred.resolver.resolve);
-            dialog.on('cancel', deferred.resolver.reject);
-
-            return deferred.promise;
+            var executor = function (resolve, reject) {
+                dialog.on('ok', resolve);
+                dialog.on('cancel', reject);
+            };
+            return new Promise(executor);
         };
 
         /**
@@ -197,14 +197,12 @@ define(
         exports.waitActionDialog = function () {
             var dialog = this.popActionDialog.apply(this, arguments);
 
-            var Deferred = require('er/Deferred');
-            var deferred = new Deferred();
-
-            dialog.on('actionloaded', deferred.resolver.resolve);
-            dialog.on('actionloadfail', deferred.resolver.reject);
-            dialog.on('actionloadabort', deferred.resolver.reject);
-
-            return deferred.promise;
+            var executor = function (resolve, reject) {
+                dialog.on('actionloaded', resolve);
+                dialog.on('actionloadfail', reject);
+                dialog.on('actionloadabort', reject);
+            };
+            return new Promise(executor);
         };
 
         /**

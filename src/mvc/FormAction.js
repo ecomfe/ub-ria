@@ -9,7 +9,7 @@
 define(
     function (require) {
         var u = require('../util');
-        var Deferred = require('er/Deferred');
+        var Promise = require('promise');
 
         /**
          * @class mvc.FormAction
@@ -140,17 +140,15 @@ define(
             try {
                 if (method) {
                     return this.model[method](entity)
-                        .then(
-                            u.bind(this.handleSubmitResult, this),
-                            u.bind(handleError, this)
-                        );
+                        .thenBind(this.handleSubmitResult, this)
+                        .fail(u.bind(handleError, this));
                 }
 
                 throw new Error('Cannot find formType in methodMap');
 
             }
             catch (ex) {
-                return Deferred.rejected(ex);
+                return Promise.reject(ex);
             }
         };
 
@@ -221,7 +219,7 @@ define(
                     content: this.getCancelConfirmMessage()
                 };
                 this.view.waitCancelConfirm(options)
-                    .then(u.bind(cancel, this));
+                    .thenBind(cancel, this);
             }
             else {
                 cancel.call(this);
@@ -279,7 +277,8 @@ define(
 
             this.view.disableSubmit();
 
-            this.view.waitSubmitConfirm(options).then(u.bind(this.submitEntity, this, entity))
+            this.view.waitSubmitConfirm(options)
+                .thenBind(this.submitEntity, this, entity)
                 .ensure(u.bind(this.view.enableSubmit, this.view));
         }
 
