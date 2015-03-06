@@ -1,4 +1,5 @@
 @table-operation-field-text-color: #67c1a5;
+@table-operation-layer-max-width: 100%;
 @list-meta-height: 35px;
 @list-action-button-bacth-gap: 10px;
 @list-action-button-width: 155px;
@@ -108,7 +109,7 @@
 // 鼠标悬浮最后一列的时候，触发弹层展现
 .ui-table-cell-text-last:hover {
     .table-operation-layer-wrapper {
-        width: 100%;
+        width: @table-operation-layer-max-width;
     }
     .table-operation-layer {
         right: 0;
