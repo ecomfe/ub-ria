@@ -28,13 +28,13 @@ define(
             var expectedType = schema[0];
             // typeMapping的key为值类型，value为与key匹配的定义中的类型数组
             var typeMapping = {
-                'Undefined': true,
-                'Null': true,
-                'Array': ['array'],
-                'String': ['string'],
-                'Number': ['number', 'enum'],
-                'Boolean': ['bool'],
-                'Object': ['object']
+                Undefined: true,
+                Null: true,
+                Array: ['array'],
+                String: ['string'],
+                Number: ['number', 'enum'],
+                Boolean: ['bool'],
+                Object: ['object']
             };
             var key = '';
 

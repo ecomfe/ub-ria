@@ -179,7 +179,7 @@ define(
             // a, b 如果有一个能转成数字
             // 能转成数字的永远大。
             if (aIsNumber || bIsNumber) {
-                return aIsNumber ? (symbol * 1) : (symbol * -1) ;
+                return aIsNumber ? (symbol * 1) : (symbol * -1);
             }
 
             // 否则就是文字对比

@@ -133,7 +133,6 @@ define(
          * 快捷显示信息的方法
          *
          * @method ui.Warn.show
-         * @param {string} content 显示的内容
          * @param {Object} options 其它配置项
          * @return {ui.Warn}
          */
