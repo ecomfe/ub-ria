@@ -4,7 +4,6 @@
  *
  * @file 类型校验对象
  * @author yanghuabei(yanghuabei@baidu.com)
- * @date $DATE$
  */
 define(
     function (require) {

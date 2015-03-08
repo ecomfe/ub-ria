@@ -3,9 +3,7 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 静态排序数据类
- * @exports mvc.StaticListData
- * @author lixiang
- *         shenbnin(bobshenbin@gmail.com)
+ * @author lixiang, shenbnin(bobshenbin@gmail.com)
  */
 define(
     function (require) {
@@ -13,11 +11,15 @@ define(
 
         /**
          * 静态搜索相关搜索参数
+         *
+         * @const
          * @type {Array}
          */
         var STATIC_KEYS = ['order', 'orderBy', 'pageNo', 'pageSize'];
 
         /**
+         * 静态排序数据类
+         *
          * @class mvc.StaticListData
          * @extends mvc.RequestManager
          */
@@ -26,7 +28,6 @@ define(
         /**
          * 获取一个实体列表（不分页）
          *
-         * @public
          * @method mvc.StaticListData#list
          * @param {Object} query 查询参数
          * @return {er.meta.FakeXHR}
@@ -77,7 +78,6 @@ define(
         /**
          * 检索一个实体列表，返回一个结果集
          *
-         * @public
          * @method mvc.StaticListData#search
          * @param {Object} query 查询参数
          * @return {er.meta.FakeXHR}
@@ -112,7 +112,6 @@ define(
         /**
          * 判断静态搜索相关的字段是否变化
          *
-         * @public
          * @method mvc.StaticListData#checkStaticKeyChanged
          * @param  {Object} query 搜索参数
          * @return {boolean}
@@ -130,7 +129,6 @@ define(
         /**
          * 返回全集
          *
-         * @public
          * @method mvc.StaticListData#getCacheList
          * @return {Array}
          */
@@ -189,11 +187,8 @@ define(
         }
 
         /**
-         * 排序
-         * js原生的sort方法在不同浏览器上表现不同（稳定或不稳定）
-         * 因此自己写一个稳定排序, 冒泡排序
+         * 排序js原生的sort方法在不同浏览器上表现不同（稳定或不稳定），因此自己写一个稳定排序, 冒泡排序
          *
-         * @public
          * @method mvc.StaticListData#sort
          * @param {Array} array 待排序数组
          * @param {string} order desc | asc

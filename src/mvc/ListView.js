@@ -3,8 +3,7 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 列表视图基类
- * @exports mvc.ListView
- * @author otakustay, wangyaqiong(catkin2009@gmail.com)
+ * @author otakustay
  */
 define(
     function (require) {

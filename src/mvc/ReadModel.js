@@ -3,12 +3,13 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 只读页数据模型基类
- * @exports mvc.ReadModel
  * @author otakustay
  */
 define(
     function (require) {
         /**
+         * 只读页数据模型基类
+         *
          * @class mvc.ReadModel
          * @extends mvc.SingleEntityModel
          */
@@ -17,7 +18,8 @@ define(
         /**
          * 字段无值时的默认显示文本，默认为`"--"`
          *
-         * @member {string} mvc.ReadModel#defaultDisplayText
+         * @member mvc.ReadModel#defaultDisplayText
+         * @type {string}
          */
         exports.defaultDisplayText = '--';
 
@@ -34,8 +36,7 @@ define(
          * 获取属性值
          *
          * @param {string} name 属性名称
-         * @return {Mixed} 对应属性的值，
-         * 如果不存在属性则返回{@link ReadModel#defaultDisplayText}
+         * @return {*} 对应属性的值，如果不存在属性则返回{@link ReadModel#defaultDisplayText}
          * @override
          */
         exports.get = function (name) {
@@ -45,9 +46,7 @@ define(
                 return value;
             }
 
-            return this.hasReadableValue(name)
-                ? value
-                : this.defaultDisplayText;
+            return this.hasReadableValue(name) ? value : this.defaultDisplayText;
         };
 
         var SingleEntityModel = require('./SingleEntityModel');

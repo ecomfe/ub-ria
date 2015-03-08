@@ -3,21 +3,25 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 表单提交成功后的跳转组件
- * @class RedirectSubmitHandler
- * @extends SubmitHandler
  * @author yanghuabei(yanghuabei@baidu.com)
- * @date $DATE$
  */
 define(
     function (require) {
         var u = require('../../util');
         var SubmitHandler = require('./SubmitHandler');
 
+        /**
+         * 表单提交成功后的跳转组件
+         *
+         * @class mvc.handler.RedirectSubmitHandler
+         * @extends mvc.handler.SubmitHandler
+         */
         var exports = {};
 
         /**
          * 跳转url模版
          *
+         * @member mvc.handler.RedirectSubmitHandler#template
          * @type {string}
          */
         exports.template = '/${entityName}/list';
@@ -25,6 +29,7 @@ define(
         /**
          * 跳转参数
          *
+         * @member mvc.handler.RedirectSubmitHandler#redirectOptions
          * @type {string}
          */
         exports.redirectOptions = null;
@@ -32,7 +37,7 @@ define(
         /**
          * 设置组件的url模版
          *
-         * @method RedirectSubmitHandler.prototype.setTemplate
+         * @method mvc.handler.RedirectSubmitHandler#setTemplate
          * @param {string} template 跳转url模版
          */
         exports.setTemplate = function (template) {
@@ -42,7 +47,7 @@ define(
         /**
          * 获取模版
          *
-         * @method RedirectSubmitHandler.prototype.getTemplate
+         * @method mvc.handler.RedirectSubmitHandler#getTemplate
          * @return {string}
          */
         exports.getTemplate = function () {
@@ -52,7 +57,7 @@ define(
         /**
          * 设置跳转参数
          *
-         * @method RedirectSubmitHandler.prototype.setRedirectOptions
+         * @method mvc.handler.RedirectSubmitHandler#setRedirectOptions
          * @param {Object} options 跳转参数
          */
         exports.setRedirectOptions = function (options) {
@@ -62,7 +67,7 @@ define(
         /**
          * 获取跳转参数
          *
-         * @method RedirectSubmitHandler.prototype.getRedirectOptions
+         * @method mvc.handler.RedirectSubmitHandler#getRedirectOptions
          * @return {Object}
          */
         exports.getRedirectOptions = function () {
@@ -70,11 +75,7 @@ define(
         };
 
         /**
-         * 提交成功处理函数
-         *
-         * @method RedirectSubmitHandler.prototype.handle
-         * @param {Object} entity 提交后服务器端返回的实体信息
-         * @param {er.Action} action 表单Action实例
+         * @override
          */
         exports.handle = function (entity, action) {
             var data = this.getData(entity, action);
@@ -87,7 +88,8 @@ define(
         /**
          * 跳转的方法
          *
-         * @method RedirectSubmitHandler.prototype.redirect
+         * @protected
+         * @method mvc.handler.RedirectSubmitHandler#redirect
          * @param {er.Action} action 表单Action实例
          * @param {string} url 跳转目的url
          * @param {Object} options 跳转参数
@@ -99,7 +101,8 @@ define(
         /**
          * 获取url模版的数据
          *
-         * @method RedirectSubmitHandler.prototype.getData
+         * @protected
+         * @method mvc.handler.RedirectSubmitHandler#getData
          * @param {Object} entity 提交后服务器端返回的实体信息
          * @param {er.Action} action 表单Action实例
          * @return {Object}

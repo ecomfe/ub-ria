@@ -2,7 +2,6 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 请求处理策略类
  * @author otakustay
  */
@@ -20,13 +19,13 @@ define(
         var exports = {};
 
         /**
-         * 处理请求名称，具体业务可以使用此方法对请求名称进行一些替换操作，
-         * 如可以根据当前对象的`entityName`属性为请求名称加上前缀等
+         * 处理请求名称，具体业务可以使用此方法对请求名称进行一些替换操作，如可以根据当前对象的`entityName`属性为请求名称加上前缀等
          *
+         * @protected
+         * @method mvc.RequestStrategy#formatName
          * @param {string} name 当前请求的名称
          * @param {Object} options 请求的配置，此配置为调用{@link mvc.RequestManager#request}时提供的初始配置
          * @return {string}
-         * @protected
          */
         exports.formatName = function (name, options) {
             return name;
@@ -36,10 +35,11 @@ define(
          * 处理请求的URL，具体业务可以使用此方法对请求的URL进行一些替换操作，
          * 如可以根据当前对象的`entityName`来生成通用的URL等
          *
+         * @protected
+         * @method mvc.RequestStrategy#formatURL
          * @param {string} url 当前请求的URL
          * @param {Object} options 请求的配置，此配置为已经被处理过的完整的配置
          * @return {string}
-         * @protected
          */
         exports.formatURL = function (url, options) {
             return url;
@@ -48,9 +48,10 @@ define(
         /**
          * 处理请求参数
          *
+         * @protected
+         * @method mvc.RequestStrategy#formatOptions
          * @param {Object} options 请求的参数
          * @return {Object}
-         * @protected
          */
         exports.formatOptions = function (options) {
             // 默认使用JSON作为响应格式

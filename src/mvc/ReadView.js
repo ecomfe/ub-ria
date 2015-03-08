@@ -3,20 +3,19 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 只读页视图基类
- * @exports mvc.ReadView
  * @author otakustay
  */
 define(
     function (require) {
         /**
+         * 只读页视图基类
+         *
          * @class mvc.ReadView
          * @extends mvc.BaseView
          */
         var exports = {};
 
         /**
-         * 绑定控件事件
-         *
          * @override
          */
         exports.bindEvents = function () {

@@ -2,10 +2,8 @@
  * UB RIA Base
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 表单实体验证基类
  * @author yanghuabei
- * @date $DATE$
  */
 define(
     function (require) {
@@ -26,12 +24,11 @@ define(
         /**
          * 表单实体验证基类
          *
-         * 作为{@link mvc.FormModel}的属性，用于对表单提交的数据在发送至后端前进行
-         * 检验，检验规则由模块下相应的schema.js决定。
+         * 作为{@link mvc.FormModel}的属性，用于对表单提交的数据在发送至后端前进行检验，检验规则由模块下相应的schema.js决定。
          *
-         * 默认提供required, type, maxLength, minLength, rangeLength,
-         * min, max, range, enum, pattern十种校验器，每种检验器具有不同的优先级
-         * 用户自定义的检验器可通过{EntityValidator.addCheckers}进行全局配置
+         * 默认提供`required`, `type`, `maxLength`, `minLength`, `rangeLength`,
+         * `min`, `max`, `range`, `enum`, `pattern`十种校验器，每种检验器具有不同的优先级
+         * 用户自定义的检验器可通过{@link EntityValidator#addCheckers}进行全局配置
          *
          * @class mvc.EntityValidator
          */
@@ -45,19 +42,19 @@ define(
         };
 
         /**
-         * 用于初始化EntityValidator实例的checkers属性，有需要可以通过override
-         * 实现对EntityValidator检查器的全局配置
+         * 用于初始化实例的checkers属性，有需要可以重写该方法实现对检查器的全局配置
          *
+         * @method mvc.EntityValidator#initCheckers
          */
         exports.initCheckers = function () {
             this.checkers = u.deepClone(checkers);
         };
 
         /**
-         * 用于自定义EntityValidator实例的校验器错误提示信息
+         * 用于自定义实例的校验器错误提示信息
          *
-         * @param {Object} errorMessages 每一项为校验器名与信息模板内容组成
-         * key-value对
+         * @method mvc.EntityValidator#setErrorMessages
+         * @param {Object} errorMessages 每一项为校验器名与信息模板内容组成key-value对
          */
         exports.setErrorMessages = function (errorMessages) {
             if (!errorMessages) {
@@ -77,12 +74,12 @@ define(
         };
 
         /**
-         * 为某个EntityValidator实例添加自定义校验器
+         * 为某个实例添加自定义校验器
          *
+         * @method mvc.EntityValidator#addChecker
          * @param {Object} checker 要添加的自定义检验器
          * @param {string} checker.name 校验器名称
-         * @param {string | Object} checker.errorMessage 错误信息模板,
-         *     或者多个错误信息模板组成的对象
+         * @param {string | Object} checker.errorMessage 错误信息模板,或者多个错误信息模板组成的对象
          * @param {number} checker.priority 校验器优先级
          * @param {Function} checker.check 校验函数
          * @return {Object} 添加成功返回checker，失败返回null
@@ -104,8 +101,9 @@ define(
         };
 
         /**
-         * 移除EntityValidator实例上指定名称的校验器
+         * 移除实例上指定名称的校验器
          *
+         * @method mvc.EntityValidator#removeChecker
          * @param {string} checkerName 校验器名称
          * @return {boolean} 删除成功返回true，失败返回false
          */
@@ -116,17 +114,19 @@ define(
         };
 
         /**
-         * 获取EntityValidator实例上的校验器checkers
+         * 获取实例上的校验器checkers
          *
-         * @return {Object} 返回localCheckers
+         * @method mvc.EntityValidator#getCheckers
+         * @return {Object} 返回当前实例上的校验器
          */
         exports.getCheckers = function () {
             return this.checkers || {};
         };
 
         /**
-         * 设置validator的'schema'属性
+         * 设置需要校验的实体的规则
          *
+         * @method mvc.EntityValidator#setSchema
          * @param {Object} value 实体的schema定义
          */
         exports.setSchema = function (value) {
@@ -134,17 +134,19 @@ define(
         };
 
         /**
-         * 获取validator的schema
+         * 获取需要校验的实体的规则
          *
-         * @return {object | undefined}
+         * @method mvc.EntityValidator#getSchema
+         * @return {Object | undefined}
          */
         exports.getSchema = function () {
             return this.schema;
         };
 
         /**
-         * 设置validator的'rule'属性
+         * 设置规则常量对象
          *
+         * @method mvc.EntityValidator#setRule
          * @param {Object} value model上绑定的rule
          */
         exports.setRule = function (value) {
@@ -152,20 +154,21 @@ define(
         };
 
         /**
-         * 获取validator的rule
+         * 获取规则常量对象
          *
-         * @return {object | undefined}
+         * @method mvc.EntityValidator#getRule
+         * @return {Object | undefined}
          */
         exports.getRule = function () {
             return this.rule;
         };
 
         /**
-         * 调用该方法对model的实体值进行检验，默认检验规则定义与相应模块内的
-         * schema.js中
+         * 调用该方法对model的实体值进行检验，默认检验规则定义与相应模块内的`schema`中
          *
+         * @method mvc.EntityValidator#validate
          * @param {Object} entity 表单提交的实体
-         * @return {object[]} 错误字段及错误信息数组
+         * @return {Object[]} 错误字段及错误信息数组
          */
         exports.validate = function (entity) {
             var schema = this.getSchema();
@@ -185,9 +188,8 @@ define(
          *
          * @param {Object} schema 实体定义
          * @param {Object} entity 表单提交的实体
-         * @param {object[]} errors 错误字段、错误信息数组
+         * @param {Object[]} errors 错误字段、错误信息数组
          * @param {string[]} path 记录字段层次的数组
-         * @ignore
          */
         function actualValidate(schema, entity, errors, path) {
             for (var field in schema) {
@@ -207,7 +209,7 @@ define(
                     fieldSchema: fieldSchema
                 };
                 // 传入实体对应字段值、字段路径、字段定义、检查器集合，检查该字段的值是否满足定义的要求
-                var result = this.excuteCheckers(fieldCheckers, args);
+                var result = this.executeCheckers(fieldCheckers, args);
                 // 如果发现错误，继续检查下一字段
                 if (result) {
                     errors.push(result);
@@ -240,14 +242,16 @@ define(
         /**
          * 执行对当前字段的校验，校验通过返回true，不通过返回对象
          *
+         * @protected
+         * @method mvc.EntityValidator#executeCheckers
          * @param {Object[]} fieldCheckers 针对某字段的检验器数组，按优先级高低排序
-         * @param {Object[]} checkerOptions 配置项
+         * @param {Object} checkerOptions 配置项
          * @param {string} checkerOptions.value 待检验的字段值
          * @param {string} checkerOptions.fieldPath 待检验字段在实体entity中的访问路径
          * @param {Object[]} checkerOptions.fieldSchema 待检验字段的定义、约束
          * @return {Object | true}
          */
-        exports.excuteCheckers = function (fieldCheckers, checkerOptions) {
+        exports.executeCheckers = function (fieldCheckers, checkerOptions) {
             var value = checkerOptions.value;
             var fieldPath = checkerOptions.fieldPath;
             var fieldSchema = u.deepClone(checkerOptions.fieldSchema);
@@ -286,9 +290,8 @@ define(
          * 根据字段定义和错误信息模板，生成错误信息
          *
          * @param {string} template 错误信息模板
-         * @param {fieldSchema} fieldSchema 字段定义
+         * @param {Array} fieldSchema 字段定义，根据规则第`0`项为字段名称，第`1`项为字段类型，第`2`项为包含校验规则的对象
          * @return {string} 错误信息
-         * @ignore
          */
         function getErrorMessage(template, fieldSchema) {
             var data = {};
@@ -311,11 +314,10 @@ define(
         }
 
         /**
-         * 解析字段定义中的预定义规则字段，包括maxLength, minLength
-         * min, max, pattern, 当其值为以'@'为前缀的字符串时，进行解析
+         * 解析字段定义中的预定义规则字段，包括maxLength, minLength，min, max, pattern, 当其值为以'@'为前缀的字符串时，进行解析
          *
-         * @param {object[]} fieldSchema 字段定义
-         * @return {object[]} 解析后的字段定义
+         * @param {Object[]} fieldSchema 字段定义
+         * @return {Object[]} 解析后的字段定义
          */
         function parseFieldSchema(fieldSchema) {
             var typeOption = fieldSchema[2];
@@ -365,6 +367,8 @@ define(
         /**
          * 生成某一字段的按优先级高低排序的检验器数组
          *
+         * @protected
+         * @method mvc.EntityValidator#getFieldCheckers
          * @param {Object} fieldSchema 字段定义
          * @return {Object} 检验器对象组成的有序数组
          */
@@ -393,7 +397,6 @@ define(
          *
          * @param {Object} fieldSchema 字段的定义
          * @return {string[]} 检验器名组成的数组
-         * @ignore
          */
         function getFieldCheckerNames(fieldSchema) {
             // 与字段校验无关的属性
@@ -430,12 +433,9 @@ define(
          * @param {string} min 下界检查器名
          * @param {string} max 上界检查器名
          * @return {string[]} 返回经过处理的新数组
-         * @ignore
          */
         function addRangeChecker(list, range, min, max) {
-            if (u.indexOf(list, min) >= 0
-                && u.indexOf(list, max) >= 0
-            ) {
+            if (u.indexOf(list, min) >= 0 && u.indexOf(list, max) >= 0) {
                 list = u.without(list, min, max);
                 list.push(range);
             }

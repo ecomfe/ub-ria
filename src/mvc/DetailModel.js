@@ -3,7 +3,6 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 详情页Model基类
- * @exports mvc.DetailModel
  * @author otakustay
  */
 define(

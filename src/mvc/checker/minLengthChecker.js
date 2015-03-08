@@ -4,7 +4,6 @@
  *
  * @file 最短长度校验器
  * @author yanghuabei(yanghuabei@baidu.com)
- * @date $DATE$
  */
 define(
     function (require) {

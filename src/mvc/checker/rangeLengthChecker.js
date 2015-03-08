@@ -4,7 +4,6 @@
  *
  * @file 字段长度范围校验器
  * @author yanghuabei(yanghuabei@baidu.com)
- * @date $DATE$
  */
 define(
     function (require) {

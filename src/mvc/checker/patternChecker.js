@@ -4,7 +4,6 @@
  *
  * @file 正则校验器
  * @author yanghuabei(yanghuabei@baidu.com)
- * @date $DATE$
  */
 define(
     function (require) {

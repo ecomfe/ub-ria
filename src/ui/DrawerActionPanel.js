@@ -3,7 +3,6 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 简易信息提示控件
- * @exports ub-ria.ui.DrawerActionPanel
  * @author exodia
  */
 define(
@@ -11,12 +10,24 @@ define(
         var lib = require('esui/lib');
 
         /**
-         * @class ub-ria.ui.DrawerActionPanel
+         * 抽屉式交互的子Action容器控件
+         *
+         * 该控件与`ActionPanel`功能相同，额外增加了以下功能：
+         *
+         * 1. 显示/隐藏会产生自右向左的滑动效果，默认覆盖与当前页面之上
+         * 2. 带有一个关闭按钮，点击后自动隐藏
+         *
+         * @class ui.DrawerActionPanel
          * @extends ef.ActionPanel
          */
         var exports = {};
 
         /**
+         * 控件类型，始终为`"DrawerActionPanel"`
+         *
+         * @member ui.DrawerActionPanel#type
+         * @type {string}
+         * @readonly
          * @override
          */
         exports.type = 'DrawerActionPanel';

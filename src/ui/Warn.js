@@ -21,15 +21,14 @@ define(
         /**
          * 控件类型，始终为`"Warn"`
          *
+         * @member ui.Warn#type
          * @type {string}
+         * @readonly
          * @override
          */
         exports.type = 'Warn';
 
         /**
-         * 初始化参数
-         *
-         * @param {Object=} options 构造函数传入的参数
          * @override
          */
         exports.initOptions = function (options) {
@@ -94,8 +93,6 @@ define(
         };
 
         /**
-         * 渲染自身
-         *
          * @override
          */
         exports.repaint = require('esui/painters').createRepaint(
@@ -135,7 +132,8 @@ define(
         /**
          * 快捷显示信息的方法
          *
-         * @parma {string} content 显示的内容
+         * @method ui.Warn.show
+         * @param {string} content 显示的内容
          * @param {Object} options 其它配置项
          * @return {ui.Warn}
          */

@@ -1,11 +1,9 @@
 /**
- * ADM 2.0
+ * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 使用外部下拉选择控件代理控件的搜索
  * @author lixiang
- * @date $DATE$
  */
 define(
     function (require) {
@@ -22,8 +20,8 @@ define(
 
         /**
          * @constructs ui.extends.ExternSelect
-         * @override
          * @param {Object} [options] 配置项
+         * @override
          */
         exports.constructor = function (options) {
             options = options || {};
@@ -34,7 +32,9 @@ define(
         /**
          * 扩展的类型，始终为`"ExternSelect"`
          *
+         * @member ui.extension.ExternSelect#type
          * @type {string}
+         * @readonly
          * @override
          */
         exports.type = 'ExternSelect';
@@ -42,6 +42,7 @@ define(
         /**
          * 指定对应的一组select的id, 逗号或空格分隔，必须指定
          *
+         * @member ui.extension.ExternSelect#selects
          * @type {string | null}
          */
         exports.selects = null;
@@ -49,7 +50,9 @@ define(
         /**
          * 找到代理控件
          *
-         * @return {esui.searchBox}
+         * @protected
+         * @method ui.extension.ExternSelect#resolveControls
+         * @return {esui.SearchBox}
          */
         exports.resolveControls = function () {
             var controls = [];
@@ -89,8 +92,6 @@ define(
         };
 
         /**
-         * 激活扩展
-         *
          * @override
          */
         exports.activate = function () {
@@ -136,8 +137,6 @@ define(
         }
 
         /**
-         * 取消激活
-         *
          * @override
          */
         exports.inactivate = function () {

@@ -1,11 +1,9 @@
 /**
- * ADM 2.0
+ * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 使用外部搜索控件代理控件的搜索的扩展
  * @author lixiang
- * @date $DATE$
  */
 define(
     function (require) {
@@ -21,8 +19,8 @@ define(
 
         /**
          * @constructs ui.extends.ExternSearch
-         * @override
          * @param {Object} [options] 配置项
+         * @override
          */
         exports.constructor = function (options) {
             options = options || {};
@@ -33,7 +31,9 @@ define(
         /**
          * 扩展的类型，始终为`"ExternSearch"`
          *
+         * @member ui.extension.ExternSearch#type
          * @type {string}
+         * @readonly
          * @override
          */
         exports.type = 'ExternSearch';
@@ -41,6 +41,7 @@ define(
         /**
          * 指定对应的searchBox的id
          *
+         * @member ui.extension.ExternSearch#searchBox
          * @type {string | null}
          */
         exports.searchBox = null;
@@ -48,7 +49,9 @@ define(
         /**
          * 找到控件对应的搜索类控件
          *
-         * @return {esui.searchBox}
+         * @protected
+         * @method ui.extension.ExternSearch#resolveControl
+         * @return {esui.SearchBox}
          */
         exports.resolveControl = function () {
             var searchBox;
@@ -72,8 +75,6 @@ define(
         };
 
         /**
-         * 激活扩展
-         *
          * @override
          */
         exports.activate = function () {
@@ -109,8 +110,6 @@ define(
         }
 
         /**
-         * 取消激活
-         *
          * @override
          */
         exports.inactivate = function () {

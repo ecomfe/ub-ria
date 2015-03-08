@@ -2,7 +2,6 @@
  * ADM 2.0
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file PartialForm控件
  * @author zhanglili(otakustay@gmail.com)
  */
@@ -11,10 +10,9 @@ define(
         var lib = require('esui/lib');
 
         /**
-         * 局部表单控件。
+         * 局部表单控件
          *
-         * 这控件本质上是个`ActionPanel`，但它表现得像是`InputControl`，
-         * 因此可以用作表单的一部分，从而细粒度地切割表单的组成
+         * 这控件本质上是个`ActionPanel`，但它表现得像是`InputControl`，因此可以用作表单的一部分，从而细粒度地切割表单的组成
          *
          * @class ui.PartialForm
          * @extends ef.ActionPanel
@@ -24,7 +22,9 @@ define(
         /**
          * 控件类型，始终为`"PartialForm"`
          *
+         * @member ui.PartialForm#type
          * @type {string}
+         * @readonly
          * @override
          */
         exports.type = 'PartialForm';
@@ -41,6 +41,7 @@ define(
         /**
          * 进行验证
          *
+         * @method ui.PartialForm#validate
          * @return {boolean}
          */
         exports.validate = function () {
@@ -96,8 +97,10 @@ define(
         /**
          * 向用户通知提交错误信息，默认根据`field`字段查找对应`name`的控件并显示错误信息
          *
+         * @method ui.PartialForm#notifyErrors
          * @param {Object} errors 错误信息
          * @param {meta.FieldError[]} errors.fields 出现错误的字段集合
+         * @param {string} [errors.message] 全局错误信息
          */
         exports.notifyErrors = function (errors) {
             var Validity = require('esui/validator/Validity');
@@ -131,7 +134,8 @@ define(
         /**
          * 获取值
          *
-         * @return {Mixed}
+         * @method ui.PartialForm#getRawValue
+         * @return {*}
          */
         exports.getRawValue = function () {
             var action = this.get('action');
@@ -149,9 +153,10 @@ define(
         };
 
         /**
-         * 获取控件分类
+         * 获取控件分类，伪装为表单控件
          *
-         * @return {string}
+         * @method ui.PartialForm#getCategory
+         * @return {string} 始终返回`"input"`
          */
         exports.getCategory = function () {
             return 'input';

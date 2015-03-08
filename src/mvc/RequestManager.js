@@ -2,10 +2,8 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 请求管理类
  * @author otakustay
- * @date $DATE$
  */
 define(
     function (require) {
@@ -41,9 +39,9 @@ define(
         /**
          * 查找请求对应的预注册的配置项
          *
-         * @param {Object} instance 实例
+         * @param {mvc.RequestManager} instance 实例
          * @param {string} name 请求名称
-         * @return {Object | null}
+         * @return {meta.RequestConfig | null}
          */
         function lookupRequestConfig(instance, name) {
             if (!name) {
@@ -58,8 +56,8 @@ define(
         /**
          * 处理多个同名请求同时出现的情况
          *
-         * @param {RequestManager} requestManager 实例
-         * @param {Object} config 请求预先注册的配置项
+         * @param {mvc.RequestManager} requestManager 实例
+         * @param {meta.RequestConfig} config 请求预先注册的配置项
          * @param {Object} options 本次请求的相关参数
          * @return {er.meta.FakeXHR | undefined}
          */
@@ -101,9 +99,9 @@ define(
         /**
          * 在XHR完成后，将之从当前运行的XHR列表中移除
          *
-         * @param {RequestManager} requestManager 实例
+         * @param {mvc.RequestManager} requestManager 实例
          * @param {string} name 请求名称
-         * @param {er.meta.FakeXHR} xhr 负责请求的`er.meta.FakeXHR`对象
+         * @param {er.meta.FakeXHR} xhr 负责请求的`FakeXHR`对象
          */
         function detachRunningRequest(requestManager, name, xhr) {
             if (requestManager.runningRequests
@@ -123,6 +121,7 @@ define(
         /**
          * 获取当前数据类负责的实体名称
          *
+         * @method mvc.RequestManager#getEntityName
          * @return {string}
          */
         exports.getEntityName = function () {
@@ -132,6 +131,7 @@ define(
         /**
          * 获取当前数据类负责的后端实体名称
          *
+         * @method mvc.RequestManager#getBackendEntityName
          * @return {string}
          */
         exports.getBackendEntityName = function () {
@@ -141,6 +141,7 @@ define(
         /**
          * 设置关联的{@link mvc.RequestStrategy}对象
          *
+         * @method mvc.RequestManager#setRequestStrategy
          * @param {mvc.RequestStrategy} requestStrategy 设置的实例
          */
         exports.setRequestStrategy = function (requestStrategy) {
@@ -150,6 +151,7 @@ define(
         /**
          * 获取关联的{@link mvc.RequestStrategy}对象
          *
+         * @method mvc.RequestManager#getRequestStrategy
          * @return {mvc.RequestStrategy}
          */
         exports.getRequestStrategy = function () {
@@ -159,11 +161,12 @@ define(
         /**
          * 获取请求对象
          *
+         * @protected
+         * @method mvc.RequestManager#getRequest
          * @param {string} name 请求配置名称
          * @param {Object} [data] 请求的数据
          * @param {Object} [options] 请求的配置
          * @return {meta.Request}
-         * @protected
          */
         exports.getRequest = function (name, data, options) {
             var strategy = this.getRequestStrategy();
@@ -217,10 +220,11 @@ define(
          * - `.request(options, data)`
          * - `.request(options)`
          *
+         * @method mvc.RequestManager#request
          * @param {string} [name] 请求名称
          * @param {Object} [data] 请求数据
          * @param {Object} [options] 请求配置项
-         * @return {er.FakeXHR}
+         * @return {er.meta.FakeXHR}
          */
         exports.request = function (name, data, options) {
             var context = this.getRequest(name, data, options);
@@ -256,8 +260,7 @@ define(
         /**
          * 销毁当前实例
          *
-         * @override
-         * @protected
+         * @method mvc.RequestManager#dispose
          */
         exports.dispose = function () {
             u.each(
@@ -274,9 +277,10 @@ define(
         /**
          * 检索一个实体列表，返回一个分页的结果集
          *
+         * @abstract
+         * @method mvc.RequestManager#search
          * @param {Object} query 查询参数
          * @return {er.meta.FakeXHR}
-         * @abstract
          */
         exports.search = function (query) {
             throw new Error('search method is not implemented');
@@ -285,9 +289,10 @@ define(
         /**
          * 获取一个实体列表（不分页）
          *
+         * @abstract
+         * @method mvc.RequestManager#list
          * @param {Object} query 查询参数
          * @return {er.meta.FakeXHR}
-         * @abstract
          */
         exports.list = function (query) {
             throw new Error('list method is not implemented');
@@ -296,9 +301,10 @@ define(
         /**
          * 保存一个实体
          *
+         * @abstract
+         * @method mvc.RequestManager#save
          * @param {Object} entity 实体对象
          * @return {er.meta.FakeXHR}
-         * @abstract
          */
         exports.save = function (entity) {
             throw new Error('save method is not implemented');
@@ -307,9 +313,10 @@ define(
         /**
          * 更新一个实体
          *
+         * @abstract
+         * @method mvc.RequestManager#update
          * @param {Object} entity 实体对象
          * @return {er.meta.FakeXHR}
-         * @abstract
          */
         exports.update = function (entity) {
             throw new Error('update method is not implemented');
@@ -321,15 +328,19 @@ define(
          * 这个方法不应该被直接调用，应该通过`bind`等方法生成明确的业务方法来使用，
          * 如“删除”操作是将状态改为`0`，因此可以按如下实现：
          *
-         *     X.prototype.remove = u.partial(X.prototype.updateStatus, 0);
+         * ```javascript
+         * X.prototype.remove = function (ids) {
+               return this.updateStatus(0, ids);
+         * };
+         * ```
          *
-         * 基类默认有`remove`将状态改为`0`，以及`restore`将状态改为`1`两个方法，
-         * 如需其它修改状态的方法可以添加
+         * 基类默认有`remove`将状态改为`0`，以及`restore`将状态改为`1`两个方法，如需其它修改状态的方法可以添加
          *
+         * @abstract
+         * @method mvc.RequestManager#updateStatus
          * @param {number} status 目标状态
          * @param {string[]} ids id集合
          * @return {FakeXHR}
-         * @abstract
          */
         exports.updateStatus = function (status, ids) {
             // 让`status`在前是为了方便通过`bind`或`partial`生成其它的方法
@@ -339,6 +350,7 @@ define(
         /**
          * 删除一个或多个实体
          *
+         * @method mvc.RequestManager#remove
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
@@ -349,6 +361,7 @@ define(
         /**
          * 恢复一个或多个实体
          *
+         * @method mvc.RequestManager#restore
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
@@ -362,17 +375,22 @@ define(
          * 这个方法不应该被直接调用，应该通过`bind`等方法生成明确的业务方法来使用，
          * 如“删除前询问后端是否满足条件”操作是将状态改为`0`时的情况，因此可以按如下实现：
          *
-         *     X.prototype.getRemoveAdvice = u.partial(X.prototype.getAdvice, 0);
+         * ```javascript
+         * X.prototype.getRemoveAdvice = function (ids) {
+         *     return this.getAdvice(0, ids);
+         * };
+         * ```
          *
-         * 基类默认有`getRemoveAdvice`对应{@link RequestManager#remove}方法，
-         * 以及`getRestoreAdvice`对应{@link RequestManager#restore}方法，如需其它修改状态的方法可以添加
+         * 基类默认有`getRemoveAdvice`对应{@link mvc.RequestManager#remove}方法，
+         * 以及`getRestoreAdvice`对应{@link mvc.RequestManager#restore}方法，如需其它修改状态的方法可以添加
          *
          * 需要注意的是，为了让系统正常运行，一个修改状态的`xxx`操作，其对应的询问后端方法应该为`getXxxAdvice`，名称一一对应
          *
+         * @abstract
+         * @method mvc.RequestManager#getAdvice
          * @param {number} status 目标状态
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
-         * @abstract
          */
         exports.getAdvice = function (status, ids) {
             throw new Error('getAdvice method is not implemented');
@@ -381,6 +399,7 @@ define(
         /**
          * 批量删除前确认
          *
+         * @method mvc.RequestManager#getRemoveAdvice
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
@@ -391,6 +410,7 @@ define(
         /**
          * 批量恢复前确认
          *
+         * @method mvc.RequestManager#getRestoreAdvice
          * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
@@ -401,9 +421,10 @@ define(
         /**
          * 根据id获取单个实体
          *
+         * @abstract
+         * @method mvc.RequestManager#findById
          * @param {string} id 实体的id
          * @return {er.meta.FakeXHR}
-         * @abstract
          */
         exports.findById = function (id) {
             throw new Error('findById method is not implemented');
@@ -418,6 +439,7 @@ define(
         /**
          * 注册一个请求配置
          *
+         * @method mvc.RequestManager.register
          * @param {Function} Type 提供配置的类型对象
          * @param {string} name 配置名称
          * @param {meta.RequestConfig} config 配置项
