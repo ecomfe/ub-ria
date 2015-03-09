@@ -7,7 +7,7 @@
  */
 define(
     function (require) {
-        require('../ui/DrawerActionPanel');
+        require('ub-ria-ui/DrawerActionPanel');
 
         /**
          * @class mvc.DetailView
