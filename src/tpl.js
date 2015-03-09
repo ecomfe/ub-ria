@@ -55,13 +55,12 @@ define(
             ActionPanel: 'ef',
             ActionDialog: 'ef',
             ViewPanel: 'ef',
-            DrawerActionPanel: 'ub-ria/ui',
+            DrawerActionPanel: 'ub-ria-ui',
+            RichSelector: 'ub-ria-ui',
+            TableRichSelector: 'ub-ria-ui',
+            TogglePanel: 'ub-ria-ui',
+            TreeRichSelector: 'ub-ria-ui',
             PartialForm: 'ub-ria/ui',
-            RichSelector: 'ub-ria/ui',
-            SelectorTreeStrategy: 'ub-ria/ui',
-            TableRichSelector: 'ub-ria/ui',
-            TogglePanel: 'ub-ria/ui',
-            TreeRichSelector: 'ub-ria/ui',
             Uploader: 'ub-ria/ui',
             Warn: 'ub-ria/ui'
         };
