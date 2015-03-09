@@ -2,7 +2,6 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 工具模块
  * @author otakustay
  */
@@ -13,10 +12,16 @@ define(
         /**
          * 工具模块
          *
-         * @class util
-         * @singleton
+         * @namespace util
+         * @extends underscore
          */
         var util = require('eoo').static(require('underscore'));
+
+        // 模板配置
+        util.templateSettings = {
+            interpolate: /\$\{(.+?)\}/g, // `${name}`直接输出
+            escape: /\$\{\:(.+?)\}/g // `${:name}`提供HTML转义
+        };
 
         /**
          * 清理对象中无用的键值对
@@ -25,6 +30,7 @@ define(
          *
          * 如果提供了`defaults`参数，则额外去除值与`defaults`的同名属性相同的键值对
          *
+         * @method util.purify
          * @param {Object} object 输入的对象
          * @param {Object} [defaults] 用于提供属性默认值的参照对象
          * @param {boolean} [deep=false] 是否深度清理，即遇到属性值为对象继续递归清理
@@ -57,6 +63,7 @@ define(
         /**
          * 去除字符串首尾空格
          *
+         * @method util.trim
          * @param {string} s 输入字符串
          * @return {string}
          */
@@ -70,6 +77,7 @@ define(
          * 输入字符串必须以空格、横线`-`、斜杠`/`或下划线`_`分割各单词，否则无法分析
          * 若输入的所有单词都是大写形式，则将每个单词分别转为小写形式后再进行转变
          *
+         * @method util.pascalize
          * @param {string} s 输入的字符串
          * @return {string}
          */
@@ -96,8 +104,9 @@ define(
         /**
          * 将一个符合一定规则的字符串转成`camelCase`形式
          *
-         * 此方法是将{@link util#pascalize}方法的输出首字母变为小写
+         * 此方法是将{@link util.pascalize}方法的输出首字母变为小写
          *
+         * @method util.camelize
          * @param {string} s 输入的字符串
          * @return {string}
          */
@@ -114,13 +123,14 @@ define(
         /**
          * 将一个符合规则的字符串转成`split-by-dash`的横线分割形式
          *
-         * 具体规则参考{@link util#pascalize}方法的说明
+         * 具体规则参考{@link util.pascalize}方法的说明
          *
          * 在此方法中，如果字符串出现多个连续的大写字母，则会将除最后一个字符以外的子串
          * 转成小写字母后再进行分割，因为连续的大写字母通常表示一个单词的缩写，不应当拆分，
          * 如`encodeURIComponent`在经过此方法处理后会变为`encode-uri-component`，
          * 而不是`encode-u-r-i-component`，前者拥有更好的可读性
          *
+         * @method util.dasherize
          * @param {string} s 输入的字符串
          * @return {string}
          */
@@ -166,8 +176,9 @@ define(
         /**
          * 将一个符合规则的字符串转成`THIS_IS_A_CONST`的常量形式
          *
-         * 具体规则参考{@link util#pascalize}方法的说明
+         * 具体规则参考{@link util.pascalize}方法的说明
          *
+         * @method util.constlize
          * @param {string} s 输入的字符串
          * @return {string}
          */
@@ -186,6 +197,7 @@ define(
          *
          * 如果单词结尾为`y`，则转为`ies`，其它情况下简单地加上`s`
          *
+         * @method util.pluralize
          * @param {string} s 输入的字符串
          * @return {string}
          */
@@ -201,6 +213,7 @@ define(
         /**
          * 格式化数字
          *
+         * @method util.formatNumber
          * @param {number} number 输入的数字
          * @param {number} [decimals=0] 保留小数位数
          * @param {string} [emptyValue=""] 当输入为空或不是数字时的返回内容，会加前缀
@@ -248,6 +261,7 @@ define(
         /**
          * 当字符串未达到预期长度时，在前方填充补齐字符
          *
+         * @method util.pad
          * @param {string} s 输入字符串
          * @param {string} padding 补齐用的字符，只能是一个字符
          * @param {number} length 补齐后的长度
@@ -267,6 +281,7 @@ define(
         /**
          * 当字符串未达到预期长度时，在后方填充补齐字符
          *
+         * @method util.padRight
          * @param {string} s 输入字符串
          * @param {string} padding 补齐用的字符，只能是一个字符
          * @param {number} length 补齐后的长度
@@ -286,8 +301,9 @@ define(
         /**
          * 深度复制一个对象
          *
-         * @param {Mixed} obj 任何对象
-         * @return {Mixed} 复制后的对象
+         * @method util.deepClone
+         * @param {*} obj 任何对象
+         * @return {*} 复制后的对象
          */
         util.deepClone = function (obj) {
             // 非对象以及函数就直接返回

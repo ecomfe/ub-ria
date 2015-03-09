@@ -3,7 +3,6 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 子视图基类
- * @exports mvc.BaseChildView
  * @author liyidong
  */
 define(
@@ -19,7 +18,6 @@ define(
         /**
          * 获取view数据的接口
          *
-         * @public
          * @method mvc.BaseChildView#getViewData
          * @return {Object}
          */
@@ -57,7 +55,6 @@ define(
         /**
          * 获取view数据的接口
          *
-         * @public
          * @method mvc.BaseChildView#setViewData
          * @param {Object} values 控件name与value组成的对象
          */
@@ -76,7 +73,6 @@ define(
         /**
          * disable当前View下所有控件
          *
-         * @public
          * @method mvc.BaseChildView#disableInputControls
          */
         exports.disableInputControls = function () {
@@ -96,7 +92,6 @@ define(
         /**
          * enable当前View下所有控件
          *
-         * @public
          * @method mvc.BaseChildView#enableInputControls
          */
         exports.enableInputControls = function () {
@@ -116,7 +111,6 @@ define(
         /**
          * setReadOnly当前View下所有控件
          *
-         * @public
          * @method mvc.BaseChildView#setReadOnly
          * @param {boolean} status 设置的readOnly状态
          */
@@ -137,7 +131,6 @@ define(
         /**
          * 向用户通知提交错误信息
          *
-         * @public
          * @method mvc.BaseChildView#notifyErrors
          * @param {Array.<Object>} errors 错误信息数组
          */
@@ -163,7 +156,6 @@ define(
         /**
          * 触发当前View下所有控件的自身校验
          *
-         * @public
          * @method mvc.BaseChildView#validate
          * @return {boolean} 控件的验证状态
          */
@@ -187,7 +179,6 @@ define(
         /**
          * 获取当前视图下所有的InputControl控件
          *
-         * @public
          * @method mvc.BaseChildView#getAllInputControls
          * @return {Array.<Control>} 所有InputControl控件
          */

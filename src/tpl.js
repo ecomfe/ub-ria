@@ -4,7 +4,6 @@
  *
  * @file tpl加载插件
  * @author otakustay
- * @date $DATE$
  */
 define(
     function (require) {
@@ -56,13 +55,12 @@ define(
             ActionPanel: 'ef',
             ActionDialog: 'ef',
             ViewPanel: 'ef',
-            DrawerActionPanel: 'ub-ria/ui',
+            DrawerActionPanel: 'ub-ria-ui',
+            RichSelector: 'ub-ria-ui',
+            TableRichSelector: 'ub-ria-ui',
+            TogglePanel: 'ub-ria-ui',
+            TreeRichSelector: 'ub-ria-ui',
             PartialForm: 'ub-ria/ui',
-            RichSelector: 'ub-ria/ui',
-            SelectorTreeStrategy: 'ub-ria/ui',
-            TableRichSelector: 'ub-ria/ui',
-            TogglePanel: 'ub-ria/ui',
-            TreeRichSelector: 'ub-ria/ui',
             Uploader: 'ub-ria/ui',
             Warn: 'ub-ria/ui'
         };
@@ -150,20 +148,18 @@ define(
          *
          * 使用此插件的自动控件依赖分析功能，模板必须满足以下条件：
          *
-         * - 控件的HTML必须写`data-ui-type="SomeControl"`这一格式，
-         * 即 *不能* 有`data-ui="type: SomeControl"`这样的写法
-         * - 对于非ESUI、EF框架，且不在`src/ui`文件夹下的控件，
-         * 必须通过{@tpl#registerControl}方法注册模块前缀
+         * - 控件的HTML必须写`data-ui-type="SomeControl"`这一格式，即*不能*有`data-ui="type: SomeControl"`这样的写法
+         * - 对于非ESUI、EF框架，且不在`src/ui`文件夹下的控件，必须通过{@link tpl.registerControl}方法注册模块前缀
          * - 对于ESUI扩展，必须写`data-ui-extension-xxx-type="Xxx"`的形式
          * - 业务ESUI扩展必须放置在`src/ui/extension`文件夹下
          *
-         * @class tpl
-         * @singleton
+         * @namespace tpl
          */
         var plugin = {
             /**
              * 设置模板引擎实例，可通过此方法来使用非默认引擎实例
              *
+             * @method tpl.setupTemplateEngine
              * @param {etpl.Engine} engine 引擎的实例
              */
             setupTemplateEngine: function (engine) {
@@ -173,6 +169,7 @@ define(
             /**
              * 加载模板，AMD插件对象暴露的方法
              *
+             * @method tpl.load
              * @param {string} resourceId 模板资源id
              * @param {Function} parentRequire 父级`require`函数
              * @param {Function} load 加载完成后调用
@@ -210,6 +207,7 @@ define(
             /**
              * 注册业务控件的模块
              *
+             * @method tpl.registerControl
              * @param {string} moduleId 业务控件对应的模块id，必须为顶级id
              */
             registerControl: function (moduleId) {
@@ -222,6 +220,7 @@ define(
             /**
              * 注册业务控件扩展的模块
              *
+             * @method tpl.registerExtension
              * @param {string} moduleId 业务控件对应的模块id，必须为顶级id
              */
             registerExtension: function (moduleId) {

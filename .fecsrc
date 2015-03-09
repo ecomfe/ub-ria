@@ -1,0 +1,13 @@
+{
+    "files": [
+        "src/**",
+
+        "!src/**/*.less"
+    ],
+    "htmlcs": {
+        "viewport": false
+    },
+    "htmlhint": {
+        "style-disabled": false
+    }
+}

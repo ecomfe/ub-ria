@@ -3,7 +3,6 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 表单Action基类
- * @exports mvc.FormAction
  * @author otakustay
  */
 define(
@@ -12,6 +11,8 @@ define(
         var Promise = require('promise');
 
         /**
+         * 表单Action基类
+         *
          * @class mvc.FormAction
          * @extends mvc.BaseAction
          */
@@ -20,6 +21,7 @@ define(
         /**
          * 当前页面的分类，始终为`"form"`
          *
+         * @member mvc.FormAction#category
          * @type {string}
          * @readonly
          * @override
@@ -60,8 +62,8 @@ define(
          *
          * @protected
          * @method mvc.FormAction#handleSubmitResult
-         * @fires mvc.FormAction#handlefinish
          * @param {Object} entity 提交成功后返回的实体
+         * @fires mvc.FormAction#handlefinish
          */
         exports.handleSubmitResult = function (entity) {
             var entitySaveEvent = this.fire('entitysave', {entity: entity});
@@ -79,7 +81,7 @@ define(
          *
          * @protected
          * @method mvc.FormAction#getSubmitHandler
-         * @return {SubmitHandler}
+         * @return {mvc.handler.SubmitHandler}
          */
         exports.getSubmitHandler = function () {
             return this.submitHandler;
@@ -90,7 +92,7 @@ define(
          *
          * @protected
          * @method mvc.FormAction#setSubmitHandler
-         * @param {SubmitHandler} handler 提交成功处理组件
+         * @param {mvc.handler.SubmitHandler} handler 提交成功处理组件
          */
         exports.setSubmitHandler = function (handler) {
             this.submitHandler = handler;
@@ -112,11 +114,11 @@ define(
          * 根据FormType获取Model提交接口的方法名
          *
          * @protected
-         * @method mvc.FormAction#getMethod
+         * @method mvc.FormAction#getSubmitMethod
          * @param {string} formType 表单类型
          * @return {string}
          */
-        exports.getMethod = function (formType) {
+        exports.getSubmitMethod = function (formType) {
             var methodMap = {
                 create: 'save',
                 update: 'update',
@@ -132,10 +134,10 @@ define(
          * @protected
          * @method mvc.FormAction#submitEntity
          * @param {Object} entity 实体数据
-         * @return {er.Promise}
+         * @return {Promise}
          */
         exports.submitEntity = function (entity) {
-            var method = this.getMethod(this.context.formType);
+            var method = this.getSubmitMethod(this.context.formType);
 
             try {
                 if (method) {
@@ -155,7 +157,9 @@ define(
         /**
          * 设置取消编辑时的提示信息标题
          *
-         * @member {string} mvc.FormAction#cancelConfirmTitle
+         * @protected
+         * @member mvc.FormAction#cancelConfirmTitle
+         * @type {string}
          */
         exports.cancelConfirmTitle = '确认取消编辑';
 
@@ -178,7 +182,9 @@ define(
         /**
          * 设置取消编辑时的提示信息内容
          *
-         * @member {string} mvc.FormAction#cancelConfirmMessage
+         * @protected
+         * @member mvc.FormAction#cancelConfirmMessage
+         * @type {string}
          */
         exports.cancelConfirmMessage = '取消编辑将不保留已经填写的数据，确定继续吗？';
 
@@ -242,7 +248,7 @@ define(
          *
          * @protected
          * @method mvc.FormAction#isFormDataChanged
-         * @param {Object} initialFormData model中保存的表单初始数据
+         * @param {Object} initialFormData 进入页面时的表单初始数据
          * @return {boolean}
          */
         exports.isFormDataChanged = function (initialFormData) {
@@ -252,7 +258,9 @@ define(
         /**
          * 设置修改提交时的提示信息内容
          *
-         * @member {string} mvc.FormAction#submitConfirmMessage
+         * @protected
+         * @member mvc.FormAction#submitConfirmMessage
+         * @type {string}
          */
         exports.submitConfirmMessage = '确认提交修改？';
 
@@ -282,9 +290,6 @@ define(
         }
 
         /**
-         * 初始化交互行为
-         *
-         * @protected
          * @override
          */
         exports.initBehavior = function () {
@@ -302,9 +307,8 @@ define(
         };
 
         /**
-         * 处理表单需要用到的通用数据
+         * 判断表单是否作为其它表单的子表单存在
          *
-         * @public
          * @method mvc.FormAction#isChildForm
          * @return {boolean}
          */

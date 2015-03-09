@@ -3,7 +3,6 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 列表数据模型基类
- * @exports mvc.ListModel
  * @author otakustay
  */
 define(
@@ -53,13 +52,16 @@ define(
         };
 
         /**
+         * 列表数据模型基类
+         *
          * @class mvc.ListModel
          * @extends mvc.BaseModel
          */
         var exports = {};
 
         /**
-         * @public
+         * 设置全局数据对象
+         *
          * @method mvc.ListModel#setGlobalData
          * @param {Object} data 全局数据对象
          */
@@ -114,9 +116,8 @@ define(
         /**
          * 默认查询参数
          *
-         * 参考{@link ListModel#defaultArgs}属性的说明
+         * 参考{@link mvc.ListModel#defaultArgs}属性的说明
          *
-         * @public
          * @method mvc.ListModel#getDefaultArgs
          * @return {Object}
          */
@@ -129,6 +130,9 @@ define(
             return args;
         };
 
+        /**
+         * @constructs mvc.ListModel
+         */
         exports.constructor = function () {
             this.$super(arguments);
 
@@ -152,19 +156,11 @@ define(
         /**
          * 设定实体的状态迁移表
          *
-         * 状态迁移每一项可包含以下5个属性
-         *
-         * - `status`表示目标状态，必须
-         * - `deny`表示不能从其指定的状态进行迁移
-         * - `accept`表示仅能从其指定的状态进行迁移
-         * - `statusName`表示`status`对应的操作名, 是一个camelCase的格式，必须
-         * - `command`表示`status`对应操作的中文描述，必须
-         *
-         * 如果`accept`和`deny`同时存在，则使用`accept`与`deny`的差集
-         * `status`, `statusName`, `command`三项必须有
+         * 如果某一个{@link meta.StatusTransition}中同时存在`accept`和`deny`属性，则使用`accept`与`deny`的差集
          *
          * @protected
-         * @member {Array.<Object>} mvc.ListModel#statusTransitions
+         * @member mvc.ListModel#statusTransitions
+         * @type {meta.StatusTransition[]}
          */
         exports.statusTransitions = [
             {
@@ -184,9 +180,8 @@ define(
         /**
          * 获取实体的状态迁移表
          *
-         * @public
          * @method mvc.ListModel#getStatusTransitions
-         * @return {Array.<object>}
+         * @return {meta.StatusTransition[]}
          */
         exports.getStatusTransitions = function () {
             return this.statusTransitions;
@@ -211,8 +206,6 @@ define(
         };
 
         /**
-         * 处理加载后的数据
-         *
          * @override
          */
         exports.prepare = function () {
@@ -224,7 +217,6 @@ define(
         /**
          * 获取请求后端时的查询参数
          *
-         * @public
          * @method mvc.ListModel#getQuery
          * @return {Object}
          */
@@ -289,11 +281,10 @@ define(
         /**
          * 更新全局每页显示条数
          *
-         * @public
          * @abstract
          * @method mvc.ListModel#updatePageSize
          * @param {number} pageSize 每页显示条数
-         * @return {er.Promise}
+         * @return {Promise}
          */
         exports.updatePageSize = function (pageSize) {
             var data = this.data('global');
@@ -368,11 +359,10 @@ define(
         /**
          * 查询列表
          *
-         * @public
          * @abstract
          * @method mvc.ListModel#search
          * @param {Object} [query] 查询参数
-         * @return {er.Promise}
+         * @return {Promise}
          */
         exports.search = function (query) {
             var data = this.data();
@@ -389,11 +379,10 @@ define(
         /**
          * 批量更新一个或多个实体的状态
          *
-         * @public
          * @abstract
          * @method mvc.ListModel#updateStatus
          * @param {number} status 目标状态
-         * @param {Array.<string>} ids id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
         exports.updateStatus = function (status, ids) {
@@ -411,9 +400,8 @@ define(
         /**
          * 删除一个或多个实体
          *
-         * @public
          * @method mvc.ListModel#remove
-         * @param {Array.<string>} ids id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
         exports.remove = function (ids) {
@@ -423,9 +411,8 @@ define(
         /**
          * 恢复一个或多个实体
          *
-         * @public
          * @method mvc.ListModel#restore
-         * @param {Array.<string>} ids id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
         exports.restore = function (ids) {
@@ -435,11 +422,10 @@ define(
         /**
          * 获取批量操作前的确认
          *
-         * @public
          * @abstract
          * @method mvc.ListModel#getAdvice
          * @param {number} status 目标状态
-         * @param {Array.<string>} ids id集合
+         * @param {string[]} ids id集合
          * @return {er.meta.FakeXHR}
          */
         exports.getAdvice = function (status, ids) {
@@ -491,9 +477,8 @@ define(
         };
 
         /**
-         * 返回原始筛选配置数组
+         * 返回原始筛选配置对象
          *
-         * @override
          * @return {Object}
          */
         exports.getFilters = function () {

@@ -11,19 +11,25 @@ define(
         var InputControl = require('esui/InputControl');
         var main = require('esui/main');
 
+        /**
+         * 文本框自动去除首尾空格扩展
+         *
+         * @class ui.extension.TrimInput
+         * @extends esui.Extension
+         */
         var exports = {};
 
         /**
          * 扩展的类型，始终为`"TrimInput"`
          *
+         * @member ui.extension.TrimInput#type
          * @type {string}
+         * @readonly
          * @override
          */
         exports.type = 'TrimInput';
 
         /**
-         * 激活扩展
-         *
          * @override
          */
         exports.activate = function () {
@@ -40,8 +46,6 @@ define(
         };
 
         /**
-         * 取消扩展的激活状态
-         *
          * @override
          */
         exports.inactivate = function () {

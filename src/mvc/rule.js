@@ -2,7 +2,6 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 常用校验规则
  * @author otakustay
  */

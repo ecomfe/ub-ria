@@ -1,0 +1,4 @@
+/**
+ * @namespace mvc
+ */
+var mvc = {};

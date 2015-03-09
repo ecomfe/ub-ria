@@ -2,7 +2,6 @@
  * UB RIA Base
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file MVC体系扩展
  * @author otakustay
  */
@@ -90,7 +89,18 @@ define(
             addPageClassName();
         }
 
+        /**
+         * MVC体系扩展
+         *
+         * @namespace extension.mvc
+         * @memberof extension
+         */
         return {
+            /**
+             * 启动扩展
+             *
+             * @method extension.mvc.enable
+             */
             enable: u.once(enable)
         };
     }
