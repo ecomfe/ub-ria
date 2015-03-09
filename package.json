@@ -34,7 +34,8 @@
             "moment": "2.x",
             "uioc": "0.x",
             "eoo": "0.x",
-            "promise": "1.x"
+            "promise": "1.x",
+            "eicons": "1.x"
         }
     }
 }
