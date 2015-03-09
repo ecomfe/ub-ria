@@ -121,8 +121,10 @@ define(
                 // 指示器
                 // 虽然`<progress>`更合适，但基本无法写样式，所以改用`<span>`
                 '<div id="' + this.helper.getId('indicator-wrapper') + '"',
-                'class="' + indicatorClasses + '">',
-                '<span id="' + this.helper.getId('indicator') + '"></span>',
+                'class="' + indicatorClasses + ' ui-progress">',
+                '<span id="' + this.helper.getId('indicator')
+                    + ' ui-progress-bar ui-progress-bar-striped ui-progress-bar-animated">',
+                '</span>',
                 '</div>',
                 // 用来偷偷上传的`<iframe>`元素
                 '<iframe id="' + iframeId + '" name="' + iframeId + '"',
