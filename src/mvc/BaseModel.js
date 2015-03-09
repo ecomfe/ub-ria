@@ -3,7 +3,6 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 数据模型基类
- * @exports mvc.BaseModel
  * @author otakustay
  */
 define(
@@ -46,7 +45,6 @@ define(
         /**
          * 设置当前所属模块的默认`Data`实现
          *
-         * @public
          * @method mvc.BaseModel#setData
          * @param {mvc.RequestManager} instance 一个数据对象
          */
@@ -131,8 +129,6 @@ define(
         };
 
         /**
-         * 销毁
-         *
          * @override
          */
         exports.dispose = function () {

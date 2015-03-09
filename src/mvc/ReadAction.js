@@ -3,12 +3,13 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 只读页Action基类
- * @exports mvc.ReadAction
  * @author lixiang(lixiang05@baidu.com)
  */
 define(
     function (require) {
         /**
+         * 只读Action基类
+         *
          * @class mvc.ReadAction
          * @extends mvc.BaseAction
          */
@@ -17,6 +18,7 @@ define(
         /**
          * 当前页面的分类，始终为`"read"`
          *
+         * @member mvc.ReadAction#category
          * @type {string}
          * @readonly
          * @override
@@ -35,9 +37,6 @@ define(
         };
 
         /**
-         * 初始化交互行为
-         *
-         * @protected
          * @override
          */
         exports.initBehavior = function () {

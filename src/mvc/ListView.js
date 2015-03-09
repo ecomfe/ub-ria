@@ -3,8 +3,7 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 列表视图基类
- * @exports mvc.ListView
- * @author otakustay, wangyaqiong(catkin2009@gmail.com)
+ * @author otakustay
  */
 define(
     function (require) {
@@ -223,14 +222,14 @@ define(
          */
         exports.submitSearchWithoutKey = function (name) {
             if (name) {
-                clearFilterValue.call(this, name);
+                this.clearFilterValue(name);
             }
             else {
                 var view = this;
                 this.getGroup('clear-button').each(
                     function (button) {
                         var name = button.get('name');
-                        clearFilterValue.call(view, name);
+                        view.clearFilterValue(name);
                     }
                 );
             }
@@ -240,12 +239,13 @@ define(
         /**
          * 取消筛选，将条件设为默认值
          *
+         * @method mvc.ListView#clearFilterValue
          * @param {string} name 需要取消的条件
          */
-        function clearFilterValue(name) {
+        exports.clearFilterValue = function (name) {
             var value = this.model.defaultArgs[name] || '';
             this.get(name).setValue(value);
-        }
+        };
 
         /**
          * 切换筛选面板和筛选条件显示面板

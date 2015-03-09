@@ -3,7 +3,6 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file IoCAction工厂
- * @exports mvc.IoCActionFactory
  * @author shenbin(bobshenbin@gmail.com)
  */
 define(
@@ -12,6 +11,8 @@ define(
         var eoo = require('eoo');
 
         /**
+         * 使用IoC创建Action的工厂
+         *
          * @class mvc.IoCActionFactory
          */
         var exports = {};
@@ -19,7 +20,7 @@ define(
         /**
          * @param {string} actionComponent action组件名
          * @param {Object} options 相关配置
-         * @param {boolean=} options.noSchema 模块没有`schema`信息，通常只有列表的模块会这样
+         * @param {boolean} [options.noSchema] 模块没有`schema`信息，通常只有列表的模块会这样
          */
         exports.constructor = function (actionComponent, options) {
             options = options || {};
@@ -30,18 +31,15 @@ define(
         /**
          * 创建一个Action实例
          *
-         * @public
          * @method mvc.IoCActionFactory#createRuntimeAction
          * @param {er.meta.ActionContext} actionContext Action的执行上下文
-         * @return {er.Promise}
+         * @return {Promise}
          */
         exports.createRuntimeAction = function (actionContext) {
-            var Deferred = require('er/Deferred');
-            var deferred = new Deferred();
-
-            this.getIocContainer().getComponent(this.actionComponent, deferred.resolver.resolve);
-
-            return deferred.promise.then(u.bind(this.buildAction, this, actionContext));
+            var Promise = require('promise');
+            var ioc = this.getIocContainer();
+            return new Promise(u.bind(ioc.getComponent, ioc, this.actionComponent))
+                .thenBind(this.buildAction, this, actionContext);
         };
 
         /**

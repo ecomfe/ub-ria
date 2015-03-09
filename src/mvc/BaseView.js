@@ -2,27 +2,26 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 视图基类
  * @author otakustay
- * @date $DATE$
  */
 define(
     function (require) {
         var u = require('../util');
+        var Promise = require('promise');
 
         /**
          * 视图基类
          *
+         * @class mvc.BaseView
          * @extends ef.UIView
-         * @constructor
          */
         var exports = {};
 
         /**
          * 添加控件事件的配置
          *
-         * @public
+         * @protected
          * @method mvc.BaseView#addUIEvents
          * @param {Object} uiEvents 控件绑定的事件
          */
@@ -79,11 +78,7 @@ define(
         };
 
         /**
-         * 绑定控件的事件
-         *
-         * @method mvc.BaseView#bindEvents
          * @override
-         * @protected
          */
         exports.bindEvents = function () {
             // 扩展后`uiEvents`可以是个数组，每一项和以前的`uiEvents`格式是一样的，一一注册就行。
@@ -106,7 +101,7 @@ define(
         /**
          * 添加控件的额外属性
          *
-         * @public
+         * @protected
          * @method mvc.BaseView#addUIProperties
          * @param {Object} newUIProperties 控件的额外属性
          */
@@ -134,12 +129,7 @@ define(
         };
 
         /**
-         * 获取控件的额外属性
-         *
          * @override
-         * @protected
-         * @method mvc.BaseView#getUIProperties
-         * @return {Object} 控件的额外属性
          */
         exports.getUIProperties = function () {
             // 重写父类实现
@@ -153,6 +143,7 @@ define(
          * 当一个视图被作为子Action使用时，需要在其视图模板名后加上`"Main"`以进行区分，
          * 根据此设计，可以将视图切分为“完整页面”和“仅用于嵌套”两部分，根据约定命名
          *
+         * @protected
          * @method mvc.BaseView#getTemplateName
          * @return {string}
          * @override
@@ -169,42 +160,63 @@ define(
         };
 
         /**
+         * 等待用户的选择
+         *
+         * 参数同`ef.UIView.prototype.confirm`，但返回一个`Promise`对象
+         *
+         * @method mvc.BaseView#waitDecision
+         * @return {Promise} 一个`Promise`对象，进入`resolved`状态时提供用户选择的按钮名称，默认有`"ok"`和`"cancel"`可选
+         */
+        exports.waitDecision = function () {
+            var dialog = this.confirm.apply(this, arguments);
+
+            var executor = function (resolve, reject) {
+                dialog.on('ok', u.partial(resolve, 'ok'));
+                dialog.on('cancel', u.partial(resolve, 'cancel'));
+            };
+            return new Promise(executor);
+        };
+
+        /**
          * 等待用户确认
          *
          * 参数同`ef.UIView.prototype.confirm`，但返回一个`Promise`对象
          *
+         * 当用户选择“确认”后，`Promise`对象进行`resolved`状态，用户选择取消则没有任何效果
+         *
+         * 如果需要知道用户选择“取消”，则应当使用{@link mvc.BaseView#waitDecision|waitDecision方法}
+         *
          * @method mvc.BaseView#waitConfirm
-         * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
+         * @return {Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
          */
         exports.waitConfirm = function () {
-            var dialog = this.confirm.apply(this, arguments);
-            var Deferred = require('er/Deferred');
-            var deferred = new Deferred();
-
-            dialog.on('ok', deferred.resolver.resolve);
-            dialog.on('cancel', deferred.resolver.reject);
-
-            return deferred.promise;
+            var waiting = this.waitDecision.apply(this, arguments);
+            var executor = function (resolve) {
+                var receiveOK = function (result) {
+                    if (result === 'ok') {
+                        resolve();
+                    }
+                };
+                waiting.then(receiveOK);
+            };
+            return new Promise(executor);
         };
 
         /**
          * 等待一个`DialogAction`加载完成
          *
          * @method mvc.BaseView#waitActionDialog
-         * @return {er.Promise} 一个`Promise`对象，
-         * 对应的Action加载完成时进入`resolved`状态，如Action加载失败则进入`rejected`状态
+         * @return {Promise} 一个`Promise`对象，对应的Action加载完成时进入`resolved`状态，如Action加载失败则进入`rejected`状态
          */
         exports.waitActionDialog = function () {
             var dialog = this.popActionDialog.apply(this, arguments);
 
-            var Deferred = require('er/Deferred');
-            var deferred = new Deferred();
-
-            dialog.on('actionloaded', deferred.resolver.resolve);
-            dialog.on('actionloadfail', deferred.resolver.reject);
-            dialog.on('actionloadabort', deferred.resolver.reject);
-
-            return deferred.promise;
+            var executor = function (resolve, reject) {
+                dialog.on('actionloaded', resolve);
+                dialog.on('actionloadfail', reject);
+                dialog.on('actionloadabort', reject);
+            };
+            return new Promise(executor);
         };
 
         /**

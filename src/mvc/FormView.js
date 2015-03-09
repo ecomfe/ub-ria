@@ -3,7 +3,6 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 表单视图基类
- * @exports mvc.FormView
  * @author otakustay
  */
 define(
@@ -11,6 +10,9 @@ define(
         require('../ui/DrawerActionPanel');
 
         var u = require('../util');
+
+        var Validity = require('esui/validator/Validity');
+        var ValidityState = require('esui/validator/ValidityState');
 
         // 使用表单视图，有以下要求：
         //
@@ -22,11 +24,16 @@ define(
         // - 可以有一个id为`cancel`的按钮，点击后会触发`cancel`事件
 
         /**
+         * 表单视图基类
+         *
          * @class mvc.FormView
          * @extends mvc.BaseView
          */
         var exports = {};
 
+        /**
+         * @constructs mvc.FormView
+         */
         exports.constructor = function () {
             this.$super(arguments);
 
@@ -75,7 +82,6 @@ define(
         /**
          * 从表单中获取实体数据
          *
-         * @public
          * @method mvc.FormView#getEntity
          * @return {Object}
          */
@@ -84,7 +90,7 @@ define(
         };
 
         /**
-         * 获取表单数据
+         * 获取表单数据，此方法通常获取未经处理的原始表单视图数据
          *
          * @protected
          * @method mvc.FormView#getFormData
@@ -98,14 +104,11 @@ define(
         /**
          * 向用户通知提交错误信息，默认根据`field`字段查找对应`name`的控件并显示错误信息
          *
-         * @public
          * @method mvc.FormView#notifyErrors
          * @param {Object} errors 错误信息
-         * @param {Array.<meta.FieldError>} errors.fields 出现错误的字段集合
+         * @param {meta.FieldError[]} errors.fields 出现错误的字段集合
          */
         exports.notifyErrors = function (errors) {
-            var Validity = require('esui/validator/Validity');
-            var ValidityState = require('esui/validator/ValidityState');
             var form = this.get('form');
 
             for (var i = 0; i < errors.fields.length; i++) {
@@ -123,13 +126,38 @@ define(
         };
 
         /**
+         * 显示全局错误
+         *
+         * @method mvc.FormView#notifyGlobalError
+         * @param {string} error 错误信息
+         */
+        exports.notifyGlobalError = function (error) {
+            var state = new ValidityState(false, error);
+            var validity = new Validity();
+            validity.addState('server', state);
+
+            var validateLabel = this.getSafely('global-error');
+            validateLabel.set('validity', validity);
+        };
+
+        /**
+         * 清除全局错误
+         *
+         * @method mvc.FormView#notifyGlobalError
+         */
+        exports.clearGlobalError = function () {
+            var validity = new Validity();
+            var validateLabel = this.getSafely('global-error');
+            validateLabel.set('validity', validity);
+        };
+
+        /**
          * 等待用户取消确认
          *
          * @protected
          * @method mvc.FormView#waitCancelConfirm
          * @param {Object} options 配置项
-         * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，
-         * 用户取消则进入`rejected`状态
+         * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
          */
         exports.waitCancelConfirm = function (options) {
             return this.waitConfirmForType(options, 'cancel');
@@ -143,8 +171,7 @@ define(
          * @return {er.Promise} 一个`Promise`对象，默认进入`resolved`状态。
          */
         exports.waitSubmitConfirm = function (options) {
-            var Deferred = require('er/Deferred');
-            return Deferred.resolved();
+            return require('promise').resolve();
         };
 
         /**
@@ -153,9 +180,7 @@ define(
          * @method mvc.FormView#waitConfirmForType
          * @param {Object} options 配置项
          * @param {string} type 操作类型
-         *
-         * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，
-         * 用户取消则进入`rejected`状态
+         * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
          */
         exports.waitConfirmForType = function (options, type) {
             // 加viewContext
@@ -202,32 +227,30 @@ define(
                 this
             );
 
-            var Deferred = require('er/Deferred');
-            var deferred = new Deferred();
+            var Promise = require('promise');
+            var executor = function (resolve, reject) {
+                warn.on(
+                    'ok',
+                    function () {
+                        resolve();
+                        formViewContainer.removeState('warned');
+                    }
+                );
+                warn.on(
+                    'cancel',
+                    function () {
+                        formViewContainer.removeState('warned');
+                    }
+                );
+                warn.on(
+                    'hide',
+                    function () {
+                        formViewContainer.removeState('warned');
+                    }
+                );
+            };
 
-            warn.on(
-                'ok',
-                function () {
-                    deferred.resolver.resolve();
-                    formViewContainer.removeState('warned');
-                }
-            );
-            warn.on(
-                'cancel',
-                function () {
-                    deferred.resolver.reject();
-                    formViewContainer.removeState('warned');
-                }
-            );
-            warn.on(
-                'hide',
-                function () {
-                    deferred.resolver.reject();
-                    formViewContainer.removeState('warned');
-                }
-            );
-
-            return deferred.promise;
+            return new Promise(executor);
         };
 
         /**
@@ -341,7 +364,8 @@ define(
          * @param {Object} entity 提交后返回实体
          * @param {string} targetId 触发事件的链接的id
          */
-        exports.handleAfterRelatedEntitySaved = function (entity, targetId) {};
+        exports.handleAfterRelatedEntitySaved = function (entity, targetId) {
+        };
 
         /**
          * 抽屉内Action处理完毕后的事件处理句柄

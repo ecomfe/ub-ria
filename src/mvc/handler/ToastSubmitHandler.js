@@ -3,10 +3,7 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 表单提交成功后的toast提醒组件
- * @class ToastSubmitHandler
- * @extends SubmitHandler
  * @author yanghuabei(yanghuabei@baidu.com)
- * @date $DATE$
  */
 define(
     function (require) {
@@ -14,11 +11,18 @@ define(
         var Toast = require('esui/Toast');
         var SubmitHandler = require('./SubmitHandler');
 
+        /**
+         * 表单提交成功后的toast提醒组件
+         *
+         * @class mvc.handler.ToastSubmitHandler
+         * @extends mvc.hadnler.SubmitHandler
+         */
         var exports = {};
 
         /**
          * toast消息模版
          *
+         * @member mvc.handler.ToastSubmitHandler#template
          * @type {string}
          */
         exports.template = '';
@@ -26,7 +30,7 @@ define(
         /**
          * 设置下一个组件
          *
-         * @method ToastSubmitHandler.prototype.setTemplate
+         * @method mvc.handler.ToastSubmitHandler#setTemplate
          * @param {string} template toast消息模版
          */
         exports.setTemplate = function (template) {
@@ -36,7 +40,7 @@ define(
         /**
          * 获取模版
          *
-         * @method ToastSubmitHandler.prototype.getTemplate
+         * @method mvc.handler.ToastSubmitHandler#getTemplate
          * @return {string}
          */
         exports.getTemplate = function () {
@@ -44,11 +48,6 @@ define(
         };
 
         /**
-         * 提交成功处理函数
-         *
-         * @method ToastSubmitHandler.prototype.handle
-         * @param {Object} entity 提交后服务器端返回的实体信息
-         * @param {er.Action} action 表单Action实例
          * @override
          */
         exports.handle = function (entity, action) {
@@ -66,7 +65,8 @@ define(
          *
          * 默认提示信息为“您[创建|修改]的{实体名称}{name}已经成功保存”
          *
-         * @method ToastSubmitHandler.prototype.getToastMessage
+         * @protected
+         * @method mvc.handler.ToastSubmitHandler#getToastMessage
          * @param {Object} entity 提交后服务器端返回的实体信息
          * @param {er.Action} action 表单Action实例
          * @return {string}

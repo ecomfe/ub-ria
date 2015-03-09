@@ -2,9 +2,8 @@
  * ADM 2.0
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file Uploader控件
- * @author zhanglili(otakustay@gmail.com)
+ * @author otakustay
  */
 define(
     function (require) {
@@ -26,7 +25,9 @@ define(
         /**
          * 控件类型，始终为`"Uploader"`
          *
+         * @member ui.Uploader#type
          * @type {string}
+         * @readonly
          * @override
          */
         exports.type = 'Uploader';
@@ -198,10 +199,7 @@ define(
         }
 
         /**
-         * 渲染自身
-         *
          * @override
-         * @protected
          */
         exports.repaint = require('esui/painters').createRepaint(
             InputControl.prototype.repaint,
@@ -297,6 +295,7 @@ define(
         /**
          * 添加一个表单项，提交文件时一起提交
          *
+         * @method ui.Uploader#addFormField
          * @param {string} name 名称
          * @param {string} value 值
          */
@@ -311,9 +310,10 @@ define(
         /**
          * 检查文件格式是否正确，不正确时直接提示
          *
+         * @protected
+         * @method ui.Uploader.checkFileFormat
          * @param {string} filename 上传的文件的文件名
          * @return {boolean}
-         * @protected
          */
         exports.checkFileFormat = function (filename) {
             if (this.accept) {
@@ -358,6 +358,8 @@ define(
 
         /**
          * 提交文件上传
+         *
+         * @method ui.Uploader#submit
          */
         exports.submit = function () {
             this.showUploading();
@@ -377,6 +379,7 @@ define(
          * 上传文件
          *
          * @protected
+         * @method ui.Uploader#receiveFile
          */
         exports.receiveFile = function () {
             var input = this.helper.getPart('input');
@@ -396,6 +399,7 @@ define(
          * 提示用户正在上传
          *
          * @protected
+         * @method ui.Uploader#showUploading
          */
         exports.showUploading = function () {
             this.removeState('complete');
@@ -408,8 +412,9 @@ define(
         /**
          * 显示上传结果
          *
-         * @param {Object} options 上传结果
          * @protected
+         * @method ui.Uploader#showUploadResult
+         * @param {Object} options 上传结果
          */
         exports.showUploadResult = function (options) {
             // 如果成功，`options`格式为：
@@ -448,8 +453,9 @@ define(
         /**
          * 通知上传失败
          *
-         * @param {string} message 失败消息
          * @protected
+         * @method ui.Uploader#notifyFail
+         * @param {string} message 失败消息
          */
         exports.notifyFail = function (message) {
             message = message || '上传失败';
@@ -463,8 +469,9 @@ define(
         /**
          * 通知上传完成
          *
-         * @param {Object} info 成功结果
          * @protected
+         * @method ui.Uploader#notifyComplete
+         * @param {Object} info 成功结果
          */
         exports.notifyComplete = function (info) {
             setStateToComplete.call(this, info);
@@ -479,15 +486,22 @@ define(
             );
         };
 
+        /**
+         * @override
+         */
         exports.getRawValue = function () {
             return this.fileInfo || null;
         };
 
+        /**
+         * @override
+         */
         exports.getRawValueProperty = exports.getRawValue;
 
         /**
          * 获取用户选择的文件名
          *
+         * @method ui.Uploader#getFileName
          * @return {string}
          */
         exports.getFileName = function () {
@@ -495,8 +509,6 @@ define(
         };
 
         /**
-         * 销毁控件
-         *
          * @override
          */
         exports.dispose = function () {

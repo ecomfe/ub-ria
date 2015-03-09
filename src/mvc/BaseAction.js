@@ -2,10 +2,8 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file Action基类
  * @author otakustay
- * @date $DATE$
  */
 define(
     function (require) {
@@ -21,8 +19,8 @@ define(
 
         /**
          * @constructs mvc.BaseAction
-         * @override
          * @param {string} [entityName] 负责的实体名称
+         * @override
          */
         exports.constructor = function (entityName) {
             this.$super(arguments);
@@ -33,6 +31,7 @@ define(
         /**
          * 获取当前Action所处理的实体名称
          *
+         * @method mvc.BaseAction#getEntityName
          * @return {string}
          */
         exports.getEntityName = function () {
@@ -48,14 +47,16 @@ define(
         /**
          * 获取当前Action的实体简介名称
          *
-         * @type {string}
          * @protected
+         * @member mvc.BaseAction#entityDescription
+         * @type {string}
          */
         exports.entityDescription = '';
 
         /**
          * 获取实体的简介名称
          *
+         * @method mvc.BaseAction#getEntityDescription
          * @return {string}
          */
         exports.getEntityDescription = function () {
@@ -65,6 +66,8 @@ define(
         /**
          * 当前Action的所属分组名称，通常用于控制导航条的选中状态
          *
+         * @protected
+         * @member mvc.BaseAction#group
          * @type {string}
          */
         exports.group = '';
@@ -72,6 +75,7 @@ define(
         /**
          * 获取当前Action的所属分组名称
          *
+         * @method mvc.BaseAction#getGroup
          * @return {string}
          */
         exports.getGroup = function () {
@@ -81,6 +85,8 @@ define(
         /**
          * 当前页面的分类，如列表为`"list"`
          *
+         * @protected
+         * @member mvc.BaseAction#category
          * @type {string}
          */
         exports.category = '';
@@ -88,6 +94,7 @@ define(
         /**
          * 获取当前页面的分类
          *
+         * @method mvc.BaseAction#getCategory
          * @return {string}
          */
         exports.getCategory = function () {
@@ -105,6 +112,7 @@ define(
          * - `{packageName}-package`
          * - `{packageName}-pacakge-{category}`
          *
+         * @method mvc.BaseAction#getPageCategories
          * @return {string[]}
          */
         exports.getPageCategories = function () {
@@ -133,13 +141,6 @@ define(
         };
 
         /**
-         * 创建数据模型对象
-         *
-         * 此方法会在返回的`Model`中加上`entityDescription`属性
-         *
-         * @param {Object} args 模型的初始化数据
-         * @return {BaseModel}
-         * @protected
          * @override
          */
         exports.createModel = function (args) {
@@ -160,8 +161,9 @@ define(
         };
 
         /**
-         * 设置数据模型对象，会给 `model` 增加 `entityDescription` 字段
+         * 设置数据模型对象，会给`model`增加`entityDescription`字段
          *
+         * @method mvc.BaseAction#setModel
          * @param {er.Model} model 数据模型
          */
         exports.setModel = function (model) {

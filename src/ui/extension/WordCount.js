@@ -2,10 +2,8 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 计算文本框可输入字符的扩展
  * @author otakustay
- * @date $DATE$
  */
 define(
     function (require) {
@@ -23,7 +21,9 @@ define(
         /**
          * 扩展的类型，始终为`"WordCount"`
          *
+         * @member ui.extension.WordCount#type
          * @type {string}
+         * @readonly
          * @override
          */
         exports.type = 'WordCount';
@@ -35,6 +35,7 @@ define(
          * - `${current}`：表示已输入的字符个数
          * - `${max}`：表示最大可输入字符个数
          *
+         * @member ui.extension.WordCount#initialTemplate
          * @type {string}
          */
         exports.initialTemplate = '最多可输入${available}个字符';
@@ -46,6 +47,7 @@ define(
          * - `${current}`：表示已输入的字符个数
          * - `${max}`：表示最大可输入字符个数
          *
+         * @member ui.extension.WordCount#remainingTemplate
          * @type {string}
          */
         exports.remainingTemplate = '还可输入${available}个字符';
@@ -57,6 +59,7 @@ define(
          * - `${current}`：表示已输入的字符个数
          * - `${max}`：表示最大可输入字符个数
          *
+         * @member ui.extension.WordCount#exceededTemplate
          * @type {string}
          */
         exports.exceededTemplate = '已超出${available}个字符';
@@ -64,12 +67,13 @@ define(
         /**
          * 获取提示信息
          *
+         * @protected
+         * @method ui.extension.WordCount#getHintMessage
          * @param {Object} data 长度计算的相关数据
          * @param {number} data.available 还可输入的字符个数，已超出时为负数
          * @param {number} data.current 已经输入的字符个数
          * @param {number} data.max 最大可输入的字符个数
          * @return {string}
-         * @protected
          */
         exports.getHintMessage = function (data) {
             var template;
@@ -90,8 +94,9 @@ define(
         /**
          * 获取最大可输入字符数
          *
-         * @return {number}
          * @protected
+         * @method ui.extension.WordCount#getMaxLength
+         * @return {number}
          */
         exports.getMaxLength = function () {
             if (+this.target.get('maxLength') === -1) {
@@ -102,8 +107,6 @@ define(
 
         /**
          * 检查长度并显示提示信息
-         *
-         * @ignore
          */
         function checkLength() {
             var maxLength = this.getMaxLength();
@@ -126,8 +129,6 @@ define(
         }
 
         /**
-         * 激活扩展
-         *
          * @override
          */
         exports.activate = function () {
@@ -142,8 +143,6 @@ define(
         };
 
         /**
-         * 取消激活
-         *
          * @override
          */
         exports.inactivate = function () {

@@ -3,9 +3,7 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 列表Action基类
- * @exports mvc.ListAction
  * @author otakustay
- *         wangyaqiong(catkin2009@gmail.com)
  */
 define(
     function (require) {
@@ -14,6 +12,8 @@ define(
         var u = require('../util');
 
         /**
+         * 列表Action基类
+         *
          * @class mvc.ListAction
          * @extends mvc.BaseAction
          */
@@ -22,6 +22,7 @@ define(
         /**
          * 当前页面的分类，始终为`"list"`
          *
+         * @member mvc.ListAction#category
          * @type {string}
          * @readonly
          * @override
@@ -29,9 +30,6 @@ define(
         exports.category = 'list';
 
         /**
-         * 初始化交互行为
-         *
-         * @protected
          * @override
          */
         exports.initBehavior = function () {
@@ -106,7 +104,7 @@ define(
         function updatePageSize(e) {
             // 先请求后端更新每页显示条数，然后直接刷新当前页
             this.model.updatePageSize(e.pageSize)
-                .then(u.bind(afterPageSizeUpdate, this, e.pageSize));
+                .thenBind(afterPageSizeUpdate, this, e.pageSize);
         }
 
         /**
@@ -150,7 +148,7 @@ define(
          *
          * @protected
          * @method mvc.ListAction#modifyStatus
-         * @param {object[]} items 待修改状态的实体数组
+         * @param {Object[]} items 待修改状态的实体数组
          * @param {number} status 修改后实体的状态值
          */
         exports.modifyStatus = function (items, status) {
@@ -171,8 +169,8 @@ define(
             if (this.requireAdviceFor(context)) {
                 // 需要后端提示消息的，再额外加入用户确认的过程
                 this.model.getAdvice(status, ids)
-                    .then(u.bind(waitConfirmForAdvice, this, context))
-                    .then(u.bind(updateEntities, this, context));
+                    .thenBind(waitConfirmForAdvice, this, context)
+                    .thenBind(updateEntities, this, context);
             }
             else {
                 updateEntities.call(this, context);
@@ -197,7 +195,7 @@ define(
          * @param {meta.UpdateContext} context 操作的上下文对象
          * @param {Object} advice 提示对象
          * @param {string} advice.message 提示信息
-         * @return {er.Promise}
+         * @return {Promise}
          */
         function waitConfirmForAdvice(context, advice) {
             var options = {
@@ -214,10 +212,8 @@ define(
          */
         function updateEntities(context) {
             this.model[context.statusName](context.ids)
-                .then(
-                    u.bind(updateListStatus, this, context),
-                    u.bind(this.notifyModifyFail, this, context)
-                );
+                .thenBind(updateListStatus, this, context)
+                .fail(u.bind(this.notifyModifyFail, this, context));
         }
 
         /**
@@ -249,7 +245,7 @@ define(
         /**
          * 通知修改状态操作失败
          *
-         * 默认提示用户“无法[操作名]部分或全部[实体名]”，或“无法[操作名]该[实体名]”
+         * 默认提示用户“无法[操作名]部分或全部[实体名]”或“无法[操作名]该[实体名]”
          *
          * @protected
          * @method mvc.ListAction#notifyModifyFail
@@ -333,29 +329,6 @@ define(
             var path = this.model.get('url').getPath();
             var url = URL.withQuery(path, args);
             this.redirect(url, {force: true});
-        };
-
-        /**
-         * 获取指定页码的跳转URL(此接口目前不用了，但是为了防止外部已被调用，所以维持)
-         *
-         * @deprecated
-         *
-         * @param {number} page 指定的页码
-         * @return {string}
-         */
-        exports.getURLForPage = function (page) {
-            var url = this.context.url;
-            var path = url.getPath();
-            var query = url.getQuery();
-
-            if (page === 1) {
-                query = u.omit(query, 'page');
-            }
-            else {
-                query.page = page;
-            }
-
-            return URL.withQuery(path, query).toString();
         };
 
         /**

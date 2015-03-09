@@ -3,9 +3,7 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 静态排序数据类
- * @exports mvc.StaticListData
- * @author lixiang
- *         shenbnin(bobshenbin@gmail.com)
+ * @author lixiang, shenbnin(bobshenbin@gmail.com)
  */
 define(
     function (require) {
@@ -13,11 +11,15 @@ define(
 
         /**
          * 静态搜索相关搜索参数
+         *
+         * @const
          * @type {Array}
          */
         var STATIC_KEYS = ['order', 'orderBy', 'pageNo', 'pageSize'];
 
         /**
+         * 静态排序数据类
+         *
          * @class mvc.StaticListData
          * @extends mvc.RequestManager
          */
@@ -26,7 +28,6 @@ define(
         /**
          * 获取一个实体列表（不分页）
          *
-         * @public
          * @method mvc.StaticListData#list
          * @param {Object} query 查询参数
          * @return {er.meta.FakeXHR}
@@ -67,7 +68,8 @@ define(
                 var start =  (query.pageNo - 1) * query.pageSize;
                 var end = Math.min(start + query.pageSize, results.length);
                 results = results.slice(start, end);
-                sortData.results = results;
+                // 深克隆一下，免得外部对数据的修改影响到cache
+                sortData.results = u.deepClone(results);
             }
 
             return sortData;
@@ -76,7 +78,6 @@ define(
         /**
          * 检索一个实体列表，返回一个结果集
          *
-         * @public
          * @method mvc.StaticListData#search
          * @param {Object} query 查询参数
          * @return {er.meta.FakeXHR}
@@ -90,9 +91,9 @@ define(
                 var cache = function (data) {
                     return this.doCache(data, query);
                 };
-                return this.list(query).then(u.bind(cache, this));
+                return this.list(query).thenBind(cache, this);
             }
-            return require('er/Deferred').resolved(this.filterData(query));
+            return require('promise').resolve(this.filterData(query));
         };
 
         /**
@@ -111,7 +112,6 @@ define(
         /**
          * 判断静态搜索相关的字段是否变化
          *
-         * @public
          * @method mvc.StaticListData#checkStaticKeyChanged
          * @param  {Object} query 搜索参数
          * @return {boolean}
@@ -129,7 +129,6 @@ define(
         /**
          * 返回全集
          *
-         * @public
          * @method mvc.StaticListData#getCacheList
          * @return {Array}
          */
@@ -180,7 +179,7 @@ define(
             // a, b 如果有一个能转成数字
             // 能转成数字的永远大。
             if (aIsNumber || bIsNumber) {
-                return aIsNumber ? (symbol * 1) : (symbol * -1) ;
+                return aIsNumber ? (symbol * 1) : (symbol * -1);
             }
 
             // 否则就是文字对比
@@ -188,11 +187,8 @@ define(
         }
 
         /**
-         * 排序
-         * js原生的sort方法在不同浏览器上表现不同（稳定或不稳定）
-         * 因此自己写一个稳定排序, 冒泡排序
+         * 排序js原生的sort方法在不同浏览器上表现不同（稳定或不稳定），因此自己写一个稳定排序, 冒泡排序
          *
-         * @public
          * @method mvc.StaticListData#sort
          * @param {Array} array 待排序数组
          * @param {string} order desc | asc

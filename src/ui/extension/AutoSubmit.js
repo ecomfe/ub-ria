@@ -1,11 +1,9 @@
 /**
- * ADM 2.0
+ * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 让输入控件在特定事件下自动提交表单的扩展
  * @author otakustay
- * @date $DATE$
  */
 define(
     function (require) {
@@ -24,8 +22,8 @@ define(
 
         /**
          * @constructs ui.extension.AutoSubmit
-         * @override
          * @param {Object} [options] 配置项
+         * @override
          */
         exports.constructor = function (options) {
             options = options || {};
@@ -42,15 +40,17 @@ define(
         /**
          * 扩展的类型，始终为`"AutoSubmit"`
          *
+         * @member ui.extension.AutoSubmit#type
          * @type {string}
+         * @readonly
          * @override
          */
         exports.type = 'AutoSubmit';
 
         /**
-         * 指定对应的表单的id，不指定的话会进行自动查找，
-         * 使用包含当前控件的main元素的`Form`控件
+         * 指定对应的表单的id，不指定的话会进行自动查找，使用包含当前控件的main元素的`Form`控件
          *
+         * @member ui.extension.AutoSubmit#form
          * @type {string | null}
          */
         exports.form = null;
@@ -58,6 +58,7 @@ define(
         /**
          * 指定用于提交表单的事件名称，默认为`click`、`change`和`search`事件
          *
+         * @member ui.extension.AutoSubmit#events
          * @type {string[]}
          */
         exports.events = ['click', 'change', 'search'];
@@ -65,6 +66,8 @@ define(
         /**
          * 找到控件对应的`Form`控件
          *
+         * @protected
+         * @method ui.extension.AutoSubmit#resolveForm
          * @return {esui.Form}
          */
         exports.resolveForm = function () {
@@ -73,9 +76,7 @@ define(
             }
 
             // 如果没指定表单，就沿DOM结构向上找一个表单控件
-            var element = this.target
-                && this.target.main
-                && this.target.main.parentNode;
+            var element = this.target && this.target.main && this.target.main.parentNode;
             while (element) {
                 var control = ui.getControlByDOM(element);
                 if (control && control instanceof Form) {
@@ -91,7 +92,6 @@ define(
          * 提交表单
          *
          * @param {esui.Control} this 触发事件的控件
-         * @ignore
          */
         function submit() {
             var form = this.resolveForm();
@@ -101,8 +101,6 @@ define(
         }
 
         /**
-         * 激活扩展
-         *
          * @override
          */
         exports.activate = function () {
@@ -118,8 +116,6 @@ define(
         };
 
         /**
-         * 取消激活
-         *
          * @override
          */
         exports.inactivate = function () {

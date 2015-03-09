@@ -1,0 +1,26 @@
+{
+    "tags": {
+        "allowUnknownTags": false
+    },
+    "source": {
+        "include": ["src", "doc/meta", "README.md"],
+        "includePattern": ".+\\.(js|md)$"
+    },
+    "plugins": ["plugins/markdown"],
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false,
+        "systemName": "emc",
+        "footer": "{string}",
+        "copyright": "Baidu Inc. All rights reserved.",
+        "navType": "vertical",
+        "theme": "flatly",
+        "linenums": true,
+        "collapseSymbols": true
+    },
+    "opts": {
+        "destination": "doc/api/",
+        "encoding": "utf-8",
+        "recurse": true
+    }
+}

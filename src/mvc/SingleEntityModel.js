@@ -2,21 +2,16 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 以单个实体为主要数据源的页面的数据模型基类
  * @author otakustay
- * @date $DATE$
  */
 define(
     function (require) {
-        var u = require('../util');
-
         /**
          * 把实体信息展开到`Model`自身上，以便直接访问到某些属性
          *
          * @param {Object} entity 加载来的实体信息
          * @return {Object} 返回`entity`自身
-         * @ignore
          */
         function fillEntityToModel(entity) {
             // 而这个实体信息本身还要单独以`entity`为键保存一份，当取消编辑时用作比对
@@ -37,8 +32,7 @@ define(
                         return fillEntityToModel.call(model, entity);
                     }
 
-                    return model.findById(id)
-                        .then(u.bind(fillEntityToModel, model));
+                    return model.findById(id).thenBind(fillEntityToModel, model);
                 }
 
                 return {};
@@ -67,7 +61,7 @@ define(
          * 根据id获取实体
          *
          * @param {string | number} id 实体的id
-         * @return {er.Promise}
+         * @return {Promise}
          */
         exports.findById = function (id) {
             var data = this.data();

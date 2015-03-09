@@ -2,7 +2,6 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file UI组件模块扩展
  * @author otakustay
  */
@@ -13,8 +12,6 @@ define(
 
         /**
          * 加载并配置验证规则
-         *
-         * @ignore
          */
         function initializeValidationRules() {
             // 加载所有验证规则
@@ -108,8 +105,6 @@ define(
 
         /**
          * 添加通用的表格单元格内容输出方法
-         *
-         * @ignore
          */
         function addTableCellRenderers() {
             var Table = require('esui/Table');
@@ -264,8 +259,6 @@ define(
 
         /**
          * 为几个控件添加链接模式的内容模板
-         *
-         * @ignore
          */
         function addControlLinkMode() {
             var CommandMenu = require('esui/CommandMenu');
@@ -307,7 +300,17 @@ define(
             addControlLinkMode();
         }
 
+        /**
+         * UI控件体系扩展
+         *
+         * @namespace extension.ui
+         */
         return {
+            /**
+             * 启动扩展
+             *
+             * @method extension.ui.enable
+             */
             enable: u.once(enable)
         };
     }

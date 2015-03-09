@@ -4,7 +4,6 @@
  *
  * @file 必填字段校验器
  * @author yanghuabei(yanghuabei@baidu.com)
- * @date $DATE$
  */
 define(
     function (require) {

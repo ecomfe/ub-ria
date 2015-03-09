@@ -2,7 +2,6 @@
  * UB RIA Base
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
- * @ignore
  * @file 重写控件默认配置用的扩展
  * @author otakustay
  */
@@ -21,7 +20,9 @@ define(
         /**
          * 扩展的类型，始终为`"OverrideDefaults"`
          *
+         * @member ui.extension.OverrideDefaults#type
          * @type {string}
+         * @readonly
          * @override
          */
         exports.type = 'OverrideDefaults';

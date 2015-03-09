@@ -3,21 +3,23 @@
  * Copyright 2013 Baidu Inc. All rights reserved.
  *
  * @file 表单数据模型基类
- * @exports mvc.FormModel
  * @author otakustay
  */
 define(
     function (require) {
-        var Deferred = require('er/Deferred');
+        var Promise = require('promise');
 
         /**
+         * 表单数据模型基类
+         *
          * @class mvc.FormModel
          * @extends mvc.SingleEntityModel
          */
         var exports = {};
 
         /**
-         * @public
+         * 设置全局数据对象
+         *
          * @method mvc.FormModel#setGlobalData
          * @param {Object} data 全局数据对象
          */
@@ -28,7 +30,7 @@ define(
         /**
          * 检查实体数据完整性，可在此补充一些视图无法提供的属性
          *
-         * @public
+         * @protected
          * @method mvc.FormModel#fillEntity
          * @param {Object} entity 实体数据
          * @return {Object} 补充完整的实体数据
@@ -40,7 +42,6 @@ define(
         /**
          * 设置当前对象关联的{@link mvc.EntityValidator}实例
          *
-         * @public
          * @method mvc.FormModel#setValidator
          * @param {mvc.EntityValidator} validator 关联的实例
          */
@@ -54,7 +55,6 @@ define(
         /**
          * 获取当前对象关联的{@link mvc.EntityValidator}实例
          *
-         * @public
          * @method mvc.FormModel#getValidator
          * @return {mvc.EntityValidator}
          */
@@ -65,10 +65,9 @@ define(
         /**
          * 校验实体
          *
-         * @public
          * @method mvc.FormModel#validateEntity
          * @param {Object} entity 需要校验的实体
-         * @return {Array.<Object>}
+         * @return {Object[]}
          */
         exports.validateEntity = function (entity) {
             var validator = this.getValidator();
@@ -82,10 +81,9 @@ define(
         /**
          * 保存新建的实体
          *
-         * @public
          * @method mvc.FormModel#save
          * @param {Object} entity 新建的实体对象
-         * @return {er.meta.Promise}
+         * @return {Promise}
          */
         exports.save = function (entity) {
             entity = this.fillEntity(entity);
@@ -93,7 +91,7 @@ define(
             var validationResult = this.validateEntity(entity);
 
             if (validationResult.length > 0) {
-                return Deferred.rejected({fields: validationResult});
+                return Promise.reject({fields: validationResult});
             }
 
             return this.saveEntity(entity);
@@ -102,10 +100,9 @@ define(
         /**
          * 更新已有的实体
          *
-         * @public
          * @method mvc.FormModel#update
          * @param {Object} entity 待更新的实体对象
-         * @return {er.meta.Promise}
+         * @return {Promise}
          */
         exports.update = function (entity) {
             entity = this.fillEntity(entity);
@@ -116,7 +113,7 @@ define(
             var validationResult = this.validateEntity(entity);
 
             if (validationResult.length > 0) {
-                return Deferred.rejected({fields: validationResult});
+                return Promise.reject({fields: validationResult});
             }
 
             return this.updateEntity(entity);
@@ -128,7 +125,7 @@ define(
          * @protected
          * @method mvc.FormModel#saveEntity
          * @param {Object} entity 已经补充完整并且验证通过的实体
-         * @return {er.meta.Promise}
+         * @return {Promise}
          */
         exports.saveEntity = function (entity) {
             var data = this.data();
@@ -148,7 +145,7 @@ define(
          * @protected
          * @method mvc.FormModel#updateEntity
          * @param {Object} entity 已经补充完整并且验证通过的实体
-         * @return {er.meta.Promise}
+         * @return {Promise}
          */
         exports.updateEntity = function (entity) {
             var data = this.data();

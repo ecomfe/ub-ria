@@ -3,7 +3,6 @@
  * Copyright 2014 Baidu Inc. All rights reserved.
  *
  * @file 详情页Model基类
- * @exports mvc.DetailModel
  * @author otakustay
  */
 define(
@@ -107,7 +106,7 @@ define(
          */
         exports.load = function () {
             var loading = this.$super(arguments);
-            return loading.then(u.bind(setListActionURL, this));
+            return loading.thenBind(setListActionURL, this);
         };
 
         var SingleEntityModel = require('./SingleEntityModel');
