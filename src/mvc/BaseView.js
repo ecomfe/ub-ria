@@ -281,6 +281,28 @@ define(
             return templateData;
         };
 
+        /**
+         * 通过`DrawerActionPanel`控件加载指定的Action
+         *
+         * @protected
+         * @method mvc.BaseView#popDrawerAction
+         * @param {Object} options 控件配置项，参考`DrawerActionPanel`控件的说明
+         * @return {ub-ria-ui.DrawerActionPanel}
+         */
+        exports.popDrawerAction = function (options) {
+            options.id = options.id || 'drawer-action';
+            var drawerActionPanel = this.get(options.id);
+
+            if (!drawerActionPanel) {
+                drawerActionPanel = this.create('DrawerActionPanel', options);
+                drawerActionPanel.render();
+            }
+            else {
+                drawerActionPanel.setProperties(options);
+            }
+            return drawerActionPanel;
+        };
+
         var oo = require('eoo');
 
         /**
