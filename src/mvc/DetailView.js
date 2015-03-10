@@ -43,27 +43,15 @@ define(
         }
 
         /**
-         * 加载 action，参数同 ActionPanel
-         *
-         * @protected
-         * @method mvc.DetailView#popDrawerAction
-         * @param {Object} options 控件配置项
-         * @return {ui.DrawerActionPanel}
+         * @override
          */
         exports.popDrawerAction = function (options) {
-            options.id = options.id || 'drawer-action';
-            var drawerActionPanel = this.get(options.id);
+            var drawerActionPanel = this.$super(arguments);
 
-            if (!drawerActionPanel) {
-                drawerActionPanel = this.create('DrawerActionPanel', options);
-                drawerActionPanel.render();
-                drawerActionPanel.on('action@submitcancel', cancel);
-                drawerActionPanel.on('action@back', back);
-                drawerActionPanel.on('action@saveandclose', saveAndClose);
-            }
-            else {
-                drawerActionPanel.setProperties(options);
-            }
+            drawerActionPanel.on('action@submitcancel', cancel);
+            drawerActionPanel.on('action@back', back);
+            drawerActionPanel.on('action@saveandclose', saveAndClose);
+
             return drawerActionPanel;
         };
 
