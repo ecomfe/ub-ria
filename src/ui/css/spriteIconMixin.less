@@ -38,7 +38,12 @@
         .sprite-icon(none);
     }
 }
-
+// 参数多态，主要通过第二个参数判断
+// 1. 如果第二个参数是颜色值，则代表是字体图标，此时：
+//    第二个参数是字体背景；第三个参数代表字体宽度；
+// 2. 如果第二个参数不是颜色值，则代表是图片图标，此时
+//    第二个参数是图片宽度；第三个参数代表图片高度
+//
 .pseudo-icon (@img, @width:0, @height:0, @horizontal:left, @hDuration:0, @vertical:center, @vDuration:0, @relativePos:relative) {
     .relative(@relativePos) when not (@relativePos = none) {
         position: @relativePos;
@@ -46,7 +51,7 @@
     .relative(@relativePos);
     &:after {
         position: absolute;
-        // 判断是否是字体图标，第二个参数是多态参数
+        // 判断是否是字体图标
         @is-font-icon: ~`/^#[A-Za-z0-9]+$/i.test("@{width}") ? 'true' : 'false'`;
 
         .icon(@img) when (@is-font-icon) {
@@ -66,12 +71,24 @@
 
         .icon(@img);
 
-        .position-vertical(@vertical) when (@vertical = center) {
+        .position-vertical(@vertical) when (@vertical = center), (@is-font-icon = 'true') {
+            top: 50%;
+            margin-top: -(@height/2);
+            line-height: @height;
+        }
+
+        .position-vertical(@vertical) when (@vertical = center), (@is-font-icon = 'false') {
             top: 50%;
             margin-top: -(@height/2);
         }
-        .position-vertical(@vertical) when not (@vertical = center) {
+
+        .position-vertical(@vertical) when (@vertical = line-height) {
+            line-height: inherit;
+        }
+
+        .position-vertical(@vertical) when not (@vertical = center) and not (@vertical = line-height) {
             @{vertical}: @vDuration;
+            line-height: @height;
         }
 
         .position-horizontal(@horizontal) when (@horizontal = center), (@is-font-icon = 'true') {
