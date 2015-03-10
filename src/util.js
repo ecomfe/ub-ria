@@ -15,12 +15,21 @@ define(
          * @namespace util
          * @extends underscore
          */
-        var util = require('eoo').static(require('underscore'));
+        var underscore = require('underscore');
+        var util = require('eoo').static(underscore);
 
-        // 模板配置
-        util.templateSettings = {
+        var TEMPLATE_SETTINGS = {
             interpolate: /\$\{(.+?)\}/g, // `${name}`直接输出
             escape: /\$\{\:(.+?)\}/g // `${:name}`提供HTML转义
+        };
+
+        // 模板配置
+
+        /**
+         * @override
+         */
+        util.template = function (template, data) {
+            return underscore.template(template, data, TEMPLATE_SETTINGS);
         };
 
         /**
