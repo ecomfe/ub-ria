@@ -115,14 +115,15 @@ header {
     overflow: hidden;
     margin-top: 21px;
     li {
-        .list-unstyled;
+        padding-left: 0;
+        list-style: none;
         a {
             width: 56px;
             text-indent: -99999px;
             display: block;
             width: 17px;
             height: 17px;
-        } 
+        }
     }
 }
 
@@ -166,7 +167,7 @@ header {
     background: @sidebar-inverse-bg;
     height: @header-height;
     width: @sidebar-collapse-width;
-    text-align: center; 
+    text-align: center;
     cursor: pointer;
     i {
     }
@@ -191,7 +192,7 @@ header {
 // sidebar 旁边的页面
 .page-content {
     min-width: 960px;
-    margin-left: @sidebar-width; 
+    margin-left: @sidebar-width;
 }
 
 .skin-action-dialog {
