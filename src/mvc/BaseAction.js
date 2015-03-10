@@ -36,9 +36,14 @@ define(
          */
         exports.getEntityName = function () {
             if (!this.entityName) {
-                // 几乎所有的URL都是`/{entityName}/list|update|create|view`结构
-                var path = this.context.url.getPath();
-                this.entityName = path.split('/')[1];
+                // 如果在`enteractionfail`之类的事件中用到，此时是没有`context`的
+                if (this.context) {
+                    // 几乎所有的URL都是`/{entityName}/list|update|create|view`结构
+                    var path = this.context.url.getPath();
+                    this.entityName = path.split('/')[1];
+                }
+
+                return '';
             }
 
             return this.entityName;
