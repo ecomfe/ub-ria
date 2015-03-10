@@ -13,17 +13,17 @@ define(
 
         function addPageClassName() {
             var add = function (e) {
-                if (!e.action || !e.action.getPageCategories) {
+                if (!e.target.getPageCategories) {
                     return;
                 }
 
-                var element = util.getElement(e.container);
+                var element = util.getElement(e.target.context.container);
 
                 if (!element) {
                     return;
                 }
 
-                var pageClasses = e.action.getPageCategories();
+                var pageClasses = e.target.getPageCategories();
 
                 // `addClass`的简单实现
                 if (element.classList) {
@@ -80,7 +80,12 @@ define(
                 }
             };
 
-            events.on('enteraction', add);
+            events.on(
+                'enteraction',
+                function (e) {
+                    e.action.on('enter', add);
+                }
+            );
             events.on('leaveaction', remove);
             events.on('enteractionfail', remove);
         }
