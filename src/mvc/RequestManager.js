@@ -28,6 +28,13 @@ define(
             this.entityName = entityName;
             this.backendEntityName = backendEntityName;
 
+            /**
+             * 正在执行的请求
+             *
+             * @private
+             * @member mvc.RequestManager#runngingRequests
+             * @type {Object}
+             */
             this.runningRequests = {};
         };
 
@@ -48,8 +55,8 @@ define(
                 return null;
             }
 
-            // FIXME: 用了`eoo`的情况下`constructor`不准的
-            var typeConfig = u.findWhere(typeRequestConfigs, {type: instance.constructor});
+            // 如果是用`eoo`创建的，那么`$self`才是指向当前类
+            var typeConfig = u.findWhere(typeRequestConfigs, {type: instance.$self || instance.constructor});
             return (typeConfig && typeConfig.config[name]) || globalRequestConfig[name] || null;
         }
 
@@ -432,6 +439,19 @@ define(
 
         var oo = require('eoo');
 
+        /**
+         * 获取关联的AJAX对象
+         *
+         * @method mvc.RequestManager#getAjax
+         * @return {er.Ajax}
+         */
+
+        /**
+         * 设置关联的AJAX对象
+         *
+         * @method mvc.RequestManager#setAjax
+         * @param {er.Ajax} ajax 关联的AJAX对象
+         */
         oo.defineAccessor(exports, 'ajax');
 
         var RequestManager = oo.create(exports);
