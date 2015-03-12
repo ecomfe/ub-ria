@@ -35,7 +35,8 @@
             "uioc": "0.x",
             "eoo": "0.x",
             "promise": "1.x",
-            "eicons": "1.x"
+            "eicons": "1.x",
+            "ub-ria-ui": "1.x"
         }
     }
 }
