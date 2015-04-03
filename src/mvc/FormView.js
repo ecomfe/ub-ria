@@ -7,7 +7,7 @@
  */
 define(
     function (require) {
-        require('../ui/DrawerActionPanel');
+        require('ub-ria-ui/DrawerActionPanel');
 
         var u = require('../util');
 
@@ -298,36 +298,23 @@ define(
         };
 
         /**
-         * 加载 action，参数同 ActionPanel
-         *
-         * @protected
-         * @method mvc.FormView#popDrawerAction
-         * @param {Object} options 控件配置项
-         * @param {string} targetId 弹出抽屉的源元素id
-         * @return {ui.DrawerActionPanel}
+         * @override
          */
         exports.popDrawerAction = function (options, targetId) {
-            options.id = options.id || 'form-drawer-action';
-            var drawerActionPanel = this.get(options.id);
-            var view = this;
-            if (!drawerActionPanel) {
-                drawerActionPanel = this.create('DrawerActionPanel', options);
-                drawerActionPanel.render();
-                drawerActionPanel.on('close', saveAndClose, this);
-                drawerActionPanel.on(
-                    'action@entitysave',
-                    function (e) {
-                        saveRelatedEntity.call(view, e, targetId);
-                    },
-                    this
-                );
-                drawerActionPanel.on('action@handlefinish', handleAfterRelatedEntitySaved, this);
-                drawerActionPanel.on('action@submitcancel', cancel);
-                drawerActionPanel.on('action@back', back, this);
-            }
-            else {
-                drawerActionPanel.setProperties(options);
-            }
+            var drawerActionPanel = this.$super(arguments);
+
+            drawerActionPanel.on('close', saveAndClose, this);
+            drawerActionPanel.on(
+                'action@entitysave',
+                function (e) {
+                    saveRelatedEntity.call(this, e, targetId);
+                },
+                this
+            );
+            drawerActionPanel.on('action@handlefinish', handleAfterRelatedEntitySaved, this);
+            drawerActionPanel.on('action@submitcancel', cancel);
+            drawerActionPanel.on('action@back', back, this);
+
             return drawerActionPanel;
         };
 

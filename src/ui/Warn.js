@@ -41,7 +41,7 @@ define(
             this.setProperties(properties);
         };
 
-        var tempalte = '<div class="${iconClass}"></div>'
+        var tempalte = '<i class="${iconClass} ui-icon ui-icon-question-circle"></i>'
                      + '<div class="${contentClass}" id="${contentId}"></div>'
                      + '<div class="${operationFieldClass}">'
                      + '    <esui-button class="${okBtnClass}" data-ui="childName:btnOk;">${okLabel}</esui-button>'
