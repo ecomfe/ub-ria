@@ -334,6 +334,42 @@ define(
             return clone;
         };
 
+        util.transformPlainObjectToStructured = function (obj) {
+            var result = {};
+
+            var addDeepProperty = function (keyPath, value) {
+                var container = result;
+                keyPath = keyPath.split('.');
+                // 最后一个是真正的`key`，前面的都是一层层创建容器对象
+                var actualPropertyName = keyPath.pop();
+                // 这里用递归的话蛮损性能的，循环也还算直接，就用循环了
+                util.each(
+                    keyPath,
+                    function (key) {
+                        if (!container.hasOwnProperty(key)) {
+                            container[key]  = {};
+                        }
+                        container = container[key];
+                    }
+                );
+                container[actualPropertyName] = value;
+            };
+
+            util.each(
+                obj,
+                function (value, key) {
+                    if (key.indexOf('.') >= 0) {
+                        addDeepProperty(key, value);
+                    }
+                    else {
+                        result[key] = value;
+                    }
+                }
+            );
+
+            return result;
+        };
+
         return util;
     }
 );
