@@ -86,7 +86,9 @@ define(
          * @return {Object}
          */
         exports.getEntity = function () {
-            return this.getFormData();
+            var formData = this.getFormData();
+
+            return this.requireStructuredEntity ? u.transformPlainObjectToStructured(formData) : formData;
         };
 
         /**
