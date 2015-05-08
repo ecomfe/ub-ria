@@ -10,13 +10,14 @@ UB-RIA的全称是RIA base for union business。是一套为联盟产品线提�
 UB-RIA处在ECOMFE框架依赖的最上层，直接与产品线实现关联。联盟产品线的业务模块直接引用或继承UB-RIA中的基础模块构建系统。
 
 
-## UB-RIA结构
+## 框架解读
 
-最新版本UB-RIA按照功能分为四块：extension（扩展）、mvc（模块基类）、ui（控件库 ——之后会被迁移到UB-RIA-UI中）、common（统一样式）
+最新版本UB-RIA按照功能分为四块：extension（扩展）、mvc（模块基类）、ui（控件库 ——只跟MVC相关的控件）、common（统一样式）
 
 ### UB-RIA 之 extension
 
-一些零散的功能补充扩展，每个扩展都是一个对象，且都必须包含一个enable接口。
+一些零散的功能补充扩展，每个扩展都是一个对象，且都必须包含一个enable接口。    
+
 1. ajax.js    
 补充提供JSON格式请求的序列化功能
 
@@ -74,9 +75,9 @@ Base的一种针对列表型页面的实现。主要包含如下抽象：
 
 1. id为`"filter"`的`Form`控件  （可选）
 
-    1.1 id为`"filter-switch"`的`Button`控件  （可选）
-    1.2 id为`"filter-cancel"`的`Button`控件  （可选）
-    1.3 id为`"filter-modify"`的`Button`控件  （可选）
+    1.1 id为`"filter-switch"`的`Button`控件  （可选）    
+    1.2 id为`"filter-cancel"`的`Button`控件  （可选）    
+    1.3 id为`"filter-modify"`的`Button`控件  （可选）    
 
 2. id为`"create"`的`Button`控件（可选）
 
@@ -91,6 +92,12 @@ Base的一种针对列表型页面的实现。主要包含如下抽象：
 7. 所有批量操作按钮的`group`属性值均为`"batch"`
 
 8. 批量操作按钮需使用`CustomData`扩展，并设置`data-ui-data-status`属性，属性值即点击该按钮后实体将更新的目标状态数字，如`data-ui-data-status="0"`
+
+![列表页示例图](/doc/img/list.png)
+
+#### DetailAction，DetailView，DetailModel  `deprecated`
+
+Base的一种针对详情页面的实现
 
 #### FormAction，FormView，FormModel
 
@@ -107,3 +114,94 @@ Base的一种针对表单型页面的实现。主要包含如下抽象：
 5. 错误展示
 
 > FormModel继承自`ub-ria.mvc.SingleEntityModel`。`ub-ria.mvc.SingleEntityModel`是所有以 **单个实体** 为主数据源的页面的数据模型基类。包含了数据获取、Model填充两大主要逻辑。
+
+![表单页示例图](/doc/img/form.png)
+
+#### ReadAction，ReadView，ReadModel
+
+Base的一种针对只读页面的实现。这组mvc的实现很简单，目前抽象的内容包括：
+
+1. 返回交互
+
+2. 数据展示
+
+3. 空值的默认值显示
+
+> ReadModel也继承自`ub-ria.mvc.SingleEntityModel`。
+
+![只读页示例图](/doc/img/form.png)
+
+#### RequestManager
+
+ajax请求的管理模块，包括请求的并行处理、冲突处理等。模块可以做实例使用，此时它是Data模块的基类；可以做静态类，调用静态方法```register```完成请求的注册。
+
+> **Data** 是后期从Model中分离出来的专门负责处理数据请求的模块。开发者在这个模块中定义请求、注册请求。查看详细。
+
+#### RequestStrategy
+
+里面包含很多format方法，用于按一定规则处理请求的URL、请求名称、请求参数等。通常每个项目会根据自身的前后端接口约定有一个通用的实现。每个Data实例都要配置一个RequestStrategy实例。
+
+#### IoCActionFactory
+
+IoC的原理这里不详细描述，点这里了解详情。IoCActionFactory是一个创建Action的工厂类，它是对老版Action创建方式的IoC化升级。    
+
+ER在Action的创建方法上原生支持“工厂”，只要```Action```的```type```是一个有`createRuntimeAction`方法的对象。因此IoCActionFactory的核心就是它的createRuntimeAction方法，把Action通过依赖配置处理后，返回一个Promise对象。
+
+Action的依赖配置实现在业务端。实现这个配置的组件叫做```iocContainer```，业务端实现一个```IoCActionFactory```的继承类，使用```setIocContainer```配置上自己的组件。
+
+
+#### EntityValidator
+
+表单实体验证基类，对表单提交的数据在发送至后端前进行校验
+独立于View，专属于Model层的校验
+
+关键属性
+1. checkers：校验器集合，可添加、删除、覆盖    
+2. schema：提供检验规则，由系统在指定模块下通过schema.js实现    
+3. rule：并在工厂实现类通过setter植入    
+
+
+### UB-RIA 之 其他
+
+#### tpl
+
+模板相关处理的插件。目前包括：
+
+1. 通用的模板“filter”
+
+2. “自定义标签” shim
+
+3. 模板控件及扩展的解析和加载
+
+
+#### util
+
+就是一个工具类
+
+
+## 框架使用
+
+- [开发规范](doc/rule.md)
+
+- [基础搭建](doc/init.md)
+    
+    - [如何自定义ioc](doc/ioc)
+
+    - [如何创建模版](doc/template)
+
+    - [如何初始化一个模块](doc/module)
+
+- [如何创建一个表单](doc/form.md)
+
+   -  [如何配置数据源](doc/datasource)
+
+   -  [如何增加自定义校验](doc/validate)
+
+   -  [如何自定义提交处理](doc/submit)
+   
+- [如何创建一个列表](doc/list.md)
+    
+   -  [如何增加筛选项](doc/filter)
+
+- [子Action与控件的选择](doc/actionOrControl)
+
