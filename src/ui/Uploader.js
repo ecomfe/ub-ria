@@ -191,6 +191,7 @@ define(
             newInput.type = 'file';
             newInput.id = this.helper.getId('input');
             this.name && (newInput.name = this.name);
+            this.accept && (newInput.accept = this.accept);
             // 清理注册事件
             var input = this.helper.getPart('input');
             this.helper.removeDOMEvent(input, 'change');
