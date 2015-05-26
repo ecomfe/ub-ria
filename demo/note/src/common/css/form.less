@@ -1,0 +1,120 @@
+/**
+ * DEMO
+ *
+ * @file 表单样式
+ * @author dddbear(dddbear@aliyun.com)
+ */
+// select的样式比较复杂，使用float简化，inline-block不好控制
+.form-field-value {
+    >.ui-select {
+        float: left;
+    }
+
+    .ui-select + .form-field-description {
+        float: left;
+    }
+
+    // 通用错误提示样式
+    .ui-validity-invalid {
+        color: #f00;
+        font-size: 12px;
+    }
+
+
+    // 错误信息之后的描述节点隐藏
+    .ui-validity-invalid + .form-field-description,
+    .ui-validity-invalid + .form-field-description-block {
+        display: none;
+    }
+
+    // 还有一种验证信息样式跟description一样
+    .ui-validity-hint {
+        display: block;
+    }
+
+    .suffix-hint {
+        margin-left: 5px;
+    }
+
+    .ui-textbox-hint-prefix .ui-textbox-hint {
+        vertical-align: top;
+    }
+}
+
+// 非inline展示的description
+.form-field-description-block {
+    display: block;
+}
+
+// 独行提示信息，对应相邻上行的form-field
+.form-field-info-break,
+.form-field-info-break-required {
+    padding-left: @form-field-label-width;
+    display: block;
+}
+// 如果它对应的是一个reuqired field，那么还要再缩进一个*的位置
+.form-field-info-break-required {
+    padding-left: @form-field-label-width + @form-field-required-star-width;
+}
+
+// 重置提交区域样式
+.form-submit-section {
+    @form-submit-section-padding-top: 30px;
+    @form-submit-section-padding-bottom: 46px;
+    padding: @form-submit-section-padding-top 30px @form-submit-section-padding-bottom;
+    margin: 0;
+    background: #fff;
+    position: relative;
+    .opacity(90);
+
+    // warn的高度受提交区影响
+    .ui-warn {
+        height: @form-submit-section-padding-top + @form-submit-section-padding-bottom + 35px;
+    }
+}
+
+.form-page.state-warned {
+    // 提示层覆盖提交按钮
+    .form-submit-section {
+        .submit-button,
+        .cancel-button {
+            visibility: hidden;
+        }
+        background-color: transparent;
+    }
+}
+
+
+// 抽屉里的样式
+.ui-draweractionpanel {
+    // 这里给form添加一个背景图，用来弥补没有纵向滚动条时，空白的那块区域
+    .form-page {
+        background: url(../img/submit-bg.png) repeat-x scroll 0 bottom #fff;
+        min-height: 100%;
+
+        &.state-warned {
+            background: url(../img/submit-bg-warn.png) repeat-x scroll 0 bottom #fff;
+        }
+    }
+    // 表单主体
+    .content-main {
+        // 让出按钮
+        padding-bottom: 100px;
+        // 使用背景图方式目前有一个缺陷，当表单内容填满外容器的时候，背景就被挡住了
+        // 所以把背景置为空，就不会遮挡了
+        background: none;
+    }
+    // 按钮层
+    .form-submit-section {
+        position: fixed;
+        bottom: 0;
+        // 让出滚动条
+        right: 20px;
+        width: auto;
+    }
+
+    // 隐藏状态的drawPanel里的按钮层要恢复原态
+    &.ui-draweractionpanel-hidden .form-submit-section {
+        position: static;
+    }
+}

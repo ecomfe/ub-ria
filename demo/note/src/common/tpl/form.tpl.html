@@ -1,0 +1,129 @@
+<!-- target: formSubmitSection -->
+<esui-panel class="form-submit-section" data-ui-id="submit-section">
+    <button type="submit" data-ui-type="Button" data-ui-id="submit" data-ui-group="submit" class="submit-button"><!-- if: ${formType} === 'update' -->完成<!-- else -->新建<!-- /if --></button>
+    <div data-ui-type="Button" data-ui-id="cancel" data-ui-group="submit" data-ui-skin="link">取消</div>
+</esui-panel>
+
+<!-- 由label + value + tip组成的表单field模板，content可以是任意内容 -->
+<!-- master: formLabelValueField -->
+<!-- var: label = ${label} || ${title} -->
+<!-- var: id = ${id} || ${name} || ${field} -->
+<!-- var: commonFieldClass = ${required} ? 'form-field-required' : 'form-field' -->
+<!-- if: ${fieldClasses} -->
+<div class="${commonFieldClass} ${fieldClasses}">
+<!-- else -->
+<div class="${commonFieldClass}">
+<!-- /if -->
+    <esui-label class="form-field-label" data-ui-for-target="${id | dasherize}">${label}：</esui-label>
+    <div class="form-field-value">
+        <!-- if: ${required} -->
+        <span class="form-field-value-required-star">*</span>
+        <!-- /if -->
+        <!-- contentplaceholder: value --><!-- /contentplaceholder-->
+        <!-- if: ${tipTitle} || ${tip} -->
+        <esui-tip class="form-field-tip" title="${tipTitle}">${tip}</esui-tip>
+        <!-- /if -->
+    </div>
+</div>
+
+<!-- master: formPage -->
+<esui-panel data-ui-id="form-page" class="form-page">
+    <div class="page-crumb">
+        <!-- contentplaceholder: crumb --><!-- /contentplaceholder -->
+        <!-- contentplaceholder: tip --><!-- /contentplaceholder -->
+    </div>
+    <!-- contentplaceholder: formMain --><!-- /contentplaceholder-->
+</esui-panel>
+
+<!-- master: formView -->
+<div class="form-view">
+    <form data-ui-type="Form" data-ui-id="form" novalidate="novalidate">
+        <esui-panel class="content-main" data-ui-id="form-content-main"
+            data-ui-extension-command-type="Command" data-command="form-content-click">
+            <!-- contentplaceholder: sections --><!-- /contentplaceholder -->
+        </esui-panel>
+
+        <!-- import: formSubmitSection -->
+    </form>
+</div>
+
+<!-- target: textbox -->
+<!-- var: name = ${name} || ${field} -->
+<!-- var: id = ${id} || ${name} -->
+<!-- var: width = ${width} || 230 -->
+<!-- var: length = ${length} || 100 -->
+<!-- var: trim = !${notTrim} -->
+<esui-text-box data-ui-id="${id | dasherize}" data-ui-value="@${field}"
+    name="${name}" title="${title}" data-ui-max-length="-1"
+    data-ui-validity-label="${id | dasherize}-validity-label"
+    <!-- if: ${mode} -->data-ui-mode="${mode}"<!-- /if -->
+    <!-- if: ${required} -->data-ui-required="required"<!-- /if -->
+    <!-- if: ${width} -->data-ui-width="${width}"<!-- /if -->
+    <!-- if: ${height} -->data-ui-height="${height}"<!-- /if -->
+    <!-- if: ${length} -->data-ui-length="${length}"<!-- /if -->
+    <!-- if: ${minLength} --> data-ui-min-length="${minLength}"<!-- /if -->
+    <!-- if: ${min} || ${min} === 0 -->data-ui-min="${min}"<!-- /if -->
+    <!-- if: ${minErrorMessage} -->data-ui-min-error-message="${minErrorMessage}"<!-- /if -->
+    <!-- if: ${max} || ${max} === 0 -->data-ui-max="${max}"<!-- /if -->
+    <!-- if: ${maxErrorMessage} -->data-ui-max-error-message="${maxErrorMessage}"<!-- /if -->
+    <!-- if: ${pattern} -->data-ui-pattern="${pattern}"<!-- /if -->
+    <!-- if: ${patternErrorMessage} -->data-ui-pattern-error-message="${patternErrorMessage}"<!-- /if -->
+    <!-- if: ${countWord} -->data-ui-extension-count-type="WordCount"<!-- /if -->
+    <!-- if: ${prefixHint} -->data-ui-hint="${prefixHint}" data-ui-hint-type="prefix" <!-- /if -->
+    <!-- if: ${group} -->data-ui-group="${group}"<!-- /if -->
+    <!-- if: ${compare} -->data-ui-compare="${compare | dasherize}"<!-- /if -->
+    <!-- if: ${passwordRule} -->data-ui-password-rule="${passwordRule}"<!-- /if -->
+    <!-- if: ${placeholder} -->data-ui-placeholder="${placeholder}"<!-- /if -->
+    <!-- if: ${disabled} -->data-ui-disabled="true"<!-- /if -->
+    <!-- if: ${trim} -->data-ui-extension-trim-type="TrimInput"<!-- /if --> >
+</esui-text-box>
+<!-- if: ${suffixHint} -->
+<esui-label class="suffix-hint" data-ui-id="${id | dasherize}-suffix-hint">${suffixHint}</esui-label>
+<label data-ui-type="Validity" data-ui-id="${id | dasherize}-validity-label"></label>
+<!-- /if -->
+<!-- if: ${description} -->
+<div class="form-field-description">${description}</div>
+<!-- /if -->
+
+<!-- target: textarea -->
+<!-- var: name = ${name} || ${field} -->
+<!-- var: id = ${id} || ${name} -->
+<!-- var: width = ${width} || 360 -->
+<!-- var: height = ${height} || 130 -->
+<!-- var: trim = !${notTrim} -->
+<div class="form-field-frame">
+    <div data-ui-type="Validity" data-ui-id="${id | dasherize}-validity-label"></div>
+    <div class="form-field-description-block">${description}</div>
+    <esui-text-box name="${name}" title="${title}" data-ui-max-length="-1"
+        data-ui-id="${id | dasherize}" data-ui-value="@${field}" data-ui-mode="textarea"
+        data-ui-validity-label="${id | dasherize}-validity-label"
+        <!-- if: ${required} -->data-ui-required="required"<!-- /if -->
+        <!-- if: ${width} -->data-ui-width="${width}"<!-- /if -->
+        <!-- if: ${height} -->data-ui-height="${height}"<!-- /if -->
+        <!-- if: ${length} -->data-ui-length="${length}"<!-- /if -->
+        <!-- if: ${countWord} -->data-ui-extension-count-type="WordCount"<!-- /if -->
+        <!-- if: ${group} -->data-ui-group="${group}"<!-- /if -->
+        <!-- if: ${trim} -->data-ui-extension-trim-type="TrimInput"<!-- /if --> >
+    </esui-text-box>
+</div>
+
+
+<!-- target: textboxField(master = formLabelValueField) -->
+<!-- content: value -->
+    <!-- import: textbox -->
+<!-- /content -->
+
+
+<!-- target: textareaField(master = formLabelValueField) -->
+<!-- content: value -->
+    <!-- import: textarea -->
+<!-- /content -->
+
+<!-- target: formCrumb -->
+<!-- if: ${formType} === 'create' -->
+<span>新建${title}</span>
+<!-- elif: ${formType} === 'update' -->
+<span>修改${title}</span>
+<!-- else -->
+<span>查看${title}</span>
+<!-- /if -->

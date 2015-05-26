@@ -1,0 +1,241 @@
+/**
+ * DEMO
+ * Copyright 2014 Baidu Inc. All rights reserved.
+ *
+ * @file 列表通用样式
+ * @author yanghuabei(yanghuabei@baidu.com)
+ */
+// 重写ub-ria中的一些样式
+.list-view {
+    .list-meta {
+        display: table;
+        width: 100%;
+    }
+
+    .list-action {
+        display: table-cell;
+        vertical-align: middle;
+        width: auto;
+        .ui-link {
+            white-space: nowrap;
+            margin-right: 10px;
+        }
+    }
+
+    .list-filter {
+        display: table-cell;
+        vertical-align: middle;
+        width: 100%;
+        margin: 0;
+        .ui-searchbox {
+            margin: 4px 10px;
+        }
+    }
+
+    // 列表中向左显示的tip
+    .end-cell {
+        .table-count-detail {
+            width: 180px;
+            margin-left: -207px;
+        }
+    }
+
+    .ui-table-cell-text {
+        line-height: 18px;
+    }
+}
+
+.list-pager {
+    .clear-float();
+
+    .ui-pager,
+    .pager-count {
+        .inline-block();
+        float: right;
+    }
+
+    .pager-count {
+        color: #666;
+        font-size: 12px;
+        line-height: 18px;
+        margin: 14px;
+    }
+
+    .ui-pager .ui-select {
+        background: #fff;
+    }
+}
+
+.list-filter-fields {
+    float: left;
+}
+
+// 批量操作区
+.list-batch-operation {
+    float: left;
+    height: 22px;
+    margin: 6px 10px 0 0;
+    border-right: 1px solid #fff;
+    .ui-button {
+        .middle-text(35px);
+        margin-top: -6px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #999;
+
+        &:hover {
+            color: #666;
+        }
+
+        // 禁用状态
+        &.state-disabled {
+            font-weight: normal;
+            cursor: default;
+            &:hover {
+                color: #999;
+            }
+        }
+    }
+}
+
+
+.list-filter-panel {
+    border: 1px solid #d7f0f2;
+    margin-bottom: 10px;
+
+    .list-filter-select-fields {
+        padding: 20px 30px 15px;
+        .clearfix();
+        .ui-select {
+            .middle-text(35px);
+            background: #f5f5f5;
+            color: #555;
+        }
+    }
+
+    .list-filter-selected-fields {
+        padding: 15px 30px 13px;
+    }
+
+    .list-filter-operation {
+        background: #e2efe6;
+        padding: 15px 30px;
+
+        .ui-button {
+            height: 23px;
+            width: 33px;
+            line-height: 23px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .skin-link-button {
+            font-weight: normal;
+        }
+
+        .skin-link-commandmenu {
+            .skin-link-button();
+        }
+    }
+
+    .list-filter-section {
+        float: left;
+        width: 100%;
+    }
+
+    .list-filter-field {
+        .middle-text(35px);
+        float: left;
+        margin-right: 60px;
+        margin-bottom: 10px;
+    }
+
+    .list-filter-field-label {
+        float: left;
+        line-height: 35px;
+        min-width: 65px;
+    }
+
+    .list-filter-field-value {
+        float: left;
+    }
+}
+
+.list-view .form-view {
+    border: 1px solid #d7f0f2;
+    margin-bottom: 10px;
+
+    .content-main {
+        padding: 20px 30px 15px;
+
+    }
+
+    .form-section {
+        margin-bottom: 0;
+    }
+
+    .form-field,
+    .form-field-required {
+        margin: 0 0 20px;
+    }
+
+    .form-submit-section {
+        background-color: #e2efe6;
+        padding: 15px 30px;
+        .ui-button {
+            height: 23px;
+            width: 33px;
+            line-height: 23px;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 0 15px;
+        }
+
+        .skin-link-button {
+            font-weight: normal;
+        }
+    }
+}
+
+// 操作列一般就放在这个格子里
+// 虽然觉着这么hardcode不太好，但也想不到啥好方法了。。。
+.ui-table-row {
+    position: relative;
+}
+
+// 表头固定
+.ui-table-head {
+    z-index: 10; // 比header高
+    top: @header-height !important;
+}
+.navigator-collapsed {
+    .ui-table-head {
+        top: 0 !important;
+    }
+}
+
+.table-operation-separator {
+    color: @separator-color;
+}
+
+// 弹层图标
+.table-operation-trigger {
+    .link-like();
+    .inline-block();
+    .pseudo-icon(@eicons-var-pencil-square-o, #779fd4, 12px);
+    text-indent: -5000px;
+    width: 14px;
+    line-height: 16px;
+    padding: 0;
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+// 操作弹层
+.table-operation-layer {
+    .table-operation {
+        text-indent: 0;
+        width: auto;
+    }
+}

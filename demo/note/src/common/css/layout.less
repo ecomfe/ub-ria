@@ -1,0 +1,60 @@
+/**
+ * DEMO
+ *
+ * @file 布局相关less
+ * @author dddbear(dddbear@aliyun.com)
+ */
+// 始终显示纵向滚动条，以免页面高度导致内容横移
+body {
+    overflow-y: scroll;
+}
+
+// header区域在展开时是fixed的
+header {
+    z-index: 2;
+    position: fixed;
+    top: 0;
+}
+
+.navigator-collapsed {
+    // 导航栏收起时header的状态
+    header {
+        position: static;
+    }
+
+    // 导航栏收起时main的状态
+    #main {
+        margin-left: @sidebar-collapse-width;
+        margin-top: 0;
+    }
+}
+
+#logo {
+    float: left;
+}
+
+.navigator-collapsed #page-container {
+    margin-top: 0;
+}
+
+#page-container {
+    margin-top: @header-height;
+}
+
+// 面包屑外框样式
+.page-crumb {
+    position: relative;
+    background: #f7f7f7;
+    padding-left: 10px;
+    .clearfix();
+
+    .ui-crumb {
+        float: left;
+    }
+
+    .ui-tip {
+        float: left;
+        margin-left: -10px;
+        margin-top: 22px;
+    }
+}

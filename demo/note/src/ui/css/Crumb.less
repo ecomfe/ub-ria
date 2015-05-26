@@ -1,0 +1,49 @@
+@crumb-background: #f7f7f7;
+@crumb-padding: 0;
+@crumb-font-size: 14px;
+@crumb-height: 55px;
+@crumb-line-height: 55px;
+@crumb-separator-margin: 0 5px;
+@crumb-node-padding: 0 20px;
+@crumb-node-color: #666;
+@crumb-first-node-color: @crumb-node-color;
+@crumb-last-node-color: @note-main-theme-color;
+
+.ui-crumb {
+    background: @crumb-background;
+    padding: @crumb-padding;
+    font-size: @crumb-font-size;
+    height: @crumb-height;
+}
+
+.ui-crumb-node,
+.ui-crumb-separator {
+    line-height: @crumb-line-height;
+    color: @crumb-node-color;
+}
+
+.ui-crumb-node {
+    color: @crumb-node-color;
+    padding: @crumb-node-padding;
+}
+
+.ui-crumb-node-first {
+    color: @crumb-first-node-color;
+}
+
+.ui-crumb-node-last {
+    color: @crumb-last-node-color;
+    font-weight: bold;
+}
+
+.ui-crumb-separator {
+    margin: @crumb-separator-margin;
+    font-size: 11px;
+    height: 55px;
+    width: 6px;
+    .hide-text();
+    .pseudo-icon (@eicons-var-angle-right, #696969, 6px, center);
+    &:after {
+        font-weight: bold;
+    }
+}

@@ -1,0 +1,72 @@
+@button-background: @note-main-theme-color;
+@button-color: #fff;
+@button-border-color: @button-background;
+
+@button-background-hover: @note-main-theme-color-hover;
+@button-color-hover: @button-color;
+@button-border-color-hover: @button-background-hover;
+
+@button-background-active: @note-main-theme-color;
+@button-color-active: @button-color;
+@button-border-color-active: #1cb6bb #27afa8 #16bbc9;
+
+@button-background-disabled: @note-main-theme-color-disabled;
+@button-color-disabled: #656565;
+@button-border-color-disabled: @button-background-disabled;
+
+@link-button-color: @note-main-theme-color;
+
+// 带删除图标的色块型按钮
+.skin-delete-block-button {
+    height: 30px;
+    min-width: 129px;
+    margin-left: 10px;
+    line-height: 30px;
+    padding: 0 26px 0 10px;
+    border: none;
+    text-align: left;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    background: #91dbe1;
+    &:hover {
+        text-decoration: none;
+        background: #91dbe1;
+        .pseudo-icon(@eicons-var-times-circle, #6ec794, 14px, right, 5px);
+    }
+}
+
+.skin-select-button {
+    padding: 1px 37px 1px 20px;
+    border: none;
+    color: #555;
+    background-color: transparent;
+    font-size: 12px;
+    font-weight: bold;
+    .pseudo-icon(@eicons-var-caret-down, #666, 14px, right, 20px);
+
+    &:hover {
+        color: #555;
+        background-color: #dee0e0;
+    }
+
+    &:active {
+        border: none;
+    }
+
+    &.state-expand {
+        .pseudo-icon(@eicons-var-caret-up, #666, 14px, right, 20px);
+    }
+}
+
+.skin-small-add-button,
+.skin-small-add-button:hover,
+.skin-small-add-button:active {
+    padding-left: 26px;
+    padding-right: 9px;
+    height: 23px;
+    line-height: 23px;
+    font-size: 12px;
+    font-weight: bold;
+    .pseudo-icon(@eicons-var-plus, #fff, 11px, left, 15px);
+}

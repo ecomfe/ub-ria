@@ -1,0 +1,41 @@
+{
+    "name": "demo",
+    "version": "0.0.1",
+    "private": true,
+    "description": "demo",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {},
+    "edp": {
+        "dependencies": {
+            "esui": "<=3.1.0-beta.3",
+            "ef": "3.x",
+            "mini-event": "1.x",
+            "er": "3.x",
+            "underscore": "1.x",
+            "jquery": "1.x",
+            "moment": "2.x",
+            "est": "1.x",
+            "etpl": "2.x",
+            "ub-ria": "2.x",
+            "eoo": "0.x",
+            "promise": "1.x",
+            "ub-ria-sidebar": "~0.0.3",
+            "uioc": "0.x",
+            "eicons": "~1.0.0-alpha.1",
+            "esf": "~1.0.0-alpha.7",
+            "ub-ria-ui": "latest"
+        },
+        "wwwroot": "/",
+        "depDir": "dep",
+        "srcDir": "src",
+        "loaderAutoConfig": "js,htm,html,tpl,vm,phtml",
+        "loaderUrl": "http://s1.bdstatic.com/r/www/cache/ecom/esl/1-6-6/esl.js",
+        "layout": "v2"
+    },
+    "dependencies": {},
+    "author": "",
+    "license": "MIT"
+}

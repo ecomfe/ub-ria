@@ -1,0 +1,12 @@
+{
+    "userId": 123456,
+    "userName": "一只青蛙",
+    "email": "email@email.com",
+    "cellphone": "13800138000",
+    "authorities": [
+        "CONTACT_VIEW",
+        "CONTACT_NEW",
+        "CONTACT_MODIFY",
+        "CONTACT_AUTH_MODIFY"
+    ]
+}

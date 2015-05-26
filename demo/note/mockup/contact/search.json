@@ -1,0 +1,21 @@
+{
+    "totalCount": 172,
+    "results": [
+        {
+            "id": 8171,
+            "name": "吴青峰",
+            "roleType": 1,
+            "roleTypeName": "同学",
+            "phone": "18621534568",
+            "authType": 1
+        },
+        {
+            "id": 8170,
+            "name": "莫文蔚",
+            "roleType": 2,
+            "roleTypeName": "同事",
+            "phone": "13918791140",
+            "authType": 2
+        }
+    ]
+}

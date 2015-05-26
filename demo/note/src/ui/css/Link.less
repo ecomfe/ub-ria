@@ -1,0 +1,112 @@
+// 添加按钮
+.skin-add-link {
+    .user-select();
+    overflow: hidden;
+    cursor: pointer;
+    text-align: center;
+    .interactive-cursor();
+    .inline-block();
+
+    padding: @button-padding;
+    background: @button-background;
+    border-style: @button-border-style;
+    border-color: @button-border-color;
+    border-width: @button-border-width;
+    color: @button-color;
+}
+.skin-add-link,
+.skin-add-link:hover,
+.skin-add-link:active {
+    text-decoration: none;
+    padding-left: 40px;
+    height: 33px;
+    line-height: 33px;
+    font-size: 15px;
+    font-weight: bold;
+    .pseudo-icon(@eicons-var-plus, #fff, 11px, left, 15px);
+}
+
+
+.skin-add-link:hover {
+    border-color: @button-border-color-hover;
+    background: @button-background-hover;
+    color: @button-color-hover;
+    border-width: @button-border-width;
+}
+
+.skin-add-link:active {
+    border-color: @button-border-color-active;
+    background: @button-background-active;
+    color: @button-color-active;
+}
+
+.skin-add-link-disabled {
+    border-color: @button-border-color-disabled;
+    background: @button-background-disabled;
+    color: @button-color-disabled;
+    &:hover {
+        border-color: @button-border-color-disabled;
+        background: @button-background-disabled;
+        color: @button-color-disabled;
+    }
+    &:active {
+        border-color: @button-border-color-disabled;
+        background: @button-background-disabled;
+        color: @button-color-disabled;
+    }
+}
+
+// 普通按钮样式的link
+.skin-button-link {
+    .user-select();
+    overflow: hidden;
+    cursor: pointer;
+    text-align: center;
+    .interactive-cursor();
+    .inline-block();
+
+    padding: 0 40px;
+    background: @button-background;
+    border-style: @button-border-style;
+    border-color: @button-border-color;
+    border-width: @button-border-width;
+    color: @button-color;
+}
+.skin-button-link,
+.skin-button-link:hover,
+.skin-button-link:active {
+    text-decoration: none;
+    height: 33px;
+    line-height: 34px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.skin-button-link:hover {
+    border-color: @button-border-color-hover;
+    background: @button-background-hover;
+    color: @button-color-hover;
+    border-width: @button-border-width;
+}
+
+.skin-button-link:active {
+    border-color: @button-border-color-active;
+    background: @button-background-active;
+    color: @button-color-active;
+}
+
+.skin-button-link-disabled {
+    border-color: @button-border-color-disabled;
+    background: @button-background-disabled;
+    color: @button-color-disabled;
+    &:hover {
+        border-color: @button-border-color-disabled;
+        background: @button-background-disabled;
+        color: @button-color-disabled;
+    }
+    &:active {
+        border-color: @button-border-color-disabled;
+        background: @button-background-disabled;
+        color: @button-color-disabled;
+    }
+}

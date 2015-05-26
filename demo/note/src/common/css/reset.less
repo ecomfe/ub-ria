@@ -1,0 +1,47 @@
+// RESET
+@import "./extern.less";
+
+.global-reset();
+.global-normalize();
+
+html,
+body {
+    margin: 0;
+    font-size: 12px;
+    // 最后一个是宋体，倒数2-3个为OSX用
+    font-family: arial, verdana, "Hiragino Sans GB", Hiragino Sans GB, "\5B8B\4F53";
+    -webkit-font-smoothing: antialiased;
+}
+
+a,
+.link-like {
+    color: #12bfcd;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul,
+ol,
+p {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+}
+
+header,
+section,
+\:section,
+footer,
+nav {
+    display: block;
+}
