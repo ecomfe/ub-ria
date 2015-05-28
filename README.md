@@ -9,6 +9,13 @@ UB-RIA的全称是RIA base for union business。是一套为联盟产品线提�
 
 UB-RIA处在ECOMFE框架依赖的最上层，直接与产品线实现关联。联盟产品线的业务模块直接引用或继承UB-RIA中的基础模块构建系统。
 
+## 生成API文档
+
+npm i -g jsdoc
+cd {ub-ria}
+jsdoc -c doc/conf.json
+open doc/api/index.html
+
 ## 文档索引
 
 - [框架解读](doc/structure.md)
