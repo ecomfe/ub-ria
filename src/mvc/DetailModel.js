@@ -106,7 +106,7 @@ define(
          */
         exports.load = function () {
             var loading = this.$super(arguments);
-            return loading.thenBind(setListActionURL, this);
+            return loading.then(u.bind(setListActionURL, this));
         };
 
         var SingleEntityModel = require('./SingleEntityModel');
