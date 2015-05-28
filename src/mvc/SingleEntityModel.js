@@ -7,6 +7,8 @@
  */
 define(
     function (require) {
+        var u = require('../util');
+
         /**
          * 把实体信息展开到`Model`自身上，以便直接访问到某些属性
          *
@@ -32,7 +34,7 @@ define(
                         return fillEntityToModel.call(model, entity);
                     }
 
-                    return model.findById(id).thenBind(fillEntityToModel, model);
+                    return model.findById(id).then(u.bind(fillEntityToModel, model));
                 }
 
                 return {};
