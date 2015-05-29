@@ -24,6 +24,9 @@ define(
 
         /**
          * 设置下一个组件
+         * 可选。默认值为空。
+         * 参数类型 ub-ria.mvc.handler.SubmitHandler
+         * 修改后可指下一个Handler（如toast后刷新）。
          *
          * @method mvc.handler.SubmitHandler#setNextSubmitHandler
          * @param {SubmitHandler} handler 下一个组件

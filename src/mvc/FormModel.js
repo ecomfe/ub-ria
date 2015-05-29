@@ -18,16 +18,6 @@ define(
         var exports = {};
 
         /**
-         * 设置全局数据对象
-         *
-         * @method mvc.FormModel#setGlobalData
-         * @param {Object} data 全局数据对象
-         */
-        exports.setGlobalData = function (data) {
-            this.addData('global', data);
-        };
-
-        /**
          * 检查实体数据完整性，可在此补充一些视图无法提供的属性
          *
          * @protected
@@ -41,6 +31,8 @@ define(
 
         /**
          * 设置当前对象关联的{@link mvc.EntityValidator}实例
+         * 可选。
+         * 参数类型 ub-ria.mvc.EntityValidator
          *
          * @method mvc.FormModel#setValidator
          * @param {mvc.EntityValidator} validator 关联的实例

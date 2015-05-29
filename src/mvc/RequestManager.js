@@ -140,6 +140,8 @@ define(
 
         /**
          * 设置关联的{@link mvc.RequestStrategy}对象
+         * 必选。一般由IoC统一配置。
+         * 参数类型 ub-ria.mvc.RequestStrategy
          *
          * @method mvc.RequestManager#setRequestStrategy
          * @param {mvc.RequestStrategy} requestStrategy 设置的实例
@@ -465,12 +467,15 @@ define(
                 }
                 configContainer[name] = config;
             }
-            else {
+            else if (config.scope === 'global')  {
                 if (globalRequestConfig.hasOwnProperty(name)) {
                     throw new Error('A global request config "' + name + '" has already been registered');
                 }
 
                 globalRequestConfig[name] = config;
+            }
+            else {
+                throw new Error('Scope should be instance or global');
             }
         };
 
