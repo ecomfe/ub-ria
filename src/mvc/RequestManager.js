@@ -141,7 +141,6 @@ define(
         /**
          * 设置关联的{@link mvc.RequestStrategy}对象
          * 必选。一般由IoC统一配置。
-         * 参数类型 ub-ria.mvc.RequestStrategy
          *
          * @method mvc.RequestManager#setRequestStrategy
          * @param {mvc.RequestStrategy} requestStrategy 设置的实例

@@ -90,7 +90,6 @@ define(
         /**
          * 设置处理组件
          * 可选。默认值为空。
-         * 参数类型 ub-ria.mvc.handler.SubmitHandler
          *
          * @protected
          * @method mvc.FormAction#setSubmitHandler
