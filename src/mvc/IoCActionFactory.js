@@ -39,7 +39,7 @@ define(
             var Promise = require('promise');
             var ioc = this.getIocContainer();
             return new Promise(u.bind(ioc.getComponent, ioc, this.actionComponent))
-                .thenBind(this.buildAction, this, actionContext);
+                .then(u.bind(this.buildAction, this, actionContext));
         };
 
         /**

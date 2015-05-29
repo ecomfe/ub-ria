@@ -142,7 +142,7 @@ define(
             try {
                 if (method) {
                     return this.model[method](entity)
-                        .thenBind(this.handleSubmitResult, this)
+                        .then(u.bind(this.handleSubmitResult, this))
                         .fail(u.bind(handleError, this));
                 }
 
@@ -225,7 +225,7 @@ define(
                     content: this.getCancelConfirmMessage()
                 };
                 this.view.waitCancelConfirm(options)
-                    .thenBind(cancel, this);
+                    .then(u.bind(cancel, this));
             }
             else {
                 cancel.call(this);
@@ -284,8 +284,8 @@ define(
             };
 
             this.view.waitSubmitConfirm(options)
-                .thenBind(this.view.disableSubmit, this.view)
-                .thenBind(this.submitEntity, this, entity)
+                .then(u.bind(this.view.disableSubmit, this.view))
+                .then(u.bind(this.submitEntity, this, entity))
                 .ensure(u.bind(this.view.enableSubmit, this.view));
         }
 

@@ -37,8 +37,11 @@ define(
         // 每页记录数
         var PAGE_SIZE_DATASOURCE = {
             pageSize: function (model) {
+                var getPageSizeProperty = function (result) {
+                    return result.pageSize;
+                };
                 var globalData = model.data('global');
-                return globalData.getUser().thenGetProperty('pageSize');
+                return globalData.getUser().then(getPageSizeProperty);
             }
         };
 

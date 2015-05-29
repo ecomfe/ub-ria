@@ -104,7 +104,7 @@ define(
         function updatePageSize(e) {
             // 先请求后端更新每页显示条数，然后直接刷新当前页
             this.model.updatePageSize(e.pageSize)
-                .thenBind(afterPageSizeUpdate, this, e.pageSize);
+                .then(u.bind(afterPageSizeUpdate, this, e.pageSize));
         }
 
         /**
@@ -169,8 +169,8 @@ define(
             if (this.requireAdviceFor(context)) {
                 // 需要后端提示消息的，再额外加入用户确认的过程
                 this.model.getAdvice(status, ids)
-                    .thenBind(waitConfirmForAdvice, this, context)
-                    .thenBind(updateEntities, this, context);
+                    .then(u.bind(waitConfirmForAdvice, this, context))
+                    .then(u.bind(updateEntities, this, context));
             }
             else {
                 updateEntities.call(this, context);
@@ -212,7 +212,7 @@ define(
          */
         function updateEntities(context) {
             this.model[context.statusName](context.ids)
-                .thenBind(updateListStatus, this, context)
+                .then(u.bind(updateListStatus, this, context))
                 .fail(u.bind(this.notifyModifyFail, this, context));
         }
 
