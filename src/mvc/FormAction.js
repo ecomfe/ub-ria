@@ -89,6 +89,7 @@ define(
 
         /**
          * 设置处理组件
+         * 可选。默认值为空。
          *
          * @protected
          * @method mvc.FormAction#setSubmitHandler
