@@ -5,170 +5,132 @@
  * @file 使用外部下拉选择控件代理控件的搜索
  * @author lixiang
  */
-define(
-    function (require) {
-        var u = require('../../util');
-        var lib = require('esui/lib');
 
-        /**
-         * 使用外部下拉选择控件代理控件的搜索
-         *
-         * @class ui.extension.ExternSelect
-         * @extends esui.Extension
-         */
-        var exports = {};
+import u from '../../util';
+import lib from 'esui/lib';
+import Extension from 'esui/Extension';
 
-        /**
-         * @constructs ui.extends.ExternSelect
-         * @param {Object} [options] 配置项
-         * @override
-         */
-        exports.constructor = function (options) {
-            options = options || {};
+function search(e) {
+    this.target.search();
+}
 
-            this.$super(arguments);
-        };
+function doSearch(e) {
+    for (let select of this.resolveControls()) {
+        let item = select.getSelectedItem();
+        if (item.value !== '' && select.dataKey) {
+            e.filterData.push({keys: [select.dataKey], value: item.value});
+        }
+    }
 
-        /**
-         * 扩展的类型，始终为`"ExternSelect"`
-         *
-         * @member ui.extension.ExternSelect#type
-         * @type {string}
-         * @readonly
-         * @override
-         */
-        exports.type = 'ExternSelect';
+    e.preventDefault();
+}
 
-        /**
-         * 指定对应的一组select的id, 逗号或空格分隔，必须指定
-         *
-         * @member ui.extension.ExternSelect#selects
-         * @type {string | null}
-         */
-        exports.selects = null;
+function clearQuery() {
+    for (let select of this.resolveControls()) {
+        select.un('change', search, this);
+        select.setProperties({selectedIndex: 0});
+        select.on('change', search, this);
+    }
+}
 
-        /**
-         * 找到代理控件
-         *
-         * @protected
-         * @method ui.extension.ExternSelect#resolveControls
-         * @return {esui.SearchBox}
-         */
-        exports.resolveControls = function () {
-            var controls = [];
-            if (this.selects) {
-                var selects;
-                if (u.isString(this.selects)) {
-                    selects = lib.splitTokenList(this.selects);
-                }
-                else {
-                    selects = this.selects;
-                }
-                if (u.isArray(selects)) {
-                    u.each(
-                        selects,
-                        function (select, index) {
-                            select = this.target.viewContext.get(select);
-                            if (select) {
-                                controls.push(select);
-                            }
-                            // 只有扩展处于激活状态才抛异常
-                            else if (this.active) {
-                                throw new Error('Cannot find related select "#' + select + '" in view context');
-                            }
-                        },
-                        this
-                    );
-                }
-                else {
-                    throw new Error('selects can only be Array or String');
+/**
+ * 使用外部下拉选择控件代理控件的搜索
+ *
+ * @class ui.extension.ExternSelect
+ * @extends esui.Extension
+ */
+export default class ExternSelect extends Extension {
+    /**
+     * 指定对应的一组select的id, 逗号或空格分隔，必须指定
+     *
+     * @member ui.extension.ExternSelect#selects
+     * @type {string | null}
+     */
+    selects = null;
+
+    /**
+     * 找到代理控件
+     *
+     * @protected
+     * @method ui.extension.ExternSelect#resolveControls
+     * @return {esui.SearchBox}
+     */
+    resolveControls() {
+        let controls = [];
+
+        if (this.selects) {
+            let selects = u.isString(this.selects) ? lib.splitTokenList(this.selects) : this.selects;
+
+            if (Array.isArray(selects)) {
+                for (let select of selects) {
+                    let targetSelectControl = this.target.viewContext.get(select);
+                    if (targetSelectControl) {
+                        controls.push(targetSelectControl);
+                    }
+                    // 只有扩展处于激活状态才抛异常
+                    else if (this.active) {
+                        throw new Error(`Cannot find related select "#${select}" in view context`);
+                    }
                 }
             }
             else {
-                throw new Error('selects cannot be null');
+                throw new Error('selects can only be Array or String');
             }
-
-            return controls;
-        };
-
-        /**
-         * @override
-         */
-        exports.activate = function () {
-            this.handleControls(
-                function (select, index) {
-                    select.on('change', search, this);
-                }
-            );
-
-            // 接收控件内清空搜索操作
-            this.target.on('clearquery', clearQuery, this);
-            // 接收控件的search事件
-            this.target.on('search', doSearch, this);
-
-            this.$super(arguments);
-        };
-
-        function search(e) {
-            this.target.search();
+        }
+        else {
+            throw new Error('selects cannot be null');
         }
 
-        function doSearch(e) {
-            this.handleControls(
-                function (select, index) {
-                    var item = select.getSelectedItem();
-                    if (item.value !== '' && select.dataKey) {
-                        e.filterData.push({keys: [select.dataKey], value: item.value});
-                    }
-                }
-            );
-
-            e.preventDefault();
-        }
-
-        function clearQuery() {
-            this.handleControls(
-                function (select) {
-                    select.un('change', search, this);
-                    select.setProperties({selectedIndex: 0});
-                    select.on('change', search, this);
-                }
-            );
-        }
-
-        /**
-         * @override
-         */
-        exports.inactivate = function () {
-            this.$super(arguments);
-
-            this.handleControls(
-                function (select) {
-                    select.un('change', search, this);
-                },
-                true
-            );
-
-            this.target.un('clearquery', clearQuery, this);
-            this.target.un('search', doSearch, this);
-        };
-
-        /**
-         * 搜索控件的处理函数
-         * @param {Function} handler 处理句柄
-         */
-        exports.handleControls = function (handler) {
-            var controls = this.resolveControls();
-            if (controls.length) {
-                u.each(controls, handler, this);
-            }
-        };
-
-        var Extension = require('esui/Extension');
-        var ExternSelect = require('eoo').create(Extension, exports);
-
-        require('esui').registerExtension(ExternSelect);
-
-        return ExternSelect;
+        return controls;
     }
-);
+
+    /**
+     * @override
+     */
+    activate() {
+        this.resolveControls.forEach((select) => select.on('change', search, this));
+
+        // 接收控件内清空搜索操作
+        this.target.on('clearquery', clearQuery, this);
+        // 接收控件的search事件
+        this.target.on('search', doSearch, this);
+
+        super.activate();
+    }
+
+    /**
+     * @override
+     */
+    inactivate() {
+        super.inactivate();
+
+        this.resolveControls.forEach((select) => select.un('change', search, this));
+
+        this.target.un('clearquery', clearQuery, this);
+        this.target.un('search', doSearch, this);
+    }
+
+    /**
+     * 搜索控件的处理函数
+     * @param {Function} handler 处理句柄
+     */
+    handleControls(handler) {
+        let controls = this.resolveControls();
+        if (controls.length) {
+            u.each(controls, handler, this);
+        }
+    }
+}
+
+/**
+ * 扩展的类型，始终为`"ExternSelect"`
+ *
+ * @member ui.extension.ExternSelect#type
+ * @type {string}
+ * @readonly
+ * @override
+ */
+ExternSelect.prototype.type = 'ExternSelect';
+
+import ui from 'esui';
+ui.registerExtension(ExternSelect);

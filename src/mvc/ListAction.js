@@ -5,384 +5,295 @@
  * @file 列表Action基类
  * @author otakustay
  */
-define(
-    function (require) {
-        var eoo = require('eoo');
-        var URL = require('er/URL');
-        var u = require('../util');
 
-        /**
-         * 列表Action基类
-         *
-         * @class mvc.ListAction
-         * @extends mvc.BaseAction
-         */
-        var exports = {};
+import u from '../util';
+import URL from 'er/URL';
+import BaseAction from './BaseAction';
 
-        /**
-         * 当前页面的分类，始终为`"list"`
-         *
-         * @member mvc.ListAction#category
-         * @type {string}
-         * @readonly
-         * @override
-         */
-        exports.category = 'list';
+/**
+ * 列表Action基类
+ *
+ * @class mvc.ListAction
+ * @extends mvc.BaseAction
+ */
+export default class ListAction extends BaseAction {
+    category = 'list';
 
-        /**
-         * @override
-         */
-        exports.initBehavior = function () {
-            this.$super(arguments);
-
-            this.view.on('search', search, this);
-            this.view.on('pagesizechange', updatePageSize, this);
-            this.view.on('pagechange', updatePage, this);
-            this.view.on('batchmodify', batchModifyStatus, this);
-            this.view.on('tablesort', updateTableSort, this);
-            this.view.on('modifystatus', modifyStatus, this);
-            this.getLayoutChangeNotifier().on('layoutchanged', this.adjustLayout, this);
-        };
-
-        /**
-         * 查询的事件处理函数
-         *
-         * @event
-         */
-        function search() {
-            this.performSearch();
+    /**
+     * 进行查询
+     *
+     * @protected
+     * @method mvc.ListAction#performSearch
+     */
+    performSearch() {
+        let event = this.fire('search');
+        if (!event.isDefaultPrevented()) {
+            let query = this.getSearchQuery();
+            query.page = 1;
+            this.reloadWithQueryUpdate(query);
         }
+    }
 
-        /**
-         * 进行查询
-         *
-         * @protected
-         * @method mvc.ListAction#performSearch
-         */
-        exports.performSearch = function () {
-            var event = this.fire('search');
-            if (!event.isDefaultPrevented()) {
-                var query = this.getSearchQuery();
-                query.page = 1;
-                this.reloadWithQueryUpdate(query);
-            }
+    /**
+     * 获取查询条件
+     *
+     * @protected
+     * @method mvc.ListAction#getSearchQuery
+     * @return {Object} 查询条件
+     */
+    getSearchQuery() {
+        let query = this.view.getSearchArgs();
+        query.page = this.view.getPageIndex();
+
+        return query;
+    }
+
+    /**
+     * 页码更新后重新加载操作
+     *
+     * @protected
+     * @method mvc.ListAction#reloadWithQueryUpdate
+     * @param {Object} args 新的请求参数对象
+     */
+    reloadWithQueryUpdate(args) {
+        let url = this.context.url;
+        let path = url.getPath();
+
+        // 如果跟默认的参数相同，去掉默认字段
+        let defaultArgs = this.model.getDefaultArgs();
+        args = u.purify(args, defaultArgs);
+
+        url = URL.withQuery(path, args).toString();
+        this.redirect(url, {force: true});
+    }
+
+    /**
+     * 修改实体状态
+     *
+     * @protected
+     * @method mvc.ListAction#modifyStatus
+     * @param {Object[]} items 待修改状态的实体数组
+     * @param {number} status 修改后实体的状态值
+     */
+    modifyStatus(items, status) {
+        let ids = u.pluck(items, 'id');
+        let transitionItem = this.model.getTransitionForStatus(status);
+        let context = {
+            ids: ids,
+            items: items,
+            status: status,
+            statusName: transitionItem.statusName,
+            command: transitionItem.command,
+            reload: transitionItem.reload
         };
 
-        /**
-         * 获取查询条件
-         *
-         * @protected
-         * @method mvc.ListAction#getSearchQuery
-         * @return {Object} 查询条件
-         */
-        exports.getSearchQuery = function () {
-            var query = this.view.getSearchArgs();
-            query.page = this.view.getPageIndex();
-
-            return query;
-        };
-
-        /**
-         * 页码更新后重新加载操作
-         *
-         * @protected
-         * @method mvc.ListAction#reloadWithQueryUpdate
-         * @param {Object} args 新的请求参数对象
-         */
-        exports.reloadWithQueryUpdate = function (args) {
-            var url = getURLForQuery.call(this, args);
-            this.redirect(url, {force: true});
-        };
-
-        /**
-         * 更新每页显示条数
-         *
-         * @event
-         * @param {mini-event.Event} e 事件对象
-         * @param {number} e.pageSize 每页显示条目数
-         */
-        function updatePageSize(e) {
-            // 先请求后端更新每页显示条数，然后直接刷新当前页
-            this.model.updatePageSize(e.pageSize)
-                .then(u.bind(afterPageSizeUpdate, this, e.pageSize));
-        }
-
-        /**
-         * 每页大小更新后重新加载操作
-         */
-        function afterPageSizeUpdate() {
-            var event = this.fire('pagesizechange');
-            if (!event.isDefaultPrevented()) {
-                var query = this.getSearchQuery();
-                query.page = 1;
-                this.reloadWithQueryUpdate(query);
-            }
-        }
-
-        /**
-         * 更新页码
-         *
-         * @event
-         */
-        function updatePage() {
-            var event = this.fire('pagechange');
-            if (!event.isDefaultPrevented()) {
-                var query = this.getSearchQuery();
-                this.reloadWithQueryUpdate(query);
-            }
-        }
-
-        /**
-         * 批量修改事件处理
-         *
-         * @event
-         * @param {mini-event.Event} e 事件对象
-         */
-        function batchModifyStatus(e) {
-            var items = this.view.getSelectedItems();
-            this.modifyStatus(items, e.status);
-        }
-
-        /**
-         * 修改实体状态
-         *
-         * @protected
-         * @method mvc.ListAction#modifyStatus
-         * @param {Object[]} items 待修改状态的实体数组
-         * @param {number} status 修改后实体的状态值
-         */
-        exports.modifyStatus = function (items, status) {
-            var ids = u.pluck(items, 'id');
-            var transitionItem = u.findWhere(
-                this.model.getStatusTransitions(),
-                {status: status}
-            );
-            var context = {
-                ids: ids,
-                items: items,
-                status: status,
-                statusName: transitionItem.statusName,
-                command: transitionItem.command,
-                reload: transitionItem.reload
-            };
-
-            if (this.requireAdviceFor(context)) {
-                // 需要后端提示消息的，再额外加入用户确认的过程
-                this.model.getAdvice(status, ids)
-                    .then(u.bind(waitConfirmForAdvice, this, context))
-                    .then(u.bind(updateEntities, this, context));
-            }
-            else {
-                updateEntities.call(this, context);
-            }
-        };
-
-        /**
-         * 检查指定操作是否需要后端提示消息，默认删除操作时要求提示用户确认
-         *
-         * @protected
-         * @method mvc.ListAction#requireAdviceFor
-         * @param {meta.UpdateContext} context 操作的上下文对象
-         * @return {boolean} 返回`true`表示需要提示用户
-         */
-        exports.requireAdviceFor = function (context) {
-            return context.statusName === 'remove';
-        };
-
-        /**
-         * 根据删除前确认
-         *
-         * @param {meta.UpdateContext} context 操作的上下文对象
-         * @param {Object} advice 提示对象
-         * @param {string} advice.message 提示信息
-         * @return {Promise}
-         */
-        function waitConfirmForAdvice(context, advice) {
-            var options = {
+        let waitConfirmForAdvice = (context, advice) => {
+            let options = {
                 title: context.command + this.getEntityDescription(),
                 content: advice.message
             };
             return this.view.waitConfirm(options);
-        }
-
-        /**
-         * 更新实体状态
-         *
-         * @param {meta.UpdateContext} context 操作的上下文对象
-         */
-        function updateEntities(context) {
-            this.model[context.statusName](context.ids)
-                .then(u.bind(updateListStatus, this, context))
-                .fail(u.bind(this.notifyModifyFail, this, context));
-        }
+        };
 
         /**
          * 根据删除、启用的状态更新当前Action，默认行为为直接刷新当前的Action
          *
          * @param {meta.UpdateContext} context 操作的上下文对象
          */
-        function updateListStatus(context) {
+        let updateListStatus = (context) => {
             this.notifyModifySuccess(context);
 
-            var event = this.fire('statusupdate', context);
+            let event = this.fire('statusupdate', context);
             if (context.reload === false) {
                 this.updateItems(context);
             }
             else if (!event.isDefaultPrevented()) {
                 this.reload();
             }
+        };
+
+        let updateEntities = (context) => {
+            this.model[context.statusName](context.ids)
+                .then(() => updateListStatus(context))
+                .catch(() => this.notifyModifyFail(context));
+        };
+
+        if (this.requireAdviceFor(context)) {
+            // 需要后端提示消息的，再额外加入用户确认的过程
+            this.model.getAdvice(status, ids)
+                .then(() => waitConfirmForAdvice(context))
+                .then(() => updateEntities(context));
         }
+        else {
+            return updateEntities(context);
+        }
+    }
 
-        /**
-         * 通知修改状态操作成功
-         *
-         * @protected
-         * @method mvc.ListAction#notifyModifySuccess
-         * @param {meta.UpdateContext} context 批量操作的上下文对象
-         */
-        exports.notifyModifySuccess = function (context) {};
+    /**
+     * 检查指定操作是否需要后端提示消息，默认删除操作时要求提示用户确认
+     *
+     * @protected
+     * @method mvc.ListAction#requireAdviceFor
+     * @param {meta.UpdateContext} context 操作的上下文对象
+     * @return {boolean} 返回`true`表示需要提示用户
+     */
+    requireAdviceFor(context) {
+        return context.statusName === 'remove';
+    }
 
-        /**
-         * 通知修改状态操作失败
-         *
-         * 默认提示用户“无法[操作名]部分或全部[实体名]”或“无法[操作名]该[实体名]”
-         *
-         * @protected
-         * @method mvc.ListAction#notifyModifyFail
-         * @param {meta.UpdateContext} context 批量操作的上下文对象
-         */
-        exports.notifyModifyFail = function (context) {
-            var entityDescription = this.getEntityDescription();
-            if (context.ids.length > 1) {
-                this.view.alert(
-                    '无法' + context.command + '部分或全部' + entityDescription,
-                    context.command + entityDescription
-                );
-            }
-            else {
-                this.view.alert(
-                    '无法' + context.command + '该' + entityDescription,
-                    context.command + entityDescription
-                );
-            }
-        };
+    /**
+     * 通知修改状态操作成功
+     *
+     * @protected
+     * @method mvc.ListAction#notifyModifySuccess
+     * @param {meta.UpdateContext} context 批量操作的上下文对象
+     */
+    notifyModifySuccess(context) {
+    }
 
-        /**
-         * 更新列表中的实体的状态
-         *
-         * @protected
-         * @method mvc.ListAction#updateItems
-         * @param {meta.UpdateContext} context 操作的上下文对象
-         */
-        exports.updateItems = function (context) {
-            var ids = context.ids;
-            var targetStatus = context.status;
-            var items = [];
-            u.each(
-                ids,
-                function (id) {
-                    var item = this.model.getItemById(id);
-                    if (item) {
-                        item.status = targetStatus;
-                        items.push(item);
-                    }
-                },
-                this
+    /**
+     * 通知修改状态操作失败
+     *
+     * 默认提示用户“无法[操作名]部分或全部[实体名]”或“无法[操作名]该[实体名]”
+     *
+     * @protected
+     * @method mvc.ListAction#notifyModifyFail
+     * @param {meta.UpdateContext} context 批量操作的上下文对象
+     */
+    notifyModifyFail(context) {
+        let entityDescription = this.getEntityDescription();
+        if (context.ids.length > 1) {
+            this.view.alert(
+                '无法' + context.command + '部分或全部' + entityDescription,
+                context.command + entityDescription
             );
-            this.view.updateItems(items);
-        };
+        }
+        else {
+            this.view.alert(
+                '无法' + context.command + '该' + entityDescription,
+                context.command + entityDescription
+            );
+        }
+    }
 
-        /**
-         * 根据删除、启用的状态更新当前Action，默认行为为直接刷新当前的Action
-         *
-         * @event
-         * @param {mini-event.Event} e 事件对象
-         * @param {number} e.tableProperties 表格排序信息
-         */
-        function updateTableSort(e) {
-            var event = this.fire('tablesort');
+    /**
+     * 更新列表中的实体的状态
+     *
+     * @protected
+     * @method mvc.ListAction#updateItems
+     * @param {meta.UpdateContext} context 操作的上下文对象
+     */
+    updateItems(context) {
+        let ids = context.ids;
+        let targetStatus = context.status;
+        let items = [];
+        u.each(
+            ids,
+            function (id) {
+                let item = this.model.getItemById(id);
+                if (item) {
+                    item.status = targetStatus;
+                    items.push(item);
+                }
+            },
+            this
+        );
+        this.view.updateItems(items);
+    }
+
+    /**
+     * 根据布局变化重新调整自身布局
+     *
+     * @protected
+     * @method mvc.ListAction#adjustLayout
+     */
+    adjustLayout() {
+        this.view.adjustLayout();
+    }
+
+    /**
+     * 获取table已经选择的列的数据
+     *
+     * @protected
+     * @method mvc.ListAction#getSelectedItems
+     * @return {Object[]} 当前table的已选择列对应的数据
+     */
+    getSelectedItems() {
+        return this.view.getSelectedItems();
+    }
+
+    /**
+     * @override
+     */
+    initBehavior() {
+        super.initBehavior();
+
+        let afterPageSizeUpdate = () => {
+            let event = this.fire('pagesizechange');
             if (!event.isDefaultPrevented()) {
-                var query = this.getSearchQuery();
+                let query = this.getSearchQuery();
                 query.page = 1;
                 this.reloadWithQueryUpdate(query);
             }
-        }
-
-        /**
-         * 处理状态修改
-         *
-         * @param {Object} e 包含待修改实体的id，以及更新到哪个状态
-         */
-        function modifyStatus(e) {
-            var item = this.model.getItemById(e.id);
-            this.modifyStatus([item], e.status);
-        }
-
-        /**
-         * 进行查询引起的重定向操作
-         *
-         * @protected
-         * @method mvc.ListAction#redirectForSearch
-         * @param {Object} args 查询参数
-         */
-        exports.redirectForSearch = function (args) {
-            var path = this.model.get('url').getPath();
-            var url = URL.withQuery(path, args);
-            this.redirect(url, {force: true});
         };
 
-        /**
-         * 获取指定排序的跳转URL
-         *
-         * @param {Object} args 新的请求对象
-         * @return {string}
-         */
-        function getURLForQuery(args) {
-            var url = this.context.url;
-            var path = url.getPath();
-
-            // 如果跟默认的参数相同，去掉默认字段
-            var defaultArgs = this.model.getDefaultArgs();
-            args = u.purify(args, defaultArgs);
-
-            return URL.withQuery(path, args).toString();
-        }
-
-        /**
-         * 根据布局变化重新调整自身布局
-         *
-         * @protected
-         * @method mvc.ListAction#adjustLayout
-         */
-        exports.adjustLayout = function () {
-            this.view.adjustLayout();
-        };
-
-        /**
-         * @override
-         */
-        exports.leave = function () {
-            this.getLayoutChangeNotifier().un('layoutchanged', this.adjustLayout, this);
-
-            this.$super(arguments);
-        };
-
-        /**
-         * 获取table已经选择的列的数据
-         *
-         * @protected
-         * @method mvc.ListAction#getSelectedItems
-         * @return {Object[]} 当前table的已选择列对应的数据
-         */
-        exports.getSelectItems = function () {
-            return this.view.getSelectedItems();
-        };
-
-        eoo.defineAccessor(exports, 'layoutChangeNotifier');
-
-        var BaseAction = require('./BaseAction');
-        var ListAction = eoo.create(BaseAction, exports);
-
-        return ListAction;
+        this.view.on('search', ::this.performSearch);
+        this.view.on(
+            'pagesizechange',
+            (e) => {
+                this.model.updatePageSize(e.pageSize).then(afterPageSizeUpdate);
+            }
+        );
+        this.view.on(
+            'pagechange',
+            (e) => {
+                let event = this.fire('pagechange');
+                if (!event.isDefaultPrevented()) {
+                    let query = this.getSearchQuery();
+                    this.reloadWithQueryUpdate(query);
+                }
+            }
+        );
+        this.view.on(
+            'batchmodify',
+            (e) => {
+                let items = this.getSelectedItems();
+                this.modifyStatus(items, e.status);
+            }
+        );
+        this.view.on(
+            'tablesort',
+            (e) => {
+                let event = this.fire('tablesort');
+                if (!event.isDefaultPrevented()) {
+                    let query = this.getSearchQuery();
+                    query.page = 1;
+                    this.reloadWithQueryUpdate(query);
+                }
+            }
+        );
+        this.view.on(
+            'modifystatus',
+            (e) => {
+                let item = this.model.getItemById(e.id);
+                this.modifyStatus([item], e.status);
+            }
+        );
+        this.getLayoutChangeNotifier().on('layoutchanged', ::this.adjustLayout);
     }
-);
+
+    /**
+     * @override
+     */
+    leave() {
+        this.getLayoutChangeNotifier().un('layoutchanged', this.adjustLayout, this);
+
+        super.leave();
+    }
+}
+
+import oo from 'eoo';
+
+oo.defineAccessor(ListAction.prototype, 'layoutChangeNotifier');
+
+export default ListAction;

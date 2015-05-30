@@ -5,24 +5,22 @@
  * @file 筛选控件辅助函数
  * @author Exodia
  */
-define(
-    function (require) {
-        var u = require('../util');
 
-        /**
-         * 列表筛选控件辅助函数
-         *
-         * @namespace mvc.filterHelper
-         */
-        var helper = {};
+import u from '../util';
 
-        /**
-         * 下拉单选辅助函数
-         *
-         * @namespace mvc.filterHelper.select
-         */
-        var select = helper.select = {};
 
+/**
+ * 列表筛选控件辅助函数
+ *
+ * @namespace mvc.filterHelper
+ */
+let helper = {
+    /**
+     * 下拉单选辅助函数
+     *
+     * @namespace mvc.filterHelper.select
+     */
+    select: {
         /**
          * 获取筛选条件文本
          *
@@ -30,7 +28,7 @@ define(
          * @param {esui.Select} filter 对应的控件实例
          * @return {string}
          */
-        select.getText = function (filter) {
+        getText(filter) {
             var item = u.find(
                 filter.datasource,
                 function (item) {
@@ -40,15 +38,15 @@ define(
                 }
             );
             return item && item.text || '';
-        };
+        }
+    },
 
-        /**
-         * 多选辅助函数
-         *
-         * @namespace mvc.filterHelper.toggleSelector
-         */
-        var toggleSelector = helper.toggleSelector = {};
-
+    /**
+     * 多选辅助函数
+     *
+     * @namespace mvc.filterHelper.toggleSelector
+     */
+    toggleSelector: {
         /**
          * 获取筛选条件文本
          *
@@ -56,7 +54,7 @@ define(
          * @param {ub-ria-ui.ToggleSelector} filter 对应的控件实例
          * @return {string}
          */
-        toggleSelector.getText = function (filter) {
+        getText(filter) {
             var item = u.find(
                 filter.datasource,
                 function (item) {
@@ -66,8 +64,10 @@ define(
                 }
             );
             return item && item.name || '';
-        };
-
-        return helper;
+        }
     }
-);
+};
+
+export default helper;
+export let select = helper.select;
+export let toggleSelector = helper.toggleSelector;

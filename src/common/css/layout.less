@@ -99,8 +99,11 @@ header {
     margin: 10px 30px 0 83px;
     .inline-block;
     a {
+        @url: ~"@{logo-image-url}";
         display: block;
-        .normal-icon(@logo-image-url, @logo-image-width, @logo-image-height);
+        background: @url scroll 0 0 no-repeat transparent;
+        width: @logo-image-width;
+        height: @logo-image-height;
         text-indent: -99999px;
     }
 }
@@ -124,34 +127,6 @@ header {
             width: 17px;
             height: 17px;
         }
-    }
-}
-
-.toolbar {
-    position: absolute;
-    top: 0;
-    right: 0;
-    .toolbar-account {
-        padding: 27px 30px 0 0;
-        height: @header-height - 27;
-        cursor: pointer;
-        .ui-dropdown-icon {
-            top: 30px;
-        }
-    }
-    .toolbar-tools {
-        padding-bottom: 10px;
-        background: #f6f6f6;
-        li {
-            margin-top: 10px;
-        }
-        a {
-            display: block;
-            background: #fffaee;
-            padding: 10px;
-            color: #666;
-        }
-        .top-pointer(#dfdfdf, 0, 30px);
     }
 }
 

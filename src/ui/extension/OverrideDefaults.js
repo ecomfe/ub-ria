@@ -5,70 +5,64 @@
  * @file 重写控件默认配置用的扩展
  * @author otakustay
  */
-define(
-    function (require) {
-        var u = require('../../util');
 
-        /**
-         * 重写控件默认配置用的扩展
-         *
-         * @class ui.extension.OverrideDefaults
-         * @extends esui.Extension
-         */
-        var exports = {};
+import u from '../../util';
+import Extension from 'esui/Extension';
 
-        /**
-         * 扩展的类型，始终为`"OverrideDefaults"`
-         *
-         * @member ui.extension.OverrideDefaults#type
-         * @type {string}
-         * @readonly
-         * @override
-         */
-        exports.type = 'OverrideDefaults';
+function onInit(e) {
+    this.overrideDefaults(e.options);
+}
 
-        /**
-         * @override
-         */
-        exports.activate = function () {
-            this.target.on('init', onInit, this);
+/**
+ * 重写控件默认配置用的扩展
+ *
+ * @class ui.extension.OverrideDefaults
+ * @extends esui.Extension
+ */
+export default class OverrideDefaults extends Extension {
+    /**
+     * @override
+     */
+    activate() {
+        this.target.on('init', onInit, this);
 
-            this.$super(arguments);
-        };
-
-        /**
-         * @override
-         */
-        exports.inactivate = function () {
-            this.target.un('init', onInit, this);
-
-            this.$super(arguments);
-        };
-
-        function onInit(e) {
-            this.overrideDefaults(e.options);
-        }
-
-        /**
-         * 重写默认属性
-         *
-         * @protected
-         * @method ui.extension.OverrideDefaults#overrideDefaults
-         * @param {Object} [rawOptions] 初始化控件时传入的参数
-         */
-        exports.overrideDefaults = function (rawOptions) {
-            // 只有初始化时没有显式指定的才覆盖
-            var overrides = u.omit(this.overrides[this.target.type], u.keys(rawOptions || {}));
-            if (overrides) {
-                this.target.setProperties(overrides);
-            }
-        };
-
-        var Extension = require('esui/Extension');
-        var OverrideDefaults = require('eoo').create(Extension, exports);
-
-        require('esui').registerExtension(OverrideDefaults);
-
-        return OverrideDefaults;
+        super.activate();
     }
-);
+
+    /**
+     * @override
+     */
+    inactivate() {
+        this.target.un('init', onInit, this);
+
+        super.inactivate();
+    }
+
+    /**
+     * 重写默认属性
+     *
+     * @protected
+     * @method ui.extension.OverrideDefaults#overrideDefaults
+     * @param {Object} [rawOptions] 初始化控件时传入的参数
+     */
+    overrideDefaults(rawOptions = {}) {
+        // 只有初始化时没有显式指定的才覆盖
+        let overrides = u.omit(this.overrides[this.target.type], u.keys(rawOptions));
+        if (overrides) {
+            this.target.setProperties(overrides);
+        }
+    }
+}
+
+/**
+ * 扩展的类型，始终为`"OverrideDefaults"`
+ *
+ * @member ui.extension.OverrideDefaults#type
+ * @type {string}
+ * @readonly
+ * @override
+ */
+OverrideDefaults.prototype.type = 'OverrideDefaults';
+
+import ui from 'esui';
+ui.registerExtension(OverrideDefaults);

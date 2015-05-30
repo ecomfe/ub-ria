@@ -5,44 +5,33 @@
  * @file 入口模块
  * @author otakustay
  */
-define(
-    function (require) {
-        /**
-         * 模块入口
-         *
-         * @namespace main
-         */
-        var main = {
-            /**
-             * @property {string} 版本号
-             * @readonly
-             */
-            version: '2.0.0-beta.6',
 
-            /**
-             * 启动所有扩展
-             *
-             * @method main.enableExtensions
-             */
-            enableExtensions: function () {
-                // 加载扩展
-                require('./extension/mvc').enable();
-                require('./extension/ui').enable();
-            },
+import er from 'er';
+import mvcExtension from './extension/mvc';
+import uiExtension from './extension/ui';
 
-            /**
-             * 启动MVC程序
-             *
-             * @method main.start
-             */
-            start: function () {
-                main.enableExtensions();
+/**
+ * 模块入口
+ *
+ * @namespace main
+ */
+let main = {
+    /**
+     * @property {string} 版本号
+     * @readonly
+     */
+    version: '3.0.0-alpha.1',
 
-                // 启动ER
-                require('er').start();
-            }
-        };
-
-        return main;
+    /**
+     * 启动MVC程序
+     *
+     * @method main.start
+     */
+    start() {
+        mvcExtension.enable();
+        uiExtension.enable();
+        er.start();
     }
-);
+};
+
+export default main;

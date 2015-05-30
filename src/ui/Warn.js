@@ -5,149 +5,130 @@
  * @file 简易信息提示控件
  * @author lixiang
  */
-define(
-    function (require) {
-        var lib = require('esui/lib');
-        var Control = require('esui/Control');
 
-        /**
-         * Warn控件
-         *
-         * @class ui.Warn
-         * @extends esui.Control
-         */
-        var exports = {};
+import lib from 'esui/lib';
+import Control from 'esui/Control';
 
-        /**
-         * 控件类型，始终为`"Warn"`
-         *
-         * @member ui.Warn#type
-         * @type {string}
-         * @readonly
-         * @override
-         */
-        exports.type = 'Warn';
+const TEMPLATE = '<i class="${iconClass} ui-icon ui-icon-question-circle"></i>'
+     + '<div class="${contentClass}" id="${contentId}"></div>'
+     + '<div class="${operationFieldClass}">'
+     + '    <esui-button class="${okBtnClass}" data-ui="childName:btnOk;">${okLabel}</esui-button>'
+     + '    <esui-button class="${cancelBtnClass}" data-ui="childName:btnCancel;">'
+     + '    ${cancelLabel}</esui-button>'
+     + '</div>';
 
-        /**
-         * @override
-         */
-        exports.initOptions = function (options) {
-            var properties = {};
-            lib.extend(properties, this.$self.defaultProperties, options);
-            if (properties.content == null) {
-                properties.content = this.main.innerHTML;
-            }
-
-            this.setProperties(properties);
-        };
-
-        var tempalte = '<i class="${iconClass} ui-icon ui-icon-question-circle"></i>'
-                     + '<div class="${contentClass}" id="${contentId}"></div>'
-                     + '<div class="${operationFieldClass}">'
-                     + '    <esui-button class="${okBtnClass}" data-ui="childName:btnOk;">${okLabel}</esui-button>'
-                     + '    <esui-button class="${cancelBtnClass}" data-ui="childName:btnCancel;">'
-                     + '    ${cancelLabel}</esui-button>'
-                     + '</div>';
-
-
-        function btnClickHandler(warn, type) {
-            // 如果在参数里设置了处理函数，会在fire时执行
-            warn.fire(type);
-            if (type === 'ok') {
-                warn.dispose();
-            }
-            else {
-                warn.hide();
-            }
+/**
+ * Warn控件
+ *
+ * @class ui.Warn
+ * @extends esui.Control
+ */
+export default class Warn extends Control {
+    /**
+     * @override
+     */
+    initOptions(options = {}) {
+        let properties = {};
+        lib.extend(properties, options);
+        if (options.content == null) {
+            properties.content = this.main.innerHTML;
         }
 
-        /**
-         * @override
-         */
-        exports.initStructure = function () {
-            this.main.innerHTML = lib.format(
-                tempalte,
-                {
-                    iconClass: this.helper.getPartClassName('icon'),
-                    contentId: this.helper.getId('content'),
-                    contentClass: this.helper.getPartClassName('content'),
-                    okBtnClass: this.helper.getPartClassName('ok-btn'),
-                    cancelBtnClass: this.helper.getPartClassName('cancel-btn'),
-                    okLabel: this.okLabel,
-                    cancelLabel: this.cancelLabel,
-                    operationFieldClass: this.helper.getPartClassName('operation-field')
-                }
-            );
+        this.setProperties(properties);
+    }
 
-            this.initChildren();
-
-            this.getChild('btnOk').on(
-                'click',
-                lib.curry(btnClickHandler, this, 'ok')
-            );
-            this.getChild('btnCancel').on(
-                'click',
-                lib.curry(btnClickHandler, this, 'cancel')
-            );
-
-        };
-
-        /**
-         * @override
-         */
-        exports.repaint = require('esui/painters').createRepaint(
-            Control.prototype.repaint,
+    /**
+     * @override
+     */
+    initStructure() {
+        this.main.innerHTML = lib.format(
+            TEMPLATE,
             {
-                name: 'content',
-                paint: function (control, content) {
-                    var container = control.helper.getPart('content');
-                    container.innerHTML = content;
-                }
+                iconClass: this.helper.getPartClassName('icon'),
+                contentId: this.helper.getId('content'),
+                contentClass: this.helper.getPartClassName('content'),
+                okBtnClass: this.helper.getPartClassName('ok-btn'),
+                cancelBtnClass: this.helper.getPartClassName('cancel-btn'),
+                okLabel: this.okLabel,
+                cancelLabel: this.cancelLabel,
+                operationFieldClass: this.helper.getPartClassName('operation-field')
             }
         );
 
-        /**
-         * @override
-         */
-        exports.hide = function () {
-            this.fire('hide');
-            this.dispose();
-        };
+        this.initChildren();
 
-        /**
-         * @override
-         */
-        exports.dispose = function () {
-            if (this.helper.isInStage('DISPOSED')) {
-                return;
+        let handleClick = (type) => {
+            // 如果在参数里设置了处理函数，会在fire时执行
+            this.fire(type);
+            if (type === 'ok') {
+                this.dispose();
             }
-
-            this.$super(arguments);
-
-            lib.removeNode(this.main);
+            else {
+                this.hide();
+            }
         };
 
-        var Warn = require('eoo').create(Control, exports);
+        this.getChild('btnOk').on('click', () => handleClick('ok'));
+        this.getChild('btnCancel').on('click', () => handleClick('cancel'));
+    }
 
-        /**
-         * 快捷显示信息的方法
-         *
-         * @method ui.Warn.show
-         * @param {Object} options 其它配置项
-         * @return {ui.Warn}
-         */
-        Warn.show = function (options) {
-            var warn = new Warn(options);
-            warn.appendTo(options.wrapper || document.body);
-            return warn;
-        };
+    /**
+     * @override
+     */
+    hide() {
+        this.fire('hide');
+        this.dispose();
+    }
 
-        Warn.defaultProperties = {
-            okLabel: '取消新建',
-            cancelLabel: '继续新建'
-        };
+    /**
+     * @override
+     */
+    dispose() {
+        if (this.helper.isInStage('DISPOSED')) {
+            return;
+        }
 
-        require('esui').register(Warn);
-        return Warn;
+        super.dispose();
+
+        lib.removeNode(this.main);
+    }
+}
+
+/**
+ * 控件类型，始终为`"Warn"`
+ *
+ * @member ui.Warn#type
+ * @type {string}
+ * @readonly
+ * @override
+ */
+Warn.prototype.type = 'Warn';
+
+import painters from 'esui/painters';
+
+/**
+ * @override
+ */
+Warn.prototype.repaint = painters.createRepaint(
+    Control.prototype.repaint,
+    {
+        name: 'content',
+        paint(control, content) {
+            let container = control.helper.getPart('content');
+            container.innerHTML = content;
+        }
     }
 );
+
+/**
+ * 快捷显示信息的方法
+ *
+ * @method ui.Warn.show
+ * @param {Object} options 其它配置项
+ * @return {ui.Warn}
+ */
+Warn.show = function (options) {
+    let warn = new Warn(options);
+    warn.appendTo(options.wrapper || document.body);
+    return warn;
+};

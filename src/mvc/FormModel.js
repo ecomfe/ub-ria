@@ -5,163 +5,127 @@
  * @file 表单数据模型基类
  * @author otakustay
  */
-define(
-    function (require) {
-        var Promise = require('promise');
 
-        /**
-         * 表单数据模型基类
-         *
-         * @class mvc.FormModel
-         * @extends mvc.SingleEntityModel
-         */
-        var exports = {};
+import SingleEntityModel from './SingleEntityModel';
 
-        /**
-         * 设置全局数据对象
-         *
-         * @method mvc.FormModel#setGlobalData
-         * @param {Object} data 全局数据对象
-         */
-        exports.setGlobalData = function (data) {
-            this.addData('global', data);
-        };
-
-        /**
-         * 检查实体数据完整性，可在此补充一些视图无法提供的属性
-         *
-         * @protected
-         * @method mvc.FormModel#fillEntity
-         * @param {Object} entity 实体数据
-         * @return {Object} 补充完整的实体数据
-         */
-        exports.fillEntity = function (entity) {
-            return entity;
-        };
-
-        /**
-         * 设置当前对象关联的{@link mvc.EntityValidator}实例
-         *
-         * @method mvc.FormModel#setValidator
-         * @param {mvc.EntityValidator} validator 关联的实例
-         */
-        exports.setValidator = function (validator) {
-            if (validator && !validator.getRule()) {
-                validator.setRule(this.get('rule'));
-            }
-            this.validator = validator;
-        };
-
-        /**
-         * 获取当前对象关联的{@link mvc.EntityValidator}实例
-         *
-         * @method mvc.FormModel#getValidator
-         * @return {mvc.EntityValidator}
-         */
-        exports.getValidator = function () {
-            return this.validator;
-        };
-
-        /**
-         * 校验实体
-         *
-         * @method mvc.FormModel#validateEntity
-         * @param {Object} entity 需要校验的实体
-         * @return {Object[]}
-         */
-        exports.validateEntity = function (entity) {
-            var validator = this.getValidator();
-            if (!validator) {
-                throw new Error('No validator object attached to this Model');
-            }
-
-            return validator.validate(entity);
-        };
-
-        /**
-         * 保存新建的实体
-         *
-         * @method mvc.FormModel#save
-         * @param {Object} entity 新建的实体对象
-         * @return {Promise}
-         */
-        exports.save = function (entity) {
-            entity = this.fillEntity(entity);
-
-            var validationResult = this.validateEntity(entity);
-
-            if (validationResult.length > 0) {
-                return Promise.reject({fields: validationResult});
-            }
-
-            return this.saveEntity(entity);
-        };
-
-        /**
-         * 更新已有的实体
-         *
-         * @method mvc.FormModel#update
-         * @param {Object} entity 待更新的实体对象
-         * @return {Promise}
-         */
-        exports.update = function (entity) {
-            entity = this.fillEntity(entity);
-
-            // 更新默认加上id
-            entity.id = this.get('id');
-
-            var validationResult = this.validateEntity(entity);
-
-            if (validationResult.length > 0) {
-                return Promise.reject({fields: validationResult});
-            }
-
-            return this.updateEntity(entity);
-        };
-
-        /**
-         * 完成实体的保存操作
-         *
-         * @protected
-         * @method mvc.FormModel#saveEntity
-         * @param {Object} entity 已经补充完整并且验证通过的实体
-         * @return {Promise}
-         */
-        exports.saveEntity = function (entity) {
-            var data = this.data();
-            if (!data) {
-                throw new Error('No default data object attached to this Model');
-            }
-            if (typeof data.save !== 'function') {
-                throw new Error('No save method implemented on default data object');
-            }
-
-            return data.save(entity);
-        };
-
-        /**
-         * 完成实体的更新操作
-         *
-         * @protected
-         * @method mvc.FormModel#updateEntity
-         * @param {Object} entity 已经补充完整并且验证通过的实体
-         * @return {Promise}
-         */
-        exports.updateEntity = function (entity) {
-            var data = this.data();
-            if (!data) {
-                throw new Error('No default data object attached to this Model');
-            }
-            if (typeof data.update !== 'function') {
-                throw new Error('No update method implemented on default data object');
-            }
-
-            return data.update(entity);
-        };
-
-        var SingleEntityModel = require('./SingleEntityModel');
-        var FormModel = require('eoo').create(SingleEntityModel, exports);
-
-        return FormModel;
+/**
+ * 表单数据模型基类
+ *
+ * @class mvc.FormModel
+ * @extends mvc.SingleEntityModel
+ */
+export default class FormModel extends SingleEntityModel {
+    /**
+     * 设置全局数据对象
+     *
+     * @method mvc.FormModel#setGlobalData
+     * @param {Object} data 全局数据对象
+     */
+    setGlobalData(data) {
+        this.addData('global', data);
     }
-);
+
+    /**
+     * 检查实体数据完整性，可在此补充一些视图无法提供的属性
+     *
+     * @protected
+     * @method mvc.FormModel#fillEntity
+     * @param {Object} entity 实体数据
+     * @return {Object} 补充完整的实体数据
+     */
+    fillEntity(entity) {
+        return entity;
+    }
+
+    /**
+     * 校验实体
+     *
+     * @method mvc.FormModel#validateEntity
+     * @param {Object} entity 需要校验的实体
+     * @return {Object[]}
+     */
+    validateEntity(entity) {
+        return [];
+    }
+
+    /**
+     * 保存新建的实体
+     *
+     * @method mvc.FormModel#save
+     * @param {Object} entity 新建的实体对象
+     * @return {Promise}
+     */
+    save(entity) {
+        entity = this.fillEntity(entity);
+
+        var validationResult = this.validateEntity(entity);
+
+        if (validationResult.length > 0) {
+            return Promise.reject({type: 'validationConflict', fields: validationResult});
+        }
+
+        return this.saveEntity(entity);
+    }
+
+    /**
+     * 更新已有的实体
+     *
+     * @method mvc.FormModel#update
+     * @param {Object} entity 待更新的实体对象
+     * @return {Promise}
+     */
+    update(entity) {
+        entity = this.fillEntity(entity);
+
+        // 更新默认加上id
+        entity.id = this.get('id');
+
+        var validationResult = this.validateEntity(entity);
+
+        if (validationResult.length > 0) {
+            return Promise.reject({type: 'validationConflict', fields: validationResult});
+        }
+
+        return this.updateEntity(entity);
+    }
+
+    /**
+     * 完成实体的保存操作
+     *
+     * @protected
+     * @method mvc.FormModel#saveEntity
+     * @param {Object} entity 已经补充完整并且验证通过的实体
+     * @return {Promise}
+     */
+    saveEntity(entity) {
+        var data = this.data();
+        if (!data) {
+            throw new Error('No default data object attached to this Model');
+        }
+        if (typeof data.save !== 'function') {
+            throw new Error('No save method implemented on default data object');
+        }
+
+        return data.save(entity);
+    }
+
+    /**
+     * 完成实体的更新操作
+     *
+     * @protected
+     * @method mvc.FormModel#updateEntity
+     * @param {Object} entity 已经补充完整并且验证通过的实体
+     * @return {Promise}
+     */
+    updateEntity(entity) {
+        var data = this.data();
+        if (!data) {
+            throw new Error('No default data object attached to this Model');
+        }
+        if (typeof data.update !== 'function') {
+            throw new Error('No update method implemented on default data object');
+        }
+
+        return data.update(entity);
+    }
+}
