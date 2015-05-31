@@ -78,7 +78,7 @@ util.purify = function purify(object, defaults, deep) {
  * @return {string}
  */
 util.pascalize = (s) => {
-    if (s == null) {
+    if (s == null || s === '') {
         return '';
     }
 
@@ -102,7 +102,7 @@ util.pascalize = util.memoize(util.pascalize);
  * @return {string}
  */
 util.camelize = (s) => {
-    if (s == null) {
+    if (s == null || s === '') {
         return '';
     }
 
@@ -126,7 +126,7 @@ util.camelize = util.memoize(util.camelize);
  * @return {string}
  */
 util.dasherize = (s) => {
-    if (s == null) {
+    if (s == null || s === '') {
         return '';
     }
 
@@ -156,7 +156,7 @@ util.dasherize = util.memoize(util.dasherize);
  * @return {string}
  */
 util.constlize = (s) => {
-    if (s == null) {
+    if (s == null || s === '') {
         return '';
     }
 
@@ -175,7 +175,7 @@ util.constlize = util.memoize(util.constlize);
  * @return {string}
  */
 util.pluralize = (s) => {
-    if (s == null) {
+    if (s == null || s === '') {
         return '';
     }
 

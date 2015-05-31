@@ -243,7 +243,7 @@ export default class FormView extends BaseView {
      * @override
      */
     popDrawerAction(options, targetId) {
-        let drawerActionPanel = this.$super(arguments);
+        let drawerActionPanel = super.popDrawerAction();
 
         drawerActionPanel.on(
             'close',

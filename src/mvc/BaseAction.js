@@ -62,8 +62,9 @@ export default class BaseAction extends Action {
                 let path = this.context.url.getPath();
                 this.entityName = path.split('/')[1];
             }
-
-            return '';
+            else {
+                return '';
+            }
         }
 
         return this.entityName;

@@ -82,8 +82,8 @@ export default class BaseView extends UIView {
      * @override
      */
     bindEvents() {
-        for (let {control, event, handler} of this[DECORATOR_EVENTS]) {
-            this.getSafely(control).on(event, handler, this);
+        for (let {control, event, key} of this[DECORATOR_EVENTS]) {
+            this.getSafely(control).on(event, this[key], this);
         }
 
         let bind = (handler, key) => {
@@ -140,7 +140,7 @@ export default class BaseView extends UIView {
      * @override
      */
     getTemplateName() {
-        let templateName = this.$super(arguments);
+        let templateName = super.getTemplateName();
 
         // 作为子Action嵌入页面时，模板使用`xxxMain`这个target
         if (this.model && this.model.get('isChildAction') && !this.model.get('isInDrawerPanel')) {

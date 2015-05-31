@@ -25,6 +25,6 @@ export let bindControlEvent = (control, event) => {
             target[DECORATOR_EVENTS] = [];
         }
 
-        target[DECORATOR_EVENTS].push({control: control, event: event, handler: target[key]});
+        target[DECORATOR_EVENTS].push({control, event, key});
     };
 };
