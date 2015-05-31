@@ -1,6 +1,6 @@
 /**
  * UB RIA Base
- * Copyright 2014 Baidu Inc. All rights reserved.
+ * Copyright 2015 Baidu Inc. All rights reserved.
  *
  * @file IoCAction工厂
  * @author shenbin(bobshenbin@gmail.com)

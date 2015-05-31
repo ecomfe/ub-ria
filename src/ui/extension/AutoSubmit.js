@@ -1,6 +1,6 @@
 /**
  * UB RIA Base
- * Copyright 2013 Baidu Inc. All rights reserved.
+ * Copyright 2015 Baidu Inc. All rights reserved.
  *
  * @file 让输入控件在特定事件下自动提交表单的扩展
  * @author otakustay

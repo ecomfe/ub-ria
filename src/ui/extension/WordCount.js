@@ -1,6 +1,6 @@
 /**
  * UB RIA Base
- * Copyright 2013 Baidu Inc. All rights reserved.
+ * Copyright 2015 Baidu Inc. All rights reserved.
  *
  * @file 计算文本框可输入字符的扩展
  * @author otakustay

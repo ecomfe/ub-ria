@@ -1,9 +1,9 @@
 /**
- * ADM 2.0
- * Copyright 2014 Baidu Inc. All rights reserved.
+ * UB RIA Base
+ * Copyright 2015 Baidu Inc. All rights reserved.
  *
  * @file PartialForm控件
- * @author zhanglili(otakustay@gmail.com)
+ * @author otakustay
  */
 
 import ui from 'esui';

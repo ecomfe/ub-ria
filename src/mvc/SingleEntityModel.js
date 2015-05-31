@@ -1,6 +1,6 @@
 /**
  * UB RIA Base
- * Copyright 2013 Baidu Inc. All rights reserved.
+ * Copyright 2015 Baidu Inc. All rights reserved.
  *
  * @file 以单个实体为主要数据源的页面的数据模型基类
  * @author otakustay

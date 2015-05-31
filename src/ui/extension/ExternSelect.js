@@ -1,6 +1,6 @@
 /**
  * UB RIA Base
- * Copyright 2013 Baidu Inc. All rights reserved.
+ * Copyright 2015 Baidu Inc. All rights reserved.
  *
  * @file 使用外部下拉选择控件代理控件的搜索
  * @author lixiang

@@ -1,6 +1,6 @@
 /**
  * UB RIA Base
- * Copyright 2013 Baidu Inc. All rights reserved.
+ * Copyright 2015 Baidu Inc. All rights reserved.
  *
  * @file 列表Action基类
  * @author otakustay

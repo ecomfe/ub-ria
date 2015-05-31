@@ -1,9 +1,9 @@
 /**
  * UB RIA Base
- * Copyright 2013 Baidu Inc. All rights reserved.
+ * Copyright 2015 Baidu Inc. All rights reserved.
  *
  * @file 文本框控件自动去除首尾空格
- * @author lixiang(lixiang05@baidu.com)
+ * @author lixiang
  */
 
 import ui from 'esui';

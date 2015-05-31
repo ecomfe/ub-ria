@@ -1,6 +1,6 @@
 /**
  * UB RIA Base
- * Copyright 2014 Baidu Inc. All rights reserved.
+ * Copyright 2015 Baidu Inc. All rights reserved.
  *
  * @file 子视图基类
  * @author liyidong

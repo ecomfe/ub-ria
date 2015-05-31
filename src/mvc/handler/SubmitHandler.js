@@ -1,9 +1,9 @@
 /**
  * UB RIA Base
- * Copyright 2014 Baidu Inc. All rights reserved.
+ * Copyright 2015 Baidu Inc. All rights reserved.
  *
  * @file 表单提交成功后跳转处理组件基类
- * @author yanghuabei(yanghuabei@baidu.com)
+ * @author yanghuabei
  */
 
 import oo from 'eoo';

@@ -1,9 +1,9 @@
 /**
  * UB RIA Base
- * Copyright 2014 Baidu Inc. All rights reserved.
+ * Copyright 2015 Baidu Inc. All rights reserved.
  *
  * @file 静态排序数据类
- * @author lixiang, shenbnin(bobshenbin@gmail.com)
+ * @author lixiang, shenbnin
  */
 
 import u from '../util';
