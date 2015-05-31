@@ -7,6 +7,7 @@
  */
 
 import u from '../util';
+import oo from 'eoo';
 import UIView from 'ef/UIView';
 import {DECORATOR_EVENTS} from './decorator';
 
@@ -291,8 +292,6 @@ export default class BaseView extends UIView {
         return drawerActionPanel;
     }
 }
-
-import oo from 'eoo';
 
 /**
  * 获取对应的规则对象

@@ -6,6 +6,7 @@
  * @author lixiang
  */
 
+import ui from 'esui';
 import lib from 'esui/lib';
 import Extension from 'esui/Extension';
 
@@ -36,6 +37,18 @@ function clearQuery() {
  * @extends esui.Extension
  */
 export default class ExternSearch extends Extension {
+    /**
+     * 扩展的类型，始终为`"ExternSearch"`
+     *
+     * @member ui.extension.ExternSearch#type
+     * @type {string}
+     * @readonly
+     * @override
+     */
+    get type() {
+        return 'ExternSearch';
+    }
+
     /**
      * 指定对应的searchBox的id
      *
@@ -94,17 +107,5 @@ export default class ExternSearch extends Extension {
         this.target.un('search', doSearch, this);
     }
 }
-
-/**
- * 扩展的类型，始终为`"ExternSearch"`
- *
- * @member ui.extension.ExternSearch#type
- * @type {string}
- * @readonly
- * @override
- */
-ExternSearch.prototype.type = 'ExternSearch';
-
-import ui from 'esui';
 
 ui.registerExtension(ExternSearch);

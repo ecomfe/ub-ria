@@ -7,6 +7,7 @@
  */
 
 import u from '../../util';
+import ui from 'esui';
 import lib from 'esui/lib';
 import Extension from 'esui/Extension';
 
@@ -40,6 +41,18 @@ function clearQuery() {
  * @extends esui.Extension
  */
 export default class ExternSelect extends Extension {
+    /**
+     * 扩展的类型，始终为`"ExternSelect"`
+     *
+     * @member ui.extension.ExternSelect#type
+     * @type {string}
+     * @readonly
+     * @override
+     */
+    get type() {
+        return 'ExternSelect';
+    }
+
     /**
      * 指定对应的一组select的id, 逗号或空格分隔，必须指定
      *
@@ -122,15 +135,4 @@ export default class ExternSelect extends Extension {
     }
 }
 
-/**
- * 扩展的类型，始终为`"ExternSelect"`
- *
- * @member ui.extension.ExternSelect#type
- * @type {string}
- * @readonly
- * @override
- */
-ExternSelect.prototype.type = 'ExternSelect';
-
-import ui from 'esui';
 ui.registerExtension(ExternSelect);

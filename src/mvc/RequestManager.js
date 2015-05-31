@@ -7,6 +7,7 @@
  */
 
 import u from '../util';
+import oo from 'eoo';
 
 const RUNNING_REQUESTS = Symbol('runningRequests');
 
@@ -423,8 +424,6 @@ function detachRunningRequest(requestManager, name, xhr) {
         globalRunningRequests.delete(name);
     }
 }
-
-import oo from 'eoo';
 
 oo.defineAccessor(RequestManager.prototype, 'ajax');
 

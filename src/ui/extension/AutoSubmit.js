@@ -32,6 +32,18 @@ function submit() {
  */
 export default class AutoSubmit extends Extension {
     /**
+     * 扩展的类型，始终为`"AutoSubmit"`
+     *
+     * @member ui.extension.AutoSubmit#type
+     * @type {string}
+     * @readonly
+     * @override
+     */
+    get type() {
+        return 'AutoSubmit';
+    }
+
+    /**
      * 指定对应的表单的id，不指定的话会进行自动查找，使用包含当前控件的main元素的`Form`控件
      *
      * @member ui.extension.AutoSubmit#form
@@ -103,15 +115,5 @@ export default class AutoSubmit extends Extension {
         super.inactivate();
     };
 }
-
-/**
- * 扩展的类型，始终为`"AutoSubmit"`
- *
- * @member ui.extension.AutoSubmit#type
- * @type {string}
- * @readonly
- * @override
- */
-AutoSubmit.prototype.type = 'AutoSubmit';
 
 ui.registerExtension(AutoSubmit);

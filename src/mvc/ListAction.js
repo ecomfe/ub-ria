@@ -7,6 +7,7 @@
  */
 
 import u from '../util';
+import oo from 'eoo';
 import URL from 'er/URL';
 import BaseAction from './BaseAction';
 
@@ -291,8 +292,6 @@ export default class ListAction extends BaseAction {
         super.leave();
     }
 }
-
-import oo from 'eoo';
 
 oo.defineAccessor(ListAction.prototype, 'layoutChangeNotifier');
 

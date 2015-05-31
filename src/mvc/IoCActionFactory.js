@@ -7,6 +7,7 @@
  */
 
 import u from '../util';
+import oo from 'eoo';
 
 const ACTION_COMPONENT = Symbol('actionComponent');
 
@@ -68,7 +69,5 @@ export default class IoCActionFactory {
         return action;
     }
 }
-
-import oo from 'eoo';
 
 oo.defineAccessor(IoCActionFactory.prototype, 'iocContainer');

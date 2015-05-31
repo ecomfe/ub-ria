@@ -7,6 +7,7 @@
  */
 
 import u from '../../util';
+import ui from 'esui';
 import Extension from 'esui/Extension';
 
 function onInit(e) {
@@ -20,6 +21,18 @@ function onInit(e) {
  * @extends esui.Extension
  */
 export default class OverrideDefaults extends Extension {
+    /**
+     * 扩展的类型，始终为`"OverrideDefaults"`
+     *
+     * @member ui.extension.OverrideDefaults#type
+     * @type {string}
+     * @readonly
+     * @override
+     */
+    get type() {
+        return 'OverrideDefaults';
+    }
+
     /**
      * @override
      */
@@ -54,15 +67,4 @@ export default class OverrideDefaults extends Extension {
     }
 }
 
-/**
- * 扩展的类型，始终为`"OverrideDefaults"`
- *
- * @member ui.extension.OverrideDefaults#type
- * @type {string}
- * @readonly
- * @override
- */
-OverrideDefaults.prototype.type = 'OverrideDefaults';
-
-import ui from 'esui';
 ui.registerExtension(OverrideDefaults);

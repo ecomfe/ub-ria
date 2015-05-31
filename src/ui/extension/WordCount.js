@@ -6,6 +6,7 @@
  * @author otakustay
  */
 
+import ui from 'esui';
 import lib from 'esui/lib';
 import Validity from 'esui/validator/Validity';
 import Extension from 'esui/Extension';
@@ -40,6 +41,18 @@ function checkLength() {
  * @extends esui.Extension
  */
 export default class WordCount extends Extension {
+    /**
+     * 扩展的类型，始终为`"WordCount"`
+     *
+     * @member ui.extension.WordCount#type
+     * @type {string}
+     * @readonly
+     * @override
+     */
+    get type() {
+        return 'WordCount';
+    }
+
     /**
      * 设置未输入字符时的提示信息模板，可用以下占位符：
      *
@@ -143,15 +156,4 @@ export default class WordCount extends Extension {
     }
 }
 
-/**
- * 扩展的类型，始终为`"WordCount"`
- *
- * @member ui.extension.WordCount#type
- * @type {string}
- * @readonly
- * @override
- */
-WordCount.prototype.type = 'WordCount';
-
-import ui from 'esui';
 ui.registerExtension(WordCount);

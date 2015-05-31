@@ -6,6 +6,7 @@
  * @author zhanglili(otakustay@gmail.com)
  */
 
+import ui from 'esui';
 import lib from 'esui/lib';
 import Form from 'esui/Form';
 import ActionPanel from 'ef/ActionPanel';
@@ -29,6 +30,18 @@ function getHelperForm(action) {
  * @extends ef.ActionPanel
  */
 export default class PartialForm extends ActionPanel {
+    /**
+     * 控件类型，始终为`"PartialForm"`
+     *
+     * @member ui.PartialForm#type
+     * @type {string}
+     * @readonly
+     * @override
+     */
+    get type() {
+        return 'PartialForm';
+    }
+
     /**
      * 进行验证
      *
@@ -148,15 +161,4 @@ export default class PartialForm extends ActionPanel {
     }
 }
 
-/**
- * 控件类型，始终为`"PartialForm"`
- *
- * @member ui.PartialForm#type
- * @type {string}
- * @readonly
- * @override
- */
-PartialForm.prototype.type = 'PartialForm';
-
-import ui from 'esui';
 ui.register(PartialForm);

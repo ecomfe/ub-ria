@@ -6,6 +6,8 @@
  * @author yanghuabei(yanghuabei@baidu.com)
  */
 
+import oo from 'eoo';
+
 /**
  * 表单提交成功后跳转处理组件基类
  *
@@ -37,8 +39,6 @@
         }
     }
  }
-
-import oo from 'eoo';
 
 /**
  * 获取下一个组件

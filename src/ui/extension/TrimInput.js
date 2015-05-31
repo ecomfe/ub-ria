@@ -6,6 +6,7 @@
  * @author lixiang(lixiang05@baidu.com)
  */
 
+import ui from 'esui';
 import InputControl from 'esui/InputControl';
 import Extension from 'esui/Extension';
 
@@ -21,6 +22,18 @@ function trim() {
  * @extends esui.Extension
  */
 export default class TrimInput extends Extension {
+    /**
+     * 扩展的类型，始终为`"TrimInput"`
+     *
+     * @member ui.extension.TrimInput#type
+     * @type {string}
+     * @readonly
+     * @override
+     */
+    get type() {
+        return 'TrimInput';
+    }
+
     /**
      * @override
      */
@@ -54,15 +67,4 @@ export default class TrimInput extends Extension {
     }
 }
 
-/**
- * 扩展的类型，始终为`"TrimInput"`
- *
- * @member ui.extension.TrimInput#type
- * @type {string}
- * @readonly
- * @override
- */
-TrimInput.prototype.type = 'TrimInput';
-
-import ui from 'esui';
 ui.registerExtension(TrimInput);

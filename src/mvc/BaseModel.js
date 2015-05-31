@@ -7,6 +7,7 @@
  */
 
 import u from '../util';
+import oo from 'eoo';
 import UIModel from 'ef/UIModel';
 
 const DATA_POOL = Symbol('dataPool');
@@ -138,8 +139,6 @@ export default class BaseModel extends UIModel {
         this[DATA_POOL] = null;
     }
 }
-
-import oo from 'eoo';
 
 /**
  * 获取权限对象

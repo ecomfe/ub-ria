@@ -7,6 +7,7 @@
  */
 
 import u from '../util';
+import oo from 'eoo';
 import Action from 'er/Action';
 
 /**
@@ -133,8 +134,6 @@ export default class BaseAction extends Action {
         this.model = model;
     }
 }
-
-import oo from 'eoo';
 
 /**
  * 获取当前模块包名，用于一些CSS Class的生成

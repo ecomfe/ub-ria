@@ -6,8 +6,9 @@
  * @author otakustay
  */
 
-import BaseAction from './BaseAction';
+import oo from 'eoo';
 import event from 'mini-event';
+import BaseAction from './BaseAction';
 
 /**
  * 表单Action基类
@@ -17,6 +18,10 @@ import event from 'mini-event';
  */
 export default class FormAction extends BaseAction {
     category = 'form';
+
+    submitConfirmMessage = '确认提交修改？';
+
+    cancelConfirmMessage = '取消编辑将不保留已经填写的数据，确定继续吗？';
 
     /**
      * 处理提交数据时发生的错误，默认无行为，如验证信息显示等需要实现此方法
@@ -176,6 +181,27 @@ export default class FormAction extends BaseAction {
         return true;
     }
 
+    /**
+     * 获取修改提交时的提示信息内容
+     *
+     * @protected
+     * @method mvc.FormAction#getUpdateConfirmMessage
+     * @return {string}
+     */
+    getSubmitConfirmMessage() {
+        return this.submitConfirmMessage;
+    }
+
+    /**
+     * 获取取消编辑时的提示信息内容
+     *
+     * @protected
+     * @method mvc.FormAction#getCancelConfirmMessage
+     * @return {string}
+     */
+    getCancelConfirmMessage() {
+        return this.cancelConfirmMessage;
+    }
 
     /**
      * @override
@@ -217,8 +243,6 @@ export default class FormAction extends BaseAction {
     }
 }
 
-import oo from 'eoo';
-
 /**
  * 获取处理组件
  *
@@ -235,19 +259,3 @@ import oo from 'eoo';
  * @param {mvc.handler.SubmitHandler} handler 提交成功处理组件
  */
 oo.defineAccessor(FormAction.prototype, 'submitHandler');
-
-/**
- * 获取修改提交时的提示信息内容
- *
- * @protected
- * @method mvc.FormAction#getUpdateConfirmMessage
- * @return {string}
- */
-
-/**
- * 设置修改提交时的提示信息内容
- *
- * @member mvc.FormAction#setCancelConfirmMessage
- * @param {string} cancelConfirmMessage 信息内容
- */
-oo.defineAccessor(FormAction.prototype, 'cancelConfirmMessage');

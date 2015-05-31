@@ -8,6 +8,7 @@
 
 import lib from 'esui/lib';
 import Control from 'esui/Control';
+import painters from 'esui/painters';
 
 const TEMPLATE = '<i class="${iconClass} ui-icon ui-icon-question-circle"></i>'
      + '<div class="${contentClass}" id="${contentId}"></div>'
@@ -24,6 +25,18 @@ const TEMPLATE = '<i class="${iconClass} ui-icon ui-icon-question-circle"></i>'
  * @extends esui.Control
  */
 export default class Warn extends Control {
+    /**
+     * 控件类型，始终为`"Warn"`
+     *
+     * @member ui.Warn#type
+     * @type {string}
+     * @readonly
+     * @override
+     */
+    get type() {
+        return 'Warn';
+    }
+
     /**
      * @override
      */
@@ -93,18 +106,6 @@ export default class Warn extends Control {
         lib.removeNode(this.main);
     }
 }
-
-/**
- * 控件类型，始终为`"Warn"`
- *
- * @member ui.Warn#type
- * @type {string}
- * @readonly
- * @override
- */
-Warn.prototype.type = 'Warn';
-
-import painters from 'esui/painters';
 
 /**
  * @override
