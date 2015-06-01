@@ -26,30 +26,7 @@ export default class RequestManager {
      * @param {string} [backendEntityName] 后端对应的实体名称，默认与`entityName`相同
      */
     constructor(entityName, backendEntityName) {
-        this.entityName = entityName;
-        this.backendEntityName = backendEntityName;
-
         this[RUNNING_REQUESTS] = new Map();
-    }
-
-    /**
-     * 获取当前数据类负责的实体名称
-     *
-     * @method mvc.RequestManager#getEntityName
-     * @return {string}
-     */
-    getEntityName() {
-        return this.entityName || '';
-    }
-
-    /**
-     * 获取当前数据类负责的后端实体名称
-     *
-     * @method mvc.RequestManager#getBackendEntityName
-     * @return {string}
-     */
-    getBackendEntityName() {
-        return this.backendEntityName || this.getEntityName();
     }
 
     /**

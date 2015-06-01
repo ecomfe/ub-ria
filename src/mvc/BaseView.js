@@ -6,13 +6,9 @@
  * @author otakustay
  */
 
-import u from '../util';
 import oo from 'eoo';
 import UIView from 'ef/UIView';
-import {DECORATOR_EVENTS} from './decorator';
-
-const UI_EVENTS = Symbol('uiEvents');
-const UI_PROPERTIES = Symbol('uiProperties');
+import {DECORATOR_EVENTS, DECORATOR_UI_PROPERTIES} from './decorator';
 
 /**
  * 视图基类
@@ -22,111 +18,19 @@ const UI_PROPERTIES = Symbol('uiProperties');
  */
 export default class BaseView extends UIView {
     /**
-     * 添加控件事件的配置
-     *
-     * @protected
-     * @method mvc.BaseView#addUIEvents
-     * @param {Object} uiEvents 控件绑定的事件
-     */
-    addUIEvents(uiEvents) {
-        // 对传入的控件事件参数进行格式变换
-        let extendedUIEvents = [uiEvents];
-        u.each(
-            uiEvents,
-            function (events, key) {
-                // `uiEvents`对象支持两种方式的事件绑定
-                //
-                // { 'controlId:eventType': functionName }
-                // { 'controlId:eventType': [functionNameA, functionNameB] }
-                //
-                // 绑定的事件函数是数组类型时，组装为多个`uiEvents`对象形式传入
-                if (Array.isArray(events)) {
-                    while (events.length > 1) {
-                        // 从`events`中拆出来的新`uiEvents`
-                        let newUIEvents = {};
-                        newUIEvents[key] = events.splice(-1)[0];
-                        // 插入到`extendedUIEvents`中
-                        extendedUIEvents.push(newUIEvents);
-                    }
-
-                    // 当数组只剩一个元素时，修正为具体的元素类型
-                    if (events.length) {
-                        uiEvents[key] = events.splice(-1)[0];
-                    }
-                }
-            }
-        );
-
-        let thisEvents = this[UI_EVENTS];
-        // `this[UI_EVENTS]`可能会以`null`/`Object`/`Array`三种类型出现
-        // 这边统一为数组类型
-        // 将`extendedUIEvents`拼接到`this[UI_EVENTS]`后面
-        this[UI_EVENTS] = [...(thisEvents || []), ...extendedUIEvents];
-    }
-
-    /**
-     * 获取控件事件配置的数组形式
-     *
-     * @private
-     * @method mvc.BaseView#getUIEventsCollection
-     * @return {Array} 控件事件
-     */
-    getUIEventsCollection() {
-        let events = this[UI_EVENTS];
-
-        // 重写父类实现
-        // 将`this[UI_EVENTS]`包装为数组返回
-        return (events && [...events]) || [];
-    }
-
-    /**
      * @override
      */
     bindEvents() {
         for (let {control, event, key} of this[DECORATOR_EVENTS]) {
             this.getSafely(control).on(event, this[key], this);
         }
-
-        let bind = (handler, key) => {
-            this.bindUIEvent(key, handler);
-        };
-
-        // 扩展后`uiEvents`可以是个数组，每一项和以前的`uiEvents`格式是一样的，一一注册就行。
-        // 两层`each`，第一层分解数组，第二层和基类的`bindEvents`一样就是绑事件
-        this.getUIEventsCollection().forEach((events) => u.each(events, bind));
-    }
-
-    /**
-     * 添加控件的额外属性
-     *
-     * @protected
-     * @method mvc.BaseView#addUIProperties
-     * @param {Object} newUIProperties 控件的额外属性
-     */
-    addUIProperties(newUIProperties) {
-        // `this[UI_PROPERTIES]`可能以`null`/`Object`两种类型出现
-        // 统一为对象类型
-        this[UI_PROPERTIES] = this[UI_PROPERTIES] || {};
-
-        let uiProperties = this[UI_PROPERTIES];
-        u.each(
-            newUIProperties,
-            (properties, controlId) => {
-                if (!uiProperties.hasOwnProperty(controlId)) {
-                    uiProperties[controlId] = {};
-                }
-                u.extend(uiProperties[controlId], properties);
-            }
-        );
     }
 
     /**
      * @override
      */
     getUIProperties() {
-        // 重写父类实现
-        // 获取 直接重写`uiProperties` 及 调用`addUIProperties`接口 设置的控件额外属性
-        return this[UI_PROPERTIES] || {};
+        return this[DECORATOR_UI_PROPERTIES] || {};
     }
 
     /**

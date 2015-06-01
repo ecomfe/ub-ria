@@ -19,9 +19,27 @@ import BaseAction from './BaseAction';
 export default class FormAction extends BaseAction {
     category = 'form';
 
-    submitConfirmMessage = '确认提交修改？';
+    /**
+     * 提交时的确认信息
+     *
+     * @protected
+     * @member mvc.FormAction#submitConfirmMessage
+     * @type {string}
+     */
+    get submitConfirmMessage() {
+        return '确认提交修改？';
+    }
 
-    cancelConfirmMessage = '取消编辑将不保留已经填写的数据，确定继续吗？';
+    /**
+     * 取消提交时的确认信息
+     *
+     * @protected
+     * @member mvc.FormAction#cancelConfirmMessage
+     * @type {string}
+     */
+    get cancelConfirmMessage() {
+        return '取消编辑将不保留已经填写的数据，确定继续吗？';
+    }
 
     /**
      * 处理提交数据时发生的错误，默认无行为，如验证信息显示等需要实现此方法
@@ -150,7 +168,7 @@ export default class FormAction extends BaseAction {
         let initialFormData = this.model.get('initialFormData');
 
         if (this.isFormDataChanged(initialFormData)) {
-            let options = {content: this.getCancelConfirmMessage()};
+            let options = {content: this.cancelConfirmMessage};
             return this.view.waitCancelConfirm(options).then(cancel);
         }
 
@@ -166,7 +184,7 @@ export default class FormAction extends BaseAction {
      */
     redirectAfterCancel() {
         // 默认返回列表页
-        this.back('/' + this.getEntityName() + '/list');
+        this.back(`/${this.entityName}/list`);
     }
 
     /**
@@ -182,28 +200,6 @@ export default class FormAction extends BaseAction {
     }
 
     /**
-     * 获取修改提交时的提示信息内容
-     *
-     * @protected
-     * @method mvc.FormAction#getUpdateConfirmMessage
-     * @return {string}
-     */
-    getSubmitConfirmMessage() {
-        return this.submitConfirmMessage;
-    }
-
-    /**
-     * 获取取消编辑时的提示信息内容
-     *
-     * @protected
-     * @method mvc.FormAction#getCancelConfirmMessage
-     * @return {string}
-     */
-    getCancelConfirmMessage() {
-        return this.cancelConfirmMessage;
-    }
-
-    /**
      * @override
      */
     initBehavior() {
@@ -213,7 +209,7 @@ export default class FormAction extends BaseAction {
             this.view.clearGlobalError();
             let entity = this.view.getEntity();
 
-            let options = {content: this.getSubmitConfirmMessage()};
+            let options = {content: this.submitConfirmMessage};
             this.view.waitSubmitConfirm(options)
                 .then(::this.view.disableSubmit)
                 .then(() => this.submitEntity(entity))

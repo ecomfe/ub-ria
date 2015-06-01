@@ -7,8 +7,11 @@
  */
 
 import u from '../util';
+import {definePropertyAccessor} from '../meta';
 import URL from 'er/URL';
 import BaseModel from './BaseModel';
+
+const DEFAULT_ARGS = Symbol('defaultArgs');
 
 // 加载列表
 const LIST = {
@@ -74,26 +77,10 @@ const DEFAULT_STATUS_TRANSITIONS = [
  * @extends mvc.BaseModel
  */
 export default class ListModel extends BaseModel {
-    /**
-     * 配置默认`status`参数值，即当URL中没有此参数时发给后端的代替值
-     *
-     * 通常“状态”的默认选项不是“全部”，而是“启用”等状态，就会遇上这样的情况：
-     *
-     * - 如果将“启用”项的值设为`""`，则不会给后端`status`参数，会查询到所有数据
-     * - 如果将“启用”项的值设为`"1"`，则所有入口要加上`status=1`参数
-     *
-     * 未了保持前端URL的整洁以及不需要外部关注默认的`status`参数，
-     * 同时保证后端的兼容性，列表在设计的时候采用以下方案：
-     *
-     * 1. 将“启用”之类未删除状态的值设为`""`
-     * 2. 在`ListModel`上添加`defaultStatusValue`属性，默认为`1`表示“启用”
-     * 3. 如果URL中没有`status`参数，则使用`defaultStatusValue`属性代替
-     * 4. 如果URL中的`status`参数值为`"all"`，则请求后端时不带此参数以获取全集
-     *
-     * @protected
-     * @member {number | string} mvc.ListModel#defaultStatusValue
-     */
-    defaultStatusValue = '';
+    statusTransitions = DEFAULT_STATUS_TRANSITIONS;
+
+    // 一般默认是启用状态
+    defaultStatusValue = 1;
 
     /**
      * 配置默认查询参数
@@ -103,20 +90,21 @@ export default class ListModel extends BaseModel {
      * 创建`Model`时，如果某个参数不存在，则会自动补上这里的值
      *
      * @protected
-     * @member {Object} mvc.ListModel#defaultArgs
+     * @member mvc.ListModel#defaultArgs
+     * @type {Object}
      */
-    defaultArgs = null;
+    get defaultArgs() {
+        let args = this[DEFAULT_ARGS] || {};
+        let defaultStatusValue = this.defaultStatusValue;
+        if (!args.hasOwnProperty('status') && defaultStatusValue) {
+            args.status = defaultStatusValue;
+        }
+        return args;
+    }
 
-    /**
-     * 设定实体的状态迁移表
-     *
-     * 如果某一个{@link meta.StatusTransition}中同时存在`accept`和`deny`属性，则使用`accept`与`deny`的差集
-     *
-     * @protected
-     * @member mvc.ListModel#statusTransitions
-     * @type {meta.StatusTransition[]}
-     */
-    statusTransitions = DEFAULT_STATUS_TRANSITIONS;
+    set defaultArgs(value) {
+        this[DEFAULT_ARGS] = value;
+    }
 
     /**
      * @constructs mvc.ListModel
@@ -126,7 +114,7 @@ export default class ListModel extends BaseModel {
 
         // 把默认参数补上，不然像表格的`orderBy`字段没值表格就不能正确显示
         u.each(
-            this.getDefaultArgs(),
+            this.defaultArgs,
             (value, key) => {
                 if (!this.has(key)) {
                     this.set(key, value);
@@ -141,6 +129,17 @@ export default class ListModel extends BaseModel {
     }
 
     /**
+     * 返回原始筛选配置对象
+     *
+     * @protected
+     * @method mvc.ListModel#getFilters
+     * @return {Object}
+     */
+    getFilters() {
+        return {};
+    }
+
+    /**
      * 设置全局数据对象
      *
      * @method mvc.ListModel#setGlobalData
@@ -150,46 +149,8 @@ export default class ListModel extends BaseModel {
         this.addData('global', data);
     }
 
-    /**
-     * 获取默认`status`参数值，即当URL中没有此参数时发给后端的代替值
-     *
-     * @protected
-     * @method mvc.ListModel#getDefaultStatusValue
-     * @return {string | number}
-     */
-    getDefaultStatusValue() {
-        return this.defaultStatusValue || '';
-    }
-
-    /**
-     * 默认查询参数
-     *
-     * 参考{@link mvc.ListModel#defaultArgs}属性的说明
-     *
-     * @method mvc.ListModel#getDefaultArgs
-     * @return {Object}
-     */
-    getDefaultArgs() {
-        let args = this.defaultArgs || {};
-        let defaultStatusValue = this.getDefaultStatusValue();
-        if (!args.hasOwnProperty('status') && defaultStatusValue) {
-            args.status = defaultStatusValue;
-        }
-        return args;
-    }
-
-    /**
-     * 获取实体的状态迁移表
-     *
-     * @method mvc.ListModel#getStatusTransitions
-     * @return {meta.StatusTransition[]}
-     */
-    getStatusTransitions() {
-        return this.statusTransitions;
-    }
-
     getTransitionForStatus(status) {
-        return u.findWhere(this.getStatusTransitions(), {status});
+        return u.findWhere(this.statusTransitions, {status});
     }
 
     /**
@@ -228,7 +189,7 @@ export default class ListModel extends BaseModel {
 
         // 调整“状态”属性
         if (!query.status) {
-            query.status = this.getDefaultStatusValue();
+            query.status = this.defaultStatusValue;
         }
         else if (query.status === 'all') {
             query.status = '';
@@ -456,15 +417,6 @@ export default class ListModel extends BaseModel {
     }
 
     /**
-     * 返回原始筛选配置对象
-     *
-     * @return {Object}
-     */
-    getFilters() {
-        return {};
-    }
-
-    /**
      * 返回经过处理的筛选数组
      *
      * @protected
@@ -473,7 +425,7 @@ export default class ListModel extends BaseModel {
      */
     getFiltersInfo() {
         let isAllFiltersDefault = true;
-        let defaultArgs = this.getDefaultArgs();
+        let defaultArgs = this.defaultArgs;
         let filters = {};
         u.each(
             this.getFilters(),
@@ -505,3 +457,35 @@ export default class ListModel extends BaseModel {
         };
     }
 }
+
+/**
+ * 配置默认`status`参数值，即当URL中没有此参数时发给后端的代替值
+ *
+ * 通常“状态”的默认选项不是“全部”，而是“启用”等状态，就会遇上这样的情况：
+ *
+ * - 如果将“启用”项的值设为`""`，则不会给后端`status`参数，会查询到所有数据
+ * - 如果将“启用”项的值设为`"1"`，则所有入口要加上`status=1`参数
+ *
+ * 未了保持前端URL的整洁以及不需要外部关注默认的`status`参数，
+ * 同时保证后端的兼容性，列表在设计的时候采用以下方案：
+ *
+ * 1. 将“启用”之类未删除状态的值设为`""`
+ * 2. 在`ListModel`上添加`defaultStatusValue`属性，默认为`1`表示“启用”
+ * 3. 如果URL中没有`status`参数，则使用`defaultStatusValue`属性代替
+ * 4. 如果URL中的`status`参数值为`"all"`，则请求后端时不带此参数以获取全集
+ *
+ * @protected
+ * @member {number | string} mvc.ListModel#defaultStatusValue
+ */
+definePropertyAccessor(ListModel.prototype, 'defaultStatusValue');
+
+/**
+ * 设定实体的状态迁移表
+ *
+ * 如果某一个{@link meta.StatusTransition}中同时存在`accept`和`deny`属性，则使用`accept`与`deny`的差集
+ *
+ * @protected
+ * @member mvc.ListModel#statusTransitions
+ * @type {meta.StatusTransition[]}
+ */
+definePropertyAccessor(ListModel.prototype, 'statusTransitions');

@@ -12,7 +12,6 @@ import Validity from 'esui/validator/Validity';
 import ValidityState from 'esui/validator/ValidityState';
 import Warn from '../ui/Warn';
 import {bindControlEvent as on, control} from './decorator';
-// require('ub-ria-ui/DrawerActionPanel');
 
 
 /**
@@ -31,16 +30,16 @@ import {bindControlEvent as on, control} from './decorator';
  * @extends mvc.BaseView
  */
 export default class FormView extends BaseView {
-    @control()
+    @control();
     get form() {}
 
-    @control()
+    @control();
     get submitSection() {}
 
-    @control('form-page')
+    @control('form-page');
     get formViewContainer() {}
 
-    @control('form-content-main')
+    @control('form-content-main');
     get formContent() {}
 
     /**

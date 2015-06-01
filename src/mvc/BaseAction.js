@@ -8,7 +8,10 @@
 
 import u from '../util';
 import oo from 'eoo';
+import {definePropertyAccessor} from '../meta';
 import Action from 'er/Action';
+
+const ENTITY_NAME = Symbol('entityName');
 
 /**
  * Action基类，提供实体名称和实体描述的维护
@@ -23,64 +26,24 @@ export default class BaseAction extends Action {
      * @memberOf  mvc.BaseAction#entityName
      * @type {string}
      */
-    entityName = null
-
-    /**
-     * 当前Action所处理的实体简介
-     *
-     * @memberOf  mvc.BaseAction#entityDescription
-     * @type {string}
-     */
-    entityDescription = null
-
-    /**
-     * 当前Action所在分组
-     *
-     * @memberOf  mvc.BaseAction#group
-     * @type {string}
-     */
-    group = null
-
-    /**
-     * 当前Action所在分类
-     *
-     * @memberOf  mvc.BaseAction#category
-     * @type {string}
-     */
-    category = null
-
-    /**
-     * 获取当前Action所处理的实体名称
-     *
-     * @method mvc.BaseAction#getEntityName
-     * @return {string}
-     */
-    getEntityName() {
-        if (!this.entityName) {
+    get entityName() {
+        if (!this[ENTITY_NAME]) {
             // 如果在`enteractionfail`之类的事件中用到，此时是没有`context`的
             if (this.context) {
                 // 几乎所有的URL都是`/{entityName}/list|update|create|view`结构
                 let path = this.context.url.getPath();
-                this.entityName = path.split('/')[1];
+                this[ENTITY_NAME] = path.split('/')[1];
             }
             else {
                 return '';
             }
         }
 
-        return this.entityName;
+        return this[ENTITY_NAME];
     }
 
-    getEntityDescription() {
-        return this.entityDescription || '';
-    }
-
-    getGroup() {
-        return this.group;
-    }
-
-    getCategory() {
-        return this.group;
+    set entityName(value) {
+        this[ENTITY_NAME] = value;
     }
 
     /**
@@ -99,9 +62,9 @@ export default class BaseAction extends Action {
      */
     getPageCategories() {
         let categories = [];
-        let category = u.dasherize(this.getCategory());
-        let entityName = u.dasherize(this.getEntityName());
-        let packageName = u.dasherize(this.getPackageName());
+        let category = u.dasherize(this.category);
+        let entityName = u.dasherize(this.entityName);
+        let packageName = u.dasherize(this.packageName);
 
         if (category) {
             categories.push(category + '-page');
@@ -129,26 +92,43 @@ export default class BaseAction extends Action {
      * @param {er.Model} model 数据模型
      */
     setModel(model) {
-        model.set('entityDescription', this.getEntityDescription());
+        model.set('entityDescription', this.entityDescription);
 
         this.model = model;
     }
 }
 
 /**
- * 获取当前模块包名，用于一些CSS Class的生成
+ * 当前Action所处理的实体简介
  *
- * @method mvc.BaseAction#getPackageName
- * @return {string}
+ * @memberOf  mvc.BaseAction#entityDescription
+ * @type {string}
  */
+definePropertyAccessor(BaseAction.prototype, 'entityDescription');
 
 /**
- * 设置当前模块包名，用于一些CSS Class的生成
+ * 当前Action所在分组
  *
- * @method mvc.BaseAction#setPackageName
- * @param {string} packageName 包名称
+ * @memberOf  mvc.BaseAction#group
+ * @type {string}
  */
-oo.defineAccessor(BaseAction.prototype, 'packageName');
+definePropertyAccessor(BaseAction.prototype, 'group');
+
+/**
+ * 当前Action所在分类
+ *
+ * @memberOf  mvc.BaseAction#category
+ * @type {string}
+ */
+definePropertyAccessor(BaseAction.prototype, 'category');
+
+/**
+ * 当前模块包名，用于第三方模块集成系统时使用，一些CSS Class的生成
+ *
+ * @member mvc.BaseAction#packageName
+ * @return {string}
+ */
+definePropertyAccessor(BaseAction.prototype, 'packageName');
 
 /**
  * 获取事件总线对象

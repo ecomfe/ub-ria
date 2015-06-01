@@ -61,7 +61,7 @@ export default class ListAction extends BaseAction {
         let path = url.getPath();
 
         // 如果跟默认的参数相同，去掉默认字段
-        let defaultArgs = this.model.getDefaultArgs();
+        let defaultArgs = this.model.defaultArgs;
         args = u.purify(args, defaultArgs);
 
         url = URL.withQuery(path, args).toString();
@@ -90,7 +90,7 @@ export default class ListAction extends BaseAction {
 
         let waitConfirmForAdvice = (context, advice) => {
             let options = {
-                title: context.command + this.getEntityDescription(),
+                title: `${context.command}${this.entityDescription}`,
                 content: advice.message
             };
             return this.view.waitConfirm(options);
@@ -162,17 +162,17 @@ export default class ListAction extends BaseAction {
      * @param {meta.UpdateContext} context 批量操作的上下文对象
      */
     notifyModifyFail(context) {
-        let entityDescription = this.getEntityDescription();
+        let entityDescription = this.entityDescription;
         if (context.ids.length > 1) {
             this.view.alert(
-                '无法' + context.command + '部分或全部' + entityDescription,
-                context.command + entityDescription
+                `无法${context.command}部分或全部${entityDescription}`,
+                `${context.command}${entityDescription}`
             );
         }
         else {
             this.view.alert(
-                '无法' + context.command + '该' + entityDescription,
-                context.command + entityDescription
+                `无法${context.command}该${entityDescription}`,
+                `${context.command}${entityDescription}`
             );
         }
     }

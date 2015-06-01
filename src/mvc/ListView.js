@@ -7,8 +7,11 @@
  */
 
 import u from '../util';
+import {definePropertyAccessor} from '../meta';
 import BaseView from './BaseView';
 import {bindControlEvent as on, control} from './decorator';
+
+const EMPTY_ARRAY = Object.freeze([]);
 
 /**
  * 列表视图基类
@@ -28,10 +31,12 @@ import {bindControlEvent as on, control} from './decorator';
  * @extends mvc.BaseView
  */
 export default class ListView extends BaseView {
-    @control;
+    tableFields = EMPTY_ARRAY;
+
+    @control();
     get pager() {}
 
-    @control;
+    @control();
     get table() {}
 
     @control('filter', true);
@@ -42,24 +47,6 @@ export default class ListView extends BaseView {
 
     @control('keyword', true);
     get keyword() {}
-
-    /**
-     * 表格的列配置，供重写
-     *
-     * @member {Array.<Object>} mvc.ListView#tableFields
-     */
-    tableFields = null;
-
-    /**
-     * 获取表格的列配置
-     *
-     * @protected
-     * @method mvc.ListView#getTableFields
-     * @return {Array.<Object>}
-     */
-    getTableFields() {
-        return this.tableFields || [];
-    }
 
     /**
      * 更新每页显示数
@@ -137,7 +124,7 @@ export default class ListView extends BaseView {
      */
     showFilterPanel() {
         this.filterPanel.show();
-        this.filterSwitch.addSatte('expand');
+        this.filterSwitch.addState('expand');
     }
 
     /**
@@ -230,7 +217,7 @@ export default class ListView extends BaseView {
      */
     handleTableCommand({triggerType, name, args}) {
         if (triggerType === 'click') {
-            let transition = u.findWhere(this.model.getStatusTransitions(), {statusName: name});
+            let transition = u.findWhere(this.model.statusTransitions, {statusName: name});
             // 处理状态修改
             if (transition) {
                 let eventArgs = {
@@ -312,10 +299,8 @@ export default class ListView extends BaseView {
     getUIProperties() {
         let properties = super.getUIProperties() || {};
 
-        if (!properties.table) {
-            properties.table = {};
-        }
-        properties.table.fields = this.getTableFields();
+        let table = properties.table || (properties.table = {});
+        table.fields = this.tableFields;
 
         return properties;
     }
@@ -514,3 +499,11 @@ export default class ListView extends BaseView {
         this.popDrawerAction({url}).show();
     }
 }
+
+/**
+ * 表格的列配置
+ *
+ * @member mvc.ListView#tableFields
+ * @type {Array.<Object>}
+ */
+definePropertyAccessor(ListView.prototype, 'tableFields');

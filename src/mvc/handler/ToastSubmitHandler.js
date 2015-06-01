@@ -81,7 +81,7 @@ export default class ToastSubmitHandler extends SubmitHandler {
         }
 
         let actionType = action.context.formType === 'update' ? '修改' : '创建';
-        let entityDescription = action.getEntityDescription();
+        let entityDescription = action.entityDescription;
         let name = u.escape(entity.name);
 
         return `您${actionType}的${entityDescription}[<string>${name}</strong>]已经成功保存`;

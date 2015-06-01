@@ -106,6 +106,6 @@ export default class RedirectSubmitHandler extends SubmitHandler {
      * @return {Object}
      */
     getData(entity, action) {
-        return {entityName: action.getEntityName()};
+        return {entityName: action.entityName};
     }
 }
