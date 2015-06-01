@@ -280,7 +280,7 @@ export default class ListAction extends BaseAction {
                 this.modifyStatus([item], e.status);
             }
         );
-        this.getLayoutChangeNotifier().on('layoutchanged', ::this.adjustLayout);
+        this.getLayoutChangeNotifier().on('layoutchanged', this.adjustLayout, this);
     }
 
     /**

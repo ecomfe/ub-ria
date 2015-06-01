@@ -8,6 +8,7 @@
 
 import u from '../util';
 import {definePropertyAccessor} from '../meta';
+import URL from 'er/URL';
 import BaseView from './BaseView';
 import {bindControlEvent as on, control} from './decorator';
 
@@ -413,7 +414,7 @@ export default class ListView extends BaseView {
      */
     adjustLayout() {
         if (this.table) {
-            this.table.adjustLayout();
+            this.table.adjustWidth();
         }
     }
 

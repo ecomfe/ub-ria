@@ -183,7 +183,7 @@ export default class FormView extends BaseView {
             }
         );
 
-        let executor = function (resolve, reject) {
+        let executor = (resolve, reject) => {
             warn.on('ok', resolve);
             warn.on('ok', () => this.formViewContainer.removeState('warned'));
             warn.on('cancel', () => this.formViewContainer.removeState('warned'));
