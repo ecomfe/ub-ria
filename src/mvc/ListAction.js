@@ -122,7 +122,7 @@ export default class ListAction extends BaseAction {
         if (this.requireAdviceFor(context)) {
             // 需要后端提示消息的，再额外加入用户确认的过程
             this.model.getAdvice(status, ids)
-                .then(() => waitConfirmForAdvice(context))
+                .then((advice) => waitConfirmForAdvice(context, advice))
                 .then(() => updateEntities(context));
         }
         else {

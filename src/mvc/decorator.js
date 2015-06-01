@@ -12,6 +12,10 @@ export function control(id, safe = false) {
     return (target, key, descriptor) => {
         let controlId = id || u.dasherize(key);
         descriptor.get = function () {
+            if (!this.viewContext) {
+                return undefined;
+            }
+
             return safe ? this.getSafely(controlId) : this.get(controlId);
         };
     };
