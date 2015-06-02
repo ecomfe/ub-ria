@@ -67,19 +67,19 @@ export default class BaseAction extends Action {
         let packageName = u.dasherize(this.packageName);
 
         if (category) {
-            categories.push(category + '-page');
+            categories.push(`${category}-page`);
         }
         if (entityName) {
-            categories.push(entityName + '-page');
+            categories.push(`${entityName}-page`);
         }
         if (category && entityName) {
-            categories.push(entityName + '-' + this.category + '-page');
+            categories.push(`${entityName}-${category}-page`);
         }
         if (packageName) {
-            categories.push(packageName + '-package');
+            categories.push(`${packageName}-package`);
         }
         if (packageName && category) {
-            categories.push(packageName + '-package-' + category);
+            categories.push(`${packageName}-package-${category}`);
         }
 
         return categories;

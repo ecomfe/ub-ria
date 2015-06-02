@@ -5,5 +5,5 @@
     "ast": false,
     "blacklist": ["strict"],
     "externalHelpers": true,
-    "sourceMaps": true
+    "sourceMaps": "inline"
 }

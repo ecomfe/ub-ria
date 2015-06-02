@@ -8,6 +8,13 @@
 
 import u from '../util';
 
+/**
+ * 关联View中的属性与控件
+ *
+ * @param {string} id 控件的id
+ * @param {boolean} safe 是否使用`getSafely`
+ * @return {Function}
+ */
 export function control(id, safe = false) {
     return (target, key, descriptor) => {
         let controlId = id || u.dasherize(key);
@@ -21,8 +28,20 @@ export function control(id, safe = false) {
     };
 }
 
+/**
+ * 用于获取通过decorator添加的事件的Symbol
+ *
+ * @type {Symbol}
+ */
 export const DECORATOR_EVENTS = Symbol('decoratorEvents');
 
+/**
+ * 关联View的方法与控件的属性
+ *
+ * @param {string} control 控件的id
+ * @param {string} event 处理的事件名称
+ * @return {Function}
+ */
 export function bindControlEvent(control, event) {
     return (target, key, descriptor) => {
         if (!target[DECORATOR_EVENTS]) {
@@ -33,8 +52,22 @@ export function bindControlEvent(control, event) {
     };
 }
 
+/**
+ * 用于获取通过decorator添加的控件属性的Symbol
+ *
+ * @type {Symbol}
+ */
 export const DECORATOR_UI_PROPERTIES = Symbol('decoratorUIProperties');
 
+/**
+ * 添加控件属性，仅可用在class上
+ *
+ * @protected
+ * @param {string} control 控件的id
+ * @param {string} key 属性名
+ * @param {*} value 属性值
+ * @return {Function}
+ */
 export function uiProperty(control, key, value) {
     // 支持`@property(control, key, value)`和`@property(control, properties)`两种重载
     let properties = arguments.length === 3 ? {[key]: value} : key;

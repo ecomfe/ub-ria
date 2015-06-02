@@ -28,7 +28,7 @@ let util = Object.create(underscore);
 /**
  * @override
  */
-util.template = (template, data) => {
+util.template = function (template, data) {
     return underscore.template(template, data, TEMPLATE_SETTINGS);
 };
 
@@ -77,7 +77,7 @@ util.purify = function purify(object, defaults, deep) {
  * @param {string} s 输入的字符串
  * @return {string}
  */
-util.pascalize = (s) => {
+util.pascalize = function (s) {
     if (s == null || s === '') {
         return '';
     }
@@ -101,7 +101,7 @@ util.pascalize = util.memoize(util.pascalize);
  * @param {string} s 输入的字符串
  * @return {string}
  */
-util.camelize = (s) => {
+util.camelize = function (s) {
     if (s == null || s === '') {
         return '';
     }
@@ -125,7 +125,7 @@ util.camelize = util.memoize(util.camelize);
  * @param {string} s 输入的字符串
  * @return {string}
  */
-util.dasherize = (s) => {
+util.dasherize = function (s) {
     if (s == null || s === '') {
         return '';
     }
@@ -155,7 +155,7 @@ util.dasherize = util.memoize(util.dasherize);
  * @param {string} s 输入的字符串
  * @return {string}
  */
-util.constlize = (s) => {
+util.constlize = function (s) {
     if (s == null || s === '') {
         return '';
     }
@@ -174,7 +174,7 @@ util.constlize = util.memoize(util.constlize);
  * @param {string} s 输入的字符串
  * @return {string}
  */
-util.pluralize = (s) => {
+util.pluralize = function (s) {
     if (s == null || s === '') {
         return '';
     }
@@ -193,7 +193,7 @@ util.pluralize = util.memoize(util.pluralize);
  * @param {string} [prefix=""] 返回的字符串的前缀
  * @return {string}
  */
-util.formatNumber = (number, decimals, emptyValue, prefix) => {
+util.formatNumber = function (number, decimals, emptyValue, prefix) {
     // 共6个重载：
     //
     // - `formatNumber(s)`
@@ -238,7 +238,7 @@ util.formatNumber = (number, decimals, emptyValue, prefix) => {
  * @param {number} length 补齐后的长度
  * @return {string}
  */
-util.pad = (s, padding, length) => {
+util.pad = function (s, padding, length) {
     s = (s == null ? '' : s) + '';
     let padLength = length - s.length;
     if (padLength > 0) {
@@ -257,7 +257,7 @@ util.pad = (s, padding, length) => {
  * @param {number} length 补齐后的长度
  * @return {string}
  */
-util.padRight = (s, padding, length) => {
+util.padRight = function (s, padding, length) {
     s = (s == null ? '' : s) + '';
     let padLength = length - s.length;
     if (padLength > 0) {
@@ -274,7 +274,7 @@ util.padRight = (s, padding, length) => {
  * @param {*} obj 任何对象
  * @return {*} 复制后的对象
  */
-util.deepClone = (obj) => {
+util.deepClone = function (obj) {
     // 非对象以及函数就直接返回
     if (!util.isObject(obj) || util.isFunction(obj) || util.isRegExp(obj)) {
         return obj;
@@ -289,7 +289,7 @@ util.deepClone = (obj) => {
     return clone;
 };
 
-util.transformPlainObjectToStructured = (obj) => {
+util.transformPlainObjectToStructured = function (obj) {
     let result = {};
 
     let addDeepProperty = (keyPath, value) => {

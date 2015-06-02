@@ -428,18 +428,18 @@ export let register = (Type, name, config) => {
         }
 
         if (typeConfig.hasOwnProperty(name)) {
-            throw new Error('An instance request config "' + name + '" has already been registered');
+            throw new Error(`An instance request config "${name}" has already been registered`);
         }
         typeConfig[name] = config;
     }
     else if (config.scope === 'global') {
         if (globalRequestConfig.hasOwnProperty(name)) {
-            throw new Error('A global request config "' + name + '" has already been registered');
+            throw new Error(`A global request config "${name}" has already been registered`);
         }
 
         globalRequestConfig[name] = config;
     }
     else {
-        throw new Error('Invalid scope "' + config.scope + '"');
+        throw new Error(`Invalid scope "${config.scope}"`);
     }
 };

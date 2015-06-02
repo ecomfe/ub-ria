@@ -82,7 +82,7 @@ let extensionModulePrefix = {
  * @param {string} text 模板内容
  * @return {Set.<string>} 依赖的控件列表
  */
-let getControlDependencies = (text) => {
+function getControlDependencies(text) {
     let dependencies = new Set();
 
     let regex = /<\s*esui-([\w-]+)[^>]*>|data-ui-type="(\w+)"/g;
@@ -96,7 +96,7 @@ let getControlDependencies = (text) => {
     }
 
     return dependencies;
-};
+}
 
 /**
  * 获取扩展依赖关系
@@ -104,7 +104,7 @@ let getControlDependencies = (text) => {
  * @param {string} text 模板内容
  * @return {Set.<string>} 依赖的扩展列表
  */
-let getExtensionDependencies = (text) => {
+function getExtensionDependencies(text) {
     let dependencies = new Set();
 
     let regex = /data-ui-extension-[^-]+-type="(\w+)"/g;
@@ -118,7 +118,7 @@ let getExtensionDependencies = (text) => {
     }
 
     return dependencies;
-};
+}
 
 /**
  * 模板加载插件，类似[etpl](https://github.com/ecomfe/etpl)的AMD插件，
@@ -142,7 +142,7 @@ let plugin = {
      * @param {Function} parentRequire 父级`require`函数
      * @param {Function} load 加载完成后调用
      */
-    load: function (resourceId, parentRequire, load) {
+    load(resourceId, parentRequire, load) {
         let addTemplate = (text) => {
             etpl.parse(text);
 
