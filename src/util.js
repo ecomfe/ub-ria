@@ -29,7 +29,7 @@ let util = Object.create(underscore);
  * @override
  */
 util.template = function (template, data) {
-    return underscore.template(template, data, TEMPLATE_SETTINGS);
+    return underscore.template(template, TEMPLATE_SETTINGS)(data);
 };
 
 /**
