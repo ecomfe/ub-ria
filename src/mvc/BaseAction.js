@@ -10,6 +10,7 @@ import u from '../util';
 import oo from 'eoo';
 import {definePropertyAccessor} from '../meta';
 import Action from 'er/Action';
+import {DECORATOR_VIEW_EVENTS} from './decorator';
 
 const ENTITY_NAME = Symbol('entityName');
 
@@ -44,6 +45,17 @@ export default class BaseAction extends Action {
 
     set entityName(value) {
         this[ENTITY_NAME] = value;
+    }
+
+    /**
+     * @override
+     */
+    initBehavior() {
+        super.initBehavior();
+
+        for (let {event, key} of this[DECORATOR_VIEW_EVENTS]) {
+            this.view.on(event, this[key], this);
+        }
     }
 
     /**

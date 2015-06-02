@@ -8,7 +8,7 @@
 
 import oo from 'eoo';
 import UIView from 'ef/UIView';
-import {DECORATOR_EVENTS, DECORATOR_UI_PROPERTIES} from './decorator';
+import {DECORATOR_UI_EVENTS, DECORATOR_UI_PROPERTIES} from './decorator';
 
 /**
  * 视图基类
@@ -21,7 +21,7 @@ export default class BaseView extends UIView {
      * @override
      */
     bindEvents() {
-        for (let {control, event, key} of this[DECORATOR_EVENTS]) {
+        for (let {control, event, key} of this[DECORATOR_UI_EVENTS]) {
             this.getSafely(control).on(event, this[key], this);
         }
     }

@@ -33,7 +33,7 @@ export function control(id, safe = false) {
  *
  * @type {Symbol}
  */
-export const DECORATOR_EVENTS = Symbol('decoratorEvents');
+export const DECORATOR_UI_EVENTS = Symbol('decoratorEvents');
 
 /**
  * 关联View的方法与控件的属性
@@ -44,11 +44,11 @@ export const DECORATOR_EVENTS = Symbol('decoratorEvents');
  */
 export function bindControlEvent(control, event) {
     return (target, key, descriptor) => {
-        if (!target[DECORATOR_EVENTS]) {
-            target[DECORATOR_EVENTS] = [];
+        if (!target[DECORATOR_UI_EVENTS]) {
+            target[DECORATOR_UI_EVENTS] = [];
         }
 
-        target[DECORATOR_EVENTS].push({control, event, key});
+        target[DECORATOR_UI_EVENTS].push({control, event, key});
     };
 }
 
@@ -81,5 +81,17 @@ export function uiProperty(control, key, value) {
                 u.extend(controlProperties, properties);
             }
         };
+    };
+}
+
+export const DECORATOR_VIEW_EVENTS = Symbol('decoratorViewEvents');
+
+export function viewEvent(event) {
+    return (target, key, descriptor) => {
+        if (!target[DECORATOR_VIEW_EVENTS]) {
+            target[DECORATOR_VIEW_EVENTS] = [];
+        }
+
+        target[DECORATOR_VIEW_EVENTS].push({event, key});
     };
 }

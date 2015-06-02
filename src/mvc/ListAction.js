@@ -9,6 +9,7 @@
 import u from '../util';
 import oo from 'eoo';
 import URL from 'er/URL';
+import {viewEvent} from './decorator';
 import BaseAction from './BaseAction';
 
 /**
@@ -229,57 +230,6 @@ export default class ListAction extends BaseAction {
     initBehavior() {
         super.initBehavior();
 
-        let afterPageSizeUpdate = () => {
-            let event = this.fire('pagesizechange');
-            if (!event.isDefaultPrevented()) {
-                let query = this.getSearchQuery();
-                query.page = 1;
-                this.reloadWithQueryUpdate(query);
-            }
-        };
-
-        this.view.on('search', ::this.performSearch);
-        this.view.on(
-            'pagesizechange',
-            (e) => {
-                this.model.updatePageSize(e.pageSize).then(afterPageSizeUpdate);
-            }
-        );
-        this.view.on(
-            'pagechange',
-            (e) => {
-                let event = this.fire('pagechange');
-                if (!event.isDefaultPrevented()) {
-                    let query = this.getSearchQuery();
-                    this.reloadWithQueryUpdate(query);
-                }
-            }
-        );
-        this.view.on(
-            'batchmodify',
-            (e) => {
-                let items = this.getSelectedItems();
-                this.modifyStatus(items, e.status);
-            }
-        );
-        this.view.on(
-            'tablesort',
-            (e) => {
-                let event = this.fire('tablesort');
-                if (!event.isDefaultPrevented()) {
-                    let query = this.getSearchQuery();
-                    query.page = 1;
-                    this.reloadWithQueryUpdate(query);
-                }
-            }
-        );
-        this.view.on(
-            'modifystatus',
-            (e) => {
-                let item = this.model.getItemById(e.id);
-                this.modifyStatus([item], e.status);
-            }
-        );
         this.getLayoutChangeNotifier().on('layoutchanged', this.adjustLayout, this);
     }
 
@@ -290,6 +240,56 @@ export default class ListAction extends BaseAction {
         this.getLayoutChangeNotifier().un('layoutchanged', this.adjustLayout, this);
 
         super.leave();
+    }
+
+    @viewEvent('search');
+    [Symbol('onSearch')]() {
+        this.performSearch();
+    }
+
+    @viewEvent('pagesizechange');
+    [Symbol('onPageSizeChange')](e) {
+        let afterPageSizeUpdate = () => {
+            let event = this.fire('pagesizechange');
+            if (!event.isDefaultPrevented()) {
+                let query = this.getSearchQuery();
+                query.page = 1;
+                this.reloadWithQueryUpdate(query);
+            }
+        };
+
+        this.model.updatePageSize(e.pageSize).then(afterPageSizeUpdate);
+    }
+
+    @viewEvent('pagechange');
+    [Symbol('onPageChange')]() {
+        let event = this.fire('pagechange');
+        if (!event.isDefaultPrevented()) {
+            let query = this.getSearchQuery();
+            this.reloadWithQueryUpdate(query);
+        }
+    }
+
+    @viewEvent('batchmodify');
+    [Symbol('onBatchModify')](e) {
+        let items = this.getSelectedItems();
+        this.modifyStatus(items, e.status);
+    }
+
+    @viewEvent('tablesort');
+    [Symbol('onTableSort')](e) {
+        let event = this.fire('tablesort');
+        if (!event.isDefaultPrevented()) {
+            let query = this.getSearchQuery();
+            query.page = 1;
+            this.reloadWithQueryUpdate(query);
+        }
+    }
+
+    @viewEvent('modifystatus');
+    [Symbol('onModifyStatus')](e) {
+        let item = this.model.getItemById(e.id);
+        this.modifyStatus([item], e.status);
     }
 }
 

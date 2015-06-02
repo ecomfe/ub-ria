@@ -8,6 +8,7 @@
 
 import oo from 'eoo';
 import event from 'mini-event';
+import {viewEvent} from './decorator';
 import BaseAction from './BaseAction';
 
 /**
@@ -205,23 +206,9 @@ export default class FormAction extends BaseAction {
     initBehavior() {
         super.initBehavior();
 
-        let submit = () => {
-            this.view.clearGlobalError();
-            let entity = this.view.getEntity();
-
-            let options = {content: this.submitConfirmMessage};
-            this.view.waitSubmitConfirm(options)
-                .then(::this.view.disableSubmit)
-                .then(() => this.submitEntity(entity))
-                .then(::this.view.enableSubmit, ::this.view.enableSubmit);
-        };
-
         // 保存一份最初的form表单内容到model，用于判断表单内容是否被更改
         let initialFormData = this.view.getFormData();
         this.model.set('initialFormData', initialFormData, {silent: true});
-
-        this.view.on('submit', submit);
-        this.view.on('cancel', ::this.cancelEdit);
 
         // 将保留数据并退出的事件代理到上层Action
         event.delegate(this.view, this, 'saveandclose');
@@ -236,6 +223,23 @@ export default class FormAction extends BaseAction {
     isChildForm() {
         // 如果表单进入时带来returnUrl参数，则认为该表单为一个ChildForm
         return this.model.hasValue('returnUrl') || this.model.hasValue('returnURL');
+    }
+
+    @viewEvent('submit');
+    [Symbol('onSubmit')]() {
+        this.view.clearGlobalError();
+        let entity = this.view.getEntity();
+
+        let options = {content: this.submitConfirmMessage};
+        this.view.waitSubmitConfirm(options)
+            .then(::this.view.disableSubmit)
+            .then(() => this.submitEntity(entity))
+            .then(::this.view.enableSubmit, ::this.view.enableSubmit);
+    }
+
+    @viewEvent('cancel');
+    [Symbol('onCancel')]() {
+        this.cancelEdit();
     }
 }
 
