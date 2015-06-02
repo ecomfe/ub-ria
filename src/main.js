@@ -20,7 +20,7 @@ let main = {
      * @property {string} 版本号
      * @readonly
      */
-    version: '3.0.0-alpha.1',
+    version: '3.0.0-alpha.2',
 
     /**
      * 启动MVC程序
