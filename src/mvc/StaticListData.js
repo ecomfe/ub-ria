@@ -172,16 +172,6 @@ export default class StaticListData extends RequestManager {
     }
 
     /**
-     * 返回全集
-     *
-     * @method mvc.StaticListData#getCacheList
-     * @return {Array}
-     */
-    getCacheList() {
-        return this[CACHE_LIST];
-    }
-
-    /**
      * 排序js原生的sort方法在不同浏览器上表现不同（稳定或不稳定），因此自己写一个稳定排序, 冒泡排序
      *
      * @method mvc.StaticListData#sort
