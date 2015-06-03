@@ -172,11 +172,11 @@ export default class ListAction extends BaseAction {
      * @method mvc.ListAction#updateItems
      * @param {meta.UpdateContext} context 操作的上下文对象
      */
-    async updateItems(context) {
+    updateItems(context) {
         let targetStatus = context.status;
         let items = context.ids.map(::this.model.getItemById);
         items.forEach((item) => item.status = targetStatus);
-        await this.view.updateItems(items);
+        this.view.updateItems(items);
     }
 
     /**

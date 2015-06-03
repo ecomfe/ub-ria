@@ -116,7 +116,7 @@ export default class RequestManager {
      * @param {Object} [options] 请求配置项
      * @return {er.meta.FakeXHR}
      */
-    async request(name, data, options) {
+    request(name, data, options) {
         let context = this.getRequest(name, data, options);
         let ajax = this.getAjax();
 
@@ -242,7 +242,7 @@ export default class RequestManager {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    async remove(ids) {
+    remove(ids) {
         return this.updateStatus(0, ids);
     }
 
@@ -253,7 +253,7 @@ export default class RequestManager {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    async restore(ids) {
+    restore(ids) {
         return this.updateStatus(1, ids);
     }
 
@@ -291,7 +291,7 @@ export default class RequestManager {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    async getRemoveAdvice(ids) {
+    getRemoveAdvice(ids) {
         return this.getAdvice(0, ids);
     }
 
@@ -302,7 +302,7 @@ export default class RequestManager {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    async getRestoreAdvice(ids) {
+    getRestoreAdvice(ids) {
         return this.getAdvice(1, ids);
     }
 

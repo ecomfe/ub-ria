@@ -16,7 +16,7 @@ const DEFAULT_ARGS = Symbol('defaultArgs');
 // 加载列表
 const LIST = {
     list: {
-        async retrieve(model) {
+        retrieve(model) {
             let query = model.getQuery();
             query = u.purify(query, null, true);
 
@@ -348,7 +348,7 @@ export default class ListModel extends BaseModel {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    async remove(ids) {
+    remove(ids) {
         return this.updateStatus(0, ids);
     }
 
@@ -359,7 +359,7 @@ export default class ListModel extends BaseModel {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    async restore(ids) {
+    restore(ids) {
         return this.updateStatus(1, ids);
     }
 

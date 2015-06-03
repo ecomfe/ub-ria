@@ -83,7 +83,7 @@ export default class StaticListData extends RequestManager {
      * @param {Object} query 查询参数
      * @return {er.meta.FakeXHR}
      */
-    async list(query) {
+    list(query) {
         return this.request(
             '$entity/list',
             query,
