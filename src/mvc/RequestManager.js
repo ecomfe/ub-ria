@@ -116,7 +116,7 @@ export default class RequestManager {
      * @param {Object} [options] 请求配置项
      * @return {er.meta.FakeXHR}
      */
-    request(name, data, options) {
+    async request(name, data, options) {
         let context = this.getRequest(name, data, options);
         let ajax = this.getAjax();
 
@@ -137,10 +137,12 @@ export default class RequestManager {
                     options: context.options,
                     xhr: xhr
                 };
-                // 有时候一个请求中带的数据会很大，因此要尽早让请求对象可回收，
-                // 所以无论请求失败还是成功，统一进行一次移除操作
-                let detachThisRequestFromManager = u.partial(detachRunningRequest, this, context.name, xhr);
-                xhr.ensure(detachThisRequestFromManager);
+                // 有时候一个请求中带的数据会很大，因此要尽早让请求对象可回收，所以无论请求失败还是成功，统一进行一次移除操作。
+                // 这里情况比较特殊不能用`await`，因为我要返回的是`xhr`本身而不是由`then`衍生出来的新的`Promise`
+                let detachThisRequestFromManager = () => {
+                    detachRunningRequest(this, context.name, xhr);
+                };
+                xhr.then(detachThisRequestFromManager, detachThisRequestFromManager);
             }
         }
         return xhr;
@@ -152,12 +154,9 @@ export default class RequestManager {
      * @method mvc.RequestManager#dispose
      */
     dispose() {
-        u.each(
-            this[RUNNING_REQUESTS],
-            function (cache) {
-                cache && cache.xhr.abort();
-            }
-        );
+        for (let cache of this[RUNNING_REQUESTS].values()) {
+            cache.xhr.abort();
+        }
         this[RUNNING_REQUESTS] = null;
     }
 
@@ -171,7 +170,7 @@ export default class RequestManager {
      * @param {Object} query 查询参数
      * @return {er.meta.FakeXHR}
      */
-    search(query) {
+    async search(query) {
         throw new Error('search method is not implemented');
     }
 
@@ -183,7 +182,7 @@ export default class RequestManager {
      * @param {Object} query 查询参数
      * @return {er.meta.FakeXHR}
      */
-    list(query) {
+    async list(query) {
         throw new Error('list method is not implemented');
     }
 
@@ -195,7 +194,7 @@ export default class RequestManager {
      * @param {Object} entity 实体对象
      * @return {er.meta.FakeXHR}
      */
-    save(entity) {
+    async save(entity) {
         throw new Error('save method is not implemented');
     }
 
@@ -207,7 +206,7 @@ export default class RequestManager {
      * @param {Object} entity 实体对象
      * @return {er.meta.FakeXHR}
      */
-    update(entity) {
+    async update(entity) {
         throw new Error('update method is not implemented');
     }
 
@@ -231,7 +230,7 @@ export default class RequestManager {
      * @param {string[]} ids id集合
      * @return {FakeXHR}
      */
-    updateStatus(status, ids) {
+    async updateStatus(status, ids) {
         // 让`status`在前是为了方便通过`bind`或`partial`生成其它的方法
         throw new Error('updateStatus method is not implemented');
     }
@@ -243,7 +242,7 @@ export default class RequestManager {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    remove(ids) {
+    async remove(ids) {
         return this.updateStatus(0, ids);
     }
 
@@ -254,7 +253,7 @@ export default class RequestManager {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    restore(ids) {
+    async restore(ids) {
         return this.updateStatus(1, ids);
     }
 
@@ -281,7 +280,7 @@ export default class RequestManager {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    getAdvice(status, ids) {
+    async getAdvice(status, ids) {
         throw new Error('getAdvice method is not implemented');
     }
 
@@ -292,7 +291,7 @@ export default class RequestManager {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    getRemoveAdvice(ids) {
+    async getRemoveAdvice(ids) {
         return this.getAdvice(0, ids);
     }
 
@@ -303,7 +302,7 @@ export default class RequestManager {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    getRestoreAdvice(ids) {
+    async getRestoreAdvice(ids) {
         return this.getAdvice(1, ids);
     }
 
@@ -315,7 +314,7 @@ export default class RequestManager {
      * @param {string} id 实体的id
      * @return {er.meta.FakeXHR}
      */
-    findById(id) {
+    async findById(id) {
         throw new Error('findById method is not implemented');
     }
 }

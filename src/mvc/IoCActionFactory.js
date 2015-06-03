@@ -31,10 +31,10 @@ export default class IoCActionFactory {
      * @param {er.meta.ActionContext} actionContext Action的执行上下文
      * @return {Promise}
      */
-    createRuntimeAction(actionContext) {
+    async createRuntimeAction(actionContext) {
         var ioc = this.getIocContainer();
-        return new Promise((resolve) => ioc.getComponent(this[ACTION_COMPONENT], resolve))
-            .then((action) => this.buildAction(actionContext, action));
+        let action = await new Promise((resolve) => ioc.getComponent(this[ACTION_COMPONENT], resolve));
+        return this.buildAction(actionContext, action);
     }
 
     /**

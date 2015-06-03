@@ -122,7 +122,7 @@ export default class FormView extends BaseView {
      * @param {Object} options 配置项
      * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
      */
-    waitCancelConfirm(options) {
+    async waitCancelConfirm(options) {
         return this.waitConfirmForType(options, 'cancel');
     }
 
@@ -133,8 +133,7 @@ export default class FormView extends BaseView {
      * @param {Object} options 配置项
      * @return {er.Promise} 一个`Promise`对象，默认进入`resolved`状态。
      */
-    waitSubmitConfirm(options) {
-        return Promise.resolve();
+    async waitSubmitConfirm(options) {
     }
 
     /**
@@ -145,7 +144,7 @@ export default class FormView extends BaseView {
      * @param {string} type 操作类型
      * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
      */
-    waitConfirmForType(options, type) {
+    async waitConfirmForType(options, type) {
         // 加viewContext
         if (!options.viewContext) {
             options.viewContext = this.viewContext;

@@ -55,13 +55,13 @@ export default class FormModel extends SingleEntityModel {
      * @param {Object} entity 新建的实体对象
      * @return {Promise}
      */
-    save(entity) {
+    async save(entity) {
         entity = this.fillEntity(entity);
 
         var validationResult = this.validateEntity(entity);
 
         if (validationResult.length > 0) {
-            return Promise.reject({type: 'validationConflict', fields: validationResult});
+            throw {type: 'validationConflict', fields: validationResult};
         }
 
         return this.saveEntity(entity);
@@ -74,7 +74,7 @@ export default class FormModel extends SingleEntityModel {
      * @param {Object} entity 待更新的实体对象
      * @return {Promise}
      */
-    update(entity) {
+    async update(entity) {
         entity = this.fillEntity(entity);
 
         // 更新默认加上id
@@ -83,7 +83,7 @@ export default class FormModel extends SingleEntityModel {
         var validationResult = this.validateEntity(entity);
 
         if (validationResult.length > 0) {
-            return Promise.reject({type: 'validationConflict', fields: validationResult});
+            throw {type: 'validationConflict', fields: validationResult};
         }
 
         return this.updateEntity(entity);
@@ -97,7 +97,7 @@ export default class FormModel extends SingleEntityModel {
      * @param {Object} entity 已经补充完整并且验证通过的实体
      * @return {Promise}
      */
-    saveEntity(entity) {
+    async saveEntity(entity) {
         var data = this.data();
         if (!data) {
             throw new Error('No default data object attached to this Model');
@@ -117,7 +117,7 @@ export default class FormModel extends SingleEntityModel {
      * @param {Object} entity 已经补充完整并且验证通过的实体
      * @return {Promise}
      */
-    updateEntity(entity) {
+    async updateEntity(entity) {
         var data = this.data();
         if (!data) {
             throw new Error('No default data object attached to this Model');

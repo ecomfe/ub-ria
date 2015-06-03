@@ -63,7 +63,7 @@ export default class BaseView extends UIView {
      * @method mvc.BaseView#waitDecision
      * @return {Promise} 一个`Promise`对象，进入`resolved`状态时提供用户选择的按钮名称，默认有`"ok"`和`"cancel"`可选
      */
-    waitDecision(...args) {
+    async waitDecision(...args) {
         let dialog = this.confirm(...args);
 
         let executor = (resolve, reject) => {
@@ -85,7 +85,7 @@ export default class BaseView extends UIView {
      * @method mvc.BaseView#waitConfirm
      * @return {Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
      */
-    waitConfirm(...args) {
+    async waitConfirm(...args) {
         let waiting = this.waitDecision(...args);
         let executor = (resolve) => {
             let receiveOK = (result) => {
@@ -104,7 +104,7 @@ export default class BaseView extends UIView {
      * @method mvc.BaseView#waitActionDialog
      * @return {Promise} 一个`Promise`对象，对应的Action加载完成时进入`resolved`状态，如Action加载失败则进入`rejected`状态
      */
-    waitActionDialog(...args) {
+    async waitActionDialog(...args) {
         let dialog = this.popActionDialog(...args);
 
         let executor = function (resolve, reject) {

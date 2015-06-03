@@ -77,7 +77,7 @@ export default class ListAction extends BaseAction {
      * @param {Object[]} items 待修改状态的实体数组
      * @param {number} status 修改后实体的状态值
      */
-    modifyStatus(items, status) {
+    async modifyStatus(items, status) {
         let ids = u.pluck(items, 'id');
         let transitionItem = this.model.getTransitionForStatus(status);
         let context = {
@@ -89,20 +89,20 @@ export default class ListAction extends BaseAction {
             reload: transitionItem.reload
         };
 
-        let waitConfirmForAdvice = (context, advice) => {
-            let options = {
+        // 需要后端提示消息的，再额外加入用户确认的过程
+        if (this.requireAdviceFor(context)) {
+            let advice = await this.model.getAdvice(status, ids);
+            let adviceOptions = {
                 title: `${context.command}${this.entityDescription}`,
                 content: advice.message
             };
-            return this.view.waitConfirm(options);
-        };
+            // 这里用户取消的话，就再也不会去下面了
+            await this.view.waitConfirm(adviceOptions);
+        }
 
-        /**
-         * 根据删除、启用的状态更新当前Action，默认行为为直接刷新当前的Action
-         *
-         * @param {meta.UpdateContext} context 操作的上下文对象
-         */
-        let updateListStatus = (context) => {
+        try {
+            await this.model[context.statusName](context.ids);
+
             this.notifyModifySuccess(context);
 
             let event = this.fire('statusupdate', context);
@@ -112,22 +112,9 @@ export default class ListAction extends BaseAction {
             else if (!event.isDefaultPrevented()) {
                 this.reload();
             }
-        };
-
-        let updateEntities = (context) => {
-            this.model[context.statusName](context.ids)
-                .then(() => updateListStatus(context))
-                .catch(() => this.notifyModifyFail(context));
-        };
-
-        if (this.requireAdviceFor(context)) {
-            // 需要后端提示消息的，再额外加入用户确认的过程
-            this.model.getAdvice(status, ids)
-                .then((advice) => waitConfirmForAdvice(context, advice))
-                .then(() => updateEntities(context));
         }
-        else {
-            return updateEntities(context);
+        catch (ex) {
+            this.notifyModifyFail(context);
         }
     }
 
@@ -185,22 +172,11 @@ export default class ListAction extends BaseAction {
      * @method mvc.ListAction#updateItems
      * @param {meta.UpdateContext} context 操作的上下文对象
      */
-    updateItems(context) {
-        let ids = context.ids;
+    async updateItems(context) {
         let targetStatus = context.status;
-        let items = [];
-        u.each(
-            ids,
-            function (id) {
-                let item = this.model.getItemById(id);
-                if (item) {
-                    item.status = targetStatus;
-                    items.push(item);
-                }
-            },
-            this
-        );
-        this.view.updateItems(items);
+        let items = context.ids.map(::this.model.getItemById);
+        items.forEach((item) => item.status = targetStatus);
+        await this.view.updateItems(items);
     }
 
     /**
@@ -248,17 +224,14 @@ export default class ListAction extends BaseAction {
     }
 
     @viewEvent('pagesizechange');
-    [Symbol('onPageSizeChange')](e) {
-        let afterPageSizeUpdate = () => {
-            let event = this.fire('pagesizechange');
-            if (!event.isDefaultPrevented()) {
-                let query = this.getSearchQuery();
-                query.page = 1;
-                this.reloadWithQueryUpdate(query);
-            }
-        };
-
-        this.model.updatePageSize(e.pageSize).then(afterPageSizeUpdate);
+    async [Symbol('onPageSizeChange')](e) {
+        await this.model.updatePageSize(e.pageSize);
+        let event = this.fire('pagesizechange');
+        if (!event.isDefaultPrevented()) {
+            let query = this.getSearchQuery();
+            query.page = 1;
+            this.reloadWithQueryUpdate(query);
+        }
     }
 
     @viewEvent('pagechange');

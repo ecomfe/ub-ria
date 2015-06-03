@@ -83,7 +83,7 @@ export default class StaticListData extends RequestManager {
      * @param {Object} query 查询参数
      * @return {er.meta.FakeXHR}
      */
-    list(query) {
+    async list(query) {
         return this.request(
             '$entity/list',
             query,
@@ -133,17 +133,18 @@ export default class StaticListData extends RequestManager {
      * @param {Object} query 查询参数
      * @return {er.meta.FakeXHR}
      */
-    search(query) {
+    async search(query) {
         let isStaticKeyChanged = this.checkStaticKeyChanged(query);
         if (isStaticKeyChanged) {
             u.extend(this, u.pick(query, STATIC_KEYS));
         }
 
         if (!this[CACHE_LIST] || !isStaticKeyChanged) {
-            return this.list(query).then((data) => this.doCache(data, query));
+            let list = await this.list(query);
+            return this.doCache(list, query);
         }
 
-        return Promise.resolve(this.filterData(query));
+        return this.filterData(query);
     }
 
     /**

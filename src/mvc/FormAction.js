@@ -127,25 +127,22 @@ export default class FormAction extends BaseAction {
      * @param {Object} entity 实体数据
      * @return {Promise}
      */
-    submitEntity(entity) {
-        let handleError = (errors) => {
-            let handled = this.handleSubmitError(errors);
-            if (!handled) {
-                this.getEventBus().fire('error', {error: errors});
+    async submitEntity(entity) {
+        let method = this.getSubmitMethod(this.context.formType);
+        if (method) {
+            try {
+                let submitResult = await this.model[method](entity);
+                this.handleSubmitResult(submitResult);
             }
-        };
-
-        try {
-            let method = this.getSubmitMethod(this.context.formType);
-            if (method) {
-                return this.model[method](entity).then(::this.handleSubmitResult, handleError);
+            catch (errors) {
+                let handled = this.handleSubmitError(errors);
+                if (!handled) {
+                    this.getEventBus().fire('error', {error: errors});
+                }
             }
-
-            throw new Error('Cannot find formType in methodMap');
-
         }
-        catch (ex) {
-            return Promise.reject(ex);
+        else {
+            throw new Error('Cannot find formType in methodMap');
         }
     }
 
@@ -155,26 +152,20 @@ export default class FormAction extends BaseAction {
      * @protected
      * @method mvc.FormAction#cancelEdit
      */
-    cancelEdit() {
-        let cancel = () => {
-            let submitCancelEvent = this.fire('submitcancel');
-            let handleFinishEvent = this.fire('handlefinish');
-
-            if (!submitCancelEvent.isDefaultPrevented() && !handleFinishEvent.isDefaultPrevented()) {
-                this.redirectAfterCancel();
-            }
-        };
-
+    async cancelEdit() {
         // 从model中拿出表单最初数据，判断是否被更改
         let initialFormData = this.model.get('initialFormData');
 
         if (this.isFormDataChanged(initialFormData)) {
             let options = {content: this.cancelConfirmMessage};
-            return this.view.waitCancelConfirm(options).then(cancel);
+            await this.view.waitCancelConfirm(options);
         }
 
-        cancel();
-        return Promise.resolve();
+        let events = [this.fire('submitcancel'), this.fire('handlefinish')];
+
+        if (!events.some((e) => e.isDefaultPrevented())) {
+            this.redirectAfterCancel();
+        }
     }
 
     /**
@@ -226,15 +217,20 @@ export default class FormAction extends BaseAction {
     }
 
     @viewEvent('submit');
-    [Symbol('onSubmit')]() {
+    async [Symbol('onSubmit')]() {
         this.view.clearGlobalError();
         let entity = this.view.getEntity();
 
         let options = {content: this.submitConfirmMessage};
-        this.view.waitSubmitConfirm(options)
-            .then(::this.view.disableSubmit)
-            .then(() => this.submitEntity(entity))
-            .then(::this.view.enableSubmit, ::this.view.enableSubmit);
+        await this.view.waitSubmitConfirm(options);
+        this.view.disableSubmit();
+        try {
+            await this.submitEntity(entity);
+        }
+        catch (ex) {
+            this.view.enableSubmit();
+            throw ex;
+        }
     }
 
     @viewEvent('cancel');

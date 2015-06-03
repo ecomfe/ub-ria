@@ -40,9 +40,10 @@ const LIST_WITHOUT_KEYWORD_URL = {
 
 // 每页记录数
 const PAGE_SIZE = {
-    pageSize: function (model) {
+    pageSize: async function (model) {
         let globalData = model.data('global');
-        return globalData.getUser().then((result) => result.pageSize);
+        let result = await globalData.getUser();
+        return result.pageSize;
     }
 };
 
@@ -233,7 +234,7 @@ export default class ListModel extends BaseModel {
      * @param {number} pageSize 每页显示条数
      * @return {Promise}
      */
-    updatePageSize(pageSize) {
+    async updatePageSize(pageSize) {
         let data = this.data('global');
         if (!data) {
             throw new Error('No global data object attached to this Model');
@@ -307,7 +308,7 @@ export default class ListModel extends BaseModel {
      * @param {Object} [query] 查询参数
      * @return {Promise}
      */
-    search(query = {}) {
+    async search(query = {}) {
         let data = this.data();
         if (!data) {
             throw new Error('No default data object attached to this Model');
@@ -328,7 +329,7 @@ export default class ListModel extends BaseModel {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    updateStatus(status, ids) {
+    async updateStatus(status, ids) {
         let data = this.data();
         if (!data) {
             throw new Error('No default data object attached to this Model');
@@ -347,7 +348,7 @@ export default class ListModel extends BaseModel {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    remove(ids) {
+    async remove(ids) {
         return this.updateStatus(0, ids);
     }
 
@@ -358,7 +359,7 @@ export default class ListModel extends BaseModel {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    restore(ids) {
+    async restore(ids) {
         return this.updateStatus(1, ids);
     }
 
@@ -371,7 +372,7 @@ export default class ListModel extends BaseModel {
      * @param {string[]} ids id集合
      * @return {er.meta.FakeXHR}
      */
-    getAdvice(status, ids) {
+    async getAdvice(status, ids) {
         let config = this.getTransitionForStatus(status);
 
         if (config && config.statusName) {
@@ -398,9 +399,9 @@ export default class ListModel extends BaseModel {
      * 此方法默认用于前端确认，如需后端检验则需要重写为调用`data().getRemoveAdvice`
      *
      * @param {string[]} ids id集合
-     * @return {er.meta.FakeXHR}
+     * @return {Promise.<Object>}
      */
-    getRemoveAdvice(ids) {
+    async getRemoveAdvice(ids) {
         // 默认仅本地提示，有需要的子类重写为从远程获取信息
         let count = ids.length;
         let description = this.get('entityDescription');
@@ -413,7 +414,7 @@ export default class ListModel extends BaseModel {
             message: message
         };
 
-        return Promise.resolve(advice);
+        return advice;
     }
 
     /**
