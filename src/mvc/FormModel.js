@@ -53,7 +53,7 @@ export default class FormModel extends SingleEntityModel {
      *
      * @method mvc.FormModel#save
      * @param {Object} entity 新建的实体对象
-     * @return {Promise}
+     * @return {Promise.<Object, meta.RequestError>} 成功时提供服务器返回的实体摘要信息
      */
     async save(entity) {
         entity = this.fillEntity(entity);
@@ -72,7 +72,7 @@ export default class FormModel extends SingleEntityModel {
      *
      * @method mvc.FormModel#update
      * @param {Object} entity 待更新的实体对象
-     * @return {Promise}
+     * @return {Promise.<Object, meta.RequestError>} 成功时提供服务器返回的实体摘要信息
      */
     async update(entity) {
         entity = this.fillEntity(entity);
@@ -95,7 +95,7 @@ export default class FormModel extends SingleEntityModel {
      * @protected
      * @method mvc.FormModel#saveEntity
      * @param {Object} entity 已经补充完整并且验证通过的实体
-     * @return {Promise}
+     * @return {Promise.<Object, meta.RequestError>} 成功时提供服务器返回的实体摘要信息
      */
     async saveEntity(entity) {
         var data = this.data();
@@ -115,7 +115,7 @@ export default class FormModel extends SingleEntityModel {
      * @protected
      * @method mvc.FormModel#updateEntity
      * @param {Object} entity 已经补充完整并且验证通过的实体
-     * @return {Promise}
+     * @return {Promise.<Object, meta.RequestError>} 成功时提供服务器返回的实体摘要信息
      */
     async updateEntity(entity) {
         var data = this.data();

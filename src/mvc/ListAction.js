@@ -76,6 +76,7 @@ export default class ListAction extends BaseAction {
      * @method mvc.ListAction#modifyStatus
      * @param {Object[]} items 待修改状态的实体数组
      * @param {number} status 修改后实体的状态值
+     * @return {Promise}
      */
     async modifyStatus(items, status) {
         let ids = u.pluck(items, 'id');

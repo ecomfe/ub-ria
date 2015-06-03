@@ -52,7 +52,7 @@ export default class SingleEntityModel extends BaseModel {
      * 根据id获取实体
      *
      * @param {string | number} id 实体的id
-     * @return {Promise}
+     * @return {Promise.<Object>}
      */
     async findById(id) {
         let data = this.data();

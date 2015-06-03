@@ -150,6 +150,12 @@ export default class ListModel extends BaseModel {
         this.addData('global', data);
     }
 
+    /**
+     * 获取指定状态的转换表
+     *
+     * @param {number} status 指定的状态码
+     * @return {meta.StatusTransition}
+     */
     getTransitionForStatus(status) {
         return u.findWhere(this.statusTransitions, {status});
     }
@@ -306,7 +312,7 @@ export default class ListModel extends BaseModel {
      * @abstract
      * @method mvc.ListModel#search
      * @param {Object} [query] 查询参数
-     * @return {Promise}
+     * @return {Promise.<meta.ListResponse>}
      */
     async search(query = {}) {
         let data = this.data();
@@ -327,7 +333,7 @@ export default class ListModel extends BaseModel {
      * @method mvc.ListModel#updateStatus
      * @param {number} status 目标状态
      * @param {string[]} ids id集合
-     * @return {er.meta.FakeXHR}
+     * @return {Promise}
      */
     async updateStatus(status, ids) {
         let data = this.data();
@@ -346,7 +352,7 @@ export default class ListModel extends BaseModel {
      *
      * @method mvc.ListModel#remove
      * @param {string[]} ids id集合
-     * @return {er.meta.FakeXHR}
+     * @return {Promise}
      */
     remove(ids) {
         return this.updateStatus(0, ids);
@@ -357,7 +363,7 @@ export default class ListModel extends BaseModel {
      *
      * @method mvc.ListModel#restore
      * @param {string[]} ids id集合
-     * @return {er.meta.FakeXHR}
+     * @return {Promise}
      */
     restore(ids) {
         return this.updateStatus(1, ids);
@@ -370,7 +376,7 @@ export default class ListModel extends BaseModel {
      * @method mvc.ListModel#getAdvice
      * @param {number} status 目标状态
      * @param {string[]} ids id集合
-     * @return {er.meta.FakeXHR}
+     * @return {Promise.<meta.Advice>}
      */
     async getAdvice(status, ids) {
         let config = this.getTransitionForStatus(status);
@@ -399,7 +405,7 @@ export default class ListModel extends BaseModel {
      * 此方法默认用于前端确认，如需后端检验则需要重写为调用`data().getRemoveAdvice`
      *
      * @param {string[]} ids id集合
-     * @return {Promise.<Object>}
+     * @return {Promise.<meta.Advice>}
      */
     async getRemoveAdvice(ids) {
         // 默认仅本地提示，有需要的子类重写为从远程获取信息

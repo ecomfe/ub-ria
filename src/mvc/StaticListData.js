@@ -81,7 +81,7 @@ export default class StaticListData extends RequestManager {
      *
      * @method mvc.StaticListData#list
      * @param {Object} query 查询参数
-     * @return {er.meta.FakeXHR}
+     * @return {Promise.<meta.ListResponse>}
      */
     list(query) {
         return this.request(
@@ -131,7 +131,7 @@ export default class StaticListData extends RequestManager {
      *
      * @method mvc.StaticListData#search
      * @param {Object} query 查询参数
-     * @return {er.meta.FakeXHR}
+     * @return {Promise.<meta.ListResponse>}
      */
     async search(query) {
         let isStaticKeyChanged = this.checkStaticKeyChanged(query);
@@ -153,7 +153,7 @@ export default class StaticListData extends RequestManager {
      * @protected
      * @param {Object} data 要做cache的数据
      * @param {Object} query 过滤参数
-     * @return {Object} 过滤后数据
+     * @return {meta.ListResponse} 过滤后数据
      */
     doCache(data, query) {
         this[CACHE_LIST] = data;

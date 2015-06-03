@@ -168,7 +168,7 @@ export default class RequestManager {
      * @abstract
      * @method mvc.RequestManager#search
      * @param {Object} query 查询参数
-     * @return {er.meta.FakeXHR}
+     * @return {Promise.<meta.ListResponse>}
      */
     async search(query) {
         throw new Error('search method is not implemented');
@@ -180,7 +180,7 @@ export default class RequestManager {
      * @abstract
      * @method mvc.RequestManager#list
      * @param {Object} query 查询参数
-     * @return {er.meta.FakeXHR}
+     * @return {Promise.<meta.ListResponse>}
      */
     async list(query) {
         throw new Error('list method is not implemented');
@@ -192,7 +192,7 @@ export default class RequestManager {
      * @abstract
      * @method mvc.RequestManager#save
      * @param {Object} entity 实体对象
-     * @return {er.meta.FakeXHR}
+     * @return {Promise.<Object>}
      */
     async save(entity) {
         throw new Error('save method is not implemented');
@@ -204,7 +204,7 @@ export default class RequestManager {
      * @abstract
      * @method mvc.RequestManager#update
      * @param {Object} entity 实体对象
-     * @return {er.meta.FakeXHR}
+     * @return {Promise.<Object>}
      */
     async update(entity) {
         throw new Error('update method is not implemented');
@@ -228,7 +228,7 @@ export default class RequestManager {
      * @method mvc.RequestManager#updateStatus
      * @param {number} status 目标状态
      * @param {string[]} ids id集合
-     * @return {FakeXHR}
+     * @return {Promise}
      */
     async updateStatus(status, ids) {
         // 让`status`在前是为了方便通过`bind`或`partial`生成其它的方法
@@ -240,7 +240,7 @@ export default class RequestManager {
      *
      * @method mvc.RequestManager#remove
      * @param {string[]} ids id集合
-     * @return {er.meta.FakeXHR}
+     * @return {Promise}
      */
     remove(ids) {
         return this.updateStatus(0, ids);
@@ -251,7 +251,7 @@ export default class RequestManager {
      *
      * @method mvc.RequestManager#restore
      * @param {string[]} ids id集合
-     * @return {er.meta.FakeXHR}
+     * @return {Promise}
      */
     restore(ids) {
         return this.updateStatus(1, ids);
@@ -278,7 +278,7 @@ export default class RequestManager {
      * @method mvc.RequestManager#getAdvice
      * @param {number} status 目标状态
      * @param {string[]} ids id集合
-     * @return {er.meta.FakeXHR}
+     * @return {Promise.<meta.Advice>}
      */
     async getAdvice(status, ids) {
         throw new Error('getAdvice method is not implemented');
@@ -289,7 +289,7 @@ export default class RequestManager {
      *
      * @method mvc.RequestManager#getRemoveAdvice
      * @param {string[]} ids id集合
-     * @return {er.meta.FakeXHR}
+     * @return {Promise.<meta.Advice>}
      */
     getRemoveAdvice(ids) {
         return this.getAdvice(0, ids);
@@ -300,7 +300,7 @@ export default class RequestManager {
      *
      * @method mvc.RequestManager#getRestoreAdvice
      * @param {string[]} ids id集合
-     * @return {er.meta.FakeXHR}
+     * @return {Promise.<meta.Advice>}
      */
     getRestoreAdvice(ids) {
         return this.getAdvice(1, ids);
@@ -312,7 +312,7 @@ export default class RequestManager {
      * @abstract
      * @method mvc.RequestManager#findById
      * @param {string} id 实体的id
-     * @return {er.meta.FakeXHR}
+     * @return {Promise.<Object>}
      */
     async findById(id) {
         throw new Error('findById method is not implemented');

@@ -29,7 +29,7 @@ export default class IoCActionFactory {
      *
      * @method mvc.IoCActionFactory#createRuntimeAction
      * @param {er.meta.ActionContext} actionContext Action的执行上下文
-     * @return {Promise}
+     * @return {Promise.<er.Action>}
      */
     async createRuntimeAction(actionContext) {
         var ioc = this.getIocContainer();

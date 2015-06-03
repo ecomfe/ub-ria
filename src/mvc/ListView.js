@@ -261,8 +261,6 @@ export default class ListView extends BaseView {
     }
 
     /**
-     * 绑定控件事件
-     *
      * @override
      */
     bindEvents() {
@@ -291,11 +289,7 @@ export default class ListView extends BaseView {
     }
 
     /**
-     * 获取视图属性
-     *
-     * @protected
      * @override
-     * @return {Object}
      */
     getUIProperties() {
         let properties = super.getUIProperties() || {};
@@ -307,8 +301,6 @@ export default class ListView extends BaseView {
     }
 
     /**
-     * 控制元素展现
-     *
      * @override
      */
     enterDocument() {
@@ -374,7 +366,6 @@ export default class ListView extends BaseView {
     /**
      * 获取查询参数，默认是取`filter`表单的所有数据，加上表格的排序字段
      *
-     * @public
      * @method mvc.ListView#getSearchArgs
      * @return {Object}
      */
@@ -398,7 +389,6 @@ export default class ListView extends BaseView {
     /**
      * 获取分页数据
      *
-     * @protected
      * @method mvc.ListView#getPageIndex
      * @return {number}
      */
@@ -409,7 +399,6 @@ export default class ListView extends BaseView {
     /**
      * 根据布局变化重新调整自身布局
      *
-     * @protected
      * @method mvc.ListView#adjustLayout
      */
     adjustLayout() {
@@ -421,7 +410,6 @@ export default class ListView extends BaseView {
     /**
      * 更新列表某几行数据
      *
-     * @protected
      * @method mvc.ListView#updateItem
      * @param {Array} items 行对应的数据
      */

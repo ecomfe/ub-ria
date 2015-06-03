@@ -125,7 +125,7 @@ export default class FormAction extends BaseAction {
      * @protected
      * @method mvc.FormAction#submitEntity
      * @param {Object} entity 实体数据
-     * @return {Promise}
+     * @return {Promise} 所有流程完成后进入`resolved`状态，提交出错时进入`rejected`状态
      */
     async submitEntity(entity) {
         let method = this.getSubmitMethod(this.context.formType);
@@ -151,6 +151,7 @@ export default class FormAction extends BaseAction {
      *
      * @protected
      * @method mvc.FormAction#cancelEdit
+     * @return {Promise} 所有流程完成后进入`resolved`状态
      */
     async cancelEdit() {
         // 从model中拿出表单最初数据，判断是否被更改

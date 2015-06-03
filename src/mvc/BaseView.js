@@ -61,7 +61,7 @@ export default class BaseView extends UIView {
      * 参数同`ef.UIView.prototype.confirm`，但返回一个`Promise`对象
      *
      * @method mvc.BaseView#waitDecision
-     * @return {Promise} 一个`Promise`对象，进入`resolved`状态时提供用户选择的按钮名称，默认有`"ok"`和`"cancel"`可选
+     * @return {Promise.<string>} 一个`Promise`对象，进入`resolved`状态时提供用户选择的按钮名称，默认有`"ok"`和`"cancel"`可选
      */
     waitDecision(...args) {
         let dialog = this.confirm(...args);

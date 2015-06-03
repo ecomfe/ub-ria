@@ -18,7 +18,7 @@ const TEMPLATE_SETTINGS = {
 /**
  * 工具对象
  *
- * @namespace common.util
+ * @namespace util
  * @extends underscore
  */
 let util = Object.create(underscore);
