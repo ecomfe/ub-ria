@@ -30,7 +30,7 @@ let helper = {
         getText(filter) {
             var item = u.find(
                 filter.datasource,
-                function (item) {
+                (item) => {
                     /* eslint-disable eqeqeq */
                     return item.value == filter.value;
                     /* eslint-enable eqeqeq */
@@ -56,7 +56,7 @@ let helper = {
         getText(filter) {
             var item = u.find(
                 filter.datasource,
-                function (item) {
+                (item) => {
                     /* eslint-disable eqeqeq */
                     return item.id == filter.value;
                     /* eslint-enable eqeqeq */

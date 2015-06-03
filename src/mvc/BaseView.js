@@ -107,7 +107,7 @@ export default class BaseView extends UIView {
     async waitActionDialog(...args) {
         let dialog = this.popActionDialog(...args);
 
-        let executor = function (resolve, reject) {
+        let executor = (resolve, reject) => {
             dialog.on('actionloaded', resolve);
             dialog.on('actionloadfail', reject);
             dialog.on('actionloadabort', reject);

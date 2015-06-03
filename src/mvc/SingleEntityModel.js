@@ -9,7 +9,7 @@
 import BaseModel from './BaseModel';
 
 const ENTITY = {
-    entity: async (model) => {
+    async entity(model) {
         // 如新建页之类的是不需要这个实体的，因此通过是否有固定的`id`字段来判断
         let id = model.get('id');
 

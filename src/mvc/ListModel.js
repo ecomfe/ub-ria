@@ -16,7 +16,7 @@ const DEFAULT_ARGS = Symbol('defaultArgs');
 // 加载列表
 const LIST = {
     list: {
-        retrieve(model) {
+        async retrieve(model) {
             let query = model.getQuery();
             query = u.purify(query, null, true);
 
@@ -40,7 +40,7 @@ const LIST_WITHOUT_KEYWORD_URL = {
 
 // 每页记录数
 const PAGE_SIZE = {
-    pageSize: async function (model) {
+    async pageSize(model) {
         let globalData = model.data('global');
         let result = await globalData.getUser();
         return result.pageSize;
@@ -49,7 +49,7 @@ const PAGE_SIZE = {
 
 // 加载是否有列表数据的值
 const HAS_RESULT = {
-    hasResult: function (model) {
+    hasResult(model) {
         let results = model.get('results');
         // 有返回内容，或者有查询参数的情况下，认为是有内容的
         return (results && results.length) || !u.isEmpty(model.get('url').getQuery());
