@@ -21,8 +21,11 @@ export default class BaseView extends UIView {
      * @override
      */
     bindEvents() {
-        for (let {control, event, key} of this[DECORATOR_UI_EVENTS]) {
-            this.getSafely(control).on(event, this[key], this);
+        let events = this[DECORATOR_UI_EVENTS];
+        if (events) {
+            for (let {control, event, key} of events) {
+                this.getSafely(control).on(event, this[key], this);
+            }
         }
     }
 

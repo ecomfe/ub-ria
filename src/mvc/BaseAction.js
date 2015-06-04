@@ -53,8 +53,11 @@ export default class BaseAction extends Action {
     initBehavior() {
         super.initBehavior();
 
-        for (let {event, key} of this[DECORATOR_VIEW_EVENTS]) {
-            this.view.on(event, this[key], this);
+        let events = this[DECORATOR_VIEW_EVENTS];
+        if (events) {
+            for (let {event, key} of events) {
+                this.view.on(event, this[key], this);
+            }
         }
     }
 
