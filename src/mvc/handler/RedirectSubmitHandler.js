@@ -35,6 +35,10 @@ export default class RedirectSubmitHandler extends SubmitHandler {
     /**
      * 设置组件的url模版
      *
+     * 可选。默认值为'/${entityName}/list'
+     *
+     * 修改后可指定跳转url模板
+     *
      * @method mvc.handler.RedirectSubmitHandler#setTemplate
      * @param {string} template 跳转url模版
      */
@@ -54,6 +58,10 @@ export default class RedirectSubmitHandler extends SubmitHandler {
 
     /**
      * 设置跳转参数
+     *
+     * 可选。默认值为空
+     *
+     * 修改后可指定跳转配置
      *
      * @method mvc.handler.RedirectSubmitHandler#setRedirectOptions
      * @param {Object} options 跳转参数

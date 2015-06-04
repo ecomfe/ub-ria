@@ -251,6 +251,8 @@ export default class FormAction extends BaseAction {
 /**
  * 设置处理组件
  *
+ * 可选，一般由IoC统一配置
+ *
  * @protected
  * @method mvc.FormAction#setSubmitHandler
  * @param {mvc.handler.SubmitHandler} handler 提交成功处理组件

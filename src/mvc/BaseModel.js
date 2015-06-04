@@ -46,6 +46,8 @@ export default class BaseModel extends UIModel {
     /**
      * 设置当前所属模块的默认`Data`实现
      *
+     * 可选，一般由IoC统一配置
+     *
      * @method mvc.BaseModel#setData
      * @param {mvc.RequestManager} instance 一个数据对象
      */
@@ -67,6 +69,8 @@ export default class BaseModel extends UIModel {
 
     /**
      * 设置全局数据对象
+     *
+     * 可选，一般由IoC统一配置
      *
      * @method mvc.FormModel#setGlobalData
      * @param {Object} data 全局数据对象

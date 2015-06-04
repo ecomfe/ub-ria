@@ -26,7 +26,11 @@ export default class ToastSubmitHandler extends SubmitHandler {
     template = '';
 
     /**
-     * 设置下一个组件
+     * 设置消息模板
+     *
+     * 可选。默认值为空
+     *
+     * 修改后可指定toast模板
      *
      * @method mvc.handler.ToastSubmitHandler#setTemplate
      * @param {string} template toast消息模版
