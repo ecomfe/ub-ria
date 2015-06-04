@@ -16,16 +16,6 @@ import SingleEntityModel from './SingleEntityModel';
  */
 export default class FormModel extends SingleEntityModel {
     /**
-     * 设置全局数据对象
-     *
-     * @method mvc.FormModel#setGlobalData
-     * @param {Object} data 全局数据对象
-     */
-    setGlobalData(data) {
-        this.addData('global', data);
-    }
-
-    /**
      * 检查实体数据完整性，可在此补充一些视图无法提供的属性
      *
      * @protected

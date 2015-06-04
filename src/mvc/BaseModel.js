@@ -66,6 +66,16 @@ export default class BaseModel extends UIModel {
     }
 
     /**
+     * 设置全局数据对象
+     *
+     * @method mvc.FormModel#setGlobalData
+     * @param {Object} data 全局数据对象
+     */
+    setGlobalData(data) {
+        this.addData('global', data);
+    }
+
+    /**
      * 添加一个数据源
      *
      * @protected

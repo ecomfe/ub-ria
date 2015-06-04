@@ -141,16 +141,6 @@ export default class ListModel extends BaseModel {
     }
 
     /**
-     * 设置全局数据对象
-     *
-     * @method mvc.ListModel#setGlobalData
-     * @param {Object} data 全局数据对象
-     */
-    setGlobalData(data) {
-        this.addData('global', data);
-    }
-
-    /**
      * 获取指定状态的转换表
      *
      * @param {number} status 指定的状态码
