@@ -67,6 +67,7 @@ define(
             if (!this.helper.getPart('close-btn')) {
                 var el = this.main.appendChild(this.helper.createPart('close-btn'), 'span');
                 el.title = '关闭';
+                el.className += ' ui-icon ui-icon-close';
             }
         }
 
