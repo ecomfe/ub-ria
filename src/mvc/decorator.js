@@ -47,6 +47,9 @@ export function bindControlEvent(control, event) {
         if (!target[DECORATOR_UI_EVENTS]) {
             target[DECORATOR_UI_EVENTS] = [];
         }
+        else if (!target.hasOwnProperty(DECORATOR_UI_EVENTS)) {
+            target[DECORATOR_UI_EVENTS] = u.clone(target[DECORATOR_UI_EVENTS]);
+        }
 
         target[DECORATOR_UI_EVENTS].push({control, event, key});
     };
@@ -90,6 +93,9 @@ export function viewEvent(event) {
     return (target, key, descriptor) => {
         if (!target[DECORATOR_VIEW_EVENTS]) {
             target[DECORATOR_VIEW_EVENTS] = [];
+        }
+        else if (!target.hasOwnProperty(DECORATOR_VIEW_EVENTS)) {
+            target[DECORATOR_VIEW_EVENTS] = u.clone(target[DECORATOR_VIEW_EVENTS]);
         }
 
         target[DECORATOR_VIEW_EVENTS].push({event, key});
