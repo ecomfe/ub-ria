@@ -105,13 +105,6 @@ export default class ListModel extends BaseModel {
 
     set defaultArgs(value) {
         this[DEFAULT_ARGS] = value;
-    }
-
-    /**
-     * @constructs mvc.ListModel
-     */
-    constructor() {
-        super();
 
         // 把默认参数补上，不然像表格的`orderBy`字段没值表格就不能正确显示
         u.each(
@@ -122,6 +115,13 @@ export default class ListModel extends BaseModel {
                 }
             }
         );
+    }
+
+    /**
+     * @constructs mvc.ListModel
+     */
+    constructor() {
+        super();
 
         this.putDatasource(LIST, 0);
         this.putDatasource(LIST_WITHOUT_KEYWORD_URL, 0);
