@@ -16,6 +16,7 @@
  * @class mvc.RequestStrategy
  */
 export default class RequestStrategy {
+
     /**
      * 处理请求名称，具体业务可以使用此方法对请求名称进行一些替换操作，如可以根据当前对象的`entityName`属性为请求名称加上前缀等
      *

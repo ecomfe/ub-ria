@@ -32,6 +32,7 @@ function submit() {
  * @extends esui.Extension
  */
 export default class AutoSubmit extends Extension {
+
     /**
      * 扩展的类型，始终为`"AutoSubmit"`
      *

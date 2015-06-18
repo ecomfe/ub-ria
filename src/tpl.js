@@ -134,6 +134,7 @@ function getExtensionDependencies(text) {
  * @namespace tpl
  */
 let plugin = {
+
     /**
      * 加载模板，AMD插件对象暴露的方法
      *

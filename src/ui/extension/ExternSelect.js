@@ -41,6 +41,7 @@ function clearQuery() {
  * @extends esui.Extension
  */
 export default class ExternSelect extends Extension {
+
     /**
      * 扩展的类型，始终为`"ExternSelect"`
      *

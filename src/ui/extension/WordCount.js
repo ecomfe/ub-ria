@@ -41,6 +41,7 @@ function checkLength() {
  * @extends esui.Extension
  */
 export default class WordCount extends Extension {
+
     /**
      * 扩展的类型，始终为`"WordCount"`
      *

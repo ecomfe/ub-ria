@@ -17,6 +17,7 @@ import {DECORATOR_UI_EVENTS, DECORATOR_UI_PROPERTIES} from './decorator';
  * @extends ef.UIView
  */
 export default class BaseView extends UIView {
+
     /**
      * @override
      */
@@ -64,6 +65,7 @@ export default class BaseView extends UIView {
      * 参数同`ef.UIView.prototype.confirm`，但返回一个`Promise`对象
      *
      * @method mvc.BaseView#waitDecision
+     * @param {Array} args 原始参数
      * @return {Promise.<string>} 一个`Promise`对象，进入`resolved`状态时提供用户选择的按钮名称，默认有`"ok"`和`"cancel"`可选
      */
     waitDecision(...args) {
@@ -86,6 +88,7 @@ export default class BaseView extends UIView {
      * 如果需要知道用户选择“取消”，则应当使用{@link mvc.BaseView#waitDecision|waitDecision方法}
      *
      * @method mvc.BaseView#waitConfirm
+     * @param {Array} args 原始参数
      * @return {Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
      */
     waitConfirm(...args) {
@@ -105,6 +108,7 @@ export default class BaseView extends UIView {
      * 等待一个`DialogAction`加载完成
      *
      * @method mvc.BaseView#waitActionDialog
+     * @param {Array} args 原始参数
      * @return {Promise} 一个`Promise`对象，对应的Action加载完成时进入`resolved`状态，如Action加载失败则进入`rejected`状态
      */
     waitActionDialog(...args) {

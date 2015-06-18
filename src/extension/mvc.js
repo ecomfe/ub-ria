@@ -83,6 +83,7 @@ function enable() {
  * @memberof extension
  */
 let mvcExtension = {
+
     /**
      * 启动扩展
      *

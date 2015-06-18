@@ -14,12 +14,14 @@ import u from '../util';
  * @namespace mvc.filterHelper
  */
 let helper = {
+
     /**
      * 下拉单选辅助函数
      *
      * @namespace mvc.filterHelper.select
      */
     select: {
+
         /**
          * 获取筛选条件文本
          *
@@ -46,6 +48,7 @@ let helper = {
      * @namespace mvc.filterHelper.toggleSelector
      */
     toggleSelector: {
+
         /**
          * 获取筛选条件文本
          *

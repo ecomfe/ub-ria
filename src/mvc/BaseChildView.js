@@ -27,6 +27,7 @@ let isInputControl = (control) => {
  * @extends ef.UIView
  */
 export default class BaseChildView extends BaseView {
+
     /**
      * 获取view数据的接口
      *

@@ -214,7 +214,7 @@ export default class ListView extends BaseView {
      *
      * @protected
      * @method mvc.ListView#handleTableCommand
-     * @param {mini-event.Event} e command事件
+     * @param {Object} e command事件
      */
     handleTableCommand({triggerType, name, args}) {
         if (triggerType === 'click') {

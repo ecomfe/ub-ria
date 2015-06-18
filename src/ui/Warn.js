@@ -25,6 +25,7 @@ const TEMPLATE = '<i class="${iconClass} ui-icon ui-icon-question-circle"></i>'
  * @extends esui.Control
  */
 export default class Warn extends Control {
+
     /**
      * 控件类型，始终为`"Warn"`
      *

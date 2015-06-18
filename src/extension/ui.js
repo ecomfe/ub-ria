@@ -130,6 +130,7 @@ function enable() {
  * @namespace extension.ui
  */
 let uiExtension = {
+
     /**
      * 启动扩展
      *

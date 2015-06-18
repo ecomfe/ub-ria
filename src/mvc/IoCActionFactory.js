@@ -17,6 +17,7 @@ const ACTION_COMPONENT = Symbol('actionComponent');
  * @class mvc.IoCActionFactory
  */
 export default class IoCActionFactory {
+
     /**
      * @param {string} actionComponent action组件名
      */

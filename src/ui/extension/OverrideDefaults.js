@@ -21,6 +21,7 @@ function onInit(e) {
  * @extends esui.Extension
  */
 export default class OverrideDefaults extends Extension {
+
     /**
      * 扩展的类型，始终为`"OverrideDefaults"`
      *

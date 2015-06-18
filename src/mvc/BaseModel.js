@@ -17,6 +17,7 @@ const DATA_POOL = Symbol('dataPool');
  * @extends ef.UIModel
  */
 export default class BaseModel extends UIModel {
+
     /**
      * 添加一个数据对象，以便当前数据模型对象可以进行管理
      *

@@ -76,6 +76,7 @@ let compare = (a, b, order) => {
  * @extends mvc.RequestManager
  */
 export default class StaticListData extends RequestManager {
+
     /**
      * 获取一个实体列表（不分页）
      *

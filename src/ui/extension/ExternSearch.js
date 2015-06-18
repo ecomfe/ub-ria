@@ -37,6 +37,7 @@ function clearQuery() {
  * @extends esui.Extension
  */
 export default class ExternSearch extends Extension {
+
     /**
      * 扩展的类型，始终为`"ExternSearch"`
      *

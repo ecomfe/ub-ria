@@ -15,6 +15,7 @@ import SingleEntityModel from './SingleEntityModel';
  * @extends mvc.SingleEntityModel
  */
 export default class FormModel extends SingleEntityModel {
+
     /**
      * 检查实体数据完整性，可在此补充一些视图无法提供的属性
      *

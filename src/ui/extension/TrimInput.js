@@ -22,6 +22,7 @@ function trim() {
  * @extends esui.Extension
  */
 export default class TrimInput extends Extension {
+
     /**
      * 扩展的类型，始终为`"TrimInput"`
      *

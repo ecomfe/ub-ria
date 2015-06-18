@@ -21,6 +21,7 @@ const ENTITY_NAME = Symbol('entityName');
  * @extends er.Action
  */
 export default class BaseAction extends Action {
+
     /**
      * 当前Action所处理的实体名称
      *

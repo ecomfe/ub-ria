@@ -30,6 +30,7 @@ function getHelperForm(action) {
  * @extends ef.ActionPanel
  */
 export default class PartialForm extends ActionPanel {
+
     /**
      * 控件类型，始终为`"PartialForm"`
      *

@@ -19,6 +19,7 @@ const RUNNING_REQUESTS = Symbol('runningRequests');
  * @class mvc.RequestManager
  */
 export default class RequestManager {
+
     /**
      * @constructs mvc.RequestManager
      *

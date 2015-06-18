@@ -38,6 +38,7 @@ const ENTITY = {
  * @extends mvc.BaseModel
  */
 export default class SingleEntityModel extends BaseModel {
+
     /**
      * @constructs mvc.SingleEntityModel
      * @override

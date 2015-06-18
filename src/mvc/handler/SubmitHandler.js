@@ -13,7 +13,8 @@ import oo from 'eoo';
  *
  * @class mvc.handler.SubmitHandler
  */
- export default class SubmitHandler {
+export default class SubmitHandler {
+
     /**
      * 提交成功处理函数
      *
