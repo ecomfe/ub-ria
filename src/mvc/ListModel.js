@@ -63,16 +63,6 @@ define(
         var exports = {};
 
         /**
-         * 设置全局数据对象
-         *
-         * @method mvc.ListModel#setGlobalData
-         * @param {Object} data 全局数据对象
-         */
-        exports.setGlobalData = function (data) {
-            this.addData('global', data);
-        };
-
-        /**
          * 配置默认`status`参数值，即当URL中没有此参数时发给后端的代替值
          *
          * 通常“状态”的默认选项不是“全部”，而是“启用”等状态，就会遇上这样的情况：

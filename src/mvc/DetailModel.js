@@ -16,17 +16,6 @@ define(
         var exports = {};
 
         /**
-         * 设置globalData方法
-         *
-         * @public
-         * @method mvc.DetailModel#setGlobalData
-         * @param {Object} data 全局数据对象
-         */
-        exports.setGlobalData = function (data) {
-            this.addData('global', data);
-        };
-
-        /**
          * 获取列表子Action的URL
          *
          * @protected

@@ -125,6 +125,7 @@ define(
 
         /**
          * 设置需要校验的实体的规则
+         * 可选。
          *
          * @method mvc.EntityValidator#setSchema
          * @param {Object} value 实体的schema定义
@@ -145,6 +146,7 @@ define(
 
         /**
          * 设置规则常量对象
+         * 可选。
          *
          * @method mvc.EntityValidator#setRule
          * @param {Object} value model上绑定的rule

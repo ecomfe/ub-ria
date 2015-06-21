@@ -44,6 +44,7 @@ define(
 
         /**
          * 设置当前所属模块的默认`Data`实现
+         * 可选。一般由IoC统一配置。
          *
          * @method mvc.BaseModel#setData
          * @param {mvc.RequestManager} instance 一个数据对象
@@ -65,6 +66,18 @@ define(
                 name = 'default';
             }
             return this.dataPool[name] || null;
+        };
+
+        /**
+         * 设置globalData方法
+         * 可选。一般由IoC统一配置。
+         *
+         * @public
+         * @method mvc.BaseModel#setGlobalData
+         * @param {mvc.RequestManager} data 全局数据对象
+         */
+        exports.setGlobalData = function (data) {
+            this.addData('global', data);
         };
 
         /**
