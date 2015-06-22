@@ -11,7 +11,7 @@ import ui from 'esui';
 import lib from 'esui/lib';
 import Form from 'esui/Form';
 import Extension from 'esui/Extension';
-import {definePropertyAccessor} from '../meta';
+import {definePropertyAccessor} from '../../meta';
 
 /**
  * 提交表单
