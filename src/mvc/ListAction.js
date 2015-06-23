@@ -163,8 +163,7 @@ define(
                 status: status,
                 statusName: transitionItem.statusName,
                 command: transitionItem.command,
-                reload: transitionItem.reload,
-                entityDescription: this.getEntityDescription()
+                reload: transitionItem.reload
             };
 
             if (this.requireAdviceFor(context)) {

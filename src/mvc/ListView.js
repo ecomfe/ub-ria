@@ -587,7 +587,7 @@ define(
          */
         exports.waitModifyStatusConfirm = function (context, advice) {
             var options = {
-                 title: context.command + context.entityDescription,
+                 title: context.command + this.model.get('entityDescription'),
                  content: advice.message
              };
              return this.waitConfirm(options);
