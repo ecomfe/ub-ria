@@ -69,6 +69,12 @@ export default class FormAction extends BaseAction {
      * @return {boolean} 返回`true`表示错误已经处理完毕
      */
     handleSubmitError(errors) {
+        // 处理后端响应的409
+        if (errors.status === 409) {
+            errors = JSON.parse(errors.responseText);
+            errors.errorType = 'validationConflict';
+        }
+
         if (errors.errorType === 'validationConflict') {
             return this.handleValidationConflict(errors);
         }
