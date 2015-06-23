@@ -162,7 +162,7 @@ define(
          * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
          */
         exports.waitCancelConfirm = function (options) {
-            return this.waitConfirmForType(options, 'cancel');
+            return this.waitFormConfirm(options);
         };
 
         /**
@@ -179,25 +179,20 @@ define(
         /**
          * 等待用户确认操作
          *
-         * @method mvc.FormView#waitConfirmForType
+         * @method mvc.FormView#waitFormConfirm
          * @param {Object} options 配置项
-         * @param {string} type 操作类型
          * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
          */
-        exports.waitConfirmForType = function (options, type) {
+        exports.waitFormConfirm = function (options) {
             // 加viewContext
             if (!options.viewContext) {
                 options.viewContext = this.viewContext;
             }
 
-            var okLabel = '取消' + options.title;
-            var cancelLabel = '继续' + options.title;
-            if (type === 'update') {
-                okLabel = '确认修改';
-                cancelLabel = '取消修改';
-            }
+            var okLabel = options.okLabel ? options.okLabel : ('取消' + options.title);
+            var cancelLabel = options.cancelLabel ? options.cancelLabel : ('继续' + options.title);
 
-            var warn = this.get('form-' + type + '-confirm');
+            var warn = this.get('form-confirm');
             if (warn) {
                 warn.hide();
             }
@@ -205,7 +200,7 @@ define(
             var wrapper = this.get('submit-section');
             var extendedOptions = {
                 wrapper: wrapper,
-                id: 'form-' + type + '-confirm',
+                id: 'form-confirm',
                 okLabel: okLabel,
                 cancelLabel: cancelLabel
             };
