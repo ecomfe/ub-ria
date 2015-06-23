@@ -577,6 +577,22 @@ define(
             );
         };
 
+        /**
+         * 修改状态前确认提示
+         *
+         * @method mvc.ListView#waitModifyStatusConfirm
+         * @param {meta.UpdateContext} context 操作的上下文对象
+         * @param {Object} advice 提示对象
+         * @return {Promise}
+         */
+        exports.waitModifyStatusConfirm = function (context, advice) {
+            var options = {
+                 title: context.command + this.model.get('entityDescription'),
+                 content: advice.message
+             };
+             return this.waitConfirm(options);
+        };
+
         var BaseView = require('./BaseView');
         var ListView = require('eoo').create(BaseView, exports);
 

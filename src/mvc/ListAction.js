@@ -194,15 +194,10 @@ define(
          *
          * @param {meta.UpdateContext} context 操作的上下文对象
          * @param {Object} advice 提示对象
-         * @param {string} advice.message 提示信息
          * @return {Promise}
          */
         function waitConfirmForAdvice(context, advice) {
-            var options = {
-                title: context.command + this.getEntityDescription(),
-                content: advice.message
-            };
-            return this.view.waitConfirm(options);
+            return this.view.waitModifyStatusConfirm(context, advice);
         }
 
         /**
