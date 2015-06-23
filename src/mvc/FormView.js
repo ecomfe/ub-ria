@@ -239,7 +239,7 @@ export default class FormView extends BaseView {
      * @override
      */
     popDrawerAction(options, targetId) {
-        let drawerActionPanel = super.popDrawerAction();
+        let drawerActionPanel = super.popDrawerAction(options, targetId);
 
         drawerActionPanel.on(
             'close',
@@ -269,7 +269,7 @@ export default class FormView extends BaseView {
             'action@submitcancel',
             (e) => {
                 e.preventDefault();
-                this.dispose();
+                e.target.dispose();
             }
         );
         drawerActionPanel.on(
