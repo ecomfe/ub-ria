@@ -426,6 +426,23 @@ export default class ListView extends BaseView {
         }
     }
 
+    /**
+     * 修改状态前确认提示
+     *
+     * @method mvc.ListView#waitModifyStatusConfirm
+     * @param {meta.UpdateContext} context 操作的上下文对象
+     * @param {Object} advice 提示对象
+     * @return {Promise}
+     */
+    waitModifyStatusConfirm(context, advice) {
+        var entityDescription = this.model.get('entityDescription');
+        let options = {
+            title: `${context.command}${entityDescription}`,
+            content: advice.message
+        };
+        return this.waitConfirm(options);
+    }
+
     @on('pager', 'pagesizechange');
     [Symbol('onPagerPageSizeChange')]() {
         this.updatePageSize();

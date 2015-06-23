@@ -93,12 +93,7 @@ export default class ListAction extends BaseAction {
         // 需要后端提示消息的，再额外加入用户确认的过程
         if (this.requireAdviceFor(context)) {
             let advice = await this.model.getAdvice(status, ids);
-            let adviceOptions = {
-                title: `${context.command}${this.entityDescription}`,
-                content: advice.message
-            };
-            // 这里用户取消的话，就再也不会去下面了
-            await this.view.waitConfirm(adviceOptions);
+            await this.view.waitModifyStatusConfirm(context, advice);
         }
 
         try {
