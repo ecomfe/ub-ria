@@ -32,6 +32,24 @@ export default class FormAction extends BaseAction {
     }
 
     /**
+     * 取消提交时的确认标题
+     *
+     * @protected
+     * @member mvc.FormAction#cancelConfirmTitle
+     * @type {string}
+     */
+    get cancelConfirmTitle() {
+        // IoC会来访问一次，此时没有`model`，在IoC支持判断getter以前得有这个Hasck
+        // TODO: IoC支持判断getter后移除
+        var formType = this.model ? this.model.get('formType') : 'create';
+        if (formType === 'create') {
+            return '新建';
+        }
+
+        return '编辑';
+    }
+
+    /**
      * 取消提交时的确认信息
      *
      * @protected
@@ -158,7 +176,10 @@ export default class FormAction extends BaseAction {
         let initialFormData = this.model.get('initialFormData');
 
         if (this.isFormDataChanged(initialFormData)) {
-            let options = {content: this.cancelConfirmMessage};
+            let options = {
+                title: this.cancelConfirmTitle,
+                content: this.cancelConfirmMessage
+            };
             await this.view.waitCancelConfirm(options);
         }
 

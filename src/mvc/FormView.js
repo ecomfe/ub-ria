@@ -123,7 +123,7 @@ export default class FormView extends BaseView {
      * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
      */
     waitCancelConfirm(options) {
-        return this.waitConfirmForType(options, 'cancel');
+        return this.waitFormConfirm(options, 'cancel');
     }
 
     /**
@@ -139,29 +139,27 @@ export default class FormView extends BaseView {
     /**
      * 等待用户确认操作
      *
-     * @method mvc.FormView#waitConfirmForType
+     * @method mvc.FormView#waitFormConfirm
      * @param {Object} options 配置项
-     * @param {string} type 操作类型
      * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
      */
-    waitConfirmForType(options, type) {
+    waitFormConfirm(options) {
         // 加viewContext
         if (!options.viewContext) {
             options.viewContext = this.viewContext;
         }
 
-        let action = type === 'update' ? '修改' : '新建';
-        let okLabel = `取消${action}`;
-        let cancelLabel = `继续${action}`;
+        let okLabel = options.okLabel || `取消${options.title}`;
+        let cancelLabel = options.cancelLabel || `继续${options.title}`;
 
-        let warn = this.get('form-' + type + '-confirm');
+        let warn = this.get('form-confirm');
         if (warn) {
             warn.hide();
         }
 
         let extendedOptions = {
             wrapper: this.submitSection,
-            id: `form-${type}-confirm`,
+            id: `form-confirm`,
             okLabel: okLabel,
             cancelLabel: cancelLabel
         };
