@@ -123,7 +123,7 @@ export default class FormView extends BaseView {
      * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
      */
     waitCancelConfirm(options) {
-        return this.waitFormConfirm(options, 'cancel');
+        return this.waitFormConfirm(options);
     }
 
     /**
