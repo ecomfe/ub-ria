@@ -162,6 +162,8 @@ define(
          * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
          */
         exports.waitCancelConfirm = function (options) {
+            options.okLabel = options.okLabel || ('取消' + options.title);
+            options.cancelLabel = options.cancelLabel || ('继续' + options.title);
             return this.waitFormConfirm(options);
         };
 
@@ -189,9 +191,6 @@ define(
                 options.viewContext = this.viewContext;
             }
 
-            var okLabel = options.okLabel ? options.okLabel : ('取消' + options.title);
-            var cancelLabel = options.cancelLabel ? options.cancelLabel : ('继续' + options.title);
-
             var warn = this.get('form-confirm');
             if (warn) {
                 warn.hide();
@@ -200,9 +199,7 @@ define(
             var wrapper = this.get('submit-section');
             var extendedOptions = {
                 wrapper: wrapper,
-                id: 'form-confirm',
-                okLabel: okLabel,
-                cancelLabel: cancelLabel
+                id: 'form-confirm'
             };
             u.extend(options, extendedOptions);
 
