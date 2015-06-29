@@ -7,7 +7,7 @@
  */
 define(
     function (require) {
-        require('ub-ria-ui/DrawerActionPanel');
+        require('../ui/DrawerActionPanel');
 
         var u = require('../util');
 

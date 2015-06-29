@@ -55,7 +55,7 @@ define(
             ActionPanel: 'ef',
             ActionDialog: 'ef',
             ViewPanel: 'ef',
-            DrawerActionPanel: 'ub-ria-ui',
+            DrawerActionPanel: 'ub-ria',
             RichSelector: 'ub-ria-ui',
             TableRichSelector: 'ub-ria-ui',
             TogglePanel: 'ub-ria-ui',
