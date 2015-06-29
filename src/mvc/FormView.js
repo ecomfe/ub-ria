@@ -42,6 +42,9 @@ export default class FormView extends BaseView {
     @control('form-content-main');
     get formContent() {}
 
+    @control('form-confirm');
+    get confirmWarn() {}
+
     /**
      * 从表单中获取实体数据
      *
@@ -123,7 +126,14 @@ export default class FormView extends BaseView {
      * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
      */
     waitCancelConfirm(options) {
-        return this.waitFormConfirm(options);
+        let confirmOptions = u.clone(options);
+        if (!confirmOptions.okLabel) {
+            confirmOptions.okLabel = `取消${options.title}`;
+        }
+        if (!confirmOptions.cancelLabel) {
+            confirmOptions.cancelLabel = `继续${options.title}`;
+        }
+        return this.waitFormConfirm(confirmOptions);
     }
 
     /**
@@ -144,15 +154,13 @@ export default class FormView extends BaseView {
      * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
      */
     waitFormConfirm(options) {
+        let warnOptions = u.clone(options);
         // 加viewContext
-        if (!options.viewContext) {
-            options.viewContext = this.viewContext;
+        if (!warnOptions.viewContext) {
+            warnOptions.viewContext = this.viewContext;
         }
 
-        let okLabel = options.okLabel || `取消${options.title}`;
-        let cancelLabel = options.cancelLabel || `继续${options.title}`;
-
-        let warn = this.get('form-confirm');
+        let warn = this.confirmWarn;
         if (warn) {
             warn.hide();
         }
@@ -160,12 +168,12 @@ export default class FormView extends BaseView {
         let extendedOptions = {
             wrapper: this.submitSection,
             id: `form-confirm`,
-            okLabel: okLabel,
-            cancelLabel: cancelLabel
+            okLabel: warnOptions.okLabel,
+            cancelLabel: warnOptions.cancelLabel
         };
-        u.extend(options, extendedOptions);
+        u.extend(warnOptions, extendedOptions);
 
-        warn = Warn.show(options);
+        warn = Warn.show(warnOptions);
 
         // 容器的状态要变一下
         this.formViewContainer.addState('warned');
