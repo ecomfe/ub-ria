@@ -17,7 +17,7 @@ import BaseView from './BaseView';
  */
 export default class ReadView extends BaseView {
     @on('return', 'click');
-    [Symbol('onReturnClick')]() {
+    [Symbol()]() {
         this.fire('return');
     }
 }

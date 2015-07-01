@@ -215,12 +215,12 @@ export default class ListAction extends BaseAction {
     }
 
     @viewEvent('search');
-    [Symbol('onSearch')]() {
+    [Symbol()]() {
         this.performSearch();
     }
 
     @viewEvent('pagesizechange');
-    async [Symbol('onPageSizeChange')](e) {
+    async [Symbol()](e) {
         await this.model.updatePageSize(e.pageSize);
         let event = this.fire('pagesizechange');
         if (!event.isDefaultPrevented()) {
@@ -231,7 +231,7 @@ export default class ListAction extends BaseAction {
     }
 
     @viewEvent('pagechange');
-    [Symbol('onPageChange')]() {
+    [Symbol()]() {
         let event = this.fire('pagechange');
         if (!event.isDefaultPrevented()) {
             let query = this.getSearchQuery();
@@ -240,13 +240,13 @@ export default class ListAction extends BaseAction {
     }
 
     @viewEvent('batchmodify');
-    [Symbol('onBatchModify')](e) {
+    [Symbol()](e) {
         let items = this.getSelectedItems();
         this.modifyStatus(items, e.status);
     }
 
     @viewEvent('tablesort');
-    [Symbol('onTableSort')](e) {
+    [Symbol()](e) {
         let event = this.fire('tablesort');
         if (!event.isDefaultPrevented()) {
             let query = this.getSearchQuery();
@@ -256,7 +256,7 @@ export default class ListAction extends BaseAction {
     }
 
     @viewEvent('modifystatus');
-    [Symbol('onModifyStatus')](e) {
+    [Symbol()](e) {
         let item = this.model.getItemById(e.id);
         this.modifyStatus([item], e.status);
     }

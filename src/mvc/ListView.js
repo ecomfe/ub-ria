@@ -444,17 +444,17 @@ export default class ListView extends BaseView {
     }
 
     @on('pager', 'pagesizechange');
-    [Symbol('onPagerPageSizeChange')]() {
+    [Symbol()]() {
         this.updatePageSize();
     }
 
     @on('pager', 'pagechange');
-    [Symbol('onPagerPageChange')]() {
+    [Symbol()]() {
         this.updatePageIndex();
     }
 
     @on('table', 'select');
-    [Symbol('onTableSelect')]() {
+    [Symbol()]() {
         this.updateBatchButtonStatus();
     }
 
@@ -468,32 +468,32 @@ export default class ListView extends BaseView {
     }
 
     @on('filter', 'submit');
-    [Symbol('onFilterSubmit')]() {
+    [Symbol()]() {
         this.submitSearch();
     }
 
     @on('filter-switch', 'click');
-    [Symbol('onFilterSwitchClick')]() {
+    [Symbol()]() {
         this.filterPanel.isHidden() ? this.showFilterPanel() : this.cancelFilter();
     }
 
     @on('filter-cancel', 'click');
-    [Symbol('onFilterCancel')]() {
+    [Symbol()]() {
         this.cancelFilter();
     }
 
     @on('filter-modify', 'click');
-    [Symbol('onFilterModify')]() {
+    [Symbol()]() {
         this.toggleFilterPanelContent();
     }
 
     @on('table', 'command');
-    [Symbol('onTableCommand')](e) {
+    [Symbol()](e) {
         this.handleTableCommand(e);
     }
 
     @on('create', 'click');
-    [Symbol('onCreateClick')](e) {
+    [Symbol()](e) {
         e.stopPropagation();
         e.preventDefault();
         let url = String(e.target.get('href'));

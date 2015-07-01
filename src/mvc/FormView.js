@@ -293,12 +293,12 @@ export default class FormView extends BaseView {
     }
 
     @on('form', 'submit');
-    [Symbol('onFormSubmit')]() {
+    [Symbol()]() {
         this.fire('submit');
     }
 
     @on('cancel', 'click');
-    [Symbol('onCancelClick')]() {
+    [Symbol()]() {
         this.fire('cancel');
     }
 }

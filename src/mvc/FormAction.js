@@ -239,7 +239,7 @@ export default class FormAction extends BaseAction {
     }
 
     @viewEvent('submit');
-    async [Symbol('onSubmit')]() {
+    async [Symbol()]() {
         this.view.clearGlobalError();
         let entity = this.view.getEntity();
 
@@ -258,7 +258,7 @@ export default class FormAction extends BaseAction {
     }
 
     @viewEvent('cancel');
-    [Symbol('onCancel')]() {
+    [Symbol()]() {
         this.cancelEdit();
     }
 }

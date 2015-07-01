@@ -29,7 +29,7 @@ export default class ReadAction extends BaseAction {
     }
 
     @viewEvent('return');
-    [Symbol('onReturn')]() {
+    [Symbol()]() {
         this.returnBack();
     }
 }
