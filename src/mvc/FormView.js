@@ -179,6 +179,18 @@ define(
         };
 
         /**
+         * 等待用户确认操作(已废弃)
+         *
+         * @deprecated
+         * @method mvc.FormView#waitConfirmForType
+         * @param {Object} options 配置项
+         * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
+         */
+        exports.waitConfirmForType = function (options) {
+            return this.waitFormConfirm(options);
+        };
+
+        /**
          * 等待用户确认操作
          *
          * @method mvc.FormView#waitFormConfirm

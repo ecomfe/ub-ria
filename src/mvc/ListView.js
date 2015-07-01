@@ -587,10 +587,10 @@ define(
          */
         exports.waitModifyStatusConfirm = function (context, advice) {
             var options = {
-                 title: context.command + this.model.get('entityDescription'),
-                 content: advice.message
-             };
-             return this.waitConfirm(options);
+                title: context.command + this.model.get('entityDescription'),
+                content: advice.message
+            };
+            return this.waitConfirm(options);
         };
 
         var BaseView = require('./BaseView');
