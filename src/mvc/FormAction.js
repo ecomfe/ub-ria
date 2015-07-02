@@ -251,8 +251,6 @@ export default class FormAction extends BaseAction {
         }
         catch (ex) {
             throw ex;
-        }
-        finally {
             this.view.enableSubmit();
         }
     }
