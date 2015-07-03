@@ -248,6 +248,7 @@ export default class FormAction extends BaseAction {
         this.view.disableSubmit();
         try {
             await this.submitEntity(entity);
+            this.view.enableSubmit();
         }
         catch (ex) {
             this.view.enableSubmit();
