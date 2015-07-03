@@ -250,8 +250,8 @@ export default class FormAction extends BaseAction {
             await this.submitEntity(entity);
         }
         catch (ex) {
-            throw ex;
             this.view.enableSubmit();
+            throw ex;
         }
     }
 
