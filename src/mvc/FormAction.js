@@ -245,7 +245,7 @@ export default class FormAction extends BaseAction {
 
         let options = {content: this.submitConfirmMessage};
         await this.view.waitSubmitConfirm(options);
-        this.view.disableSubmit();
+        this.startSubmit();
         try {
             await this.submitEntity(entity);
         }
@@ -253,8 +253,28 @@ export default class FormAction extends BaseAction {
             throw ex;
         }
         finally {
-            this.view.enableSubmit();
+            this.finishSubmit();
         }
+    }
+
+    /**
+     * 调用提交实体方法之前，disable提交按钮
+     *
+     * @protected
+     * @method mvc.FormAction#startSubmit
+     */
+    startSubmit() {
+        this.view.disableSubmit();
+    }
+
+    /**
+     * 提交操作执行完成后，enable提交按钮
+     *
+     * @protected
+     * @method mvc.FormAction#finishSubmit
+     */
+    finishSubmit() {
+        this.view && this.view.enableSubmit();
     }
 
     @viewEvent('cancel');

@@ -372,7 +372,7 @@ export default class ListView extends BaseView {
     getSearchArgs() {
         // 获取表单的字段
         let form = this.filterPanel;
-        let args = form.type === 'form' ? form.getData() : {};
+        let args = form.get('type') === 'Form' ? form.getData() : {};
         // 加上原本的排序方向和排序字段名
         args.order = this.table.order;
         args.orderBy = this.table.orderBy;
