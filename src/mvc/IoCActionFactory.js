@@ -19,6 +19,8 @@ const ACTION_COMPONENT = Symbol('actionComponent');
 export default class IoCActionFactory {
 
     /**
+     * 构造函数
+     *
      * @param {string} actionComponent action组件名
      */
     constructor(actionComponent) {

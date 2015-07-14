@@ -235,7 +235,7 @@ export default class ListView extends BaseView {
                 this.popDrawerAction({url}).show();
             }
         }
-    };
+    }
 
     /**
      * 根据id和当前url获取列表操作对应的url
@@ -309,7 +309,7 @@ export default class ListView extends BaseView {
         this.updateBatchButtonStatus();
         this.updateFilterPanelStatus();
         this.updateSearchBoxStatus();
-    };
+    }
 
     /**
      * view渲染完成后根据所有筛选条件是否都为默认值来控制展开或闭合

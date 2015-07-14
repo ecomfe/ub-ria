@@ -89,7 +89,7 @@ export default class AutoSubmit extends Extension {
         }
 
         return null;
-    };
+    }
 
     /**
      * @override
@@ -98,7 +98,7 @@ export default class AutoSubmit extends Extension {
         u.each(this.events, (eventName) => this.target.on(eventName, submit, this));
 
         super.activate();
-    };
+    }
 
     /**
      * @override
@@ -107,7 +107,7 @@ export default class AutoSubmit extends Extension {
         u.each(this.events, (eventName) => this.target.un(eventName, submit, this));
 
         super.inactivate();
-    };
+    }
 }
 
 /**

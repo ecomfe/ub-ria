@@ -21,6 +21,8 @@ const RUNNING_REQUESTS = Symbol('runningRequests');
 export default class RequestManager {
 
     /**
+     * 构造函数
+     *
      * @constructs mvc.RequestManager
      *
      * @param {string} entityName 实体名称

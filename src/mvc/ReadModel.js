@@ -34,7 +34,7 @@ export default class ReadModel extends SingleEntityModel {
         }
 
         return this.hasReadableValue(name) ? super.get(name) : this.defaultDisplayText;
-    };
+    }
 }
 
 /**

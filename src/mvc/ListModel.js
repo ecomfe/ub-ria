@@ -118,6 +118,8 @@ export default class ListModel extends BaseModel {
     }
 
     /**
+     * 构造函数
+     *
      * @constructs mvc.ListModel
      */
     constructor() {

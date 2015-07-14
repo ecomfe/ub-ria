@@ -126,6 +126,7 @@ export default class ExternSelect extends Extension {
 
     /**
      * 搜索控件的处理函数
+     *
      * @param {Function} handler 处理句柄
      */
     handleControls(handler) {

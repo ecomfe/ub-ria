@@ -196,7 +196,7 @@ export default class FormView extends BaseView {
         };
 
         return new Promise(executor);
-    };
+    }
 
     /**
      * 禁用提交操作
