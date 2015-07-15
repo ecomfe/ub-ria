@@ -126,7 +126,7 @@ export default class FormView extends BaseView {
      * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
      */
     waitCancelConfirm(options) {
-        let confirmOptions = u.clone(options);
+        let confirmOptions = Object.create(options);
         if (!confirmOptions.okLabel) {
             confirmOptions.okLabel = `取消${options.title}`;
         }
@@ -154,7 +154,7 @@ export default class FormView extends BaseView {
      * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
      */
     waitFormConfirm(options) {
-        let warnOptions = u.clone(options);
+        let warnOptions = Object.create(options);
         // 加viewContext
         if (!warnOptions.viewContext) {
             warnOptions.viewContext = this.viewContext;
