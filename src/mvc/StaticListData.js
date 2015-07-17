@@ -27,7 +27,7 @@ const CACHE_LIST = Symbol('cacheList');
  * @param {string} order desc | asc
  * @return {number}
  */
-let compare = (a, b, order) => {
+function compare(a, b, order) {
     let symbol = 1;
 
     if (order === 'asc') {
@@ -67,7 +67,7 @@ let compare = (a, b, order) => {
 
     // 否则就是文字对比
     return symbol * (a + '').localeCompare(b);
-};
+}
 
 /**
  * 静态排序数据类
