@@ -103,7 +103,6 @@ define(
         /**
          * 快捷更新属性的方法，效果相当于使用`update`方法传递`$set`指令
          *
-         * @protected
          * @param {Object} source 待更新的原对象
          * @param {string|Array.<string>} path 属性路径，当路径深度大于1时使用数组
          * @param {*} value 更新的值
@@ -116,7 +115,6 @@ define(
         /**
          * 快捷更新属性的方法，效果相当于使用`update`方法传递`$push`指令
          *
-         * @protected
          * @param {Object} source 待更新的原对象
          * @param {string|Array.<string>} path 属性路径，当路径深度大于1时使用数组
          * @param {*} value 更新的值
@@ -129,7 +127,6 @@ define(
         /**
          * 快捷更新属性的方法，效果相当于使用`update`方法传递`$unshift`指令
          *
-         * @protected
          * @param {Object} source 待更新的原对象
          * @param {string|Array.<string>} path 属性路径，当路径深度大于1时使用数组
          * @param {*} value 更新的值
@@ -142,7 +139,6 @@ define(
         /**
          * 快捷更新属性的方法，效果相当于使用`update`方法传递`$merge`指令
          *
-         * @protected
          * @param {Object} source 待更新的原对象
          * @param {string|Array.<string>} path 属性路径，当路径深度大于1时使用数组
          * @param {*} value 更新的值
