@@ -24,6 +24,10 @@ define(
                 var result = oldValue.slice();
                 result.unshift(newValue);
                 return result;
+            },
+
+            $merge: function (oldValue, newValue) {
+                return u.extend({}, oldValue, newValue);
             }
         };
 
@@ -35,6 +39,7 @@ define(
          * - `$set`用于更新属性的值
          * - `$push`用于向类型为数组的属性最后位置添加值
          * - `$unshift`用于向类型为数组的属性最前位置添加值
+         * - `$merge`用于在原对象上合并新属性
          *
          * 可以一次使用多个指令更新对象：
          *
@@ -42,19 +47,9 @@ define(
          * var newObject = update(
          *     source,
          *     {
-         *         foo: {
-         *             bar: {
-         *                 $set: 1
-         *             }
-         *         },
-         *         alice: {
-         *             $push: 1
-         *         },
-         *         tom: {
-         *             jack: {
-         *                 $set: {x: 1}
-         *             }
-         *         }
+         *         foo: {bar: {$set: 1}},
+         *         alice: {$push: 1},
+         *         tom: {jack: {$set: {x: 1}}
          *     }
          * );
          * ```
@@ -142,6 +137,19 @@ define(
          */
         update.unshift = function (source, path, value) {
             return update(source, buildPathObject(path, {$unshift: value}));
+        };
+
+        /**
+         * 快捷更新属性的方法，效果相当于使用`update`方法传递`$merge`指令
+         *
+         * @protected
+         * @param {Object} source 待更新的原对象
+         * @param {string|Array.<string>} path 属性路径，当路径深度大于1时使用数组
+         * @param {*} value 更新的值
+         * @return {Object} 更新后的新对象
+         */
+        update.merge = function (source, path, value) {
+            return update(source, buildPathObject(path, {$merge: value}));
         };
 
         return update;

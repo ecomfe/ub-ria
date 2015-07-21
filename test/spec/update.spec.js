@@ -64,6 +64,13 @@ define(
                 expect(result).toEqual(source);
             });
 
+            it('should recognize merge command', function () {
+                var source = createSourceObject();
+                var result = update(source, {x: {y: {$merge: {a: 1, b: 2, z: 3}}}});
+                expect(result.x.y).toEqual({a: 1, b: 2, z: 3});
+                expect(source).toEqual(createSourceObject());
+            });
+
             it('should expose set function', function () {
                 var source = createSourceObject();
                 var result = update.set(source, ['tom', 'jack'], 2);
@@ -89,6 +96,13 @@ define(
                 expect(source).toEqual(createSourceObject());
                 result.x.y.z.shift();
                 expect(result).toEqual(source);
+            });
+
+            it('should expose merge function', function () {
+                var source = createSourceObject();
+                var result = update.merge(source, ['x', 'y'], {a: 1, b: 2, z: 3});
+                expect(result.x.y).toEqual({a: 1, b: 2, z: 3});
+                expect(source).toEqual(createSourceObject());
             });
         });
     }
