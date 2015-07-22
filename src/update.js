@@ -63,6 +63,12 @@ const AVAILABLE_COMMANDS = {
  * @return {Object} 更新了属性的新对象
  */
 export function run(source, commands) {
+    // 可能是第一层的指令，直接对原数据进行处理，不访问任何属性
+    let possibleFirstLevelCommand = u.find(Object.keys(AVAILABLE_COMMANDS), ::commands.hasOwnProperty);
+    if (possibleFirstLevelCommand) {
+        return AVAILABLE_COMMANDS[possibleFirstLevelCommand](source, commands[possibleFirstLevelCommand]);
+    }
+
     let result = Object.keys(commands).reduce(
         (result, key) => {
             let propertyCommand = commands[key];
@@ -91,6 +97,10 @@ export function run(source, commands) {
 }
 
 function buildPathObject(path, value) {
+    if (!path) {
+        return value;
+    }
+
     if (typeof path === 'string') {
         path = [path];
     }

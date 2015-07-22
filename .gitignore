@@ -17,3 +17,4 @@ node_modules
 dep
 doc/api
 .DS_Store
+test/coverage

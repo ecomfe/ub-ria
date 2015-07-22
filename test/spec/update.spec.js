@@ -118,6 +118,80 @@ define(
                 expect(result.tom.jack).toBe(2);
                 expect(source).toEqual(createSourceObject());
             });
+
+            describe('run with first level command', function () {
+                it('should work with $set', function () {
+                    var source = {};
+                    var result = update.run(source, {$set: 1});
+                    expect(result).toBe(1);
+                    expect(source).toEqual({});
+                });
+
+                it('should work with $push', function () {
+                    var source = [1, 2, 3];
+                    var result = update.run(source, {$push: 4});
+                    expect(result).toEqual([1, 2, 3, 4]);
+                    expect(source).toEqual([1, 2, 3]);
+                });
+
+                it('should work with $unshift', function () {
+                    var source = [1, 2, 3];
+                    var result = update.run(source, {$unshift: 0});
+                    expect(result).toEqual([0, 1, 2, 3]);
+                    expect(source).toEqual([1, 2, 3]);
+                });
+
+                it('should work with $merge', function () {
+                    var source = {foo: 1};
+                    var result = update.run(source, {$merge: {bar: 2}});
+                    expect(result).toEqual({foo: 1, bar: 2});
+                    expect(source).toEqual({foo: 1});
+                });
+
+                it('should work with $invoke', function () {
+                    var source = 1;
+                    var result = update.run(source, {$invoke: function (x) { return x * 2; }});
+                    expect(result).toEqual(2);
+                    expect(source).toEqual(1);
+                });
+            });
+
+            describe('shortcut function with first level command', function () {
+                it('should work with $set', function () {
+                    var source = {};
+                    var result = update.set(source, null, 1);
+                    expect(result).toBe(1);
+                    expect(source).toEqual({});
+                });
+
+                it('should work with $push', function () {
+                    var source = [1, 2, 3];
+                    var result = update.push(source, null, 4);
+                    expect(result).toEqual([1, 2, 3, 4]);
+                    expect(source).toEqual([1, 2, 3]);
+                });
+
+                it('should work with $unshift', function () {
+                    var source = [1, 2, 3];
+                    var result = update.unshift(source, null, 0);
+                    expect(result).toEqual([0, 1, 2, 3]);
+                    expect(source).toEqual([1, 2, 3]);
+                });
+
+                it('should work with $merge', function () {
+                    var source = {foo: 1};
+                    var result = update.merge(source, null, {bar: 2})
+                    expect(result).toEqual({foo: 1, bar: 2});
+                    expect(source).toEqual({foo: 1});
+                });
+
+                it('should work with $invoke', function () {
+                    var source = 1;
+                    var result = update.invoke(source, null, function (x) { return x * 2; });
+                    expect(result).toEqual(2);
+                    expect(source).toEqual(1);
+                });
+            });
         });
     }
 );
