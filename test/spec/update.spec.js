@@ -71,6 +71,13 @@ define(
                 expect(source).toEqual(createSourceObject());
             });
 
+            it('should recognize invoke command', function () {
+                var source = createSourceObject();
+                var result = update(source, {tom: {jack: {$invoke: function(x) { return x * 2; }}}});
+                expect(result.tom.jack).toBe(2);
+                expect(source).toEqual(createSourceObject());
+            });
+
             it('should expose set function', function () {
                 var source = createSourceObject();
                 var result = update.set(source, ['tom', 'jack'], 2);
@@ -102,6 +109,13 @@ define(
                 var source = createSourceObject();
                 var result = update.merge(source, ['x', 'y'], {a: 1, b: 2, z: 3});
                 expect(result.x.y).toEqual({a: 1, b: 2, z: 3});
+                expect(source).toEqual(createSourceObject());
+            });
+
+            it('should expose invoke function', function () {
+                var source = createSourceObject();
+                var result = update.invoke(source, ['tom', 'jack'], function(x) { return x * 2; });
+                expect(result.tom.jack).toBe(2);
                 expect(source).toEqual(createSourceObject());
             });
         });

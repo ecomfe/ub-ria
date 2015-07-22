@@ -28,6 +28,10 @@ define(
 
             $merge: function (oldValue, newValue) {
                 return u.extend({}, oldValue, newValue);
+            },
+
+            $invoke: function (oldValue, factory) {
+                return factory(oldValue);
             }
         };
 
@@ -40,6 +44,7 @@ define(
          * - `$push`用于向类型为数组的属性最后位置添加值
          * - `$unshift`用于向类型为数组的属性最前位置添加值
          * - `$merge`用于在原对象上合并新属性
+         * - `$invoke`用于执行一个函数获取新的属性值，该函数接收旧的属性值作为唯一的参数
          *
          * 可以一次使用多个指令更新对象：
          *
@@ -141,11 +146,23 @@ define(
          *
          * @param {Object} source 待更新的原对象
          * @param {string|Array.<string>} path 属性路径，当路径深度大于1时使用数组
-         * @param {*} value 更新的值
+         * @param {Object} value 更新的值
          * @return {Object} 更新后的新对象
          */
         update.merge = function (source, path, value) {
             return update(source, buildPathObject(path, {$merge: value}));
+        };
+
+        /**
+         * 快捷更新属性的方法，效果相当于使用`update`方法传递`$invoke`指令
+         *
+         * @param {Object} source 待更新的原对象
+         * @param {string|Array.<string>} path 属性路径，当路径深度大于1时使用数组
+         * @param {Function} factory 产生新属性值的工厂函数，接受旧属性值为参数
+         * @return {Object} 更新后的新对象
+         */
+        update.invoke = function (source, path, factory) {
+            return update(source, buildPathObject(path, {$invoke: factory}));
         };
 
         return update;
