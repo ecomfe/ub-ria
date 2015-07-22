@@ -73,6 +73,17 @@ define(
          * @return {Object} 更新了属性的新对象
          */
         exports.run = function (source, commands) {
+            // 可能是第一层的指令，直接对原数据进行处理，不访问任何属性
+            var possibleFirstLevelCommand = u.find(
+                Object.keys(AVAILABLE_COMMANDS),
+                function (command) {
+                    return commands.hasOwnProperty(command);
+                }
+            );
+            if (possibleFirstLevelCommand) {
+                return AVAILABLE_COMMANDS[possibleFirstLevelCommand](source, commands[possibleFirstLevelCommand]);
+            }
+
             var result = Object.keys(commands).reduce(
                 function (result, key) {
                     var propertyCommand = commands[key];
@@ -101,6 +112,10 @@ define(
         };
 
         function buildPathObject(path, value) {
+            if (!path) {
+                return value;
+            }
+
             if (typeof path === 'string') {
                 path = [path];
             }
@@ -118,7 +133,7 @@ define(
          * 快捷更新属性的方法，效果相当于使用`update`方法传递`$set`指令
          *
          * @param {Object} source 待更新的原对象
-         * @param {string|Array.<string>} path 属性路径，当路径深度大于1时使用数组
+         * @param {string?|Array.<string>} path 属性路径，当路径深度大于1时使用数组，为空或非值则直接对`source`对象操作
          * @param {*} value 更新的值
          * @return {Object} 更新后的新对象
          */
@@ -130,7 +145,7 @@ define(
          * 快捷更新属性的方法，效果相当于使用`update`方法传递`$push`指令
          *
          * @param {Object} source 待更新的原对象
-         * @param {string|Array.<string>} path 属性路径，当路径深度大于1时使用数组
+         * @param {string?|Array.<string>} path 属性路径，当路径深度大于1时使用数组，为空或非值则直接对`source`对象操作
          * @param {*} value 更新的值
          * @return {Object} 更新后的新对象
          */
@@ -142,7 +157,7 @@ define(
          * 快捷更新属性的方法，效果相当于使用`update`方法传递`$unshift`指令
          *
          * @param {Object} source 待更新的原对象
-         * @param {string|Array.<string>} path 属性路径，当路径深度大于1时使用数组
+         * @param {string?|Array.<string>} path 属性路径，当路径深度大于1时使用数组，为空或非值则直接对`source`对象操作
          * @param {*} value 更新的值
          * @return {Object} 更新后的新对象
          */
@@ -154,7 +169,7 @@ define(
          * 快捷更新属性的方法，效果相当于使用`update`方法传递`$merge`指令
          *
          * @param {Object} source 待更新的原对象
-         * @param {string|Array.<string>} path 属性路径，当路径深度大于1时使用数组
+         * @param {string?|Array.<string>} path 属性路径，当路径深度大于1时使用数组，为空或非值则直接对`source`对象操作
          * @param {Object} value 更新的值
          * @return {Object} 更新后的新对象
          */
@@ -166,7 +181,7 @@ define(
          * 快捷更新属性的方法，效果相当于使用`update`方法传递`$invoke`指令
          *
          * @param {Object} source 待更新的原对象
-         * @param {string|Array.<string>} path 属性路径，当路径深度大于1时使用数组
+         * @param {string?|Array.<string>} path 属性路径，当路径深度大于1时使用数组，为空或非值则直接对`source`对象操作
          * @param {Function} factory 产生新属性值的工厂函数，接受旧属性值为参数
          * @return {Object} 更新后的新对象
          */
