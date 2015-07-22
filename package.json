@@ -36,7 +36,12 @@
             "eicons": "1.x",
             "esf": "1.x",
             "est": "1.x",
-            "moment": "2.x"
+            "moment": "2.x",
+            "promise": "latest",
+            "uioc": "latest"
         }
+    },
+    "devDependencies": {
+        "babel": "5.x"
     }
 }

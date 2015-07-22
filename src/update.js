@@ -48,7 +48,7 @@ const AVAILABLE_COMMANDS = {
  * 可以一次使用多个指令更新对象：
  *
  * ```javascript
- * let newObject = update(
+ * let newObject = run(
  *     source,
  *     {
  *         foo: {bar: {$set: 1}},
@@ -62,7 +62,7 @@ const AVAILABLE_COMMANDS = {
  * @param {Object} commands 更新的指令
  * @return {Object} 更新了属性的新对象
  */
-export default function update(source, commands) {
+export function run(source, commands) {
     let result = Object.keys(commands).reduce(
         (result, key) => {
             let propertyCommand = commands[key];
@@ -79,7 +79,7 @@ export default function update(source, commands) {
             );
             // 如果没有任何指令，说明是多层的，所以递归
             if (!isCommand) {
-                result[key] = update(result[key] || {}, propertyCommand);
+                result[key] = run(result[key] || {}, propertyCommand);
             }
 
             return result;
@@ -113,7 +113,7 @@ function buildPathObject(path, value) {
  * @return {Object} 更新后的新对象
  */
 export function set(source, path, value) {
-    return update(source, buildPathObject(path, {$set: value}));
+    return run(source, buildPathObject(path, {$set: value}));
 }
 
 /**
@@ -125,7 +125,7 @@ export function set(source, path, value) {
  * @return {Object} 更新后的新对象
  */
 export function push(source, path, value) {
-    return update(source, buildPathObject(path, {$push: value}));
+    return run(source, buildPathObject(path, {$push: value}));
 }
 
 /**
@@ -137,7 +137,7 @@ export function push(source, path, value) {
  * @return {Object} 更新后的新对象
  */
 export function unshift(source, path, value) {
-    return update(source, buildPathObject(path, {$unshift: value}));
+    return run(source, buildPathObject(path, {$unshift: value}));
 }
 
 /**
@@ -149,7 +149,7 @@ export function unshift(source, path, value) {
  * @return {Object} 更新后的新对象
  */
 export function merge(source, path, value) {
-    return update(source, buildPathObject(path, {$merge: value}));
+    return run(source, buildPathObject(path, {$merge: value}));
 }
 
 /**
@@ -161,5 +161,5 @@ export function merge(source, path, value) {
  * @return {Object} 更新后的新对象
  */
 export function invoke(source, path, factory) {
-    return update(source, buildPathObject(path, {$invoke: factory}));
+    return run(source, buildPathObject(path, {$invoke: factory}));
 }
