@@ -71,6 +71,13 @@ define(
                 expect(source).toEqual(createSourceObject());
             });
 
+            it('should recognize defaults command', function () {
+                var source = createSourceObject();
+                var result = update.run(source, {x: {y: {$defaults: {a: 1, b: 2, z: 3}}}});
+                expect(result.x.y).toEqual({a: 1, b: 2, z: [1, 2, 3]});
+                expect(source).toEqual(createSourceObject());
+            });
+
             it('should recognize invoke command', function () {
                 var source = createSourceObject();
                 var result = update.run(source, {tom: {jack: {$invoke: function(x) { return x * 2; }}}});
@@ -112,6 +119,13 @@ define(
                 expect(source).toEqual(createSourceObject());
             });
 
+            it('should expose defaults function', function () {
+                var source = createSourceObject();
+                var result = update.defaults(source, ['x', 'y'], {a: 1, b: 2, z: 3});
+                expect(result.x.y).toEqual({a: 1, b: 2, z: [1, 2, 3]});
+                expect(source).toEqual(createSourceObject());
+            });
+
             it('should expose invoke function', function () {
                 var source = createSourceObject();
                 var result = update.invoke(source, ['tom', 'jack'], function(x) { return x * 2; });
@@ -144,6 +158,13 @@ define(
                 it('should work with $merge', function () {
                     var source = {foo: 1};
                     var result = update.run(source, {$merge: {bar: 2}});
+                    expect(result).toEqual({foo: 1, bar: 2});
+                    expect(source).toEqual({foo: 1});
+                });
+
+                it('should work with $defaults', function () {
+                    var source = {foo: 1};
+                    var result = update.run(source, {$defaults: {foo: 2, bar: 2}});
                     expect(result).toEqual({foo: 1, bar: 2});
                     expect(source).toEqual({foo: 1});
                 });
@@ -181,6 +202,13 @@ define(
                 it('should work with $merge', function () {
                     var source = {foo: 1};
                     var result = update.merge(source, null, {bar: 2})
+                    expect(result).toEqual({foo: 1, bar: 2});
+                    expect(source).toEqual({foo: 1});
+                });
+
+                it('should work with $defaults', function () {
+                    var source = {foo: 1};
+                    var result = update.defaults(source, null, {foo: 2, bar: 2});
                     expect(result).toEqual({foo: 1, bar: 2});
                     expect(source).toEqual({foo: 1});
                 });
