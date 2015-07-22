@@ -30,6 +30,10 @@ define(
                 return u.extend({}, oldValue, newValue);
             },
 
+            $defaults: function (oldValue, newValue) {
+                return u.defaults(u.clone(oldValue), newValue);
+            },
+
             $invoke: function (oldValue, factory) {
                 return factory(oldValue);
             }
@@ -175,6 +179,18 @@ define(
          */
         exports.merge = function (source, path, value) {
             return exports.run(source, buildPathObject(path, {$merge: value}));
+        };
+
+        /**
+         * 快捷更新属性的方法，效果相当于使用`update`方法传递`$defaults`指令
+         *
+         * @param {Object} source 待更新的原对象
+         * @param {string?|Array.<string>} path 属性路径，当路径深度大于1时使用数组，为空或非值则直接对`source`对象操作
+         * @param {Object} value 更新的值
+         * @return {Object} 更新后的新对象
+         */
+        exports.defaults = function (source, path, value) {
+            return exports.run(source, buildPathObject(path, {$defaults: value}));
         };
 
         /**
