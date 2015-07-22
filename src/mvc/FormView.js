@@ -7,6 +7,7 @@
  */
 
 import u from '../util';
+import update from '../update';
 import BaseView from './BaseView';
 import Validity from 'esui/validator/Validity';
 import ValidityState from 'esui/validator/ValidityState';
@@ -126,13 +127,14 @@ export default class FormView extends BaseView {
      * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
      */
     waitCancelConfirm(options) {
-        let confirmOptions = u.clone(options);
-        if (!confirmOptions.okLabel) {
-            confirmOptions.okLabel = `取消${options.title}`;
-        }
-        if (!confirmOptions.cancelLabel) {
-            confirmOptions.cancelLabel = `继续${options.title}`;
-        }
+        let confirmOptions = update.defaults(
+            options,
+            null,
+            {
+                okLabel: `取消${options.title}`,
+                cancelLabel: `继续${options.title}`
+            }
+        );
         return this.waitFormConfirm(confirmOptions);
     }
 
@@ -154,11 +156,8 @@ export default class FormView extends BaseView {
      * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
      */
     waitFormConfirm(options) {
-        let warnOptions = u.clone(options);
         // 加viewContext
-        if (!warnOptions.viewContext) {
-            warnOptions.viewContext = this.viewContext;
-        }
+        let warnOptions = u.defaults(options, null, {viewContext: this.viewContext});
 
         let warn = this.confirmWarn;
         if (warn) {
@@ -167,9 +166,7 @@ export default class FormView extends BaseView {
 
         let extendedOptions = {
             wrapper: this.submitSection,
-            id: `form-confirm`,
-            okLabel: warnOptions.okLabel,
-            cancelLabel: warnOptions.cancelLabel
+            id: `form-confirm`
         };
         u.extend(warnOptions, extendedOptions);
 
