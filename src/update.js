@@ -36,6 +36,15 @@ define(
         };
 
         /**
+         * 不可变数据的更新辅助函数
+         *
+         * 用此模块的函数可以在不修改一个对象的前提下对其进行更新，并获得更新后的新对象
+         *
+         * @namespace update
+         */
+        var exports = {};
+
+        /**
          * 根据给定的指令更新一个对象的属性，并返回更新后的新对象，原对象不会被修改
          *
          * 指令支持以下几种：
@@ -49,7 +58,7 @@ define(
          * 可以一次使用多个指令更新对象：
          *
          * ```javascript
-         * var newObject = update(
+         * var newObject = update.run(
          *     source,
          *     {
          *         foo: {bar: {$set: 1}},
@@ -63,7 +72,7 @@ define(
          * @param {Object} commands 更新的指令
          * @return {Object} 更新了属性的新对象
          */
-        var update = function (source, commands) {
+        exports.run = function (source, commands) {
             var result = Object.keys(commands).reduce(
                 function (result, key) {
                     var propertyCommand = commands[key];
@@ -80,7 +89,7 @@ define(
                     );
                     // 如果没有任何指令，说明是多层的，所以递归
                     if (!isCommand) {
-                        result[key] = update(result[key] || {}, propertyCommand);
+                        result[key] = exports.run(result[key] || {}, propertyCommand);
                     }
 
                     return result;
@@ -113,8 +122,8 @@ define(
          * @param {*} value 更新的值
          * @return {Object} 更新后的新对象
          */
-        update.set = function (source, path, value) {
-            return update(source, buildPathObject(path, {$set: value}));
+        exports.set = function (source, path, value) {
+            return exports.run(source, buildPathObject(path, {$set: value}));
         };
 
         /**
@@ -125,8 +134,8 @@ define(
          * @param {*} value 更新的值
          * @return {Object} 更新后的新对象
          */
-        update.push = function (source, path, value) {
-            return update(source, buildPathObject(path, {$push: value}));
+        exports.push = function (source, path, value) {
+            return exports.run(source, buildPathObject(path, {$push: value}));
         };
 
         /**
@@ -137,8 +146,8 @@ define(
          * @param {*} value 更新的值
          * @return {Object} 更新后的新对象
          */
-        update.unshift = function (source, path, value) {
-            return update(source, buildPathObject(path, {$unshift: value}));
+        exports.unshift = function (source, path, value) {
+            return exports.run(source, buildPathObject(path, {$unshift: value}));
         };
 
         /**
@@ -149,8 +158,8 @@ define(
          * @param {Object} value 更新的值
          * @return {Object} 更新后的新对象
          */
-        update.merge = function (source, path, value) {
-            return update(source, buildPathObject(path, {$merge: value}));
+        exports.merge = function (source, path, value) {
+            return exports.run(source, buildPathObject(path, {$merge: value}));
         };
 
         /**
@@ -161,10 +170,10 @@ define(
          * @param {Function} factory 产生新属性值的工厂函数，接受旧属性值为参数
          * @return {Object} 更新后的新对象
          */
-        update.invoke = function (source, path, factory) {
-            return update(source, buildPathObject(path, {$invoke: factory}));
+        exports.invoke = function (source, path, factory) {
+            return exports.run(source, buildPathObject(path, {$invoke: factory}));
         };
 
-        return update;
+        return exports;
     }
 );
