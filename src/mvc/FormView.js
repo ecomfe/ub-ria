@@ -157,7 +157,7 @@ export default class FormView extends BaseView {
      */
     waitFormConfirm(options) {
         // 加viewContext
-        let warnOptions = u.defaults(options, null, {viewContext: this.viewContext});
+        let warnOptions = update.defaults(options, null, {viewContext: this.viewContext});
 
         let warn = this.confirmWarn;
         if (warn) {
