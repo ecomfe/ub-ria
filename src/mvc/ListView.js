@@ -357,7 +357,6 @@ export default class ListView extends BaseView {
                 e.target.hide();
             }
         );
-        drawerActionPanel.on('action@saveandclose', (e) => e.target.hide());
         drawerActionPanel.on('close', () => this.fire('close'));
 
         return drawerActionPanel;
