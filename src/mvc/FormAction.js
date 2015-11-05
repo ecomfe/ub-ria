@@ -302,9 +302,6 @@ define(
 
             this.view.on('submit', submit, this);
             this.view.on('cancel', this.cancelEdit, this);
-
-            // 将保留数据并退出的事件代理到上层Action
-            require('mini-event').delegate(this.view, this, 'saveandclose');
         };
 
         /**

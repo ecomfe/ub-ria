@@ -309,7 +309,6 @@ define(
         exports.popDrawerAction = function (options, targetId) {
             var drawerActionPanel = this.$super(arguments);
 
-            drawerActionPanel.on('close', saveAndClose, this);
             drawerActionPanel.on(
                 'action@entitysave',
                 function (e) {
@@ -323,18 +322,6 @@ define(
 
             return drawerActionPanel;
         };
-
-        /**
-         * 返回并告诉上层保留数据并退出
-         *
-         * @event
-         * @fires mvc.FormView#saveandclose
-         * @param {mini-event.Event} e 事件参数
-         */
-        function saveAndClose(e) {
-            e.target.hide();
-            this.fire('saveandclose');
-        }
 
         /**
          * 抽屉内Action提交成功后的事件处理句柄
