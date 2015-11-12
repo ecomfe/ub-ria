@@ -165,6 +165,7 @@ define(
          * @param {er.Model} model 数据模型
          */
         exports.setModel = function (model) {
+            model.set('entityName', this.getEntityName());
             model.set('entityDescription', this.getEntityDescription());
             this.model = model;
         };
