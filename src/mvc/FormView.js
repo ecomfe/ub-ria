@@ -247,15 +247,6 @@ export default class FormView extends BaseView {
         let drawerActionPanel = super.popDrawerAction(options);
 
         drawerActionPanel.on(
-            'close',
-            (e) => {
-                e.target.hide();
-                this.fire('saveandclose');
-            }
-        );
-
-
-        drawerActionPanel.on(
             'action@entitysave',
             (e) => {
                 e.stopPropagation();

@@ -7,7 +7,6 @@
  */
 
 import oo from 'eoo';
-import event from 'mini-event';
 import {viewEvent} from './decorator';
 import BaseAction from './BaseAction';
 
@@ -222,9 +221,6 @@ export default class FormAction extends BaseAction {
         // 保存一份最初的form表单内容到model，用于判断表单内容是否被更改
         let initialFormData = this.view.getFormData();
         this.model.set('initialFormData', initialFormData, {silent: true});
-
-        // 将保留数据并退出的事件代理到上层Action
-        event.delegate(this.view, this, 'saveandclose');
     }
 
     /**
