@@ -29,7 +29,10 @@ define(
          * @override
          */
         util.template = function (template, data) {
-            return underscore.template(template, data, TEMPLATE_SETTINGS);
+            // 1.7.0以上的underscore.template方法返回render函数
+            // 这样实现保证util.template在多种版本underscore正常运行
+            var render = underscore.template(template, undefined, TEMPLATE_SETTINGS);
+            return render(data);
         };
 
         /**

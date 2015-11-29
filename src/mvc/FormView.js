@@ -7,7 +7,7 @@
  */
 define(
     function (require) {
-        require('ub-ria-ui/DrawerActionPanel');
+        require('../ui/DrawerActionPanel');
 
         var u = require('../util');
 
@@ -162,7 +162,9 @@ define(
          * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
          */
         exports.waitCancelConfirm = function (options) {
-            return this.waitConfirmForType(options, 'cancel');
+            options.okLabel = options.okLabel || ('取消' + options.title);
+            options.cancelLabel = options.cancelLabel || ('继续' + options.title);
+            return this.waitFormConfirm(options);
         };
 
         /**
@@ -177,27 +179,31 @@ define(
         };
 
         /**
-         * 等待用户确认操作
+         * 等待用户确认操作(已废弃)
          *
+         * @deprecated
          * @method mvc.FormView#waitConfirmForType
          * @param {Object} options 配置项
-         * @param {string} type 操作类型
          * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
          */
-        exports.waitConfirmForType = function (options, type) {
+        exports.waitConfirmForType = function (options) {
+            return this.waitFormConfirm(options);
+        };
+
+        /**
+         * 等待用户确认操作
+         *
+         * @method mvc.FormView#waitFormConfirm
+         * @param {Object} options 配置项
+         * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
+         */
+        exports.waitFormConfirm = function (options) {
             // 加viewContext
             if (!options.viewContext) {
                 options.viewContext = this.viewContext;
             }
 
-            var okLabel = '取消' + options.title;
-            var cancelLabel = '继续' + options.title;
-            if (type === 'update') {
-                okLabel = '确认修改';
-                cancelLabel = '取消修改';
-            }
-
-            var warn = this.get('form-' + type + '-confirm');
+            var warn = this.get('form-confirm');
             if (warn) {
                 warn.hide();
             }
@@ -205,9 +211,7 @@ define(
             var wrapper = this.get('submit-section');
             var extendedOptions = {
                 wrapper: wrapper,
-                id: 'form-' + type + '-confirm',
-                okLabel: okLabel,
-                cancelLabel: cancelLabel
+                id: 'form-confirm'
             };
             u.extend(options, extendedOptions);
 
@@ -305,7 +309,6 @@ define(
         exports.popDrawerAction = function (options, targetId) {
             var drawerActionPanel = this.$super(arguments);
 
-            drawerActionPanel.on('close', saveAndClose, this);
             drawerActionPanel.on(
                 'action@entitysave',
                 function (e) {
@@ -319,18 +322,6 @@ define(
 
             return drawerActionPanel;
         };
-
-        /**
-         * 返回并告诉上层保留数据并退出
-         *
-         * @event
-         * @fires mvc.FormView#saveandclose
-         * @param {mini-event.Event} e 事件参数
-         */
-        function saveAndClose(e) {
-            e.target.hide();
-            this.fire('saveandclose');
-        }
 
         /**
          * 抽屉内Action提交成功后的事件处理句柄

@@ -7,7 +7,7 @@
  */
 define(
     function (require) {
-        require('ub-ria-ui/DrawerActionPanel');
+        require('../ui/DrawerActionPanel');
 
         /**
          * @class mvc.DetailView
@@ -50,7 +50,6 @@ define(
 
             drawerActionPanel.on('action@submitcancel', cancel);
             drawerActionPanel.on('action@back', back);
-            drawerActionPanel.on('action@saveandclose', saveAndClose);
 
             return drawerActionPanel;
         };
@@ -76,16 +75,6 @@ define(
             e.stopPropagation();
             e.preventDefault();
             this.hide();
-        }
-
-        /**
-         * 保留当前数据并退出
-         *
-         * @event
-         * @param {mini-event.Event} e 事件参数
-         */
-        function saveAndClose(e) {
-            e.target.hide();
         }
 
         /**

@@ -1,0 +1,51 @@
+@import "./mixin.less";
+
+@ui-class-prefix: ui;
+@drawer-action-panel-offset: 220px;
+
+.@{ui-class-prefix}-draweractionpanel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin-left: @drawer-action-panel-offset;
+    overflow: auto;
+    z-index: 1000;
+    .transition(all .5s);
+
+    &-hidden {
+        display: block !important;
+        visibility: hidden;
+        .translate(100% 0);
+        .translate(100% 0 0);
+    }
+}
+
+.@{ui-class-prefix}-draweractionpanel-mask {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #333;
+    opacity: .2;
+    filter: alpha(opacity=20);
+    z-index: 999;
+}
+
+.@{ui-class-prefix}-draweractionpanel-close-btn {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    color: #bbb;
+    cursor: pointer;
+}
+
+esui-drawer-action-panel {
+    display: block;
+}

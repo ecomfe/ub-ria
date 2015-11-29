@@ -35,7 +35,9 @@
             "uioc": "0.x",
             "eoo": "0.x",
             "promise": "1.x",
-            "eicons": "1.x"
+            "eicons": "1.x",
+            "esf": "~1.0.0-beta.1",
+            "est": "~1.3.0"
         }
     }
 }

@@ -7,7 +7,7 @@
  */
 define(
     function (require) {
-        require('ub-ria-ui/DrawerActionPanel');
+        require('../ui/DrawerActionPanel');
 
         var u = require('../util');
 
@@ -456,7 +456,6 @@ define(
 
             drawerActionPanel.on('action@submitcancel', cancel);
             drawerActionPanel.on('action@back', back);
-            drawerActionPanel.on('action@saveandclose', saveAndClose);
             drawerActionPanel.on('close', closeDrawerActionPanel, this);
 
             return drawerActionPanel;
@@ -483,16 +482,6 @@ define(
             e.stopPropagation();
             e.preventDefault();
             this.hide();
-        }
-
-        /**
-         * 保留当前数据并退出
-         *
-         * @event
-         * @param {mini-event.Event} e 事件参数
-         */
-        function saveAndClose(e) {
-            e.target.hide();
         }
 
         /**
@@ -587,10 +576,10 @@ define(
          */
         exports.waitModifyStatusConfirm = function (context, advice) {
             var options = {
-                 title: context.command + this.model.get('entityDescription'),
-                 content: advice.message
-             };
-             return this.waitConfirm(options);
+                title: context.command + this.model.get('entityDescription'),
+                content: advice.message
+            };
+            return this.waitConfirm(options);
         };
 
         var BaseView = require('./BaseView');
