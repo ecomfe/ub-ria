@@ -179,7 +179,13 @@ define(
          */
         function toggleFilter() {
             var filter = this.getSafely('filter');
-            filter.isHidden() ? showFilter.call(this) : cancelFilter.call(this);
+            var filtersInfo = this.model.get('filtersInfo');
+            if (filtersInfo.isAllFiltersDefault) {
+                filter.isHidden() ? showFilter.call(this) : hideFilter.call(this);
+            }
+            else {
+                this.submitSearchWithoutKey();
+            }
         }
 
         /**
@@ -225,13 +231,8 @@ define(
                 this.clearFilterValue(name);
             }
             else {
-                var view = this;
-                this.getGroup('clear-button').each(
-                    function (button) {
-                        var name = button.get('name');
-                        view.clearFilterValue(name);
-                    }
-                );
+                var filters = this.model.get('filtersInfo').filters;
+                u.pluck(filters, 'name').forEach(this.clearFilterValue, this);
             }
             this.fire('search');
         };
@@ -244,7 +245,7 @@ define(
          */
         exports.clearFilterValue = function (name) {
             var value = this.model.defaultArgs[name] || '';
-            this.get(name).setValue(value);
+            this.getSafely(name).setValue(value);
         };
 
         /**
