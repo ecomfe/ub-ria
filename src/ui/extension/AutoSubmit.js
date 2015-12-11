@@ -12,6 +12,8 @@ define(
         var ui = require('esui');
         var Form = require('esui/Form');
 
+        var store = {};
+
         /**
          * 让输入控件在特定事件下自动提交表单的扩展
          *
@@ -104,10 +106,16 @@ define(
          * @override
          */
         exports.activate = function () {
+            var handler = submit;
+            //  对指定的 form 进行 debounce 限制
+            if (this.form && this.debounce) {
+                handler = store[this.form] || u.debounce(submit, 0);
+                store[this.form] = handler;
+            }
             u.each(
                 this.events,
                 function (eventName) {
-                    this.target.on(eventName, submit, this);
+                    this.target.on(eventName, handler, this);
                 },
                 this
             );
@@ -119,10 +127,11 @@ define(
          * @override
          */
         exports.inactivate = function () {
+            var handler = this.form && this.debounce ? store[this.form] : submit;
             u.each(
                 this.events,
                 function (eventName) {
-                    this.target.un(eventName, submit, this);
+                    this.target.un(eventName, handler, this);
                 },
                 this
             );
