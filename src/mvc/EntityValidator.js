@@ -266,6 +266,11 @@ define(
 
                 if (!result) {
                     var messageTemplate = checker.errorMessage;
+                    // 当自定义错误信息存在时替换自定义错误信息
+                    var fieldErrorMessage = fieldSchema[3];
+                    if (fieldErrorMessage && fieldErrorMessage[checker.name]) {
+                        messageTemplate = fieldErrorMessage[checker.name];
+                    }
                     // 处理同一个checker检查不同类型字段时错误消息模版不同的情况
                     if (typeof messageTemplate === 'object') {
                         messageTemplate = messageTemplate[fieldSchema[0]];
