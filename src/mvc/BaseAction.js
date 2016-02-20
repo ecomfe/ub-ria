@@ -111,6 +111,7 @@ export default class BaseAction extends Action {
      */
     setModel(model) {
         model.set('entityDescription', this.entityDescription);
+        model.set('entityName', this.entityName);
 
         this.model = model;
     }
