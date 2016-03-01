@@ -107,7 +107,7 @@ define(
                 }
                 return Rule.prototype.getErrorMessage.apply(this, arguments);
             };
-        };
+        }
 
         /**
          * 添加通用的表格单元格内容输出方法
@@ -259,7 +259,7 @@ define(
                 return '<span class="table-status-' + u.escape(status.type)
                     + '">' + status.text + '</span>';
             };
-        };
+        }
 
         /**
          * 为几个控件添加链接模式的内容模板
