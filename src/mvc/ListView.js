@@ -54,7 +54,50 @@ define(
             };
             /* eslint-enable fecs-camelcase */
             this.addUIEvents(uiEvents);
+
+            // handler支持字符串，为字符串时表示使用当前view实例上的同名方法
+            var commands = {
+                'click:modify': u.partial(handleRowAction, 'modify'),
+                'click:read': u.partial(handleRowAction, 'read'),
+                'click:copy': u.partial(handleRowAction, 'copy'),
+                'click:viewReport': handleViewReport
+            };
+            this.addCommands(commands);
         };
+
+        /**
+         * 添加列表行内command处理
+         *
+         * @method mvc.ListView#addCommands
+         * @param {Object} newCommands 需要添加的command处理
+         * @public
+         */
+        exports.addCommands = function (newCommands) {
+            this.commands = u.extend(this.commands || {}, newCommands);
+        };
+
+        /**
+         * 处理修改、复制、查看操作
+         *
+         * @param {string} name command名称
+         * @param {string} args command参数
+         */
+        function handleRowAction(name, args) {
+            var id = args;
+            var url = getActionURL.call(this, name, id);
+            var options = {url: url};
+
+            this.popDrawerAction(options).show();
+        }
+
+        /**
+         * 处理查看报告操作
+         *
+         * @param {string} args command参数
+         */
+        function handleViewReport(args) {
+            this.popDrawerAction({url: args}).show();
+        }
 
         /**
          * 每页条数变更监听函数
@@ -263,27 +306,62 @@ define(
          * @protected
          * @method mvc.ListView#commandHandler
          * @param {mini-event.Event} e command事件
+         * @deprecated
          */
         exports.commandHandler = function (e) {
-            if (e.triggerType === 'click') {
-                var transition = u.findWhere(this.model.getStatusTransitions(), {statusName: e.name});
-                // 处理状态修改
+            this.handleTableCommand(e.triggerType, e.name, e.args);
+        };
+
+        /**
+         * 处理command
+         *
+         * @method mvc.ListView#handleTableCommand
+         * @param {string} triggerType command事件的触发方式
+         * @param {string} name command名称
+         * @param {string} args command参数
+         * @return {boolean} command是否被处理过
+         * @protected
+         */
+        exports.handleTableCommand = function (triggerType, name, args) {
+            var handled = this.handleStatusCommand(triggerType, name, args);
+
+            if (!handled) {
+                var handler = this.commands[triggerType + ':' + name];
+                if (u.isString(handler)) {
+                    handler = this[handler];
+                }
+
+                if (u.isFunction(handler)) {
+                    handler.call(this, args);
+                    handled = true;
+                }
+            }
+            return handled;
+        };
+
+        /**
+         * 处理操作状态的command
+         *
+         * @method mvc.ListView#handleStatusCommand
+         * @param {string} triggerType command事件的触发方式
+         * @param {string} name command名称
+         * @param {string} args command参数
+         * @return {boolean} command是否被处理过
+         * @private
+         */
+        exports.handleStatusCommand = function (triggerType, name, args) {
+            if (triggerType === 'click') {
+                var transition = u.findWhere(this.model.getStatusTransitions(), {statusName: name});
                 if (transition) {
-                    var args = {
-                        id: e.args,
+                    args = {
+                        id: args,
                         status: transition.status
                     };
                     this.fire('modifystatus', args);
-                }
-                // 处理实体修改和查看
-                else if (e.name === 'modify' || e.name === 'read' || e.name === 'copy') {
-                    var id = e.args;
-                    var url = getActionURL.call(this, e.name, id);
-                    var options = {url: url};
-
-                    this.popDrawerAction(options).show();
+                    return true;
                 }
             }
+            return false;
         };
 
         /**
