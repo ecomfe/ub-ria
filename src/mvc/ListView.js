@@ -83,8 +83,7 @@ define(
          * @param {string} args command参数
          */
         function handleRowAction(name, args) {
-            var id = args;
-            var url = getActionURL.call(this, name, id);
+            var url = getActionURL.call(this, name, args);
             var options = {url: url};
 
             this.popDrawerAction(options).show();
@@ -323,7 +322,19 @@ define(
          * @protected
          */
         exports.handleTableCommand = function (triggerType, name, args) {
-            var handled = this.handleStatusCommand(triggerType, name, args);
+            var handled = false;
+            // 处理状态修改的command
+            if (triggerType === 'click') {
+                var transition = u.findWhere(this.model.getStatusTransitions(), {statusName: name});
+                if (transition) {
+                    args = {
+                        id: args,
+                        status: transition.status
+                    };
+                    this.fire('modifystatus', args);
+                    handled = true;
+                }
+            }
 
             if (!handled) {
                 var handler = this.commands[triggerType + ':' + name];
@@ -337,31 +348,6 @@ define(
                 }
             }
             return handled;
-        };
-
-        /**
-         * 处理操作状态的command
-         *
-         * @method mvc.ListView#handleStatusCommand
-         * @param {string} triggerType command事件的触发方式
-         * @param {string} name command名称
-         * @param {string} args command参数
-         * @return {boolean} command是否被处理过
-         * @private
-         */
-        exports.handleStatusCommand = function (triggerType, name, args) {
-            if (triggerType === 'click') {
-                var transition = u.findWhere(this.model.getStatusTransitions(), {statusName: name});
-                if (transition) {
-                    args = {
-                        id: args,
-                        status: transition.status
-                    };
-                    this.fire('modifystatus', args);
-                    return true;
-                }
-            }
-            return false;
         };
 
         /**
