@@ -70,7 +70,7 @@ define(
          *
          * @method mvc.ListView#addCommands
          * @param {Object} newCommands 需要添加的command处理
-         * @public
+         * @protected
          */
         exports.addCommands = function (newCommands) {
             this.commands = u.extend(this.commands || {}, newCommands);
@@ -322,32 +322,103 @@ define(
          * @protected
          */
         exports.handleTableCommand = function (triggerType, name, args) {
-            var handled = false;
-            // 处理状态修改的command
-            if (triggerType === 'click') {
-                var transition = u.findWhere(this.model.getStatusTransitions(), {statusName: name});
-                if (transition) {
-                    args = {
-                        id: args,
-                        status: transition.status
-                    };
-                    this.fire('modifystatus', args);
-                    handled = true;
-                }
+            // 处理状态修改command
+            if (this.isStatusModificationCommand(triggerType, name)) {
+                this.handleStatusModificationCommand(name, args);
+                return true;
             }
 
-            if (!handled) {
-                var handler = this.commands[triggerType + ':' + name];
-                if (u.isString(handler)) {
-                    handler = this[handler];
-                }
-
-                if (u.isFunction(handler)) {
-                    handler.call(this, args);
-                    handled = true;
-                }
+            // 处理通过addCommands配置的命令
+            if (this.isConfiguredTableCommand(triggerType, name)) {
+                this.handleConfiguredTableCommand(triggerType, name, args);
+                return true;
             }
-            return handled;
+
+            return false;
+        };
+
+        /**
+         * 判断是否是状态修改命令
+         *
+         * @method mvc.ListView#isStatusModificationCommand
+         * @param {string} triggerType 命令的触发方式
+         * @param {string} name 命令名称
+         * @return {boolean}
+         * @private
+         */
+        exports.isStatusModificationCommand = function (triggerType, name) {
+            return triggerType === 'click' && !!u.some(this.model.getStatusTransitions(), {statusName: name});
+        };
+
+        /**
+         * 处理状态修改命令
+         *
+         * @method mvc.ListView#handleStatusModificationCommand
+         * @fires mvc.ListView#modifystatus
+         * @param {string} name 命令名称
+         * @param {string} args 命令参数
+         * @private
+         */
+        exports.handleStatusModificationCommand = function (name, args) {
+            var transition = u.findWhere(this.model.getStatusTransitions(), {statusName: name});
+            if (transition) {
+                args = {
+                    id: args,
+                    status: transition.status
+                };
+                this.fire('modifystatus', args);
+            }
+        };
+
+        /**
+         * 判断是否是已配置handler的命令
+         *
+         * @method mvc.ListView#isConfiguredTableCommand
+         * @param {string} triggerType 命令的触发方式
+         * @param {string} name 命令名称
+         * @return {boolean}
+         * @private
+         */
+        exports.isConfiguredTableCommand = function (triggerType, name) {
+            return !!this.commands[triggerType + ':' + name];
+        };
+
+        /**
+         * 处理commands中配置的命令
+         *
+         * @method mvc.ListView#handleConfiguredTableCommand
+         * @param {string} triggerType 命令的触发方式
+         * @param {string} name 命令名称
+         * @param {string} args 命令参数
+         * @private
+         */
+        exports.handleConfiguredTableCommand = function (triggerType, name, args) {
+            var handler = this.getConfiguredTableCommandHandler(triggerType, name);
+            handler.call(this, args);
+        };
+
+        /**
+         * 从commands配置中找到指定command的handler
+         * 以'[triggerType]:[name]'为key，value位function或者ListView实例成员函数的名称
+         *
+         * @method mvc.ListView#getConfiguredTableCommandHandler
+         * @param {string} triggerType 命令的触发方式
+         * @param {string} name 命令名称
+         * @param {string} args 命令参数
+         * @return {Function}
+         * @private
+         */
+        exports.getConfiguredTableCommandHandler = function (triggerType, name) {
+            var handler = this.commands[triggerType + ':' + name];
+            if (u.isString(handler)) {
+                handler = this[handler];
+            }
+
+            if (!u.isFunction(handler)) {
+                throw new Error('Command handler should be a function or a member function of ListView instance');
+            }
+
+            return handler;
         };
 
         /**
