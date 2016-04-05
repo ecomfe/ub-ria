@@ -10,6 +10,12 @@ define(
         var u = require('../util');
         var lib = require('esui/lib');
 
+        var EXTENSION_MAP = {
+            validationRule: initializeValidationRules,
+            tableCellRender: addTableCellRenderers,
+            controlLinkMode: addControlLinkMode
+        };
+
         /**
          * 加载并配置验证规则
          */
@@ -293,9 +299,14 @@ define(
         }
 
         function enable() {
-            initializeValidationRules();
-            addTableCellRenderers();
-            addControlLinkMode();
+            var modules = arguments.length ? arguments : u.keys(EXTENSION_MAP);
+
+            u.each(
+                modules,
+                function (module) {
+                    EXTENSION_MAP[module] && EXTENSION_MAP[module]();
+                }
+            );
         }
 
         /**
