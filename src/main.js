@@ -13,7 +13,7 @@ import mvcExtension from './extension/mvc';
  * @property {string} 版本号
  * @readonly
  */
-export let version = '3.0.0-beta.1';
+export let version = '4.0.0-alpha.1';
 
 /**
  * 启动MVC程序
