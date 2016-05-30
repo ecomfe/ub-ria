@@ -84,8 +84,8 @@ export default class RedirectSubmitHandler extends SubmitHandler {
      * @override
      */
     handle(entity, action) {
-        var data = this.getData(entity, action);
-        var url = u.template(this.getTemplate(), data);
+        let data = this.getData(entity, action);
+        let url = u.template(this.getTemplate(), data);
         this.redirect(action, url, this.getRedirectOptions());
 
         this.next(entity, action);

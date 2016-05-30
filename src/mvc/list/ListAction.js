@@ -6,11 +6,11 @@
  * @author otakustay
  */
 
-import u from '../util';
-import oo from 'eoo';
+import u from '../../util';
 import URL from 'er/URL';
-import {viewEvent} from './decorator';
-import BaseAction from './BaseAction';
+import {accessorProperty} from '../../decorator';
+import {viewEvent} from '../decorator';
+import BaseAction from '../common/BaseAction';
 
 /**
  * 列表Action基类
@@ -18,8 +18,11 @@ import BaseAction from './BaseAction';
  * @class mvc.ListAction
  * @extends mvc.BaseAction
  */
+@accessorProperty('layoutChangeNotifier')
 export default class ListAction extends BaseAction {
-    category = 'list';
+    get category() {
+        return 'list';
+    }
 
     /**
      * 进行查询
@@ -170,8 +173,19 @@ export default class ListAction extends BaseAction {
      */
     updateItems(context) {
         let targetStatus = context.status;
-        let items = context.ids.map(::this.model.getItemById);
-        items.forEach((item) => item.status = targetStatus);
+        let indexList = context.ids.map(::this.model.indexOf);
+        let commands = {
+            results: indexList.reduce(
+                (combine, index) => {
+                    combine[index] = {status: {$set: targetStatus}};
+                    return combine;
+                },
+                {}
+            )
+        };
+        this.model.update(commands);
+
+        let items = u.pick(this.model.get('results'), ...indexList);
         this.view.updateItems(items);
     }
 
@@ -202,25 +216,31 @@ export default class ListAction extends BaseAction {
     initBehavior() {
         super.initBehavior();
 
-        this.getLayoutChangeNotifier().on('layoutchanged', this.adjustLayout, this);
+        this.layoutChangeNotifier.on('layoutchanged', this.adjustLayout, this);
     }
 
     /**
      * @override
      */
     leave() {
-        this.getLayoutChangeNotifier().un('layoutchanged', this.adjustLayout, this);
+        this.layoutChangeNotifier.un('layoutchanged', this.adjustLayout, this);
 
         super.leave();
     }
 
-    @viewEvent('search');
-    [Symbol()]() {
+    /**
+     * @private
+     */
+    @viewEvent('search')
+    onSearch() {
         this.performSearch();
     }
 
-    @viewEvent('pagesizechange');
-    async [Symbol()](e) {
+    /**
+     * @private
+     */
+    @viewEvent('pagesizechange')
+    async onPageSizeChange(e) {
         await this.model.updatePageSize(e.pageSize);
         let event = this.fire('pagesizechange');
         if (!event.isDefaultPrevented()) {
@@ -230,8 +250,11 @@ export default class ListAction extends BaseAction {
         }
     }
 
-    @viewEvent('pagechange');
-    [Symbol()]() {
+    /**
+     * @private
+     */
+    @viewEvent('pagechange')
+    onPageChange() {
         let event = this.fire('pagechange');
         if (!event.isDefaultPrevented()) {
             let query = this.getSearchQuery();
@@ -239,14 +262,20 @@ export default class ListAction extends BaseAction {
         }
     }
 
-    @viewEvent('batchmodify');
-    [Symbol()](e) {
+    /**
+     * @private
+     */
+    @viewEvent('batchmodify')
+    onBatchModify(e) {
         let items = this.getSelectedItems();
         this.modifyStatus(items, e.status);
     }
 
-    @viewEvent('tablesort');
-    [Symbol()](e) {
+    /**
+     * @private
+     */
+    @viewEvent('tablesort')
+    onTableSort(e) {
         let event = this.fire('tablesort');
         if (!event.isDefaultPrevented()) {
             let query = this.getSearchQuery();
@@ -255,13 +284,20 @@ export default class ListAction extends BaseAction {
         }
     }
 
-    @viewEvent('modifystatus');
-    [Symbol()](e) {
+    /**
+     * @private
+     */
+    @viewEvent('modifystatus')
+    onModifyStatus(e) {
         let item = this.model.getItemById(e.id);
         this.modifyStatus([item], e.status);
     }
+
+    /**
+     * @private
+     */
+    @viewEvent('openform')
+    onOpenForm({url, type}) {
+        this.redirect(url);
+    }
 }
-
-oo.defineAccessor(ListAction.prototype, 'layoutChangeNotifier');
-
-export default ListAction;

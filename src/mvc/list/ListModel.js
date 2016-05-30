@@ -6,70 +6,10 @@
  * @author otakustay
  */
 
-import u from '../util';
-import {definePropertyAccessor} from '../meta';
+import u from '../../util';
 import URL from 'er/URL';
-import BaseModel from './BaseModel';
-
-const DEFAULT_ARGS = Symbol('defaultArgs');
-
-// 加载列表
-const LIST = {
-    list: {
-        retrieve(model) {
-            let query = model.getQuery();
-            query = u.purify(query, null, true);
-
-            return model.search(query);
-        },
-        dump: true
-    }
-};
-
-// 加载没有搜索词时的URL，用于搜索词后的“清空”链接
-const LIST_WITHOUT_KEYWORD_URL = {
-    listWithoutKeywordURL(model) {
-        let url = model.get('url');
-        let path = url.getPath();
-        let query = url.getQuery();
-        query = u.omit(query, 'keyword');
-        let template = '#' + URL.withQuery(path, query);
-        return template;
-    }
-};
-
-// 每页记录数
-const PAGE_SIZE = {
-    async pageSize(model) {
-        let globalData = model.data('global');
-        let result = await globalData.getUser();
-        return result.pageSize;
-    }
-};
-
-// 加载是否有列表数据的值
-const HAS_RESULT = {
-    hasResult(model) {
-        let results = model.get('results');
-        // 有返回内容，或者有查询参数的情况下，认为是有内容的
-        return (results && results.length) || !u.isEmpty(model.get('url').getQuery());
-    }
-};
-
-const DEFAULT_STATUS_TRANSITIONS = [
-    {
-        status: 0,
-        deny: [0],
-        statusName: 'remove',
-        command: '删除'
-    },
-    {
-        status: 1,
-        deny: [1],
-        statusName: 'restore',
-        command: '启用'
-    }
-];
+import BaseModel from '../common/BaseModel';
+import * as loader from './loader';
 
 /**
  * 列表数据模型基类
@@ -78,10 +18,78 @@ const DEFAULT_STATUS_TRANSITIONS = [
  * @extends mvc.BaseModel
  */
 export default class ListModel extends BaseModel {
-    statusTransitions = DEFAULT_STATUS_TRANSITIONS;
 
-    // 一般默认是启用状态
-    defaultStatusValue = 1;
+    /**
+     * 构造函数
+     *
+     * @constructs mvc.ListModel
+     * @param {Object} [context] 初始化数据
+     */
+    constructor(context) {
+        super(context);
+
+        // 把默认参数补上，不然像表格的`orderBy`字段没值表格就不能正确显示
+        u.each(
+            this.defaultArgs,
+            (value, key) => {
+                if (!this.has(key)) {
+                    this.set(key, value);
+                }
+            }
+        );
+
+        this.putLoader(loader.list, 0);
+        this.putLoader(loader.pageSize, 0);
+    }
+
+    /**
+     * 获取实体的状态迁移表
+     *
+     * 如果某一个{@link meta.StatusTransition}中同时存在`accept`和`deny`属性，则使用`accept`与`deny`的差集
+     *
+     * @protected
+     * @member mvc.ListModel#statusTransitions
+     * @type {meta.StatusTransition[]}
+     */
+    get statusTransitions() {
+        return [
+            {
+                status: 0,
+                deny: [0],
+                statusName: 'remove',
+                command: '删除'
+            },
+            {
+                status: 1,
+                deny: [1],
+                statusName: 'restore',
+                command: '启用'
+            }
+        ];
+    }
+
+
+    /**
+     * 获取默认`status`参数值，即当URL中没有此参数时发给后端的代替值
+     *
+     * 通常“状态”的默认选项不是“全部”，而是“启用”等状态，就会遇上这样的情况：
+     *
+     * - 如果将“启用”项的值设为`""`，则不会给后端`status`参数，会查询到所有数据
+     * - 如果将“启用”项的值设为`"1"`，则所有入口要加上`status=1`参数
+     *
+     * 为了保持前端URL的整洁以及不需要外部关注默认的`status`参数，同时保证后端的兼容性，列表在设计的时候采用以下方案：
+     *
+     * 1. 将“启用”之类未删除状态的值设为`""`
+     * 2. 在`ListModel`上添加`defaultStatusValue`属性，默认为`1`表示“启用”
+     * 3. 如果URL中没有`status`参数，则使用`defaultStatusValue`属性代替
+     * 4. 如果URL中的`status`参数值为`"all"`，则请求后端时不带此参数以获取全集
+     *
+     * @protected
+     * @member {number | string} mvc.ListModel#defaultStatusValue
+     */
+    get defaultStatusValue() {
+        return 1;
+    }
 
     /**
      * 配置默认查询参数
@@ -95,51 +103,72 @@ export default class ListModel extends BaseModel {
      * @type {Object}
      */
     get defaultArgs() {
-        let args = this[DEFAULT_ARGS] || {};
-        let defaultStatusValue = this.defaultStatusValue;
-        if (!args.hasOwnProperty('status') && defaultStatusValue) {
-            args.status = defaultStatusValue;
-        }
-        return args;
-    }
-
-    set defaultArgs(value) {
-        this[DEFAULT_ARGS] = value;
-
-        // 把默认参数补上，不然像表格的`orderBy`字段没值表格就不能正确显示
-        u.each(
-            this.defaultArgs,
-            (value, key) => {
-                if (!this.has(key)) {
-                    this.set(key, value);
-                }
-            }
-        );
-    }
-
-    /**
-     * 构造函数
-     *
-     * @constructs mvc.ListModel
-     */
-    constructor() {
-        super();
-
-        this.putDatasource(LIST, 0);
-        this.putDatasource(LIST_WITHOUT_KEYWORD_URL, 0);
-        this.putDatasource(PAGE_SIZE, 0);
-        this.putDatasource(HAS_RESULT, 1);
+        return {status: this.defaultStatusValue};
     }
 
     /**
      * 返回原始筛选配置对象
      *
      * @protected
-     * @method mvc.ListModel#getFilters
+     * @member mvc.ListModel#filters
      * @return {Object}
      */
-    getFilters() {
+    get filters() {
         return {};
+    }
+
+    get tableFields() {
+        return [];
+    }
+
+    defineComputedProperties() {
+        super.defineComputedProperties();
+
+        this.defineComputedProperty(
+            'tableFields',
+            [],
+            () => this.tableFields
+        );
+
+        this.defineComputedProperty(
+            'listWithoutKeywordURL',
+            [],
+            () => {
+                let url = this.get('url');
+                let path = url.getPath();
+                let query = u.omit(url.getQuery(), 'keyword');
+                let template = '#' + URL.withQuery(path, query);
+                return template;
+            }
+        );
+
+        this.defineComputedProperty(
+            'hasResult',
+            ['results'],
+            () => {
+                let results = this.get('results');
+                // 有返回内容，或者有查询参数的情况下，认为是有内容的
+                return (results && results.length) || !u.isEmpty(this.get('url').getQuery());
+            }
+        );
+
+        this.defineComputedProperty(
+            'selectMode',
+            [],
+            () => {
+                if (!this.permission) {
+                    return 'multi';
+                }
+
+                return this.checkPermission('canBatchModify') ? 'multi' : '';
+            }
+        );
+
+        this.defineComputedProperty(
+            'filtersInfo',
+            [],
+            () => this.filtersInfo
+        );
     }
 
     /**
@@ -150,25 +179,6 @@ export default class ListModel extends BaseModel {
      */
     getTransitionForStatus(status) {
         return u.findWhere(this.statusTransitions, {status});
-    }
-
-    /**
-     * 处理列表多选|单选类型
-     *
-     * @protected
-     */
-    prepareSelectMode() {
-        let canBatchModify = this.checkPermission('canBatchModify');
-        this.set('selectMode', canBatchModify ? 'multi' : '');
-    }
-
-    /**
-     * @override
-     */
-    prepare() {
-        this.set('filtersInfo', this.getFiltersInfo());
-
-        this.prepareSelectMode();
     }
 
     /**
@@ -207,7 +217,7 @@ export default class ListModel extends BaseModel {
      * @return {boolean}
      */
     canUpdateToStatus(items, status) {
-        let checkStatusTransition = (entity) => {
+        let checkStatusTransition = entity => {
             let config = this.getTransitionForStatus(status);
 
             if (config.accept) {
@@ -266,7 +276,7 @@ export default class ListModel extends BaseModel {
         let list = this.getAllItems();
 
         /* eslint-disable eqeqeq */
-        return u.find(list, (item) => item.id == id);
+        return u.find(list, item => item.id == id);
         /* eslint-enable eqeqeq */
     }
 
@@ -408,9 +418,7 @@ export default class ListModel extends BaseModel {
         if (count <= 1) {
             message = '您确定要删除该' + description + '吗？';
         }
-        let advice = {
-            message: message
-        };
+        let advice = {message};
 
         return advice;
     }
@@ -419,15 +427,15 @@ export default class ListModel extends BaseModel {
      * 返回经过处理的筛选数组
      *
      * @protected
-     * @method mvc.ListModel#getFiltersInfo
+     * @member mvc.ListModel#filtersInfo
      * @return {Object}
      */
-    getFiltersInfo() {
+    get filtersInfo() {
         let isAllFiltersDefault = true;
         let defaultArgs = this.defaultArgs;
         let filters = {};
         u.each(
-            this.getFilters(),
+            this.filters,
             (rawFilter, name) => {
                 let filter = {
                     text: typeof rawFilter.text === 'function' ? rawFilter.text(rawFilter) : rawFilter.text,
@@ -450,41 +458,6 @@ export default class ListModel extends BaseModel {
             }
         );
 
-        return {
-            filters: filters,
-            isAllFiltersDefault: isAllFiltersDefault
-        };
+        return {filters, isAllFiltersDefault};
     }
 }
-
-/**
- * 配置默认`status`参数值，即当URL中没有此参数时发给后端的代替值
- *
- * 通常“状态”的默认选项不是“全部”，而是“启用”等状态，就会遇上这样的情况：
- *
- * - 如果将“启用”项的值设为`""`，则不会给后端`status`参数，会查询到所有数据
- * - 如果将“启用”项的值设为`"1"`，则所有入口要加上`status=1`参数
- *
- * 未了保持前端URL的整洁以及不需要外部关注默认的`status`参数，
- * 同时保证后端的兼容性，列表在设计的时候采用以下方案：
- *
- * 1. 将“启用”之类未删除状态的值设为`""`
- * 2. 在`ListModel`上添加`defaultStatusValue`属性，默认为`1`表示“启用”
- * 3. 如果URL中没有`status`参数，则使用`defaultStatusValue`属性代替
- * 4. 如果URL中的`status`参数值为`"all"`，则请求后端时不带此参数以获取全集
- *
- * @protected
- * @member {number | string} mvc.ListModel#defaultStatusValue
- */
-definePropertyAccessor(ListModel.prototype, 'defaultStatusValue');
-
-/**
- * 设定实体的状态迁移表
- *
- * 如果某一个{@link meta.StatusTransition}中同时存在`accept`和`deny`属性，则使用`accept`与`deny`的差集
- *
- * @protected
- * @member mvc.ListModel#statusTransitions
- * @type {meta.StatusTransition[]}
- */
-definePropertyAccessor(ListModel.prototype, 'statusTransitions');

@@ -11,7 +11,7 @@ import util from 'er/util';
 import events from 'er/events';
 
 function addPageClassName() {
-    let add = (e) => {
+    let add = e => {
         if (!e.target.getPageCategories) {
             return;
         }
@@ -26,7 +26,7 @@ function addPageClassName() {
 
         // `addClass`的简单实现
         if (element.classList) {
-            pageClasses.forEach((className) => element.classList.add(className));
+            pageClasses.forEach(className => element.classList.add(className));
         }
         else {
             let classes = element.className ? element.className.split(/\s+/) : [];
@@ -35,7 +35,7 @@ function addPageClassName() {
         }
     };
 
-    let remove = (e) => {
+    let remove = e => {
         if (!e.action || !e.action.getPageCategories) {
             return;
         }
@@ -54,7 +54,7 @@ function addPageClassName() {
 
         // `removeClass`的简单实现
         if (element.classList) {
-            pageClasses.forEach((className) => element.classList.remove(className));
+            pageClasses.forEach(className => element.classList.remove(className));
         }
         else {
             let classes = element.className
@@ -67,7 +67,7 @@ function addPageClassName() {
         }
     };
 
-    events.on('enteraction', (e) => e.action.on('enter', add));
+    events.on('enteraction', e => e.action.on('enter', add));
     events.on('leaveaction', remove);
     events.on('enteractionfail', remove);
 }
@@ -82,7 +82,7 @@ function enable() {
  * @namespace extension.mvc
  * @memberof extension
  */
-let mvcExtension = {
+export default {
 
     /**
      * 启动扩展
@@ -91,5 +91,3 @@ let mvcExtension = {
      */
     enable: u.once(enable)
 };
-
-export default mvcExtension;

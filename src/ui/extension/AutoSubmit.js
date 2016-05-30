@@ -11,7 +11,6 @@ import ui from 'esui';
 import lib from 'esui/lib';
 import Form from 'esui/Form';
 import Extension from 'esui/Extension';
-import {definePropertyAccessor} from '../../meta';
 
 /**
  * 提交表单
@@ -95,7 +94,7 @@ export default class AutoSubmit extends Extension {
      * @override
      */
     activate() {
-        u.each(this.events, (eventName) => this.target.on(eventName, submit, this));
+        u.each(this.events, eventName => this.target.on(eventName, submit, this));
 
         super.activate();
     }
@@ -104,18 +103,10 @@ export default class AutoSubmit extends Extension {
      * @override
      */
     inactivate() {
-        u.each(this.events, (eventName) => this.target.un(eventName, submit, this));
+        u.each(this.events, eventName => this.target.un(eventName, submit, this));
 
         super.inactivate();
     }
 }
-
-/**
- * 指定对应的表单的id，不指定的话会进行自动查找，使用包含当前控件的main元素的`Form`控件
- *
- * @member ui.extension.AutoSubmit#form
- * @type {string | null}
- */
-definePropertyAccessor(AutoSubmit.prototype, 'form');
 
 ui.registerExtension(AutoSubmit);

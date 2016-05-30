@@ -1,9 +1,12 @@
 {
     "files": [
-        "src/**",
-
-        "!src/**/*.less"
+        "src/**/*.js"
     ],
+    "eslint": {
+        "env": {
+            "es6": true
+        }
+    },
     "htmlcs": {
         "viewport": false
     },

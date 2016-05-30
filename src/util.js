@@ -135,10 +135,10 @@ util.dasherize = function (s) {
     // 如果`encodeURIComponent`，会变成`encodeUriComponent`，
     // 然后加横线后就是`encode-uri-component`得到正确的结果
     // 但是如果连续的大写串后没有其它字母，则将其第二个字母起全部转成小写
-    s = s.replace(/[A-Z]{2,}$/g, (match) => match[0] + match.slice(1).toLowerCase());
-    s = s.replace(/[A-Z]{2,}/g, (match) => match[0] + match.slice(1, -1).toLowerCase() + match[match.length - 1]);
+    s = s.replace(/[A-Z]{2,}$/g, match => match[0] + match.slice(1).toLowerCase());
+    s = s.replace(/[A-Z]{2,}/g, match => match[0] + match.slice(1, -1).toLowerCase() + match[match.length - 1]);
     // 大写字符之间用横线连起来
-    s = s.replace(/[A-Z]/g, (match) => '-' + match.toLowerCase());
+    s = s.replace(/[A-Z]/g, match => '-' + match.toLowerCase());
     if (s[0] === '-') {
         s = s.substring(1);
     }
@@ -204,9 +204,9 @@ util.formatNumber = function (number, decimals, emptyValue, prefix) {
     // - `formatNumber(s, decimals, emptyValue, prefix)`
     //
     // 主要看第2个参数的类型，不是数字的话参数往前移1个
-    if (typeof arguments[1] !== 'number') {
-        prefix = arguments[2];
-        emptyValue = arguments[1];
+    if (typeof decimals !== 'number') {
+        prefix = emptyValue;
+        emptyValue = decimals;
         decimals = 0;
     }
     prefix = prefix || '';
@@ -300,7 +300,7 @@ util.transformPlainObjectToStructured = function (obj) {
         // 这里用递归的话蛮损性能的，循环也还算直接，就用循环了
         util.each(
             keyPath,
-            (key) => {
+            key => {
                 if (!container.hasOwnProperty(key)) {
                     container[key] = {};
                 }

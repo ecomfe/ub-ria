@@ -6,17 +6,42 @@
  * @author otakustay
  */
 
-import u from '../util';
-import oo from 'eoo';
-import UIModel from 'ef/UIModel';
+import u from '../../util';
+import {accessorProperty} from '../../decorator';
+import {data} from '../decorator';
+import Model from 'emc/Model';
 
 const DATA_POOL = Symbol('dataPool');
 
 /**
  * @class mvc.BaseModel
- * @extends ef.UIModel
+ * @extends emc.Model
  */
-export default class BaseModel extends UIModel {
+@accessorProperty('permission')
+@accessorProperty('eventBus')
+@data('global')
+export default class BaseModel extends Model {
+
+    loaders = [];
+
+    constructor(context) {
+        super(context);
+
+        this[DATA_POOL] = new Map();
+
+        this.defineComputedProperties();
+    }
+
+    defineComputedProperties() {
+    }
+
+    pick(...keys) {
+        return keys.reduce((result, key) => Object.assign(result, {[key]: this.get(key)}), {});
+    }
+
+    fill(mixin) {
+        return u.each(mixin, (value, key) => this.set(key, value));
+    }
 
     /**
      * 添加一个数据对象，以便当前数据模型对象可以进行管理
@@ -27,14 +52,12 @@ export default class BaseModel extends UIModel {
      * @param {mvc.RequestManager} instance 一个数据对象
      */
     addData(name, instance) {
-        if (!this[DATA_POOL]) {
-            this[DATA_POOL] = new Map();
-        }
-
+        /* eslint-disable prefer-rest-params */
         if (arguments.length < 2) {
             instance = name;
             name = 'default';
         }
+        /* eslint-enable prefer-rest-params */
         if (!name) {
             name = 'default';
         }
@@ -69,49 +92,48 @@ export default class BaseModel extends UIModel {
     }
 
     /**
-     * 设置全局数据对象
-     *
-     * 可选，一般由IoC统一配置
-     *
-     * @method mvc.FormModel#setGlobalData
-     * @param {Object} data 全局数据对象
-     */
-    setGlobalData(data) {
-        this.addData('global', data);
-    }
-
-    /**
      * 添加一个数据源
      *
      * @protected
-     * @method mvc.BaseModel#putDatasource
+     * @method mvc.BaseModel#putLoader
      * @param {Object} item 数据源配置，参考ER框架的说明
      * @param {number} [index] 数据源放置的位置，如果不提供则放在最后，提供则和那个位置的并行
      */
-    putDatasource(item, index) {
-        // 先复制一份，避免合并时相互污染
-        item = u.clone(item);
-
-        if (!this.datasource) {
-            this.datasource = [];
-        }
-        else if (!Array.isArray(this.datasource)) {
-            this.datasource = [this.datasource];
-        }
-
+    putLoader(item, index) {
         if (index === undefined) {
-            this.datasource.push(item);
+            this.loaders.push(item);
+        }
+        else if (!this.loaders[index]) {
+            // 如果要代码方便，这里使用`[item]`全部转为数组最合适，
+            // 但是使用数组的话，在`load`阶段会需要`Promise.all`包一层，对效率和调用堆栈有影响
+            this.loaders[index] = item;
         }
         else {
-            let originalItem = this.datasource[index] || {};
-            // 如果是数组就加到最后，是对象就混一起了，但我们并不希望这里是数组
-            if (Array.isArray(originalItem)) {
-                originalItem.push(item);
+            this.loaders[index] = [].concat(this.loaders[index], item);
+        }
+    }
+
+    /**
+     * 简化版`er.Model#load`方法，`ub-ria`的`datasoruce`有固定格式，所以不需要太复杂的分析
+     *
+     * @protected
+     * @return {Promise}
+     */
+    async load() {
+        let runLoader = async loader => {
+            let result = await loader(this);
+            this.fill(result);
+            return result;
+        };
+
+        for (let loader of this.loaders) {
+            if (typeof loader === 'function') {
+                await runLoader(loader);
             }
             else {
-                u.extend(originalItem, item);
+                // 一定是数组
+                await Promise.all(loader.map(runLoader));
             }
-            this.datasource[index] = originalItem;
         }
     }
 
@@ -126,7 +148,7 @@ export default class BaseModel extends UIModel {
      * @throws {Error} 关联的`permission`对象不提供`permissionName`对应的权限的判断
      */
     checkPermission(permissionName) {
-        let permission = this.getPermission();
+        let permission = this.permission;
 
         if (!permission) {
             throw new Error('No attached permission object');
@@ -147,40 +169,8 @@ export default class BaseModel extends UIModel {
     dispose() {
         super.dispose();
 
-        for (let data of this[DATA_POOL].values()) {
-            data.dispose();
-        }
+        u.invoke(this[DATA_POOL].values(), 'dispose');
         this[DATA_POOL].clear();
         this[DATA_POOL] = null;
     }
 }
-
-/**
- * 获取权限对象
- *
- * @method mvc.BaseModel#getPermission
- * @return {Object} 权限对象，其中不同权限对应不同方法，由实际需要的模块定义接口
- */
-
-/**
- * 设置权限对象
- *
- * @method mvc.BaseModel#setPermission
- * @param {Object} permission 权限对象，其中不同权限对应不同方法，由实际需要的模块定义接口
- */
-oo.defineAccessor(BaseModel.prototype, 'permission');
-
-/**
- * 获取事件总线对象
- *
- * @method  mvc.BaseAction#getEventBus
- * @return {mini-event.EventTarget}
- */
-
-/**
- * 设置事件总线对象
- *
- * @method  mvc.BaseAction#getEventBus
- * @param {mini-event.EventTarget} eventBus 事件总线对象
- */
-oo.defineAccessor(BaseModel.prototype, 'eventBus');

@@ -6,9 +6,9 @@
  * @author otakustay
  */
 
-import oo from 'eoo';
 import UIView from 'ef/UIView';
-import {DECORATOR_UI_EVENTS, DECORATOR_UI_PROPERTIES} from './decorator';
+import {accessorProperty} from '../../decorator';
+import {DECORATOR_UI_EVENTS} from '../decorator';
 
 /**
  * 视图基类
@@ -16,6 +16,8 @@ import {DECORATOR_UI_EVENTS, DECORATOR_UI_PROPERTIES} from './decorator';
  * @class mvc.BaseView
  * @extends ef.UIView
  */
+@accessorProperty('rule')
+@accessorProperty('eventBus')
 export default class BaseView extends UIView {
 
     /**
@@ -28,13 +30,6 @@ export default class BaseView extends UIView {
                 this.getSafely(control).on(event, this[key], this);
             }
         }
-    }
-
-    /**
-     * @override
-     */
-    getUIProperties() {
-        return this[DECORATOR_UI_PROPERTIES] || {};
     }
 
     /**
@@ -65,7 +60,7 @@ export default class BaseView extends UIView {
      * 参数同`ef.UIView.prototype.confirm`，但返回一个`Promise`对象
      *
      * @method mvc.BaseView#waitDecision
-     * @param {Array} args 原始参数
+     * @param {...*} args 原始参数
      * @return {Promise.<string>} 一个`Promise`对象，进入`resolved`状态时提供用户选择的按钮名称，默认有`"ok"`和`"cancel"`可选
      */
     waitDecision(...args) {
@@ -88,19 +83,12 @@ export default class BaseView extends UIView {
      * 如果需要知道用户选择“取消”，则应当使用{@link mvc.BaseView#waitDecision|waitDecision方法}
      *
      * @method mvc.BaseView#waitConfirm
-     * @param {Array} args 原始参数
-     * @return {Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
+     * @param {...*} args 原始参数
+     * @return {Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则永远不改变状态
      */
     waitConfirm(...args) {
         let waiting = this.waitDecision(...args);
-        let executor = (resolve) => {
-            let receiveOK = (result) => {
-                if (result === 'ok') {
-                    resolve();
-                }
-            };
-            waiting.then(receiveOK);
-        };
+        let executor = resolve => waiting.then(result => result === 'ok' && resolve());
         return new Promise(executor);
     }
 
@@ -108,7 +96,7 @@ export default class BaseView extends UIView {
      * 等待一个`DialogAction`加载完成
      *
      * @method mvc.BaseView#waitActionDialog
-     * @param {Array} args 原始参数
+     * @param {...*} args 原始参数
      * @return {Promise} 一个`Promise`对象，对应的Action加载完成时进入`resolved`状态，如Action加载失败则进入`rejected`状态
      */
     waitActionDialog(...args) {
@@ -133,10 +121,8 @@ export default class BaseView extends UIView {
     getRuleValue(path) {
         path = path.split('.');
 
-        let value = this.model.get('rule') || this.getRule();
-        for (let segment of path) {
-            value = value[segment];
-        }
+        let ruleObject = this.model.get('rule') || this.getRule();
+        let value = path.reduce((current, name) => current[name], ruleObject);
 
         return value;
     }
@@ -163,7 +149,7 @@ export default class BaseView extends UIView {
         let templateData = super.getTemplateData();
         let getProperty = templateData.get;
 
-        templateData.get = (path) => {
+        templateData.get = path => {
             // 访问`rule`的会做一次拦截，但如果`model`中正好也有`rule`，以`model`的优先
             if (path.indexOf('rule.') === 0) {
                 return this.getRuleValue(path.substring(5));
@@ -205,31 +191,16 @@ export default class BaseView extends UIView {
 }
 
 /**
- * 获取对应的规则对象
+ * 对应的规则对象
  *
- * @method mvc.BaseView#getRule
- * @return {Object}
+ * @member mvc.BaseView#rule
+ * @type {Object}
  */
 
-/**
- * 设置对应的规则对象
- *
- * @method mvc.BaseView#setRule
- * @param {Object} rule 对应的规则对象
- */
-oo.defineAccessor(BaseView.prototype, 'rule');
 
 /**
- * 获取事件总线对象
+ * 事件总线对象
  *
- * @method  mvc.BaseAction#getEventBus
- * @return {mini-event.EventTarget}
+ * @member mvc.BaseAction#eventBus
+ * @type {mini-event.EventTarget}
  */
-
-/**
- * 设置事件总线对象
- *
- * @method  mvc.BaseAction#getEventBus
- * @param {mini-event.EventTarget} eventBus 事件总线对象
- */
-oo.defineAccessor(BaseView.prototype, 'eventBus');

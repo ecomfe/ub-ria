@@ -6,9 +6,9 @@
  * @author otakustay
  */
 
-import oo from 'eoo';
-import {viewEvent} from './decorator';
-import BaseAction from './BaseAction';
+import {accessorProperty} from '../../decorator';
+import {viewEvent} from '../decorator';
+import BaseAction from '../common/BaseAction';
 
 /**
  * 表单Action基类
@@ -16,8 +16,11 @@ import BaseAction from './BaseAction';
  * @class mvc.FormAction
  * @extends mvc.BaseAction
  */
+@accessorProperty('submitHandler')
 export default class FormAction extends BaseAction {
-    category = 'form';
+    get category() {
+        return 'form';
+    }
 
     /**
      * 提交时的确认信息
@@ -38,9 +41,9 @@ export default class FormAction extends BaseAction {
      * @type {string}
      */
     get cancelConfirmTitle() {
-        // IoC会来访问一次，此时没有`model`，在IoC支持判断getter以前得有这个Hasck
+        // IoC会来访问一次，此时没有`model`，在IoC支持判断getter以前得有这个Hack
         // TODO: IoC支持判断getter后移除
-        var formType = this.model ? this.model.get('formType') : 'create';
+        let formType = this.model ? this.model.get('formType') : 'create';
         if (formType === 'create') {
             return '新建';
         }
@@ -110,7 +113,7 @@ export default class FormAction extends BaseAction {
     handleSubmitResult(entity) {
         let entitySaveEvent = this.fire('entitysave', {entity});
         if (!entitySaveEvent.isDefaultPrevented()) {
-            let submitHandler = this.getSubmitHandler();
+            let submitHandler = this.submitHandler;
             if (submitHandler) {
                 submitHandler.handle(entity, this);
             }
@@ -159,7 +162,7 @@ export default class FormAction extends BaseAction {
             }
         }
         else {
-            throw new Error('Cannot find formType in methodMap');
+            throw new Error(`Cannot find formType "${this.content.formType}" in methodMap`);
         }
     }
 
@@ -184,7 +187,7 @@ export default class FormAction extends BaseAction {
 
         let events = [this.fire('submitcancel'), this.fire('handlefinish')];
 
-        if (!events.some((e) => e.isDefaultPrevented())) {
+        if (!events.some(e => e.isDefaultPrevented())) {
             this.redirectAfterCancel();
         }
     }
@@ -220,7 +223,7 @@ export default class FormAction extends BaseAction {
 
         // 保存一份最初的form表单内容到model，用于判断表单内容是否被更改
         let initialFormData = this.view.getFormData();
-        this.model.set('initialFormData', initialFormData, {silent: true});
+        this.model.set('initialFormData', initialFormData);
     }
 
     /**
@@ -231,26 +234,7 @@ export default class FormAction extends BaseAction {
      */
     isChildForm() {
         // 如果表单进入时带来returnUrl参数，则认为该表单为一个ChildForm
-        return this.model.hasValue('returnUrl') || this.model.hasValue('returnURL');
-    }
-
-    @viewEvent('submit');
-    async [Symbol()]() {
-        this.view.clearGlobalError();
-        let entity = this.view.getEntity();
-
-        let options = {content: this.submitConfirmMessage};
-        await this.view.waitSubmitConfirm(options);
-        this.startSubmit();
-        try {
-            await this.submitEntity(entity);
-        }
-        catch (ex) {
-            throw ex;
-        }
-        finally {
-            this.finishSubmit();
-        }
+        return this.model.hasValue('returnURL');
     }
 
     /**
@@ -273,8 +257,24 @@ export default class FormAction extends BaseAction {
         this.view && this.view.enableSubmit();
     }
 
+    @viewEvent('submit')
+    async onSubmit() {
+        this.view.clearGlobalError();
+        let entity = this.view.getEntity();
+
+        let options = {content: this.submitConfirmMessage};
+        await this.view.waitSubmitConfirm(options);
+        this.startSubmit();
+        try {
+            await this.submitEntity(entity);
+        }
+        finally {
+            this.finishSubmit();
+        }
+    }
+
     @viewEvent('cancel');
-    [Symbol()]() {
+    onCancel() {
         this.cancelEdit();
     }
 }
@@ -296,4 +296,3 @@ export default class FormAction extends BaseAction {
  * @method mvc.FormAction#setSubmitHandler
  * @param {mvc.handler.SubmitHandler} handler 提交成功处理组件
  */
-oo.defineAccessor(FormAction.prototype, 'submitHandler');

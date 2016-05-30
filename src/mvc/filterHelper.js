@@ -30,14 +30,10 @@ let helper = {
          * @return {string}
          */
         getText(filter) {
-            var item = u.find(
-                filter.datasource,
-                (item) => {
-                    /* eslint-disable eqeqeq */
-                    return item.value == filter.value;
-                    /* eslint-enable eqeqeq */
-                }
-            );
+            /* eslint-disable eqeqeq */
+            let item = u.find(filter.datasource, item => item.value == filter.value);
+            /* eslint-enable eqeqeq */
+
             return item && item.text || '';
         }
     },
@@ -57,14 +53,10 @@ let helper = {
          * @return {string}
          */
         getText(filter) {
-            var item = u.find(
-                filter.datasource,
-                (item) => {
-                    /* eslint-disable eqeqeq */
-                    return item.id == filter.value;
-                    /* eslint-enable eqeqeq */
-                }
-            );
+            /* eslint-disable eqeqeq */
+            let item = u.find(filter.datasource, item => item.id == filter.value);
+            /* eslint-enable eqeqeq */
+
             return item && item.name || '';
         }
     }

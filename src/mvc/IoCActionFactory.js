@@ -35,8 +35,8 @@ export default class IoCActionFactory {
      * @return {Promise.<er.Action>}
      */
     async createRuntimeAction(actionContext) {
-        var ioc = this.getIocContainer();
-        let action = await new Promise((resolve) => ioc.getComponent(this[ACTION_COMPONENT], resolve));
+        let ioc = this.getIocContainer();
+        let action = await new Promise(resolve => ioc.getComponent(this[ACTION_COMPONENT], resolve));
         return this.buildAction(actionContext, action);
     }
 
@@ -47,9 +47,9 @@ export default class IoCActionFactory {
      * @return {string}
      */
     getViewName(actionContext) {
-        var parts = u.compact(actionContext.url.getPath().split('/'));
+        let parts = u.compact(actionContext.url.getPath().split('/'));
 
-        var pageType = parts[parts.length - 1];
+        let pageType = parts[parts.length - 1];
         if (pageType === 'create' || pageType === 'update') {
             parts[parts.length - 1] = 'form';
         }

@@ -6,13 +6,10 @@
  * @author otakustay
  */
 
-import u from '../util';
-import {definePropertyAccessor} from '../meta';
+import u from '../../util';
 import URL from 'er/URL';
-import BaseView from './BaseView';
-import {bindControlEvent as on, control} from './decorator';
-
-const EMPTY_ARRAY = Object.freeze([]);
+import BaseView from '../common/BaseView';
+import {bindControlEvent as on, control} from '../decorator';
 
 /**
  * 列表视图基类
@@ -32,8 +29,6 @@ const EMPTY_ARRAY = Object.freeze([]);
  * @extends mvc.BaseView
  */
 export default class ListView extends BaseView {
-    tableFields = EMPTY_ARRAY;
-
     @control();
     get pager() {}
 
@@ -83,7 +78,7 @@ export default class ListView extends BaseView {
 
         u.each(
             this.getGroup('batch'),
-            (button) => {
+            button => {
                 let status = +button.getData('status');
                 // 1. 没有任何选中项时，所有按钮肯定禁用
                 // 2. 使用`model.canUpdateToStatus`判断按钮是否能用
@@ -177,12 +172,7 @@ export default class ListView extends BaseView {
             this.clearFilterValue(name);
         }
         else {
-            this.getGroup('clear-button').each(
-                (button) => {
-                    let name = button.get('name');
-                    this.clearFilterValue(name);
-                }
-            );
+            this.getGroup('clear-button').each(button => this.clearFilterValue(button.get('name')));
         }
 
         this.fire('search');
@@ -214,7 +204,9 @@ export default class ListView extends BaseView {
      *
      * @protected
      * @method mvc.ListView#handleTableCommand
-     * @param {Object} e command事件
+     * @param {string} triggerType 触发事件类型
+     * @param {string} name 命令名称
+     * @param {string} args 命令参数
      */
     handleTableCommand({triggerType, name, args}) {
         if (triggerType === 'click') {
@@ -232,9 +224,13 @@ export default class ListView extends BaseView {
                 let id = args;
                 let url = this.getActionURL(name, id);
 
-                this.popDrawerAction({url}).show();
+                this.openForm(url, name);
             }
         }
+    }
+
+    openForm(url, type) {
+        this.fire('openform', {url, type});
     }
 
     /**
@@ -267,7 +263,7 @@ export default class ListView extends BaseView {
         // 批量更新
         this.getGroup('batch').on(
             'click',
-            (e) => {
+            e => {
                 let args = {
                     // `status`是`number`类型
                     status: +e.target.getData('status')
@@ -279,25 +275,13 @@ export default class ListView extends BaseView {
 
         this.getGroup('clear-button').on(
             'click',
-            (e) => {
+            e => {
                 let name = e.target.get('name');
                 this.submitSearchWithoutKey(name);
             }
         );
 
         super.bindEvents();
-    }
-
-    /**
-     * @override
-     */
-    getUIProperties() {
-        let properties = super.getUIProperties() || {};
-
-        let table = properties.table || (properties.table = {});
-        table.fields = this.tableFields;
-
-        return properties;
     }
 
     /**
@@ -344,14 +328,14 @@ export default class ListView extends BaseView {
 
         drawerActionPanel.on(
             'action@submitcancel',
-            (e) => {
+            e => {
                 e.preventDefault();
                 e.target.dispose();
             }
         );
         drawerActionPanel.on(
             'action@back',
-            (e) => {
+            e => {
                 e.stopPropagation();
                 e.preventDefault();
                 e.target.hide();
@@ -434,7 +418,7 @@ export default class ListView extends BaseView {
      * @return {Promise}
      */
     waitModifyStatusConfirm(context, advice) {
-        var entityDescription = this.model.get('entityDescription');
+        let entityDescription = this.model.get('entityDescription');
         let options = {
             title: `${context.command}${entityDescription}`,
             content: advice.message
@@ -442,23 +426,35 @@ export default class ListView extends BaseView {
         return this.waitConfirm(options);
     }
 
-    @on('pager', 'pagesizechange');
-    [Symbol()]() {
+    /**
+     * @private
+     */
+    @on('pager', 'pagesizechange')
+    onPagerPageSizeChange() {
         this.updatePageSize();
     }
 
-    @on('pager', 'pagechange');
-    [Symbol()]() {
+    /**
+     * @private
+     */
+    @on('pager', 'pagechange')
+    onPagerPageChange() {
         this.updatePageIndex();
     }
 
-    @on('table', 'select');
-    [Symbol()]() {
+    /**
+     * @private
+     */
+    @on('table', 'select')
+    onTableSelect() {
         this.updateBatchButtonStatus();
     }
 
-    @on('table', 'sort');
-    [Symbol()](e) {
+    /**
+     * @private
+     */
+    @on('table', 'sort')
+    onTableSort(e) {
         let tableProperties = {
             order: e.order,
             orderBy: e.field.field
@@ -466,33 +462,51 @@ export default class ListView extends BaseView {
         this.sortTable(tableProperties);
     }
 
-    @on('filter', 'submit');
-    [Symbol()]() {
+    /**
+     * @private
+     */
+    @on('filter', 'submit')
+    onFilterSubmit() {
         this.submitSearch();
     }
 
-    @on('filter-switch', 'click');
-    [Symbol()]() {
+    /**
+     * @private
+     */
+    @on('filter-switch', 'click')
+    onFilterSwitchClick() {
         this.filterPanel.isHidden() ? this.showFilterPanel() : this.cancelFilter();
     }
 
-    @on('filter-cancel', 'click');
-    [Symbol()]() {
+    /**
+     * @private
+     */
+    @on('filter-cancel', 'click')
+    onFilterCancelClick() {
         this.cancelFilter();
     }
 
-    @on('filter-modify', 'click');
-    [Symbol()]() {
+    /**
+     * @private
+     */
+    @on('filter-modify', 'click')
+    onFilterModifyClick() {
         this.toggleFilterPanelContent();
     }
 
-    @on('table', 'command');
-    [Symbol()](e) {
+    /**
+     * @private
+     */
+    @on('table', 'command')
+    onTableCommand(e) {
         this.handleTableCommand(e);
     }
 
-    @on('create', 'click');
-    [Symbol()](e) {
+    /**
+     * @private
+     */
+    @on('create', 'click')
+    onCreateClick(e) {
         e.stopPropagation();
         e.preventDefault();
         let url = String(e.target.get('href'));
@@ -501,14 +515,6 @@ export default class ListView extends BaseView {
         if (url[0] === '#') {
             url = url.slice(1);
         }
-        this.popDrawerAction({url}).show();
+        this.openForm(url, 'create');
     }
 }
-
-/**
- * 表格的列配置
- *
- * @member mvc.ListView#tableFields
- * @type {Array.<Object>}
- */
-definePropertyAccessor(ListView.prototype, 'tableFields');

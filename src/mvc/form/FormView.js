@@ -6,13 +6,13 @@
  * @author otakustay
  */
 
-import u from '../util';
-import update from '../update';
-import BaseView from './BaseView';
+import u from '../../util';
+import {defaults} from 'diffy-update';
+import BaseView from '../common/BaseView';
 import Validity from 'esui/validator/Validity';
 import ValidityState from 'esui/validator/ValidityState';
-import Warn from '../ui/Warn';
-import {bindControlEvent as on, control} from './decorator';
+import Warn from '../../ui/warn/Warn';
+import {bindControlEvent as on, control} from '../decorator';
 
 
 /**
@@ -34,17 +34,14 @@ export default class FormView extends BaseView {
     @control();
     get form() {}
 
-    @control();
+    @control()
     get submitSection() {}
 
-    @control('form-page');
+    @control('form-page')
     get formViewContainer() {}
 
-    @control('form-content-main');
+    @control('form-content-main')
     get formContent() {}
-
-    @control('form-confirm');
-    get confirmWarn() {}
 
     /**
      * 从表单中获取实体数据
@@ -127,7 +124,7 @@ export default class FormView extends BaseView {
      * @return {er.Promise} 一个`Promise`对象，用户确认则进入`resolved`状态，用户取消则进入`rejected`状态
      */
     waitCancelConfirm(options) {
-        let confirmOptions = update.defaults(
+        let confirmOptions = defaults(
             options,
             null,
             {
@@ -157,20 +154,15 @@ export default class FormView extends BaseView {
      */
     waitFormConfirm(options) {
         // 加viewContext
-        let warnOptions = update.defaults(options, null, {viewContext: this.viewContext});
-
-        let warn = this.confirmWarn;
-        if (warn) {
-            warn.hide();
-        }
+        let warnOptions = defaults(options, null, {viewContext: this.viewContext});
 
         let extendedOptions = {
             wrapper: this.submitSection,
-            id: `form-confirm`
+            id: 'form-confirm'
         };
         u.extend(warnOptions, extendedOptions);
 
-        warn = Warn.show(warnOptions);
+        let warn = Warn.show(warnOptions);
 
         // 容器的状态要变一下
         this.formViewContainer.addState('warned');
@@ -178,7 +170,7 @@ export default class FormView extends BaseView {
         // 点击表单编辑区也会关闭
         this.formContent.on(
             'command',
-            (e) => {
+            e => {
                 if (e.name === 'form-content-click') {
                     warn.hide();
                 }
@@ -190,6 +182,8 @@ export default class FormView extends BaseView {
             warn.on('ok', () => this.formViewContainer.removeState('warned'));
             warn.on('cancel', () => this.formViewContainer.removeState('warned'));
             warn.on('hide', () => this.formViewContainer.removeState('warned'));
+            warn.on('ok', ::warn.hide);
+            warn.on('cancel', ::warn.hide);
         };
 
         return new Promise(executor);
@@ -248,7 +242,7 @@ export default class FormView extends BaseView {
 
         drawerActionPanel.on(
             'action@entitysave',
-            (e) => {
+            e => {
                 e.stopPropagation();
                 e.preventDefault();
                 this.handleAfterRelatedEntitySaved(e.entity, targetId);
@@ -256,21 +250,21 @@ export default class FormView extends BaseView {
         );
         drawerActionPanel.on(
             'action@handlefinish',
-            (e) => {
+            e => {
                 e.target.hide();
                 e.target.dispose();
             }
         );
         drawerActionPanel.on(
             'action@submitcancel',
-            (e) => {
+            e => {
                 e.preventDefault();
                 e.target.dispose();
             }
         );
         drawerActionPanel.on(
             'action@back',
-            (e) => {
+            e => {
                 e.stopPropagation();
                 e.preventDefault();
                 e.target.hide();
@@ -281,12 +275,12 @@ export default class FormView extends BaseView {
     }
 
     @on('form', 'submit');
-    [Symbol()]() {
+    onFormSubmit() {
         this.fire('submit');
     }
 
     @on('cancel', 'click');
-    [Symbol()]() {
+    onCancelClick() {
         this.fire('cancel');
     }
 }

@@ -6,7 +6,7 @@
  * @author otakustay
  */
 
-import SingleEntityModel from './SingleEntityModel';
+import SingleEntityModel from '../common/SingleEntityModel';
 
 /**
  * 表单数据模型基类
@@ -49,7 +49,7 @@ export default class FormModel extends SingleEntityModel {
     async save(entity) {
         entity = this.fillEntity(entity);
 
-        var validationResult = this.validateEntity(entity);
+        let validationResult = this.validateEntity(entity);
 
         if (validationResult.length > 0) {
             throw {type: 'validationConflict', fields: validationResult};
@@ -71,7 +71,7 @@ export default class FormModel extends SingleEntityModel {
         // 更新默认加上id
         entity.id = this.get('id');
 
-        var validationResult = this.validateEntity(entity);
+        let validationResult = this.validateEntity(entity);
 
         if (validationResult.length > 0) {
             throw {type: 'validationConflict', fields: validationResult};
@@ -89,7 +89,7 @@ export default class FormModel extends SingleEntityModel {
      * @return {Promise.<Object, meta.RequestError>} 成功时提供服务器返回的实体摘要信息
      */
     async saveEntity(entity) {
-        var data = this.data();
+        let data = this.data();
         if (!data) {
             throw new Error('No default data object attached to this Model');
         }
@@ -109,7 +109,7 @@ export default class FormModel extends SingleEntityModel {
      * @return {Promise.<Object, meta.RequestError>} 成功时提供服务器返回的实体摘要信息
      */
     async updateEntity(entity) {
-        var data = this.data();
+        let data = this.data();
         if (!data) {
             throw new Error('No default data object attached to this Model');
         }

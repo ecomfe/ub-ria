@@ -55,38 +55,6 @@ export function bindControlEvent(control, event) {
     };
 }
 
-/**
- * 用于获取通过decorator添加的控件属性的Symbol
- *
- * @type {Symbol}
- */
-export const DECORATOR_UI_PROPERTIES = Symbol('decoratorUIProperties');
-
-/**
- * 添加控件属性，仅可用在class上
- *
- * @protected
- * @param {string} control 控件的id
- * @param {string} key 属性名
- * @param {*} value 属性值
- * @return {Function}
- */
-export function uiProperty(control, key, value) {
-    // 支持`@property(control, key, value)`和`@property(control, properties)`两种重载
-    let properties = arguments.length === 3 ? {[key]: value} : key;
-    return (View) => {
-        return class extends View {
-            constructor(...args) {
-                super(...args);
-
-                let map = this[DECORATOR_UI_PROPERTIES] || (this[DECORATOR_UI_PROPERTIES] = {});
-                let controlProperties = map[control] || (map[control] = {});
-                u.extend(controlProperties, properties);
-            }
-        };
-    };
-}
-
 export const DECORATOR_VIEW_EVENTS = Symbol('decoratorViewEvents');
 
 export function viewEvent(event) {
@@ -99,5 +67,22 @@ export function viewEvent(event) {
         }
 
         target[DECORATOR_VIEW_EVENTS].push({event, key});
+    };
+}
+
+/**
+ * data setter 装饰器: @data('app') => Class#setAppData = function (data) { this.addData('app', data); }
+ *
+ * @param {string} entityName 实体名
+ * @return {Function}
+ */
+export function data(entityName = 'default') {
+    return target => {
+
+        let upperName = entityName === 'default' ? '' : entityName.charAt(0).toUpperCase() + entityName.slice(1);
+
+        target.prototype[`set${upperName}Data`] = function (data) {
+            this.addData(entityName, data);
+        };
     };
 }

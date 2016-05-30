@@ -6,13 +6,10 @@
  * @author otakustay
  */
 
-import u from '../util';
-import oo from 'eoo';
-import {definePropertyAccessor} from '../meta';
+import u from '../../util';
+import {accessorProperty, memoize} from '../../decorator';
 import Action from 'er/Action';
-import {DECORATOR_VIEW_EVENTS} from './decorator';
-
-const ENTITY_NAME = Symbol('entityName');
+import {DECORATOR_VIEW_EVENTS} from '../decorator';
 
 /**
  * Action基类，提供实体名称和实体描述的维护
@@ -20,6 +17,9 @@ const ENTITY_NAME = Symbol('entityName');
  * @class mvc.BaseAction
  * @extends er.Action
  */
+@accessorProperty('group')
+@accessorProperty('packageName')
+@accessorProperty('eventBus')
 export default class BaseAction extends Action {
 
     /**
@@ -28,24 +28,37 @@ export default class BaseAction extends Action {
      * @memberOf  mvc.BaseAction#entityName
      * @type {string}
      */
+    @memoize()
     get entityName() {
-        if (!this[ENTITY_NAME]) {
-            // 如果在`enteractionfail`之类的事件中用到，此时是没有`context`的
-            if (this.context) {
-                // 几乎所有的URL都是`/{entityName}/list|update|create|view`结构
-                let path = this.context.url.getPath();
-                this[ENTITY_NAME] = path.split('/')[1];
-            }
-            else {
-                return '';
-            }
+        // 如果在`enteractionfail`之类的事件中用到，此时是没有`context`的
+        if (this.context) {
+            // 几乎所有的URL都是`/{entityName}/list|update|create|view`结构
+            let path = this.context.url.getPath();
+            return path.split('/')[1];
         }
 
-        return this[ENTITY_NAME];
+        return '';
     }
 
-    set entityName(value) {
-        this[ENTITY_NAME] = value;
+
+    /**
+     * 当前Action所处理的实体描述
+     *
+     * @memberOf  mvc.BaseAction#entityDescription
+     * @type {string}
+     */
+    get entityDescription() {
+        return '';
+    }
+
+    /**
+     * 当前Action所在分类
+     *
+     * @memberOf  mvc.BaseAction#category
+     * @type {string}
+     */
+    get category() {
+        return '';
     }
 
     /**
@@ -118,28 +131,11 @@ export default class BaseAction extends Action {
 }
 
 /**
- * 当前Action所处理的实体简介
- *
- * @memberOf  mvc.BaseAction#entityDescription
- * @type {string}
- */
-definePropertyAccessor(BaseAction.prototype, 'entityDescription');
-
-/**
  * 当前Action所在分组
  *
  * @memberOf  mvc.BaseAction#group
  * @type {string}
  */
-definePropertyAccessor(BaseAction.prototype, 'group');
-
-/**
- * 当前Action所在分类
- *
- * @memberOf  mvc.BaseAction#category
- * @type {string}
- */
-definePropertyAccessor(BaseAction.prototype, 'category');
 
 /**
  * 当前模块包名，用于第三方模块集成系统时使用，一些CSS Class的生成
@@ -147,7 +143,6 @@ definePropertyAccessor(BaseAction.prototype, 'category');
  * @member mvc.BaseAction#packageName
  * @return {string}
  */
-definePropertyAccessor(BaseAction.prototype, 'packageName');
 
 /**
  * 获取事件总线对象
@@ -162,4 +157,3 @@ definePropertyAccessor(BaseAction.prototype, 'packageName');
  * @method  mvc.BaseAction#getEventBus
  * @param {mini-event.EventTarget} eventBus 事件总线对象
  */
-oo.defineAccessor(BaseAction.prototype, 'eventBus');

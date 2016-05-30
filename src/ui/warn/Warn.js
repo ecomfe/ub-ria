@@ -6,17 +6,16 @@
  * @author lixiang
  */
 
+import u from '../../util';
 import lib from 'esui/lib';
 import Control from 'esui/Control';
 import painters from 'esui/painters';
+import {set} from 'diffy-update';
+import etpl from 'etpl';
+import TEMPLATE from 'text!./warn.tpl.html';
 
-const TEMPLATE = '<i class="${iconClass} ui-icon ui-icon-question-circle"></i>'
-     + '<div class="${contentClass}" id="${contentId}"></div>'
-     + '<div class="${operationFieldClass}">'
-     + '    <esui-button class="${okBtnClass}" data-ui="childName:btnOk;">${okLabel}</esui-button>'
-     + '    <esui-button class="${cancelBtnClass}" data-ui="childName:btnCancel;">'
-     + '    ${cancelLabel}</esui-button>'
-     + '</div>';
+let engine = new etpl.Engine();
+engine.parse(TEMPLATE);
 
 /**
  * Warn控件
@@ -38,14 +37,20 @@ export default class Warn extends Control {
         return 'Warn';
     }
 
+    constructor(...args) {
+        super(...args);
+
+        this.helper.setTemplateEngine(engine);
+    }
+
     /**
      * @override
      */
     initOptions(options = {}) {
-        let properties = {};
-        lib.extend(properties, options);
+        let properties = options;
+
         if (options.content == null) {
-            properties.content = this.main.innerHTML;
+            properties = set(properties, 'content', this.main.innerHTML);
         }
 
         this.setProperties(properties);
@@ -55,25 +60,14 @@ export default class Warn extends Control {
      * @override
      */
     initStructure() {
-        this.main.innerHTML = lib.format(
-            TEMPLATE,
-            {
-                iconClass: this.helper.getPartClassName('icon'),
-                contentId: this.helper.getId('content'),
-                contentClass: this.helper.getPartClassName('content'),
-                okBtnClass: this.helper.getPartClassName('ok-btn'),
-                cancelBtnClass: this.helper.getPartClassName('cancel-btn'),
-                okLabel: this.okLabel,
-                cancelLabel: this.cancelLabel,
-                operationFieldClass: this.helper.getPartClassName('operation-field')
-            }
-        );
+        this.main.innerHTML = this.helper.renderTemplate('main', u.pick(this, 'okLabel', 'cancelLabel'));
 
         this.initChildren();
 
-        let handleClick = (type) => {
+        let handleClick = type => {
             // 如果在参数里设置了处理函数，会在fire时执行
             this.fire(type);
+
             if (type === 'ok') {
                 this.dispose();
             }

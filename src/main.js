@@ -8,30 +8,19 @@
 
 import er from 'er';
 import mvcExtension from './extension/mvc';
-import uiExtension from './extension/ui';
 
 /**
- * 模块入口
- *
- * @namespace main
+ * @property {string} 版本号
+ * @readonly
  */
-let main = {
-    /**
-     * @property {string} 版本号
-     * @readonly
-     */
-    version: '3.0.0-beta.1',
+export let version = '3.0.0-beta.1';
 
-    /**
-     * 启动MVC程序
-     *
-     * @method main.start
-     */
-    start() {
-        mvcExtension.enable();
-        uiExtension.enable();
-        er.start();
-    }
+/**
+ * 启动MVC程序
+ *
+ * @method main.start
+ */
+export let start = () => {
+    mvcExtension.enable();
+    er.start();
 };
-
-export default main;

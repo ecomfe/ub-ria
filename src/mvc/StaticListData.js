@@ -111,6 +111,7 @@ export default class StaticListData extends RequestManager {
 
         // 先排序
         if (query.orderBy) {
+            // TODO: 优化一下
             this.sort(results, query.order, query.orderBy);
         }
 
@@ -169,7 +170,7 @@ export default class StaticListData extends RequestManager {
      * @return {boolean}
      */
     checkStaticKeyChanged(query) {
-        return STATIC_KEYS.some((key) => this[key] !== query[key]);
+        return STATIC_KEYS.some(key => this[key] !== query[key]);
     }
 
     /**

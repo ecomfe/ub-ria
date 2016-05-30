@@ -11,6 +11,8 @@ import oo from 'eoo';
 
 const RUNNING_REQUESTS = Symbol('runningRequests');
 
+let globalRunningRequests = new Map();
+
 /**
  * 请求管理类
  *
@@ -89,11 +91,7 @@ export default class RequestManager {
 
         options = strategy.formatOptions(options);
 
-        let request = {
-            name: name,
-            options: options,
-            config: config
-        };
+        let request = {name, options, config};
 
         if (request.options.url) {
             request.options.url = strategy.formatURL(request.options.url, request.options);
@@ -324,7 +322,6 @@ export default class RequestManager {
 
 let typeRequestConfigs = new Map();
 let globalRequestConfig = {};
-let globalRunningRequests = new Map();
 
 /**
  * 查找请求对应的预注册的配置项

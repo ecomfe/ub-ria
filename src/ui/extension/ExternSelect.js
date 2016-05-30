@@ -102,7 +102,7 @@ export default class ExternSelect extends Extension {
      * @override
      */
     activate() {
-        this.resolveControls.forEach((select) => select.on('change', search, this));
+        this.resolveControls.forEach(select => select.on('change', search, this));
 
         // 接收控件内清空搜索操作
         this.target.on('clearquery', clearQuery, this);
@@ -118,7 +118,7 @@ export default class ExternSelect extends Extension {
     inactivate() {
         super.inactivate();
 
-        this.resolveControls.forEach((select) => select.un('change', search, this));
+        this.resolveControls.forEach(select => select.un('change', search, this));
 
         this.target.un('clearquery', clearQuery, this);
         this.target.un('search', doSearch, this);

@@ -11,7 +11,7 @@ import ajax from 'er/ajax';
 import etpl from 'etpl';
 
 // 添加一堆`filter`用用
-etpl.addFilter('trim', (s) => s.trim());
+etpl.addFilter('trim', s => s.trim());
 etpl.addFilter('pascalize', u.pascalize);
 etpl.addFilter('camelize', u.camelize);
 etpl.addFilter('dasherize', u.dasherize);
@@ -52,15 +52,12 @@ let controlModulePrefix = {
     ActionPanel: 'ef',
     ActionDialog: 'ef',
     ViewPanel: 'ef',
-    DrawerActionPanel: 'ub-ria-ui',
-    RichSelector: 'ub-ria-ui',
-    TableRichSelector: 'ub-ria-ui',
     TogglePanel: 'ub-ria-ui',
-    ToggleSelector: 'ub-ria-ui',
-    TreeRichSelector: 'ub-ria-ui',
-    PartialForm: 'ub-ria/ui',
-    Uploader: 'ub-ria/ui',
-    Warn: 'ub-ria/ui'
+    RichSelector: 'ub-ria-ui/selectors',
+    TableRichSelector: 'ub-ria-ui/selectors',
+    ToggleSelector: 'ub-ria-ui/selectors',
+    TreeRichSelector: 'ub-ria-ui/selectors',
+    Warn: 'ub-ria/ui/warn'
 };
 
 let extensionModulePrefix = {
@@ -133,64 +130,60 @@ function getExtensionDependencies(text) {
  *
  * @namespace tpl
  */
-let plugin = {
 
-    /**
-     * 加载模板，AMD插件对象暴露的方法
-     *
-     * @method tpl.load
-     * @param {string} resourceId 模板资源id
-     * @param {Function} parentRequire 父级`require`函数
-     * @param {Function} load 加载完成后调用
-     */
-    load(resourceId, parentRequire, load) {
-        let addTemplate = (text) => {
-            etpl.parse(text);
+/**
+ * 加载模板，AMD插件对象暴露的方法
+ *
+ * @method tpl.load
+ * @param {string} resourceId 模板资源id
+ * @param {Function} parentRequire 父级`require`函数
+ * @param {Function} load 加载完成后调用
+ */
+export function load(resourceId, parentRequire, load) {
+    let addTemplate = text => {
+        etpl.parse(text);
 
-            let dependencies = [...getControlDependencies(text), ...getExtensionDependencies(text)];
+        let dependencies = [...getControlDependencies(text), ...getExtensionDependencies(text)];
 
-            window.require(dependencies, () => load(text));
+        window.require(dependencies, () => load(text));
+    };
+
+    if (resourceId.indexOf('.tpl.html') >= 0) {
+        let options = {
+            method: 'GET',
+            url: parentRequire.toUrl(resourceId),
+            cache: true,
+            dataType: 'text'
         };
-
-        if (resourceId.indexOf('.tpl.html') >= 0) {
-            let options = {
-                method: 'GET',
-                url: parentRequire.toUrl(resourceId),
-                cache: true,
-                dataType: 'text'
-            };
-            ajax.request(options).then(addTemplate);
-        }
-        else {
-            parentRequire([resourceId], addTemplate);
-        }
-    },
-
-    /**
-     * 注册业务控件的模块
-     *
-     * @method tpl.registerControl
-     * @param {string} moduleId 业务控件对应的模块id，必须为顶级id
-     */
-    registerControl(moduleId) {
-        let lastIndexOfSlash = moduleId.lastIndexOf('/');
-        let prefix = moduleId.substring(0, lastIndexOfSlash);
-        let type = moduleId.substring(lastIndexOfSlash + 1);
-        controlModulePrefix[type] = prefix;
-    },
-
-    /**
-     * 注册业务控件扩展的模块
-     *
-     * @method tpl.registerExtension
-     * @param {string} moduleId 业务控件对应的模块id，必须为顶级id
-     */
-    registerExtension(moduleId) {
-        let lastIndexOfSlash = moduleId.lastIndexOf('/');
-        let prefix = moduleId.substring(0, lastIndexOfSlash);
-        let type = moduleId.substring(lastIndexOfSlash + 1);
-        extensionModulePrefix[type] = prefix;
+        ajax.request(options).then(addTemplate);
     }
-};
+    else {
+        parentRequire([resourceId], addTemplate);
+    }
+}
 
-export default plugin;
+/**
+ * 注册业务控件的模块
+ *
+ * @method tpl.registerControl
+ * @param {string} moduleId 业务控件对应的模块id，必须为顶级id
+ */
+export function registerControl(moduleId) {
+    let lastIndexOfSlash = moduleId.lastIndexOf('/');
+    let prefix = moduleId.substring(0, lastIndexOfSlash);
+    let type = moduleId.substring(lastIndexOfSlash + 1);
+    controlModulePrefix[type] = prefix;
+}
+
+/**
+ * 注册业务控件扩展的模块
+ *
+ * @method tpl.registerExtension
+ * @param {string} moduleId 业务控件对应的模块id，必须为顶级id
+ */
+export function registerExtension(moduleId) {
+    let lastIndexOfSlash = moduleId.lastIndexOf('/');
+    let prefix = moduleId.substring(0, lastIndexOfSlash);
+    let type = moduleId.substring(lastIndexOfSlash + 1);
+    extensionModulePrefix[type] = prefix;
+}

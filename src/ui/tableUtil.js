@@ -50,7 +50,7 @@ export function operations(config) {
     let separator = '';
     let html = u.map(
         config,
-        (item) => {
+        item => {
             // 字符串为分隔符
             if (u.isString(item)) {
                 separator = `<span class="table-operation-separator">${u.escape(item)}</span>`;
@@ -142,9 +142,8 @@ export function slideOperations(config) {
 /**
  * 生成状态列HTML
  *
- * @param {Object} status 状态配置项
- * @param {string} status.type 类型名称
- * @param {string} status.text 类型中文
+ * @param {string} type 类型名称
+ * @param {string} text 类型中文
  * @return {string}
  */
 export function status({type, text}) {
