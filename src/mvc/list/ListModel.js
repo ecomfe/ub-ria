@@ -37,9 +37,6 @@ export default class ListModel extends BaseModel {
                 }
             }
         );
-
-        this.putLoader(loader.list, 0);
-        this.putLoader(loader.pageSize, 0);
     }
 
     /**

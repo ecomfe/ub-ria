@@ -171,3 +171,5 @@
 12. `ListModel`的`getFiltersInfo`修改为`get filtersInfo`
 13. `tableFields`配置移到`Model`中实现
 14. 引入了`loader`机制代替原有的`datasource`
+15. 移除了`SingleEntityModel`
+16. 默认添加了基于`JSON Schema`的校验，使用`jsen`库

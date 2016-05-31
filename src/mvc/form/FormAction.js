@@ -67,12 +67,12 @@ export default class FormAction extends BaseAction {
      *
      * @protected
      * @method mvc.FormAction#handleSubmitError
-     * @param {Object} errors 错误对象
+     * @param {Object} error 错误对象
      * @return {boolean} 返回`true`表示错误已经处理完毕
      */
-    handleSubmitError(errors) {
-        if (errors.errorType === 'validationConflict') {
-            return this.handleValidationConflict(errors);
+    handleSubmitError(error) {
+        if (error.errorType === 'validationConflict') {
+            return this.handleValidationConflict(error);
         }
 
         return false;
@@ -82,17 +82,17 @@ export default class FormAction extends BaseAction {
      * 处理验证字段冲突
      *
      * @protected
-     * @param {meta.ValidationConflict} errors 错误对象
+     * @param {meta.ValidationConflict} error 错误对象
      * @return {boolean} 返回`true`表示错误已经处理完毕
      */
-    handleValidationConflict(errors) {
+    handleValidationConflict(error) {
         // 处理全局错误
-        if (errors.message) {
-            this.view.notifyGlobalError(errors.message);
+        if (error.globalMessage) {
+            this.view.notifyGlobalError(error.globalMessage);
         }
         // 处理model校验产生的错误信息，或者后端校验返回的错误信息
-        if (errors.fields) {
-            this.view.notifyErrors(errors);
+        if (error.fields) {
+            this.view.notifyErrors(error);
         }
 
         return true;
@@ -157,12 +157,12 @@ export default class FormAction extends BaseAction {
             catch (errors) {
                 let handled = this.handleSubmitError(errors);
                 if (!handled) {
-                    this.getEventBus().fire('error', {error: errors});
+                    this.eventBus.fire('error', {error: errors});
                 }
             }
         }
         else {
-            throw new Error(`Cannot find formType "${this.content.formType}" in methodMap`);
+            throw new Error(`Cannot find formType "${this.context.formType}" in methodMap`);
         }
     }
 

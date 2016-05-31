@@ -6,15 +6,73 @@
  * @author otakustay
  */
 
-import SingleEntityModel from '../common/SingleEntityModel';
+import BaseModel from '../common/BaseModel';
+import ValidationError from './ValidationError';
+import jsen from 'jsen';
+
+const DEFAULT_SCHEMA = {type: 'object'};
+
+let getRangeErrorMessage = (name, {description, type, minimum, maximum}) => {
+    return fieldSchema.type === 'integer'
+        ? `${description}请填写≥${minimum}且≤${maximum}的整数`
+        : `${description}请填写≥${minimum}且≤${maximum}的数字，最多可保存至小数点后两位`;
+};
+
+const ERROR_MESSAGES = {
+    minLength({description, minLength}) {
+        `${description}不能小于${minLength}个字符`
+    },
+
+    maxLength({description, maxLength}) {
+        return `${description}不能超过${maxLength}个字符`;
+    },
+
+    minimum(fieldSchema) {
+        if (fieldSchema.maximum) {
+            return getRangeErrorMessage(name, fieldSchema);
+        }
+
+        return `${description}不能小于${fieldSchema.minimum}`;
+    },
+
+    maximum(fieldSchema) {
+        if (fieldSchema.minimum) {
+            return getRangeErrorMessage(name, fieldSchema);
+        }
+
+        return `${description}不能大于${fieldSchema.minimum}`;
+    },
+
+    pattern({description}) {
+        return `${description}格式不符合要求`;
+    },
+
+    required({description}) {
+        return `请填写${description}`;
+    }
+};
+
+let convertToFieldError = (schema, {keyword, path, message}) => {
+    if (message) {
+        return {field: path, message: message};
+    }
+
+    let fieldSchema = path.split('.').reduce((current, name) => current.properties[name], schema);
+    let defaultMessage = ERROR_MESSAGES[keyword] && ERROR_MESSAGES[keyword](fieldSchema);
+    return {field: path, message: defaultMessage};
+};
 
 /**
  * 表单数据模型基类
  *
  * @class mvc.FormModel
- * @extends mvc.SingleEntityModel
+ * @extends mvc.BaseModel
  */
-export default class FormModel extends SingleEntityModel {
+export default class FormModel extends BaseModel {
+
+    get schema() {
+        return null;
+    }
 
     /**
      * 检查实体数据完整性，可在此补充一些视图无法提供的属性
@@ -33,10 +91,54 @@ export default class FormModel extends SingleEntityModel {
      *
      * @method mvc.FormModel#validateEntity
      * @param {Object} entity 需要校验的实体
-     * @return {Object[]}
+     * @return {Object} 包含`isValid`、`fields`和`globalMessage`三个字段
      */
     validateEntity(entity) {
-        return [];
+        let schema = this.schema;
+
+        if (!schema) {
+            return {
+                isValid: true,
+                fields: [],
+                globalMessage: null
+            };
+        }
+
+        let validate = jsen(schema);
+        let isValid = validate(entity, {greedy: true});
+
+        if (isValid) {
+            return {
+                isValid: true,
+                fields: [],
+                globalMessage: null
+            };
+        }
+
+        let fields = validate.errors.map(error => convertToFieldError(schema, error))
+        return {
+            isValid: false,
+            fields: fields,
+            globalMessage: null
+        };
+    }
+
+    /**
+     * 根据id获取实体
+     *
+     * @param {string | number} id 实体的id
+     * @return {Promise.<Object>}
+     */
+    async findById(id) {
+        let data = this.data();
+        if (!data) {
+            throw new Error('No default data object attached to this Model');
+        }
+        if (typeof data.findById !== 'function') {
+            throw new Error('No findById method implemented on default data object');
+        }
+
+        return data.findById(id);
     }
 
     /**
@@ -49,10 +151,10 @@ export default class FormModel extends SingleEntityModel {
     async save(entity) {
         entity = this.fillEntity(entity);
 
-        let validationResult = this.validateEntity(entity);
+        let {isValid, fields, globalMessage} = this.validateEntity(entity);
 
-        if (validationResult.length > 0) {
-            throw {type: 'validationConflict', fields: validationResult};
+        if (!isValid) {
+            throw new ValidationError(fields, globalMessage);
         }
 
         return this.saveEntity(entity);
@@ -73,8 +175,8 @@ export default class FormModel extends SingleEntityModel {
 
         let validationResult = this.validateEntity(entity);
 
-        if (validationResult.length > 0) {
-            throw {type: 'validationConflict', fields: validationResult};
+        if (!validationResult.isValid) {
+            throw new ValidationError(validationResult.fields, validationResult.globalMessage);
         }
 
         return this.updateEntity(entity);
