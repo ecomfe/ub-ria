@@ -135,6 +135,16 @@ export default class BaseModel extends Model {
                 await Promise.all(loader.map(runLoader));
             }
         }
+
+        this.prepare();
+    }
+
+    /**
+     * 准备数据
+     *
+     * @protected
+     */
+    prepare() {
     }
 
     /**
