@@ -57,8 +57,21 @@ let convertToFieldError = (schema, {keyword, path, message}) => {
         return {field: path, message: message};
     }
 
-    let fieldSchema = path.split('.').reduce((current, name) => current.properties[name], schema);
-    let defaultMessage = ERROR_MESSAGES[keyword] && ERROR_MESSAGES[keyword](fieldSchema);
+    let fieldSchema = path.split('.').reduce(
+        (current, name) => {
+            if (current.type === 'object') {
+                return current.properties[name];
+            }
+
+            return current;
+        },
+        schema
+    );
+    // 数组得用下面`items`的相关数据
+    let formattingContext = fieldSchema.type === 'array'
+        ? {...fieldSchema, ...fieldSchema.items}
+        : fieldSchema;
+    let defaultMessage = ERROR_MESSAGES[keyword] && ERROR_MESSAGES[keyword](formattingContext);
     return {field: path, message: defaultMessage};
 };
 
