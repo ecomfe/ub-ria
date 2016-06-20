@@ -31,7 +31,7 @@ import {bindControlEvent as on, control} from '../decorator';
  * @extends mvc.BaseView
  */
 export default class FormView extends BaseView {
-    @control();
+    @control()
     get form() {}
 
     @control()
@@ -274,12 +274,12 @@ export default class FormView extends BaseView {
         return drawerActionPanel;
     }
 
-    @on('form', 'submit');
+    @on('form', 'submit')
     onFormSubmit() {
         this.fire('submit');
     }
 
-    @on('cancel', 'click');
+    @on('cancel', 'click')
     onCancelClick() {
         this.fire('cancel');
     }

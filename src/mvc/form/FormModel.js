@@ -10,17 +10,16 @@ import BaseModel from '../common/BaseModel';
 import ValidationError from './ValidationError';
 import jsen from 'jsen';
 
-const DEFAULT_SCHEMA = {type: 'object'};
-
-let getRangeErrorMessage = (name, {description, type, minimum, maximum}) => {
-    return fieldSchema.type === 'integer'
+let getRangeErrorMessage = (name, fieldSchema) => {
+    let {description, type, minimum, maximum} = fieldSchema;
+    return type === 'integer'
         ? `${description}请填写≥${minimum}且≤${maximum}的整数`
         : `${description}请填写≥${minimum}且≤${maximum}的数字，最多可保存至小数点后两位`;
 };
 
 const ERROR_MESSAGES = {
     minLength({description, minLength}) {
-        `${description}不能小于${minLength}个字符`
+        return `${description}不能小于${minLength}个字符`;
     },
 
     maxLength({description, maxLength}) {
@@ -32,7 +31,7 @@ const ERROR_MESSAGES = {
             return getRangeErrorMessage(name, fieldSchema);
         }
 
-        return `${description}不能小于${fieldSchema.minimum}`;
+        return `${fieldSchema.description}不能小于${fieldSchema.minimum}`;
     },
 
     maximum(fieldSchema) {
@@ -40,7 +39,7 @@ const ERROR_MESSAGES = {
             return getRangeErrorMessage(name, fieldSchema);
         }
 
-        return `${description}不能大于${fieldSchema.minimum}`;
+        return `${fieldSchema.description}不能大于${fieldSchema.minimum}`;
     },
 
     pattern({description}) {
@@ -128,7 +127,7 @@ export default class FormModel extends BaseModel {
             };
         }
 
-        let fields = validate.errors.map(error => convertToFieldError(schema, error))
+        let fields = validate.errors.map(error => convertToFieldError(schema, error));
         return {
             isValid: false,
             fields: fields,

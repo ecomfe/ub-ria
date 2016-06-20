@@ -9,7 +9,6 @@
 import u from '../../util';
 import URL from 'er/URL';
 import BaseModel from '../common/BaseModel';
-import * as loader from './loader';
 
 /**
  * 列表数据模型基类

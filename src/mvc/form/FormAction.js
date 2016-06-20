@@ -273,7 +273,7 @@ export default class FormAction extends BaseAction {
         }
     }
 
-    @viewEvent('cancel');
+    @viewEvent('cancel')
     onCancel() {
         this.cancelEdit();
     }

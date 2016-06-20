@@ -29,19 +29,19 @@ import {bindControlEvent as on, control} from '../decorator';
  * @extends mvc.BaseView
  */
 export default class ListView extends BaseView {
-    @control();
+    @control()
     get pager() {}
 
-    @control();
+    @control()
     get table() {}
 
-    @control('filter', true);
+    @control('filter', true)
     get filterPanel() {}
 
-    @control('filter-switch', true);
+    @control('filter-switch', true)
     get filterSwitch() {}
 
-    @control('keyword', true);
+    @control('keyword', true)
     get keyword() {}
 
     /**
