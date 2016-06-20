@@ -39,8 +39,8 @@ export default class BaseModel extends Model {
         return keys.reduce((result, key) => Object.assign(result, {[key]: this.get(key)}), {});
     }
 
-    fill(mixin) {
-        return u.each(mixin, (value, key) => this.set(key, value));
+    fill(mixin, options) {
+        return u.each(mixin, (value, key) => this.set(key, value, options));
     }
 
     /**
@@ -122,7 +122,7 @@ export default class BaseModel extends Model {
     async load() {
         let runLoader = async loader => {
             let result = await loader(this);
-            this.fill(result);
+            this.fill(result, {silent: true});
             return result;
         };
 
