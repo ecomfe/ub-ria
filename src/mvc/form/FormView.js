@@ -75,15 +75,30 @@ export default class FormView extends BaseView {
      * @param {meta.FieldError[]} errors.fields 出现错误的字段集合
      */
     notifyErrors(errors) {
-        let form = this.form;
+        let inputs = u.indexBy(this.form.getInputControls(), input => input.get('name'));
+
+        let findPossibleInputControl = path => {
+            // 'x.y.z'变为['x.y.z', 'x.y', 'x']
+            let possiblePaths = path.split('.').reduce(
+                (possibilities, currentNode) => {
+                    let prefix = possibilities[0] ? possibilities[0] + '.' : '';
+                    possibilities.unshift(prefix + currentNode);
+                    return possibilities;
+                },
+                []
+            );
+            let actualName = possiblePaths.find(name => inputs.hasOwnProperty(name));
+            return actualName ? inputs[actualName] : null;
+        };
 
         for (let fail of errors.fields) {
-            let state = new ValidityState(false, fail.message);
-            let validity = new Validity();
-            validity.addState('server', state);
+            let input = findPossibleInputControl(fail.field);
 
-            let input = form.getInputControls(fail.field)[0];
             if (input && typeof input.showValidity === 'function') {
+                let state = new ValidityState(false, fail.message);
+                let validity = new Validity();
+                validity.addState('server', state);
+
                 input.showValidity(validity);
             }
         }

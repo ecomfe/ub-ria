@@ -30,6 +30,6 @@ export let list = async model => {
  */
 export let pageSize = async model => {
     let globalData = model.data('global');
-    let result = await globalData.getUser();
-    return {pageSize: result.pageSize};
+    let pageSize = await globalData.getPageSize();
+    return {pageSize};
 };
