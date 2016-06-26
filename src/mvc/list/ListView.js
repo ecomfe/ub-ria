@@ -186,7 +186,7 @@ export default class ListView extends BaseView {
      */
     clearFilterValue(name) {
         let value = this.model.defaultArgs[name] || '';
-        this.get(name).setValue(value);
+        this.get(u.dasherize(name)).setValue(value);
     }
 
     /**

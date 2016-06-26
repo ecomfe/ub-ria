@@ -45,8 +45,7 @@ util.template = function (template, data) {
  * @param {boolean} [deep=false] 是否深度清理，即遇到属性值为对象继续递归清理
  * @return {Object} 清理后的新对象
  */
-util.purify = function purify(object, defaults, deep) {
-    defaults = defaults || EMPTY_OBJECT;
+util.purify = function purify(object, defaults = EMPTY_OBJECT, deep) {
     let purifiedObject = {};
     util.each(
         object,
