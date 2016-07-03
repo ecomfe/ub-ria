@@ -77,6 +77,30 @@ export default class FormView extends BaseView {
     notifyErrors(errors) {
         let inputs = u.indexBy(this.form.getInputControls(), input => input.get('name'));
 
+        errors.fields.forEach(fail => this.notifyFieldError(fail, inputs));
+    }
+
+    /**
+     * 显示单个表单项的错误提示
+     *
+     * @protected
+     * @param {string} field 表单项名称
+     * @param {string} message 错误信息
+     * @param {Object} [inputs] 输入控件索引，可选用于加速查询
+     */
+    notifyFieldError({field, message}, inputs) {
+        inputs = inputs || u.indexBy(this.form.getInputControls(), input => input.get('name'));
+
+        let state = new ValidityState(false, fail.message);
+        let validity = new Validity();
+        validity.addState('server', state);
+
+        let possibleValidityLabel = this.get(u.dasherize(field) + '-validity');
+        if (possibleValidityLabel) {
+            possibleValidityLabel.set('validity', validity);
+            return;
+        }
+
         let findPossibleInputControl = path => {
             // 'x.y.z'变为['x.y.z', 'x.y', 'x']
             let possiblePaths = path.split('.').reduce(
@@ -90,17 +114,10 @@ export default class FormView extends BaseView {
             let actualName = possiblePaths.find(name => inputs.hasOwnProperty(name));
             return actualName ? inputs[actualName] : null;
         };
-
-        for (let fail of errors.fields) {
-            let input = findPossibleInputControl(fail.field);
-
-            if (input && typeof input.showValidity === 'function') {
-                let state = new ValidityState(false, fail.message);
-                let validity = new Validity();
-                validity.addState('server', state);
-
-                input.showValidity(validity);
-            }
+        let input = findPossibleInputControl(fail.field);
+        if (input && typeof input.showValidity === 'function') {
+            input.showValidity(validity);
+            return;
         }
     }
 
