@@ -8,7 +8,7 @@
 
 import BaseModel from '../common/BaseModel';
 import ValidationError from './ValidationError';
-import jsen from 'jsen';
+import {withDefaultMessages} from 'san-validation';
 
 let getRangeErrorMessage = (name, fieldSchema) => {
     let {description, type, minimum, maximum} = fieldSchema;
@@ -17,7 +17,7 @@ let getRangeErrorMessage = (name, fieldSchema) => {
         : `${description}请填写≥${minimum}且≤${maximum}的数字，最多可保存至小数点后两位`;
 };
 
-const ERROR_MESSAGES = {
+let messages = {
     minLength({description, minLength}) {
         return `${description}不能小于${minLength}个字符`;
     },
@@ -27,19 +27,23 @@ const ERROR_MESSAGES = {
     },
 
     minimum(fieldSchema) {
-        if (fieldSchema.maximum) {
+        let {description, minimum, maximum} = fieldSchema;
+
+        if (maximum) {
             return getRangeErrorMessage(name, fieldSchema);
         }
 
-        return `${fieldSchema.description}不能小于${fieldSchema.minimum}`;
+        return `${description}不能小于${minimum}`;
     },
 
     maximum(fieldSchema) {
-        if (fieldSchema.minimum) {
+        let {description, minimum, maximum} = fieldSchema;
+
+        if (minimum) {
             return getRangeErrorMessage(name, fieldSchema);
         }
 
-        return `${fieldSchema.description}不能大于${fieldSchema.minimum}`;
+        return `${description}不能大于${maximum}`;
     },
 
     pattern({description}) {
@@ -51,27 +55,10 @@ const ERROR_MESSAGES = {
     }
 };
 
-let convertToFieldError = (schema, {keyword, path, message}) => {
-    if (message) {
-        return {field: path, message: message};
-    }
+let validation = withDefaultMessages(messages);
 
-    let fieldSchema = path.split('.').reduce(
-        (current, name) => {
-            if (current.type === 'object') {
-                return current.properties[name];
-            }
-
-            return current;
-        },
-        schema
-    );
-    // 数组得用下面`items`的相关数据
-    let formattingContext = fieldSchema.type === 'array'
-        ? {...fieldSchema, ...fieldSchema.items}
-        : fieldSchema;
-    let defaultMessage = ERROR_MESSAGES[keyword] && ERROR_MESSAGES[keyword](formattingContext);
-    return {field: path, message: defaultMessage};
+let convertToFieldError = ({path, message}) => {
+    return {field: path, message: message};
 };
 
 /**
@@ -84,6 +71,10 @@ export default class FormModel extends BaseModel {
 
     get schema() {
         return null;
+    }
+
+    get messages() {
+        return {};
     }
 
     /**
@@ -116,21 +107,12 @@ export default class FormModel extends BaseModel {
             };
         }
 
-        let validate = jsen(schema);
-        let isValid = validate(entity, {greedy: true});
+        let validate = validation(schema, this.messages, {greedy: true});
+        let {isValid, errors} = validate(entity);
 
-        if (isValid) {
-            return {
-                isValid: true,
-                fields: [],
-                globalMessage: null
-            };
-        }
-
-        let fields = validate.errors.map(error => convertToFieldError(schema, error));
         return {
-            isValid: false,
-            fields: fields,
+            isValid: isValid,
+            fields: errors.map(convertToFieldError),
             globalMessage: null
         };
     }

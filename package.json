@@ -40,7 +40,9 @@
             "emc": "2.x",
             "promise": "latest",
             "uioc": "latest",
-            "jsen": "latest"
+            "jsen": "latest",
+            "diffy-update": "latest",
+            "san-validation": "latest"
         }
     },
     "devDependencies": {
