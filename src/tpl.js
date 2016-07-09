@@ -57,6 +57,7 @@ let controlModulePrefix = {
     TableRichSelector: 'ub-ria-ui/selectors',
     ToggleSelector: 'ub-ria-ui/selectors',
     TreeRichSelector: 'ub-ria-ui/selectors',
+    RichSelectorGroup: 'ub-ria-ui/selectors/RichSelectorGroup',
     Warn: 'ub-ria/ui/warn'
 };
 
