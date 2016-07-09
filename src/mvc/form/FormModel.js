@@ -10,7 +10,7 @@ import BaseModel from '../common/BaseModel';
 import ValidationError from './ValidationError';
 import {withDefaultMessages} from 'san-validation';
 
-let getRangeErrorMessage = (name, fieldSchema) => {
+let getRangeErrorMessage = fieldSchema => {
     let {description, type, minimum, maximum} = fieldSchema;
     return type === 'integer'
         ? `${description}请填写≥${minimum}且≤${maximum}的整数`
@@ -19,6 +19,10 @@ let getRangeErrorMessage = (name, fieldSchema) => {
 
 let messages = {
     minLength({description, minLength}) {
+        if (minLength === 1) {
+            return `请填写${description}`;
+        }
+
         return `${description}不能小于${minLength}个字符`;
     },
 
@@ -30,7 +34,7 @@ let messages = {
         let {description, minimum, maximum} = fieldSchema;
 
         if (maximum) {
-            return getRangeErrorMessage(name, fieldSchema);
+            return getRangeErrorMessage(fieldSchema);
         }
 
         return `${description}不能小于${minimum}`;
@@ -40,7 +44,7 @@ let messages = {
         let {description, minimum, maximum} = fieldSchema;
 
         if (minimum) {
-            return getRangeErrorMessage(name, fieldSchema);
+            return getRangeErrorMessage(fieldSchema);
         }
 
         return `${description}不能大于${maximum}`;
