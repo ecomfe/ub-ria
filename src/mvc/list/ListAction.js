@@ -62,13 +62,14 @@ export default class ListAction extends BaseAction {
      */
     reloadWithQueryUpdate(args) {
         let url = this.context.url;
-        let path = url.getPath();
-
+        // url中会有一些不实查询产生的参数（比如跳转过来时就带着的，这些要保留下来）
+        let urlArgs = url.getQuery();
         // 如果跟默认的参数相同，去掉默认字段
         let defaultArgs = this.model.defaultArgs;
-        args = u.purify(args, defaultArgs);
+        let query = u.purify(Object.assign({}, urlArgs, args), defaultArgs);
 
-        url = URL.withQuery(path, args).toString();
+        let path = url.getPath();
+        url = URL.withQuery(path, query).toString();
         this.redirect(url, {force: true});
     }
 
