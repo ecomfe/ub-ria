@@ -16,7 +16,7 @@ import u from '../../util';
  */
 export let list = async model => {
     let query = model.getQuery();
-    query = u.purify(query, null, true);
+    query = u.purify(query, undefined, true);
 
     let response = await model.search(query);
     return response;
