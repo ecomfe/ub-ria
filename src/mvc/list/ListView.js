@@ -360,11 +360,8 @@ export default class ListView extends BaseView {
         args.order = this.table.order;
         args.orderBy = this.table.orderBy;
 
-        let keyword = this.keyword.getValue().trim();
-        if (keyword) {
-            // 关键词去空格
-            args.keyword = keyword;
-        }
+        // 关键词去空格
+        args.keyword = this.keyword.getValue().trim();
 
         return args;
     }
