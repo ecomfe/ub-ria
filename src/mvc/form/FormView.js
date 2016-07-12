@@ -91,7 +91,7 @@ export default class FormView extends BaseView {
     notifyFieldError({field, message}, inputs) {
         inputs = inputs || u.indexBy(this.form.getInputControls(), input => input.get('name'));
 
-        let state = new ValidityState(false, fail.message);
+        let state = new ValidityState(false, message);
         let validity = new Validity();
         validity.addState('server', state);
 
@@ -114,7 +114,7 @@ export default class FormView extends BaseView {
             let actualName = possiblePaths.find(name => inputs.hasOwnProperty(name));
             return actualName ? inputs[actualName] : null;
         };
-        let input = findPossibleInputControl(fail.field);
+        let input = findPossibleInputControl(field);
         if (input && typeof input.showValidity === 'function') {
             input.showValidity(validity);
             return;
