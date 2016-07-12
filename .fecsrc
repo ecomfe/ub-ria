@@ -5,6 +5,9 @@
     "eslint": {
         "env": {
             "es6": true
+        },
+        "rules": {
+            "fecs-valid-class-jsdoc": false
         }
     },
     "htmlcs": {
