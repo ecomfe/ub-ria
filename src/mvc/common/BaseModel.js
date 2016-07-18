@@ -179,7 +179,7 @@ export default class BaseModel extends Model {
     dispose() {
         super.dispose();
 
-        u.invoke(this[DATA_POOL].values(), 'dispose');
+        u.invoke(Array.from(this[DATA_POOL].values()), 'dispose');
         this[DATA_POOL].clear();
         this[DATA_POOL] = null;
     }
