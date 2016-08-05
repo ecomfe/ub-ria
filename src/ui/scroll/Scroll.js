@@ -1,7 +1,7 @@
 /**
  * 控制页面滚动的操控控件
  *
- * @file Scroll.js 抽屉控件
+ * @file Scroll.js 控制页面滚动的操控控件
  * @exports ui.Scroll
  * @author
  */
@@ -9,7 +9,6 @@
 import ui from 'esui';
 import Control from 'esui/Control';
 import {createRepaint} from 'esui/painters';
-import lib from 'esui/lib';
 import $ from 'jquery';
 
 let repaint = createRepaint(
@@ -18,7 +17,6 @@ let repaint = createRepaint(
         name: ['scrollTop'],
         paint(control, scrollTop) {
             let container = control::getContainer();
-            console.log(container);
             $(container).scrollTop(scrollTop);
         }
     }
@@ -45,6 +43,7 @@ function getContainer() {
 /**
  * 判断是否有滚动条
  *
+ * @param {HTMLElement} element 要判断的容器元素
  * @return {boolean} 有 true；无 false
  */
 function hasScroll(element) {
