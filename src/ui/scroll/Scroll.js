@@ -1,0 +1,77 @@
+/**
+ * 控制页面滚动的操控控件
+ *
+ * @file Scroll.js 抽屉控件
+ * @exports ui.Scroll
+ * @author
+ */
+
+import ui from 'esui';
+import Control from 'esui/Control';
+import {createRepaint} from 'esui/painters';
+import lib from 'esui/lib';
+import $ from 'jquery';
+
+let repaint = createRepaint(
+    Control.prototype.repaint,
+    {
+        name: ['scrollTop'],
+        paint(control, scrollTop) {
+            let container = control::getContainer();
+            console.log(container);
+            $(container).scrollTop(scrollTop);
+        }
+    }
+);
+
+/**
+ * 找最近的那个有scroll的容器
+ *
+ * @return {HTMLElement} 最近的带滚动条的父容器
+ */
+function getContainer() {
+    let target = this.main;
+
+    while (target && target !== document.body) {
+        if (this::hasScroll(target)) {
+            return target;
+        }
+        target = target.parentNode;
+    }
+
+    return window;
+}
+
+/**
+ * 判断是否有滚动条
+ *
+ * @return {boolean} 有 true；无 false
+ */
+function hasScroll(element) {
+    return element.clientHeight < element.scrollHeight;
+}
+
+/**
+ * 控制页面滚动的操控控件
+ *
+ * @class ui.Scroll
+ * @extends esui.Control
+ */
+export default class Scroll extends Control {
+
+    /**
+     * @override
+     */
+    get type() {
+        return 'Scroll';
+    }
+
+    /**
+     * @override
+     */
+    repaint(changes, changesIndex) {
+        repaint.call(this, changes, changesIndex);
+    }
+}
+
+ui.register(Scroll);

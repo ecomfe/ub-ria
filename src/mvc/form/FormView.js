@@ -12,6 +12,7 @@ import BaseView from '../common/BaseView';
 import Validity from 'esui/validator/Validity';
 import ValidityState from 'esui/validator/ValidityState';
 import Warn from '../../ui/warn/Warn';
+import Scroll from '../../ui/scroll/Scroll';
 import {bindControlEvent as on, control} from '../decorator';
 
 
@@ -42,6 +43,9 @@ export default class FormView extends BaseView {
 
     @control('form-content-main')
     get formContent() {}
+
+    @control('scroll')
+    get scroll() {}
 
     /**
      * 从表单中获取实体数据
@@ -304,6 +308,17 @@ export default class FormView extends BaseView {
         );
 
         return drawerActionPanel;
+    }
+
+    /**
+     * 页面滚到顶部
+     *
+     * @public
+     * @method mvc.FormView#scrollToTop
+     */
+    scrollToTop() {
+        // 滚到上面
+        this.scroll.set('scrollTop', 0);
     }
 
     @on('form', 'submit')
