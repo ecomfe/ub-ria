@@ -44,7 +44,7 @@ export default class FormView extends BaseView {
     @control('form-content-main')
     get formContent() {}
 
-    @control('scroll')
+    @control('scroll', true)
     get scroll() {}
 
     /**
