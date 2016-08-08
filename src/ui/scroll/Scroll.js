@@ -18,6 +18,8 @@ let repaint = createRepaint(
         paint(control, scrollTop) {
             let container = control::getContainer();
             $(container).scrollTop(scrollTop);
+            // 重置scrollTop，保证每次更新生效
+            control.scrollTop = null;
         }
     }
 );
@@ -31,7 +33,7 @@ function getContainer() {
     let target = this.main;
 
     while (target && target !== document.body) {
-        if (this::hasScroll(target)) {
+        if (hasScroll(target)) {
             return target;
         }
         target = target.parentNode;
