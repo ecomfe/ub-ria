@@ -95,6 +95,8 @@ export default class FormAction extends BaseAction {
             this.view.notifyErrors(error);
         }
 
+        this.view.scrollToTop();
+
         return true;
     }
 

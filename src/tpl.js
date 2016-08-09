@@ -58,7 +58,8 @@ let controlModulePrefix = {
     ToggleSelector: 'ub-ria-ui/selectors',
     TreeRichSelector: 'ub-ria-ui/selectors',
     RichSelectorGroup: 'ub-ria-ui/selectors',
-    Warn: 'ub-ria/ui/warn'
+    Warn: 'ub-ria/ui/warn',
+    Scroll: 'ub-ria/ui/scroll'
 };
 
 let extensionModulePrefix = {
