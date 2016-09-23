@@ -192,13 +192,27 @@ define(
                 }
 
                 if (resourceId.indexOf('.tpl.html') >= 0) {
-                    var options = {
-                        method: 'GET',
-                        url: parentRequire.toUrl(resourceId),
-                        cache: true,
-                        dataType: 'text'
-                    };
-                    ajax.request(options).then(addTemplate);
+                    var url = parentRequire.toUrl(resourceId);
+                    var origin = document.location.origin;
+                    var isCrossRigion = url.indexOf(origin) !== 0;
+
+                    // 跨域时，兼容ie10、9、8
+                    if (isCrossRigion && window.XDomainRequest) {
+                        var xdr = new window.XDomainRequest();
+                        xdr.open('GET', url);
+                        xdr.onload = function () {
+                            addTemplate(xdr.responseText);
+                        };
+                    }
+                    else {
+                        var options = {
+                            method: 'GET',
+                            url: url,
+                            cache: true,
+                            dataType: 'text'
+                        };
+                        ajax.request(options).then(addTemplate);
+                    }
                 }
                 else {
                     parentRequire([resourceId], addTemplate);
