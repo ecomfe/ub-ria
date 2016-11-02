@@ -54,14 +54,11 @@ define(
             util.each(
                 object,
                 function (value, key) {
-                    var isDefaultNull =
-                        value == null || value === '';
-                    var isInDefaults =
-                        defaults.hasOwnProperty(key) && defaults[key] === value;
+                    var isDefaultNull = value == null || value === '';
+                    var isInDefaults = defaults.hasOwnProperty(key) && defaults[key] === value;
                     if (!isDefaultNull && !isInDefaults) {
                         if (deep && typeof value === 'object') {
-                            purifiedObject[key] =
-                                purify(value, defaults[key], deep);
+                            purifiedObject[key] = purify(value, defaults[key], deep);
                         }
                         else {
                             purifiedObject[key] = value;

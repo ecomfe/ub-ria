@@ -32,6 +32,8 @@ define(
         var exports = {};
 
         /**
+         * 默认构造函数
+         *
          * @constructs mvc.FormView
          */
         exports.constructor = function () {

@@ -124,6 +124,8 @@ define(
         };
 
         /**
+         * 默认构造函数
+         *
          * @constructs mvc.ListModel
          */
         exports.constructor = function () {

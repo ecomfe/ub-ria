@@ -20,7 +20,7 @@ define(
          * 类型检验器，value值为undefined、null时，不做检查；
          * enum、number类型字段值为number时通过检查；
          *
-         * @param {string | boolean | number | object | array | undefined} value 待检验的值
+         * @param {string | boolean | number | Object | Array | undefined} value 待检验的值
          * @param {Array} schema 字段的定义、约束, 长度为3或2的数组
          * @return {boolean} 检验成功返回true，失败返回false
          */

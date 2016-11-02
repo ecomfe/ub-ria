@@ -35,6 +35,8 @@ define(
         var exports = {};
 
         /**
+         * 默认构造函数
+         *
          * @constructs mvc.EntityValidator
          */
         exports.constructor = function () {
@@ -429,6 +431,7 @@ define(
         }
 
         /**
+         * 添加一个范围检查器
          *
          * @param {string[]} list 检查器名数组
          * @param {string} range 上下界检查器名

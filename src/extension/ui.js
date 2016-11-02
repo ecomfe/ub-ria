@@ -267,8 +267,7 @@ define(
         function addControlLinkMode() {
             var CommandMenu = require('esui/CommandMenu');
 
-            CommandMenu.prototype.linkTemplate =
-                '<a target="${target}" href="${href}">${text}</a>';
+            CommandMenu.prototype.linkTemplate = '<a target="${target}" href="${href}">${text}</a>';
 
             CommandMenu.prototype.getItemHTML = function (item) {
                 var data = {

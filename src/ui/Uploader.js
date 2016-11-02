@@ -106,7 +106,7 @@ define(
                 // 文件上传框
                 '<input type="file" ',
                 'id="' + this.helper.getId('input') + '" ',
-                (this.name ? 'name="' + this.name + '" ' : ' '),
+                this.name ? 'name="' + this.name + '" ' : ' ',
                 '/>'
             ];
             // 附加参数

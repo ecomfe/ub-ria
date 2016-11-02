@@ -132,8 +132,7 @@ define(
                 if (!defined[type]) {
                     defined[type] = true;
 
-                    var prefix =
-                        (extensionModulePrefix[type] || 'ui/extension') + '/';
+                    var prefix = (extensionModulePrefix[type] || 'ui/extension') + '/';
                     dependencies.push(prefix + type);
                 }
 
@@ -157,6 +156,7 @@ define(
          * @namespace tpl
          */
         var plugin = {
+
             /**
              * 设置模板引擎实例，可通过此方法来使用非默认引擎实例
              *

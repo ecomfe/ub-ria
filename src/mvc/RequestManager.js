@@ -19,6 +19,8 @@ define(
         var exports = {};
 
         /**
+         * 默认构造函数
+         *
          * @constructs mvc.RequestManager
          *
          * @param {string} entityName 实体名称

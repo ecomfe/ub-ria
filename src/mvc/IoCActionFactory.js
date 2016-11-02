@@ -18,6 +18,8 @@ define(
         var exports = {};
 
         /**
+         * 默认构造函数
+         *
          * @param {string} actionComponent action组件名
          * @param {Object} options 相关配置
          * @param {boolean} [options.noSchema] 模块没有`schema`信息，通常只有列表的模块会这样
