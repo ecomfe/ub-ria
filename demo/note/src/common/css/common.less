@@ -1,0 +1,56 @@
+/**
+ * DEMO
+ *
+ * @file 多页面通用的样式
+ * @author dddbear(dddbear@aliyun.com)
+ */
+// 侧边栏图标
+.sidebar-menu-icon {
+    .sidebar-menu-contact & {
+        .pseudo-icon(url(../img/sidebar-setting.png), 16px, 16px, center);
+    }
+}
+
+// 控制侧边栏展开收起的按钮
+.inverse-sidebar {
+    .user-select(none);
+    .toggle-navigator-icon {
+        display: inline-block;
+        width: 27px;
+        height: @header-height;
+        .pseudo-icon(url(../img/navigator-inverse-opened.png), 27px, 15px, center);
+    }
+    &:hover {
+        .toggle-navigator-icon {
+            .pseudo-icon(url(../img/navigator-inverse-opened-hover.png), 27px, 15px, center);
+        }
+    }
+}
+
+// 收起状态
+.inverse-sidebar.sidebar-collapsed {
+    .toggle-navigator-icon {
+        display: inline-block;
+        width: 27px;
+        height: @header-height;
+        .pseudo-icon(url(../img/navigator-inverse-collapsed.png), 27px, 15px, center);
+    }
+    &:hover {
+        .toggle-navigator-icon {
+            .pseudo-icon(url(../img/navigator-inverse-collapsed-hover.png), 27px, 15px, center);
+        }
+    }
+}
+
+.ui-label {
+    display: inline;
+}
+
+.header-logo {
+    margin-top: 15px;
+}
+
+.middle-text(@height) {
+    height: @height;
+    line-height: @height;
+}

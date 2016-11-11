@@ -1,0 +1,74 @@
+<!-- target: contactForm(master = formPage) -->
+<!-- content: crumb -->
+    <!-- import: contactFormCrumb -->
+<!-- /content -->
+<!-- content: formMain -->
+    <!-- import: contactFormMain -->
+<!-- /content -->
+
+<!-- target: contactFormCrumb(master = crumb) -->
+<!-- content: path -->
+    <!-- if: ${formType} === 'create' -->
+    <span>新建联系人</span>
+    <!-- elif: ${formType} === 'update' -->
+    <span>修改联系人</span>
+    <!-- /if -->
+<!-- /content -->
+
+<!-- target: contactFormMain(master = formView) -->
+<!-- content: sections -->
+<section class="form-section">
+    <!-- use:
+        textboxField(
+            field = 'name', title = '姓名',
+            required = true, length = 100
+        )
+    -->
+    <!-- use:
+        textboxField(
+            field = 'phone', title = '电话', 
+            required = true, pattern = '/^((0\d{2,3})-)(\d{7,8})(-(\d{3,}))?$/'
+        )
+    -->
+    <div class="form-field-required">
+        <esui-label class="form-field-label" data-ui-for-target="role-type">角色分类：</esui-label>
+        <div class="form-field-value">
+            <span class="form-field-value-required-star">*</span>
+            <esui-select
+                title="角色分类："
+                data-ui-id="role-type"
+                data-ui-name="roleType"
+                data-ui-value="@roleType"
+                data-ui-required="true"
+                data-ui-validity-label="role-validity-label"
+                data-ui-datasource="@roleTypes">
+            </esui-select>
+            <label data-ui-type="Validity" data-ui-id="role-validity-label"></label>
+        </div>
+    </div>
+    <div class="form-field-required">
+        <esui-label class="form-field-label" data-ui-for-target="auth-type">权限分类：</esui-label>
+        <div class="form-field-value">
+            <span class="form-field-value-required-star">*</span>
+            <esui-select
+                title="权限分类："
+                data-ui-id="auth-type"
+                data-ui-name="authType"
+                data-ui-value="@authType"
+                data-ui-required="true"
+                data-ui-validity-label="auth-validity-label"
+                data-ui-datasource="@authTypes">
+            </esui-select>
+            <label data-ui-type="Validity" data-ui-id="auth-validity-label"></label>
+        </div>
+    </div>
+    <!-- use:
+        textareaField(
+            title = '备注',
+            field = 'description',
+            length = 400,
+            description = '(选填)'
+        )
+    -->
+</section>
+<!-- /content -->

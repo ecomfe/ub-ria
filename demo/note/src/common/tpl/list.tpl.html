@@ -1,0 +1,120 @@
+<!-- target: listSearchBox -->
+<!-- var: field = ${field} || 'keyword' -->
+<!-- var: name = ${name} || ${field} -->
+<!-- var: id = ${id} || ${name} -->
+<!-- var: width = ${width} || 180 -->
+<!-- var: height = ${height} || 19 -->
+<!-- var: maxlength = ${maxlength} || 100 -->
+<div data-ui-type="SearchBox" class="list-keyword" name="${name}"
+    data-ui-max-length="${maxlength}" data-ui-id="${id}"
+    data-ui-extension-submit-form="filter" data-ui-height="${height}"
+    data-ui-width="${width}" data-ui-text="@${field}"
+    data-ui-placeholder="${placeholder}" data-ui-extension-submit-type="AutoSubmit">
+</div>
+
+<!-- target: listTable -->
+<esui-table class="list-content-table" data-ui-id="table" data-ui-datasource="@results"
+    data-ui-order-by="@orderBy" data-ui-order="@order" data-ui-select="@selectMode" data-ui-skin="noGrid"
+<!-- if: ${useExtensionEvent} -->data-ui-extension-command-events="mouseout mouseover click"<!-- /if -->
+<!-- if: ${useCommand} -->data-ui-extension-command-type="Command"<!-- /if -->
+<!-- if: ${useCustomData} -->data-ui-extension-data-type="CustomData" data-ui-data="${data}"<!-- /if -->
+<!-- if: ${useSubrow} -->data-ui-extension-tablesubrow-type="TableSubrow"<!-- /if -->
+>
+</esui-table>
+
+<!-- target: listPager -->
+<div class="list-pager">
+    <esui-pager data-ui-id="pager" data-ui-count="@totalCount" data-ui-page="@page"
+    data-ui-page-size="@pageSize" data-ui-page-type="plain" data-ui-layout="alignRight">
+    </esui-pager>
+    <span class="pager-count">共 ${totalCount} 条</span>
+</div>
+
+<!-- master: listPage -->
+<div class="list-page">
+    <div class="page-crumb">
+        <!-- contentplaceholder: crumb --><!-- /contentplaceholder -->
+        <!-- contentplaceholder: tip --><!-- /contentplaceholder -->
+    </div>
+    <div class="list-page-content">
+        <!-- contentplaceholder: main --><!-- /contentplaceholder -->
+    </div>
+</div>
+
+<!-- master: listView -->
+<div class="list-view">
+    <div class="list-summary">
+        <!-- contentplaceholder: summary --><!-- /contentplaceholder -->
+    </div>
+    <div class="list-meta">
+        <div class="list-action">
+            <!-- contentplaceholder: actionButtons --><!-- /contentplaceholder -->
+        </div>
+        <div class="list-filter">
+            <!-- contentplaceholder: searchbox --><!-- /contentplaceholder -->
+            <div class="list-batch-operation">
+                <!-- contentplaceholder: bacthOperation --><!-- /contentplaceholder -->
+            </div>
+            <div class="list-filter-fields">
+                <!-- contentplaceholder: filter --><!-- /contentplaceholder -->
+            </div>
+
+        </div>
+    </div>
+    <!-- contentplaceholder: listFilter --><!-- /contentplaceholder -->
+    <!-- contentplaceholder: batchOperateArea --><!-- /contentplaceholder -->
+    <!-- contentplaceholder: table --><!-- /contentplaceholder -->
+    <!-- import: listPager -->
+</div>
+
+<!-- master: listFilter -->
+<form data-ui-type="Form" class="list-filter-panel" data-ui-id="filter"
+      data-ui-hidden="true" novalidata="novalidate">
+    <esui-panel data-ui-id="list-filter-select-panel" data-ui-group="filter-content"
+        class="list-filter-select-fields">
+        <!-- contentplaceholder: filters --><!-- /contentplaceholder -->
+    </esui-panel>
+    <esui-panel data-ui-id="list-filter-selected-panel" data-ui-group="filter-content"
+        data-ui-hidden="true" class="list-filter-selected-fields">
+        <esui-label class="list-filter-field-label">筛选条件：</esui-label>
+        <!-- contentplaceholder: filterResults --><!-- /contentplaceholder -->
+    </esui-panel>
+    <div class="list-filter-operation">
+        <button type="submit" data-ui-type="Button" data-ui-id="filter-submit" data-ui-group="filter-content">确定
+        </button>
+        <esui-button data-ui-id="filter-modify" data-ui-group="filter-content" data-ui-hidden="true">修改</esui-button>
+        <esui-button data-ui-id="filter-cancel" data-ui-skin="link">取消</esui-button>
+    </div>
+</form>
+
+<!-- target: listFilterSelect -->
+<!-- var: id = ${id} || ${name} -->
+<!-- var: title = ${title} -->
+<!-- var: datasource = ${datasource} -->
+<!-- var: field = ${field} -->
+<div class="list-filter-field">
+    <esui-label class="list-filter-field-label">${title}</esui-label>
+    <div class="form-field-value">
+        <esui-select
+            data-ui-id="${id}" data-ui-name="${name}" data-ui-width="137"
+            data-ui-datasource="@${datasource}" data-ui-value="@${field}"
+            <!-- if: ${disabled} --> data-ui-disabled="${disabled}"<!-- /if -->></esui-select>
+    </div>
+</div>
+
+
+<!-- target: filterResult -->
+<!-- if: !${filter.isDefaultValue} -->
+<a data-ui-type="Button" data-ui-group="clear-button" data-ui-name="${filter.name}" data-ui-skin="delete-block">${title}${filter.text}</a><!-- /if -->
+
+
+<!-- target: batchButton -->
+<esui-button class="list-${statusName}" data-ui-skin="link"
+    data-ui-type="Button" data-ui-id="${statusName}"
+    data-ui-group="batch" data-ui-data-status="${status}"
+    data-ui-extension-data-type="CustomData">${command}</esui-button>
+
+
+<!-- target: batchRemoveButton -->
+<!-- use: batchButton(status = 0, statusName = "remove", command = "删除") -->
+

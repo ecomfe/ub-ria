@@ -1,0 +1,63 @@
+<!-- target: contactList(master = listPage) -->
+<!-- content: crumb -->
+    <!-- import: contactListCrumb -->
+<!-- /content -->
+<!-- content: main -->
+<!-- import: contactListMain -->
+<!-- /content -->
+
+<!-- target: contactListCrumb(master = crumb) -->
+<!-- content: path -->
+    <span>联系人</span>
+<!-- /content -->
+
+<!-- target: contactListMain(master = listView) -->
+<!-- content: actionButtons -->
+    <a data-ui-type="Link" data-ui-id="create" data-ui-skin="add" data-ui-href="#/contact/create">新建联系人</a>
+    <!-- /if -->
+<!-- /content -->
+<!-- content: bacthOperation -->
+    <esui-button class="list-remove" data-ui-skin="link"
+        data-ui-type="Button" data-ui-id="remove"
+        data-ui-group="batch" data-ui-data-status="0"
+        data-ui-extension-data-type="CustomData">删除</esui-button>
+    <!-- /if -->
+<!-- /content -->
+<!-- content: filter -->
+    <esui-button data-ui-id="filter-switch" data-ui-skin="select">筛选</esui-button>
+<!-- /content -->
+<!-- content: searchbox -->
+    <!-- use: listSearchBox(placeholder = '请输入联系人名称') -->
+<!-- /content -->
+<!-- content: listFilter -->
+    <!-- import: contactListFilters -->
+<!-- /content -->
+<!-- content: table -->
+    <!-- use: listTable(useCommand = true) -->
+<!-- /content -->
+
+<!--target: contactListFilters(master = listFilter) -->
+<!-- content: filters -->
+    <!-- use:
+    listFilterSelect(
+        title = '角色类型：',
+        id = 'role-type',
+        name = 'roleType',
+        datasource = 'roleTypes',
+        field = 'roleType'
+    )
+    -->
+    <!-- use:
+    listFilterSelect(
+        title = '权限类型：',
+        id = 'auth-type',
+        name = 'authType',
+        datasource = 'authTypes',
+        field = 'authype'
+    )
+    -->
+<!-- /content -->
+<!-- content: filterResults -->
+    <!-- use: filterResult(title = '角色类型：', filter = ${filtersInfo.filters.roleType}) -->
+    <!-- use: filterResult(title = '权限类型：', filter = ${filtersInfo.filters.authType}) -->
+<!-- /content -->
