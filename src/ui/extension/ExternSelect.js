@@ -105,6 +105,8 @@ define(
             this.target.on('clearquery', clearQuery, this);
             // 接收控件的search事件
             this.target.on('search', doSearch, this);
+            // 接收控件的加载更多事件
+            this.target.on('loadmoredata', doSearch, this);
 
             this.$super(arguments);
         };

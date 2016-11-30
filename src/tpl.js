@@ -58,6 +58,8 @@ define(
             DrawerActionPanel: 'ub-ria',
             RichSelector: 'ub-ria-ui',
             TableRichSelector: 'ub-ria-ui',
+            PagingTableRichSelector: 'ub-ria-ui',
+            PagingTreeRichSelector: 'ub-ria-ui',
             TogglePanel: 'ub-ria-ui',
             ToggleSelector: 'ub-ria-ui',
             TreeRichSelector: 'ub-ria-ui',
