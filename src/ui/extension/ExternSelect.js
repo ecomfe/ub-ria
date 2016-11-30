@@ -116,9 +116,17 @@ define(
         function doSearch(e) {
             this.handleControls(
                 function (select, index) {
-                    var item = select.getSelectedItem();
-                    if (item.value !== '' && select.dataKey) {
-                        e.filterData.push({keys: [select.dataKey], value: item.value});
+                    if (select.getSelectedItem) {
+                        var item = select.getSelectedItem();
+                        if (item.value !== '' && select.dataKey) {
+                            e.filterData.push({keys: [select.dataKey], value: item.value});
+                        }
+                    }
+                    else if (select.getSelectedItems) {
+                        var items = select.getSelectedItems();
+                        if (items && items.length) {
+                            e.filterData.push({keys: [select.dataKey], value: items});
+                        }
                     }
                 }
             );
@@ -130,7 +138,7 @@ define(
             this.handleControls(
                 function (select) {
                     select.un('change', search, this);
-                    select.setProperties({selectedIndex: 0});
+                    select.setRawValue([]);
                     select.on('change', search, this);
                 }
             );
