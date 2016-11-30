@@ -135,7 +135,7 @@ define(
             var method = permission[permissionName];
 
             if (!method) {
-                throw new Error('No "' + method + '" method on permission object');
+                throw new Error('No "' + permissionName + '" method on permission object');
             }
 
             return method.call(permission);
