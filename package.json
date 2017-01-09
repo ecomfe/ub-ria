@@ -30,19 +30,15 @@
             "esui": ">=3.1.x",
             "ef": ">=3.1.x",
             "underscore": ">=1.7.x",
-            "mini-event": "1.x",
             "etpl": "3.x",
             "eoo": "0.x",
             "eicons": "1.x",
             "esf": "1.x",
             "est": "1.x",
-            "moment": "2.x",
             "emc": "2.x",
-            "promise": "latest",
-            "uioc": "latest",
-            "jsen": "latest",
-            "diffy-update": "latest",
-            "san-validation": "latest"
+            "jsen": "0.x",
+            "san-update": "1.x",
+            "san-validation": "1.x"
         }
     },
     "devDependencies": {

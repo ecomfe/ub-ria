@@ -7,12 +7,14 @@
  */
 
 import u from '../../util';
-import {defaults} from 'diffy-update';
+import {defaults} from 'san-update';
 import BaseView from '../common/BaseView';
 import Validity from 'esui/validator/Validity';
 import ValidityState from 'esui/validator/ValidityState';
 import Warn from '../../ui/warn/Warn';
+/* eslint-disable no-unused-vars */
 import Scroll from '../../ui/scroll/Scroll';
+/* eslint-enable no-unused-vars */
 import {bindControlEvent as on, control} from '../decorator';
 
 

@@ -10,7 +10,7 @@ import u from '../../util';
 import lib from 'esui/lib';
 import Control from 'esui/Control';
 import painters from 'esui/painters';
-import {set} from 'diffy-update';
+import {set} from 'san-update';
 import etpl from 'etpl';
 import TEMPLATE from 'text!./warn.tpl.html';
 
