@@ -84,7 +84,8 @@ let extensionModulePrefix = {
 function getControlDependencies(text) {
     let dependencies = new Set();
 
-    let regex = /<\s*esui-([\w-]+)[^>]*>|data-ui-type="(\w+)"/g;
+
+    let regex = /<\s*esui-([\w-]+)[^>]*>|data-ui-type="(\w+)"|type:([\w-]+)/g;
     let match = regex.exec(text);
     while (match) {
         let type = match[1] && u.pascalize(match[1]) || match[2];
